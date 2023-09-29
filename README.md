@@ -27,4 +27,4 @@ You can stop them at any time by running `docker compose down`.
 	5. Password: < value of POSTGRES_PASSWORD in .env > 
 
 	Leave the other fields/settings untouched.
-12. Press the save button. You should be good to go now :smile:
+12. Press the save button. You should be good to go now :smile: !
