@@ -1,7 +1,7 @@
 ---
 name: User Story Template
 about: Template for easily creating a new user story
-title: "[ID] - [Title]"
+title: "[ Title ]"
 labels: 'Type: User Story'
 assignees: ''
 
