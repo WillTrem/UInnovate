@@ -5,8 +5,11 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=uinnovate_test_db # Default database's name
     ports:
       - "5432:5432"
+    volumes:
+      - ./uinnovate-test-db-dump.backup:/dumps/uinnovate-test-db-dump.backup # Initializes the default database from the dump
 
   pgadmin:
     image: dpage/pgadmin4:latest
