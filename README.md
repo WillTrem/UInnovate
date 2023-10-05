@@ -30,7 +30,7 @@ You can stop them at any time by running `docker compose stop`.
 12. Press the save button. 
 13. Back in your terminal window, execute 
 
-```docker exec -i db /usr/bin/pg_restore -U <POSTGRES_USER in .env> -d uinnovate_test_db /dumps/uinnovate-test-db-dump.backup```
+```docker exec -i db /usr/bin/pg_restore -U <POSTGRES_USER in .env> -d uinnovate_test_db /dumps/uinnovate-test-db-dump.backup -c --no-owner --no-privileges```
     
 This will copy the data from the dump into your local database.  
 *Make sure that you replace `<POSTGRES_USER in .env>` with the actual value!  
