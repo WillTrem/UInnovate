@@ -9,9 +9,9 @@ assignees: ''
 
 As a [ user X ], I want to [ do Y ], so that [ I can accomplish Z ].
 
-| MoSCoW      | Priority         | Risk               | Story Points  |
-| ------------- | ------------- | ------------- | ------------- |
-|                     |                      |                      |                    |
+| MoSCoW      |  Risk               | Story Points  |
+| ------------- |------------- | ------------- |
+| Must/Should/Could/Won't have |                      |                    |
 
 ## Acceptance Criteria
 
