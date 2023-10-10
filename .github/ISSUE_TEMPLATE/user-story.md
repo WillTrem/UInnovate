@@ -1,7 +1,7 @@
 ---
 name: User Story
 about: Template for easily creating a new user story
-title: "[ Title ]"
+title: "[US] Title"
 labels: 'Type: User Story'
 assignees: ''
 
@@ -9,9 +9,13 @@ assignees: ''
 
 As a [ user X ], I want to [ do Y ], so that [ I can accomplish Z ].
 
-| MoSCoW      | Priority         | Risk               | Story Points  |
-| ------------- | ------------- | ------------- | ------------- |
-|                     |                      |                      |                    |
+| MoSCoW      |  Risk               | Story Points  |
+| ------------- |------------- | ------------- |
+| Must/Should/Could/Won't have |                      |                    |
+
+## Acceptance Criteria
+
+## Risks
 
 ## Tasks
 - [ ] Task

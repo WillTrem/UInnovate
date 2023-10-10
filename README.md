@@ -23,7 +23,6 @@
 9. On the home page, click on "Add New Server".
 10. In the "General" tab, enter a Name for your local PostgreSQL server (e.g. "UInnovate Local PostgreSQL").
 11. In the "Connection" tab, fill the fields with the following values :
-
     1. Host name/address: db (the name of the PostreSQL container)
     2. Port: 5432 (should be by default)
     3. Maintenance database: postgres (by default, leave untouched)
