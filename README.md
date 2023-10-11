@@ -35,3 +35,132 @@ You can stop them at any time by running `docker compose stop`.
 This will copy the data from the dump into your local database.  
 *Make sure that you replace `<POSTGRES_USER in .env>` with the actual value!  
 You should be good to go now :smile: 
+
+## Getting Started
+
+The set of steps to follow in order to run the app locally on your machine. 
+
+### Prerequisites 
+
+1. You will need a [stable](https://nodejs.org/en/download) version of Node.js, hence install the LTS version of Node.js.
+
+2. Install NPM, if you don't have it already on your machine.
+
+### Installation
+
+1. If you already cloned the project during "Setting up Docker", you can omit this step.
+
+```bash
+git clone https://github.com/WillTrem/UInnovate.git
+```
+
+2. Open the project via your preferred editor/IDE and go to the project directory.
+
+```bash
+cd UInnovateApp
+```
+
+3. Install all the dependencies.
+
+```bash
+npm install
+```
+
+4. Start the server.
+
+```bash
+npm run dev
+```
+
+## Supported Testing
+
+The supported types of tests are:
+
+1. Unit Tests using Vitest
+2. Integration Tests using Cypress
+3. Component Tests using Cypress
+
+### Unit Tests
+
+The unit tests will be written using [Vitest](https://vitest.dev/guide/) in the `tests/unit` directory.
+
+To run the unit tests
+
+```bash
+npm run test:unit
+```
+
+### Component Tests 
+
+The [component tests](https://docs.cypress.io/guides/component-testing/react/overview#React-with-Vite) will be handled by Cypress. These tests will be generated in the `cypress/component` directory.
+
+To run component tests
+
+```bash
+npm run cy:run-component
+```
+
+To build component tests with Cypress Component Testing
+
+```bash
+npm run cy:open-component
+```
+
+### Integration Tests 
+
+The [integration tests](https://docs.cypress.io/guides/component-testing/react/overview#React-with-Vite) will be handled by Cypress. These tests will be generated in the `cypress/component` directory.
+
+To run component tests
+
+```bash
+npm run cy:run-e2e
+```
+
+To build component tests with Cypress Component Testing
+
+```bash
+npm run cy:open-e2e
+```
+
+### Cypress Component Testing
+
+To open directly the GUI of Cypress Component Testing for both component tests and E2E, run
+
+```bash
+npx cypress open
+```
+
+## Coverage Reports
+
+Our current coverage reports only support Vitest unit tests by running
+
+```bash
+npm run coverage
+```
+
+## Available Scripts
+
+You can run the following scripts with `npm run <script>`.
+
+| Script                   | Description                        |
+| ------------------------ | ---------------------------------- |
+| `build`                  | Builds the project for production. |
+| `dev`                    | Starts the development server.     |
+| `preview`                | Preview of the application.        |
+| `lint`                   | Runs ESLint on the project.        |
+| `test:unit`              | Runs unit tests.                   |
+| `cy:open-component`      | Opens component tests via GUI.     |
+| `cy:run-component`       | Runs component tests.              |
+| `cy:open-e2e`            | Opens E2E tests via GUI.           |
+| `cy:run-e2e`             | Runs E2E tests.                    |
+| `coverage`               | Coverage report for Vitest.        |
+
+Additionally, you can run the script `npx cypress open`
+
+
+
+
+
+
+
+
