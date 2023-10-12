@@ -1,23 +1,3 @@
--- TEST SCHEMA
-create schema test_schema;
-
-create table test_schema.test_table (
-  id serial primary key,
-  done boolean not null default false,
-  task text not null,
-  due timestamptz
-);
-
-insert into test_schema.test_table (task) values
-  ('this is test task 1'), ('this is test task 2');
-
-create role web_anon nologin;
-
-grant usage on schema test_schema to web_anon;
-grant usage on schema public to web_anon;
-grant select on test_schema.test_table to web_anon;
-grant select on public.customers to web_anon;
-
 -- VIEWS
 -- Creating the custom schema holding the views
 CREATE SCHEMA IF NOT EXISTS meta ;
@@ -62,3 +42,14 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
 	)
 	ORDER BY c.table_schema, c.table_name
 ) ;
+
+
+-- Creating role web_anon
+CREATE ROLE web_anon nologin;
+
+GRANT USAGE ON SCHEMA public TO web_anon;
+GRANT USAGE ON SCHEMA meta TO web_anon;
+GRANT SELECT ON public.customers TO web_anon;
+GRANT SELECT ON meta.schemas TO web_anon;
+GRANT SELECT ON meta.tables TO web_anon;
+GRANT SELECT ON meta.columns TO web_anon;
