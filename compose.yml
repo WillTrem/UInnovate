@@ -5,11 +5,13 @@ services:
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=uinnovate_test_db # Default database's name
+      - POSTGRES_DB=${POSTGRES_DB_NAME} # Default database's name
     ports:
       - "5432:5432"
     volumes:
       - ./uinnovate-test-db-dump.backup:/dumps/uinnovate-test-db-dump.backup # Initializes the default database from the dump
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -19,3 +21,15 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - "5050:80"
+
+  server:
+    image: postgrest/postgrest
+    ports:
+      - "3000:3000"
+    environment:
+      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB_NAME}
+      PGRST_DB_SCHEMAS: public, test_schema
+      PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
+      PGRST_DB_ANON_ROLE: web_anon
+    depends_on:
+      - db

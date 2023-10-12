@@ -23,7 +23,6 @@
 9. On the home page, click on "Add New Server".
 10. In the "General" tab, enter a Name for your local PostgreSQL server (e.g. "UInnovate Local PostgreSQL").
 11. In the "Connection" tab, fill the fields with the following values :
-
     1. Host name/address: db (the name of the PostreSQL container)
     2. Port: 5432 (should be by default)
     3. Maintenance database: postgres (by default, leave untouched)
@@ -33,12 +32,15 @@
     Leave the other fields/settings untouched.
 
 12. Press the save button.
-13. Back in your terminal window, execute
 
-`docker exec -i db /usr/bin/pg_restore -U <POSTGRES_USER in .env> -d uinnovate_test_db /dumps/uinnovate-test-db-dump.backup -c --if-exists --no-owner --no-privileges`
+13. You should be able to access the PostgREST API from `localhost:3000` on your browser: to view `table_x` in your database, you would go to
+    `localhost:3000/table_x`
 
-This will copy the data from the dump into your local database.  
-\*Make sure that you replace `<POSTGRES_USER in .env>` with the actual value!  
+    Note: Because of the way PostgREST works, if you specified multiple schemas to be exposed in your compose file (`PGRST_DB_SCHEMAS`), you will only have direct
+    access to the tables of the first schema specified. To have access to a table from say the 2nd schema (`schema_Y`), you will need to specify the `Accept-Profile` header in your GET request with the value `schema_Y` as shown in the Postman request below
+
+    ![Postman request](postman_example_request.png)
+
 You should be good to go now :smile:
 
 ## Getting Started
