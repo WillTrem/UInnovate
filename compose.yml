@@ -2,8 +2,6 @@ services:
   db:
     image: postgres:latest
     container_name: db
-    profiles:
-      - system
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -31,8 +29,6 @@ services:
     image: postgrest/postgrest
     ports:
       - "3000:3000"
-    profiles:
-      - system
     environment:
       PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB_NAME}
       PGRST_DB_SCHEMAS: application, meta
