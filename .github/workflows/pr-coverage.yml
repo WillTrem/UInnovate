@@ -6,9 +6,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    env:
-    working-directory: ./UInnovateApp
-    
     permissions:
       # Required to checkout the code
       contents: read
@@ -23,10 +20,10 @@ jobs:
         node-version: '16.x'
     - name: 'Install Deps'
       run: npm install
-      working-directory: ${{env.working-directory}}
+      working-directory: ./UInnovateApp
     - name: 'Test'
       run: npx vitest --coverage
-       working-directory: ${{env.working-directory}}
+       working-directory: ./UInnovateApp
     - name: 'Report Coverage'
       if: always() # Also generate the report if tests are failing
       uses:  davelosert/vitest-coverage-report-action@v2
