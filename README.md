@@ -15,8 +15,10 @@
    > :bulb: Note that you don't have to create any account or credentials prior to this setup. It will be done automatically when you first run the containers.
 
 5. Open a terminal window in the root directory of the repository (UInnovate).
-6. Run `docker compose up` to start the containers.  
-   You can stop them at any time by running `docker compose stop`.
+6. Run `docker compose --profile tool up` to start the containers.  
+   You can stop them at any time by running `docker compose --profile tool stop`.
+   
+    > :bulb: Note that the pgadmin container will only be targeted by a docker compose command if you specify `--profile tool` as shown above. Otherwise, only the PostgreSQL and the PostgREST containers will be affected. Leaving it out can become handy if you try to reset the database, but you don't want to lose your server connection on pgadmin!  
 
 7. In a web browser window, access to localhost:5050
 8. Log in to pgAdmin with the credentials you provided in your `.env` file.
