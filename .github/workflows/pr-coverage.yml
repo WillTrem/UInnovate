@@ -19,8 +19,10 @@ jobs:
       with:
         node-version: '16.x'
     - name: 'Install Deps'
+      working-directory: ./UInnovateApp
       run: npm install
     - name: 'Test'
+      working-directory: ./UInnovateApp
       run: npx vitest --coverage
     - name: 'Report Coverage'
       if: always() # Also generate the report if tests are failing
