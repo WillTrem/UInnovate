@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { NavBar } from './components/NavBar';
 import { VirtualModel } from './pages/VirtualModel';
