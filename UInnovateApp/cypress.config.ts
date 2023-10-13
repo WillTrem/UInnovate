@@ -2,8 +2,14 @@ import { defineConfig } from "cypress";
 import vitePreprocessor from "cypress-vite";
 
 export default defineConfig({
+  env: {
+    codeCoverage: {
+      exclude: "cypress/**/*.*",
+    },
+  },
+  
   e2e: {
-    supportFile: false,
+    baseUrl: 'http://localhost:5173/',
     setupNodeEvents(on) {
       on("file:preprocessor", vitePreprocessor());
     },
