@@ -15,7 +15,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     coverage: {
-      include: ["./src/**/*.ts", "./src/**/*.tsx", "**/cypress/**"],
+      include: ["./src/**/*.ts", "src/**/*.tsx", "**/cypress/**"],
       provider: "istanbul", // or 'v8'
       reporter: ["text", "json", "html"],
     },
