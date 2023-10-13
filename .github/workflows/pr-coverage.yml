@@ -23,7 +23,7 @@ jobs:
       working-directory: ./UInnovateApp
     - name: 'Test'
       run: npx vitest --coverage
-       working-directory: ./UInnovateApp
+      working-directory: ./UInnovateApp
     - name: 'Report Coverage'
       if: always() # Also generate the report if tests are failing
       uses:  davelosert/vitest-coverage-report-action@v2
