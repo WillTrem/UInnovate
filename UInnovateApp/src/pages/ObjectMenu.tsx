@@ -1,6 +1,6 @@
 import { NavBar } from "../components/NavBar";
 import TableComponent from "../components/TableComponent";
-import tables from "../virtualmodel/Tables";
+import attr from "../virtualmodel/Tables";
 
 export function ObjectMenu() {
   return (
@@ -13,7 +13,7 @@ export function ObjectMenu() {
         Tables would go under here
       </div>
       <div>
-        <TableComponent columnNames={tables}></TableComponent>
+        <TableComponent attr={attr}></TableComponent>
       </div>
     </>
   );
