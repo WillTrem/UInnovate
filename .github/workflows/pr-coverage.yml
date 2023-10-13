@@ -22,7 +22,7 @@ jobs:
       run: npm install
       working-directory: ./UInnovateApp
     - name: 'Test'
-      run: npx vitest --coverage
+      run: npx vitest --coverage.enabled --coverage.provider=v8 --coverage.reporter=json-summary --coverage.reporter=json
       working-directory: ./UInnovateApp
     - name: 'Report Coverage'
       if: always() # Also generate the report if tests are failing
