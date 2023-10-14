@@ -146,13 +146,7 @@ Our current coverage reports only support Vitest unit tests by running
 ```bash
 npm run coverage
 ```
-## Start vite server and run cypress
 
-To run the vite server and run the cypress application at the same time
-
-```bash
-npm run cy:e2e
-```
 ## Available Scripts
 
 You can run the following scripts with `npm run <script>`.
