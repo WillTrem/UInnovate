@@ -1,19 +1,21 @@
 import { NavBar } from "../components/NavBar";
 import TableComponent from "../components/TableComponent";
 import attr from "../virtualmodel/Tables";
+import TableTitles from "../components/TableTitles";
 
 export function ObjectMenu() {
   return (
     <>
       <NavBar />
       <div
-        style={{ textAlign: "center", fontSize: "60px", paddingTop: "40px" }}
-      >
+        style={{ textAlign: "center", fontSize: "40px", paddingTop: "40px" }}>
         {" "}
-        Tables would go under here
+        Table Names:
       </div>
+
+
       <div>
-        <TableComponent attr={attr}></TableComponent>
+        <TableTitles attr={attr}></TableTitles>
       </div>
     </>
   );
