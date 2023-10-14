@@ -13,6 +13,7 @@
     "cy:open-component": "cypress open --component --browser chrome",
     "cy:run-e2e": "cypress run --e2e",
     "cy:run-component": "cypress run --component",
+    "cy:e2e": "start-server-and-test start http://localhost:5173/ cy:open-e2e",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
@@ -21,9 +22,13 @@
     "react-bootstrap": "^2.9.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0",
+    "react-test-renderer": "^18.2.0",
     "react-router-dom": "^6.16.0"
   },
   "devDependencies": {
+    "@cypress/code-coverage": "^3.12.3",
+    "@cypress/react18": "^2.0.0",
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
@@ -36,9 +41,12 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "jsdom": "^22.1.0",
+    "start-server-and-test": "^2.0.1",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-istanbul": "^5.0.0",
     "vitest": "^0.34.6"
   }
 }
