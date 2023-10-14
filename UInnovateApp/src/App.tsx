@@ -1,5 +1,4 @@
 import { Route, Routes } from 'react-router-dom';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { NavBar } from './components/NavBar';
 import { VirtualModel } from './pages/VirtualModel';
@@ -12,7 +11,6 @@ function App() {
 
   return (
     
-    <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/check" element={<NavBar />} />
@@ -22,7 +20,6 @@ function App() {
 
         
       </Routes>
-      </BrowserRouter>
   )
 }
 
