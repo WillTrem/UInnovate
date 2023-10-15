@@ -1,8 +1,9 @@
 import App from '../App'
 import { mount } from '@cypress/react18'
+import {MemoryRouter} from 'react-router-dom'
 
 describe('<App>', () => {
   it('mounts', () => {
-    mount(<App />)
+    mount(<MemoryRouter><App /></MemoryRouter>)
   })
 })
