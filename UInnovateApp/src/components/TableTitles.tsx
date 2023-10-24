@@ -1,4 +1,5 @@
 import Nav from "react-bootstrap/Nav";
+import { Link } from "react-router-dom";
 
 export default function TableTitles({ attr }) {
   const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
@@ -9,10 +10,12 @@ export default function TableTitles({ attr }) {
       
         
           
-            {tableNames.map((tableName: string) => {
-              return <Nav.Link href="/app/element" style={{ textAlign:'center', fontSize: "25px" }}>
-              {tableName}
-            </Nav.Link>;
+            {tableNames.map((tableName) => {
+              return  <>
+              <Link to={`/app/${tableName}`} style={{ textAlign:'center', fontSize: "25px" }}>{tableName}</Link>
+
+
+              </>
             })}
           
     
