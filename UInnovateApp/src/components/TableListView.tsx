@@ -1,29 +1,36 @@
 import "./TableComponent.css";
+import attr from '../virtualmodel/Tables';
+import Table from 'react-bootstrap/Table';
 
-export default function TableListView({ attr }) {
-  const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
-  return (
-    <div>
-      <table>
-       
-        <tbody>
-          {attr.map((table) => {
-            return (
+export default function TableListView({ nameoftable }) {
+
+  return(
+    <div>       
+         {attr.map((table) => {
+        if (table.table_name !== nameoftable) {
+          return null;
+        } else {
+          const attributeElements = table.attributes.map((attribute, index) => (
+                <th key= {index}>{attribute}</th>
+               
+            
+          ));
+
+          return <div>
+              <Table striped bordered hover variant="dark" >
+            <thead>
               <tr>
-                {tableNames.map((tableName) => {
-                  return (
-                    <td>
-                      {table.table_name === tableName
-                        ? table.attributes.join(", ")
-                        : null}
-                    </td>
-                  );
-                })}
+              {attributeElements}
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            </thead>
+            
+          </Table>
+           
+
+            
+            </div>;
+        }
+      })}
     </div>
   );
 }

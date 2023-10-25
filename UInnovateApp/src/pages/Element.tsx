@@ -17,7 +17,7 @@ export function Element() {
         
         
         <div>
-        <TableListView attr={attr}></TableListView>
+        <TableListView nameoftable={table_name} ></TableListView>
         </div>
 
         

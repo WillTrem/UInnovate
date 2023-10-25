@@ -1,6 +1,6 @@
-import Nav from "react-bootstrap/Nav";
 import { Link } from "react-router-dom";
-import {Row, Col, Container} from "react-bootstrap";
+import {Row, Col, Container, Tab, Nav} from "react-bootstrap";
+
 export default function TableTitles({ attr }) {
   const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
 
