@@ -1,18 +1,23 @@
 import { NavBar } from "../components/NavBar";
-import TableComponent from "../components/TableComponent";
 import attr from "../virtualmodel/Tables";
+import TableListView from "../components/TableListView";
+import { useParams } from "react-router-dom";
 
 
 export function Element() {
+
+    let {table_name}= useParams();
+
+
     return(
         
         <>
         <NavBar/>
-        <div style={{textAlign:'center', fontSize:'60px', paddingTop:"40px"}}> Table Information</div>      
+        <div style={{textAlign:'center', fontSize:'40px', paddingTop:"40px"}}> Table Information of {table_name}</div>      
         
         
         <div>
-        <TableComponent attr={attr}></TableComponent>
+        <TableListView attr={attr}></TableListView>
         </div>
 
         

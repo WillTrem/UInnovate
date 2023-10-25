@@ -1,5 +1,4 @@
 import { NavBar } from "../components/NavBar";
-import TableComponent from "../components/TableComponent";
 import attr from "../virtualmodel/Tables";
 import TableTitles from "../components/TableTitles";
 
@@ -16,7 +15,9 @@ export function ObjectMenu() {
 
       <div>
         <TableTitles attr={attr}></TableTitles>
+      
       </div>
+
     </>
   );
 }

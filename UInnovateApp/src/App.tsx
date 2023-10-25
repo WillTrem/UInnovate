@@ -10,7 +10,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/check" element={<NavBar />} />
       <Route path="/app" element={<ObjectMenu />} />
-      <Route path="/app/element" element={<Element />} />
+      <Route path="/app/:table_name" element={<Element />} />
       </Routes>
   )
 }

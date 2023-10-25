@@ -1,6 +1,6 @@
 import Nav from "react-bootstrap/Nav";
 import { Link } from "react-router-dom";
-
+import {Row, Col, Container} from "react-bootstrap";
 export default function TableTitles({ attr }) {
   const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
 
@@ -12,8 +12,13 @@ export default function TableTitles({ attr }) {
           
             {tableNames.map((tableName) => {
               return  <>
-              <Link to={`/app/${tableName}`} style={{ textAlign:'center', fontSize: "25px" }}>{tableName}</Link>
-
+              <Container>
+              <Row style={{textAlign:'center'}}>
+                <Col>
+              <Link to={`/app/${tableName}`} style={{ fontSize: "25px" , color:'black', textDecoration:'none'}}>{tableName}</Link>
+              </Col>
+              </Row>
+              </Container>
 
               </>
             })}
