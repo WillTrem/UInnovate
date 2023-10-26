@@ -1,0 +1,31 @@
+.title {
+  font-size: 30px;
+  margin-bottom: 0.5em;
+  padding-top: 40px;
+  text-align: left;
+}
+.page-layout {
+  padding-inline: 4em;
+}
+
+.customization-title {
+  font-weight: bold;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #6c757d;
+}
+
+.nav {
+  --bs-nav-link-color: black;
+  --bs-nav-link-hover-color: #6c757d !important;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+  width: 18em;
+}
