@@ -1,7 +1,6 @@
 import { NavBar } from "../components/NavBar";
-import TableComponent from "../components/TableComponent";
-import attr from "../virtualmodel/Tables";
-import TableTitles from "../components/TableTitles";
+
+import { Link } from "react-router-dom";
 
 export function ObjectMenu() {
   return (
@@ -9,14 +8,21 @@ export function ObjectMenu() {
       <NavBar />
       <div
         style={{ textAlign: "center", fontSize: "40px", paddingTop: "40px" }}>
-        {" "}
-        Table Names:
+        
+        Which View:
       </div>
 
 
-      <div>
-        <TableTitles attr={attr}></TableTitles>
+      <div style={{textAlign:"center"}}>
+      <Link to={`/app`} style={{ fontSize: "25px" , color:'black', textDecoration:'none'}}>List View</Link>
+      <br />
+
+      <Link to={`/enumview`} style={{ fontSize: "25px" , color:'black', textDecoration:'none'}}>Enum View</Link>
+
+      
       </div>
+      
+
     </>
   );
 }
