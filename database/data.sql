@@ -1,31 +1,3 @@
--- Create the Tools Table
-CREATE TABLE application.Tools (
-    ToolID serial PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Description TEXT,
-    RentalRate DECIMAL(10, 2) NOT NULL,
-    Availability BOOLEAN NOT NULL
-);
-
--- Create the Customers Table
-CREATE TABLE application.Customers (
-    CustomerID serial PRIMARY KEY,
-    FirstName VARCHAR(255) NOT NULL,
-    LastName VARCHAR(255) NOT NULL,
-    Email VARCHAR(255),
-    Phone VARCHAR(20)
-);
-
--- Create the Rentals Table
-CREATE TABLE application.Rentals (
-    RentalID serial PRIMARY KEY,
-    ToolID INT REFERENCES application.Tools(ToolID),
-    CustomerID INT REFERENCES application.Customers(CustomerID),
-    RentalDate DATE NOT NULL,
-    DueDate DATE NOT NULL,
-    ActualReturnDate DATE
-);
-
 -- Insert sample data into the Tools Table
 INSERT INTO application.Tools (Name, Description, RentalRate, Availability)
 VALUES
@@ -57,10 +29,3 @@ VALUES
     (3, 3, '2023-09-17', '2023-09-21', NULL),
     (4, 4, '2023-09-18', '2023-09-23', NULL),
     (5, 5, '2023-09-19', '2023-09-25', NULL);
-
-
-
-
-GRANT SELECT ON application.tools TO web_anon;
-GRANT SELECT ON application.customers TO web_anon;
-GRANT SELECT ON application.rentals TO web_anon;
