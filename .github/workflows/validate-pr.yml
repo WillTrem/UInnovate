@@ -5,24 +5,18 @@ on: [push]
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./UInnovateApp
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-
-      # install dependencies using the root folder
-      - name: Install 📦
-        uses: cypress-io/github-action@v2
+  steps:
+      - uses: actions/checkout@master
+      - name: Install dependencies
+        uses: cypress-io/github-action@v5
         with:
+          # just perform install
           runTests: false
-
-      # Install NPM dependencies, cache them correctly
-      # and run all Cypress tests
-      - name: Cypress tests
-        uses: cypress-io/github-action@v2
+      - run: npm install
+      - name: Run e2e tests
+        uses: cypress-io/github-action@v5
         with:
+          # we have already installed all dependencies above
           install: false
-          working-directory: ./UInnovateApp
-          build: npm run build
-          start: npm start
+          # Cypress tests and config file are in "e2e" folder
+          working-directory: e2e
