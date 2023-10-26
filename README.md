@@ -173,3 +173,15 @@ You can run the following scripts with `npm run <script>`.
 | `coverage`          | Coverage report for Vitest.        |
 
 Additionally, you can run the script `npx cypress open`
+
+## Refresh Database Script
+The refresh_database.sh script allows for the application developer to
+refresh the schema, tables, and data within the database. To run the
+refresh script, follow the steps below:
+
+1. Open a terminal
+2. Change directories to the UInnovate folder where the refresh_database.sh is located
+3. From a terminal, run:
+💡 .\refresh_database.sh
+
+4. A log file will be generated to see everything that was done to the DB and any errors that occurred
