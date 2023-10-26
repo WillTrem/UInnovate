@@ -9,7 +9,7 @@ DB_PASS=$POSTGRES_PASSWORD
 DB_NAME=$POSTGRES_DB_NAME
 DB_HOST="db"
 META_FILE="./database/meta.sql"
-SCHEMA_FILE="./database/schema.sql"
+SCHEMA_FILE="./database/application.sql"
 DATA_FILE="./database/data.sql"
 LOG_FILE="./database/refresh_log.txt"
 
