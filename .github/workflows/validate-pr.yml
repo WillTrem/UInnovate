@@ -1,31 +1,26 @@
-name: 'Test'
-on: 
-  pull_request:
+name: Cypress Tests
+
+on: [push]
 
 jobs:
-  test:
+  cypress-run:
     runs-on: ubuntu-latest
-    env:
-      working-directory: ./UInnovateApp
-    
-    permissions:
-      # Required to checkout the code
-      contents: read
-      # Required to put a comment into the pull-request
-      pull-requests: write
-
     steps:
-    - uses: actions/checkout@v2
-    - name: 'Install Node'
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16.x'
-    - name: 'Install Deps'
-      run: npm install
-      working-directory: ${{env.working-directory}}
-    - name: 'Test'
-      run: npx vitest --coverage
-      working-directory: ${{env.working-directory}}
-    - name: 'Report Coverage'
-      if: always() # Also generate the report if tests are failing
-      uses:  davelosert/vitest-coverage-report-action@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      # install dependencies using the root folder
+      - name: Install 📦
+        uses: cypress-io/github-action@v2
+        with:
+          runTests: false
+
+      # Install NPM dependencies, cache them correctly
+      # and run all Cypress tests
+      - name: Cypress tests
+        uses: cypress-io/github-action@v2
+        with:
+          install: false
+          working-directory: ./UInnovateApp
+          build: npm run build
+          start: npm start
