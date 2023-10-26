@@ -5,6 +5,8 @@ on: [push]
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./UInnovateApp
     steps:
       - name: Checkout
         uses: actions/checkout@v2
