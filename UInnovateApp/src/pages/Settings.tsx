@@ -7,21 +7,15 @@ import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
 import "../styles/settings.css";
-import { useState } from "react";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
+import attr from "../virtualmodel/Tables";
 
 export function Settings() {
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
+  const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
   return (
     <>
       <NavBar />
       <div className="page-layout">
-        <div className="title"> Settings</div>{" "}
+        <h1 className="title"> Settings</h1>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row>
             <Col sm={3}>
@@ -30,7 +24,7 @@ export function Settings() {
                   <Nav.Link eventKey="first">General</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link eventKey="second">Future Tab</Nav.Link>
+                  <Nav.Link eventKey="second">Display</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
@@ -39,43 +33,6 @@ export function Settings() {
                 <Tab.Pane eventKey="first">
                   <Card>
                     <ListGroup variant="flush">
-                      <ListGroup.Item>
-                        <div className="customization-title">
-                          Default Layout
-                        </div>
-                        <p>
-                          To customize the default layout of the application.
-                        </p>
-                        <div className="form-container">
-                          <Form.Select aria-label="Default select example">
-                            <option>Select the default layout</option>
-                            <option value="1">Enum View</option>
-                            <option value="2">List View</option>
-                          </Form.Select>
-                          <button
-                            type="button"
-                            className="btn btn-secondary"
-                            onClick={handleShow}
-                          >
-                            Save
-                          </button>
-
-                          {/* <!-- Modal --> */}
-                          <Modal show={show} onHide={handleClose}>
-                            <Modal.Header closeButton>
-                              <Modal.Title>Confirmation</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                              You have succesfully selected a default layout
-                            </Modal.Body>
-                            <Modal.Footer>
-                              <Button variant="secondary" onClick={handleClose}>
-                                Close
-                              </Button>
-                            </Modal.Footer>
-                          </Modal>
-                        </div>
-                      </ListGroup.Item>
                       <ListGroup.Item>
                         <div className="customization-title">
                           Layout Personalization
@@ -89,7 +46,25 @@ export function Settings() {
                     </ListGroup>
                   </Card>
                 </Tab.Pane>
-                <Tab.Pane eventKey="second">Future tab content</Tab.Pane>
+                <Tab.Pane eventKey="second">
+                  <div className="customization-title">Tables</div>
+                  <div className="table-list">
+                    {tableNames.map((tableName: string) => {
+                      return (
+                        <th id="table">
+                          <div className="text-table">{tableName}</div>
+                          <Form.Select
+                            className="form-select"
+                            aria-label="Default select example"
+                          >
+                            <option value="1">List View</option>
+                            <option value="2">Enumeration View</option>
+                          </Form.Select>
+                        </th>
+                      );
+                    })}
+                  </div>
+                </Tab.Pane>
               </Tab.Content>
             </Col>
           </Row>
