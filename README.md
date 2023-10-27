@@ -21,7 +21,7 @@
    > 💡 Note that the pgadmin container will only be targeted by a docker compose command if you specify `--profile tool` as shown above. Otherwise, only the PostgreSQL and the PostgREST containers will be affected. Leaving it out can become handy if you try to reset the database, but you don't want to lose your server connection on pgadmin!
 
 7. Run `.\refresh_database.sh` in your terminal to populate the db. (Note: \ on Windows, / on Linux)
-   > 💡 Note: You may need to shut down the db and server containers and restart them after running the refresh database command. To do so, use `docker compose down && docker compose up  -d` in your terminal after the .\refresh_database.sh command
+   > 💡 Note: You may need to shut down the db and server containers and restart them after running the refresh database command. To do so, use `docker compose stop && docker compose up  -d` in your terminal after the .\refresh_database.sh command
 8. In a web browser window, access to localhost:5050
 9. Log in to pgAdmin with the credentials you provided in your `.env` file.
 10. On the home page, click on "Add New Server".
