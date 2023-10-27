@@ -9,10 +9,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - ./database:/database
+      - ./dataFiles:/dataFiles
       - ./uinnovate-test-db-dump.backup:/dumps/uinnovate-test-db-dump.backup # Copies the dump file into the container
       - ./init.sql:/docker-entrypoint-initdb.d/1_init.sql # Create the schemas, the custom views and the web_anon role
       - ./init.sh:/docker-entrypoint-initdb.d/2_init.sh # Populates the application schema with the dump file tables
-      - ./grant_access_to_anon.sql:/docker-entrypoint-initdb.d/3_grant_access_to_anon.sql # Grant permissions to web_anon to read tables
 
   pgadmin:
     image: dpage/pgadmin4:latest

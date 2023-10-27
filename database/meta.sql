@@ -41,10 +41,40 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     ORDER BY c.table_schema, c.table_name
 ) ;
 
+-- TABLES
+-- Creating the application config properties table
+CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
+	name TEXT PRIMARY KEY,
+	description TEXT,
+	value_type TEXT NOT NULL,
+	default_value TEXT NOT NULL
+);
+-- Creating the application config values table
+CREATE TABLE IF NOT EXISTS meta.appconfig_values (
+	property TEXT,
+	value TEXT NOT NULL,
+	"table" TEXT,
+	"column" TEXT,
+    PRIMARY KEY (property, "table", "column"),
+	FOREIGN KEY (property) 
+	REFERENCES meta.appconfig_properties(name)
+	ON DELETE CASCADE 
+	ON UPDATE CASCADE
+);
 
+-- Copying the properties from the csv file into the proper table
+COPY meta.appconfig_properties("name", description, value_type, default_value)
+FROM '/dataFiles/appconfig_properties.csv'
+DELIMITER ','
+CSV HEADER;
+
+-- USAGE 
 GRANT USAGE ON SCHEMA meta TO web_anon;
 
 GRANT SELECT ON meta.schemas TO web_anon;
 GRANT SELECT ON meta.tables TO web_anon;
 GRANT SELECT ON meta.columns TO web_anon;
+GRANT SELECT ON meta.appconfig_properties TO web_anon;
+GRANT SELECT ON meta.appconfig_values TO web_anon;
+
 

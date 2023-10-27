@@ -185,3 +185,8 @@ refresh script, follow the steps below:
 💡 .\refresh_database.sh
 
 4. A log file will be generated to see everything that was done to the DB and any errors that occurred
+
+## Configuration
+
+### Adding new configuration properties
+To add a new configuration property to the database, simply add an entry for it in `appconfig_properties.csv` (under ./dataFiles). Then, simply refresh the database using the `refresh_database.sh` script.

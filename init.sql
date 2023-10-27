@@ -1,3 +1,5 @@
+-- TODO: Remove this file when we incorporate refresh_database.sh into the compose file
+
 -- VIEWS
 -- Creating the custom schema holding the views
 CREATE SCHEMA IF NOT EXISTS meta ;
@@ -43,6 +45,26 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
 	ORDER BY c.table_schema, c.table_name
 ) ;
 
+-- TABLES
+-- Creating the application config properties table
+CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
+	name TEXT PRIMARY KEY,
+	description TEXT,
+	value_type TEXT NOT NULL,
+	default_value TEXT NOT NULL
+);
+-- Creating the application config values table
+CREATE TABLE IF NOT EXISTS meta.appconfig_values (
+	property TEXT,
+	"table" TEXT,
+	"column" TEXT,
+	value TEXT NOT NULL,
+    PRIMARY KEY (property, "table", "column"),
+	FOREIGN KEY (property) 
+	REFERENCES meta.appconfig_properties(name)
+	ON DELETE CASCADE 
+	ON UPDATE CASCADE
+);
 
 -- Creating role web_anon
 CREATE ROLE web_anon nologin;
