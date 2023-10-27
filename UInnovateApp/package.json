@@ -31,6 +31,8 @@
     "@cypress/code-coverage": "^3.12.3",
     "@cypress/react18": "^2.0.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.0.0",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
