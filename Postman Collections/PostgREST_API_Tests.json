@@ -6,14 +6,243 @@
 	},
 	"item": [
 		{
-			"name": "New Request",
+			"name": "Tools",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "29e3711c-d86f-4b93-9d8b-a50c765d888e",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response should be an array\", function() {",
+							"    pm.expect(Array.isArray(pm.response.json())).to.be.true;",
+							"});",
+							"",
+							"pm.test(\"Each tool should have the correct structure\", function() {",
+							"    const tools = pm.response.json();",
+							"    tools.forEach(tool => {",
+							"        pm.expect(tool).to.have.property('toolid');",
+							"        pm.expect(tool).to.have.property('name');",
+							"        pm.expect(tool).to.have.property('description');",
+							"        pm.expect(tool).to.have.property('rentalrate');",
+							"        pm.expect(tool).to.have.property('availability');",
+							"    });",
+							"});",
+							"",
+							"//Fetch tool by id to validate data values: (using id 1)",
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Data values are correct for Tool ID 1\", function() {",
+							"    const tool = pm.response.json();",
+							"    pm.expect(tool.toolid).to.eql(1);",
+							"    pm.expect(tool.name).to.eql(\"Hammer\");",
+							"    pm.expect(tool.description).to.eql(\"A versatile tool for various tasks.\");",
+							"    pm.expect(tool.rentalrate).to.eql(2.50);",
+							"    pm.expect(tool.availability).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"",
+							"// Error response scenario for non-existant record",
+							"",
+							"// pm.test(\"Status code is 404\", function() {",
+							"//     pm.response.to.have.status(404);",
+							"// });",
+							"",
+							"// pm.test(\"Error message is returned\", function() {",
+							"//     const responseBody = pm.response.json();",
+							"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+							"// });",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"id": "f7205874-a9fa-45db-81a7-9b1b90173086",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
 			},
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/tools?Accept-Profile=application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"tools"
+					],
+					"query": [
+						{
+							"key": "Accept-Profile",
+							"value": "application"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customers",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4afb350d-28a5-4509-ac93-270e8d273976",
+						"exec": [
+							"",
+							"var data = pm.response.json()",
+							"",
+							"pm.test(\"response should contain 9 rows\", function() {",
+							"    pm.response.to.not.be.error;",
+							"    pm.response.to.have.jsonBody()",
+							"    pm.expect(data.length).to.equal(9)",
+							"})",
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//Fetch all customers and validate data structure",
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Each customer should have the correct structure\", function() {",
+							"    const customers = pm.response.json();",
+							"    customers.forEach(customer => {",
+							"        pm.expect(customer).to.have.property('customerid');",
+							"        pm.expect(customer).to.have.property('firstname');",
+							"        pm.expect(customer).to.have.property('lastname');",
+							"        pm.expect(customer).to.have.property('email');",
+							"        pm.expect(customer).to.have.property('phone');",
+							"    });",
+							"});",
+							"",
+							"",
+							"// // Error response scenario for non-existant record",
+							"",
+							"// pm.test(\"Status code is 404\", function() {",
+							"//     pm.response.to.have.status(404);",
+							"// });",
+							"",
+							"// pm.test(\"Error message is returned\", function() {",
+							"//     const responseBody = pm.response.json();",
+							"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+							"// });",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "c1306674-28ec-4be8-9207-b6e73beb16bb",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/customers?Accept-Profile=application",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"customers"
+					],
+					"query": [
+						{
+							"key": "Accept-Profile",
+							"value": "application",
+							"type": "text"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Rentals",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4f1caff6-1c65-414d-a521-56760a681b37",
+						"exec": [
+							"var data = pm.response.json()",
+							"//Fetch all rentals and validate data structure",
+							"",
+							"pm.test(\"Status code is 200\", function() {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Each rental should have the correct structure\", function() {",
+							"    const rentals = pm.response.json();",
+							"    rentals.forEach(rental => {",
+							"        pm.expect(rental).to.have.property('rentalid');",
+							"        pm.expect(rental).to.have.property('toolid');",
+							"        pm.expect(rental).to.have.property('customerid');",
+							"        pm.expect(rental).to.have.property('rentaldate');",
+							"        pm.expect(rental).to.have.property('duedate');",
+							"        pm.expect(rental).to.have.property('actualreturndate');",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response should contain 5 rows\", function() {",
+							"    pm.response.to.not.be.error;",
+							"    pm.response.to.have.jsonBody()",
+							"    pm.expect(data.length).to.equal(5)",
+							"})",
+							"",
+							"pm.test(\"Rental with ID 4 should have rental date equal to 2023-09-18\", function() {",
+							"    pm.response.to.not.be.error;",
+							"    pm.response.to.have.jsonBody()",
+							"    var rentalIDFour = data.find((element) => element.rentalid == 4)",
+							"    pm.expect(rentalIDFour.rentaldate).to.equal(\"2023-09-18\")",
+							"",
+							"})",
+							"",
+							"",
+							"",
+							"// Error response scenario for non-existant record",
+							"",
+							"// pm.test(\"Status code is 404\", function() {",
+							"//     pm.response.to.have.status(404);",
+							"// });",
+							"",
+							"// pm.test(\"Error message is returned\", function() {",
+							"//     const responseBody = pm.response.json();",
+							"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+							"// });",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"id": "7c72fef2-0367-4bdd-84d8-64fe0004004d",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "localhost:3000/rentals"
 			},
 			"response": []
 		}
