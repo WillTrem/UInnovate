@@ -28,6 +28,9 @@ export function NavBar() {
             <Nav.Link href="/objview" style={{ fontSize: "25px" }}>
               ObjectMenu
             </Nav.Link>
+            <Nav.Link href="/settings" style={{ fontSize: "25px" }}>
+               Settings
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

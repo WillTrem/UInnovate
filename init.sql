@@ -1,3 +1,4 @@
+
 -- Creating role web_anon
 CREATE ROLE web_anon nologin;
 

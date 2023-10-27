@@ -190,6 +190,7 @@ refresh script, follow the steps below:
 
 4. A log file will be generated to see everything that was done to the DB and any errors that occurred
 
+
 ## Postman Endpoint Testing
 
 To use Postman for testing the PostgREST API corrrectly accessing the database:
@@ -199,3 +200,9 @@ To use Postman for testing the PostgREST API corrrectly accessing the database:
    https://app.getpostman.com/join-team?invite_code=daa40b2dc66c40aca34c410ded3642a0&target_code=0ad2148deff37d1bc2ab282720715240
    > Note: there is a 3-person/teamspace limitation on Postman without a premium account. We'll look into this later.
 3. Once inside the teamspace, navigate to Collections to see the current tests and run them.
+
+## Configuration
+
+### Adding new configuration properties
+To add a new configuration property to the database, simply add an entry for it in `appconfig_properties.csv` (under ./dataFiles). Then, simply refresh the database using the `refresh_database.sh` script.
+
