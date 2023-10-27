@@ -41,10 +41,35 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     ORDER BY c.table_schema, c.table_name
 ) ;
 
+-- TABLES
+-- Creating the application config properties table
+CREATE TABLE IF NOT EXISTS meta.app_config_properties (
+	id serial PRIMARY KEY,
+	name VARCHAR(255) UNIQUE NOT NULL,
+	description TEXT,
+	value_type VARCHAR(50) NOT NULL,
+	default_value VARCHAR(100) NOT NULL
+);
+-- Creating the application config values table
+CREATE TABLE IF NOT EXISTS meta.app_config_values (
+	property_id INT NOT NULL,
+	id serial PRIMARY KEY,
+	value VARCHAR(100) NOT NULL,
+	"table" VARCHAR(255),
+	"column" VARCHAR(255),
+	FOREIGN KEY (property_id) 
+	REFERENCES meta.app_config_properties(id)
+	ON DELETE CASCADE 
+	ON UPDATE CASCADE
+);
 
+-- USAGE 
 GRANT USAGE ON SCHEMA meta TO web_anon;
 
 GRANT SELECT ON meta.schemas TO web_anon;
 GRANT SELECT ON meta.tables TO web_anon;
 GRANT SELECT ON meta.columns TO web_anon;
+GRANT SELECT ON meta.app_config_properties TO web_anon;
+GRANT SELECT ON meta.app_config_values TO web_anon;
+
 
