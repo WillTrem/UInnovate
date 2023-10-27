@@ -73,23 +73,7 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": {
-					"raw": "http://localhost:3000/tools?Accept-Profile=application",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "3000",
-					"path": [
-						"tools"
-					],
-					"query": [
-						{
-							"key": "Accept-Profile",
-							"value": "application"
-						}
-					]
-				}
+				"url": "http://localhost:3000/tools"
 			},
 			"response": []
 		},
@@ -155,7 +139,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "localhost:3000/customers?Accept-Profile=application",
+					"raw": "localhost:3000/customers",
 					"host": [
 						"localhost"
 					],
@@ -167,7 +151,7 @@
 						{
 							"key": "Accept-Profile",
 							"value": "application",
-							"type": "text"
+							"disabled": true
 						}
 					]
 				}
