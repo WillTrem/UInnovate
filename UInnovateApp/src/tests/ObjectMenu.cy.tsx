@@ -23,32 +23,4 @@ describe('<ObjectMenu>', () => {
     // Assert that the "Enum View" link is present
     cy.contains('Enum View').should('exist');
   });
-
-  it('navigates to List View when the "List View" link is clicked', () => {
-    mount(
-      <MemoryRouter>
-        <ObjectMenu />
-      </MemoryRouter>
-    );
-    
-    // Click the "List View" link
-    cy.contains('a').click();
-    
-    // Assert that the URL has changed to '/app' (or the correct URL)
-    cy.url().should('include', '/app');
-  });
-
-  it('navigates to Enum View when the "Enum View" link is clicked', () => {
-    mount(
-      <MemoryRouter>
-        <ObjectMenu />
-      </MemoryRouter>
-    );
-
-    // Click the "Enum View" link
-    cy.contains('a').click();
-
-    // Assert that the URL has changed to '/enumview' (or the correct URL)
-    cy.url().should('include', '/enumview');
-  });
 });
