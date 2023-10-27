@@ -30,4 +30,4 @@ jobs:
       if: always()
       uses: davelosert/vitest-coverage-report-action@v2
       with:
-        vite-config-path: './UInnovateApp/vite.config.js'
+        vite-config-path: 'UInnovateApp/vite.config.js'
