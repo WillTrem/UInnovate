@@ -23,13 +23,17 @@ export function NavBar() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">
+        
           <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link href="/app" style={{ fontSize: "25px" }}>
+            <Nav.Link href="/objview" style={{ fontSize: "25px" }}>
               ObjectMenu
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>
+  
     </Navbar>
   );
+
+
 }
