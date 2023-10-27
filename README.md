@@ -12,19 +12,22 @@
 3. Rename the copy to `.env`.
 4. Replace all the fields within '<>' by actual values (not keeping the <>). They can be any of your choosing.
 
-   > :bulb: Note that you don't have to create any account or credentials prior to this setup. It will be done automatically when you first run the containers.
+   > 💡 Note that you don't have to create any account or credentials prior to this setup. It will be done automatically when you first run the containers.
 
 5. Open a terminal window in the root directory of the repository (UInnovate).
 6. Run `docker compose --profile tool up` to start the containers.  
    You can stop them at any time by running `docker compose --profile tool stop`.
-   
-    > :bulb: Note that the pgadmin container will only be targeted by a docker compose command if you specify `--profile tool` as shown above. Otherwise, only the PostgreSQL and the PostgREST containers will be affected. Leaving it out can become handy if you try to reset the database, but you don't want to lose your server connection on pgadmin!  
 
-7. In a web browser window, access to localhost:5050
-8. Log in to pgAdmin with the credentials you provided in your `.env` file.
-9. On the home page, click on "Add New Server".
-10. In the "General" tab, enter a Name for your local PostgreSQL server (e.g. "UInnovate Local PostgreSQL").
-11. In the "Connection" tab, fill the fields with the following values :
+   > 💡 Note that the pgadmin container will only be targeted by a docker compose command if you specify `--profile tool` as shown above. Otherwise, only the PostgreSQL and the PostgREST containers will be affected. Leaving it out can become handy if you try to reset the database, but you don't want to lose your server connection on pgadmin!
+
+7. Run `.\refresh_database.sh` in your terminal to populate the db. (Note: \ on Windows, / on Linux)
+   > 💡 Note: You may need to shut down the db and server containers and restart them after running the refresh database command. To do so, use `docker compose stop && docker compose up  -d` in your terminal after the .\refresh_database.sh command
+8. In a web browser window, access to localhost:5050
+9. Log in to pgAdmin with the credentials you provided in your `.env` file.
+10. On the home page, click on "Add New Server".
+11. In the "General" tab, enter a Name for your local PostgreSQL server (e.g. "UInnovate Local PostgreSQL").
+12. In the "Connection" tab, fill the fields with the following values :
+
     1. Host name/address: db (the name of the PostreSQL container)
     2. Port: 5432 (should be by default)
     3. Maintenance database: postgres (by default, leave untouched)
@@ -33,9 +36,9 @@
 
     Leave the other fields/settings untouched.
 
-12. Press the save button.
+13. Press the save button.
 
-13. You should be able to access the PostgREST API from `localhost:3000` on your browser: to view `table_x` in your database, you would go to
+14. You should be able to access the PostgREST API from `localhost:3000` on your browser: to view `table_x` in your database, you would go to
     `localhost:3000/table_x`
 
     Note: Because of the way PostgREST works, if you specified multiple schemas to be exposed in your compose file (`PGRST_DB_SCHEMAS`), you will only have direct
@@ -175,6 +178,7 @@ You can run the following scripts with `npm run <script>`.
 Additionally, you can run the script `npx cypress open`
 
 ## Refresh Database Script
+
 The refresh_database.sh script allows for the application developer to
 refresh the schema, tables, and data within the database. To run the
 refresh script, follow the steps below:
@@ -182,11 +186,23 @@ refresh script, follow the steps below:
 1. Open a terminal
 2. Change directories to the UInnovate folder where the refresh_database.sh is located
 3. From a terminal, run:
-💡 .\refresh_database.sh
+   💡 .\refresh_database.sh
 
 4. A log file will be generated to see everything that was done to the DB and any errors that occurred
+
+
+## Postman Endpoint Testing
+
+To use Postman for testing the PostgREST API corrrectly accessing the database:
+
+1. Have Postman downloaded on your local machine, with an account created.
+2. Join the Team Workspace using the invite link below:
+   https://app.getpostman.com/join-team?invite_code=daa40b2dc66c40aca34c410ded3642a0&target_code=0ad2148deff37d1bc2ab282720715240
+   > Note: there is a 3-person/teamspace limitation on Postman without a premium account. We'll look into this later.
+3. Once inside the teamspace, navigate to Collections to see the current tests and run them.
 
 ## Configuration
 
 ### Adding new configuration properties
 To add a new configuration property to the database, simply add an entry for it in `appconfig_properties.csv` (under ./dataFiles). Then, simply refresh the database using the `refresh_database.sh` script.
+
