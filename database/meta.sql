@@ -44,21 +44,20 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
 -- TABLES
 -- Creating the application config properties table
 CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
-	id serial PRIMARY KEY,
-	name VARCHAR(255) UNIQUE NOT NULL,
+	name TEXT PRIMARY KEY,
 	description TEXT,
-	value_type VARCHAR(50) NOT NULL,
-	default_value VARCHAR(100) NOT NULL
+	value_type TEXT NOT NULL,
+	default_value TEXT NOT NULL
 );
 -- Creating the application config values table
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
-	property_id INT NOT NULL,
-	id serial PRIMARY KEY,
-	value VARCHAR(100) NOT NULL,
-	"table" VARCHAR(255),
-	"column" VARCHAR(255),
-	FOREIGN KEY (property_id) 
-	REFERENCES meta.appconfig_properties(id)
+	property TEXT,
+	value TEXT NOT NULL,
+	"table" TEXT,
+	"column" TEXT,
+    PRIMARY KEY (property, "table", "column"),
+	FOREIGN KEY (property) 
+	REFERENCES meta.appconfig_properties(name)
 	ON DELETE CASCADE 
 	ON UPDATE CASCADE
 );
