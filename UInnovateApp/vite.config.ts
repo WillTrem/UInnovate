@@ -24,7 +24,8 @@ export default defineConfig({
   },
 
   test: {
-    environment: 'jsdom',
+    environment: "jsdom",
+    reporters: ["json"],
     coverage: {
       include: ["./src/**/*.ts", "src/**/*.tsx", "**/cypress/**"],
       provider: "istanbul", // or 'v8'
