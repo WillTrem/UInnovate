@@ -28,8 +28,8 @@ jobs:
         working-directory: ./UInnovateApp
       - name: "Report Coverage"
         if: always()
+        env:
+          working-directory: ./UInnovateApp
         uses: davelosert/vitest-coverage-report-action@v2
         with:
-          vite-config-path: "./UInnovateApp/vite.config.ts"
-          json-summary-path: "./UInnovateApp/coverage/coverage-summary.json"
-          json-final-path: "./UInnovateApp/coverage/coverage-final.json"
+          vite-config-path: "./vite.config.ts"
