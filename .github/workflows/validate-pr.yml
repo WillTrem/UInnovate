@@ -31,3 +31,4 @@ jobs:
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           vite-config-path: "./UInnovateApp/vite.config.ts"
+          json-summary-path: "./UInnovateApp/coverage/coverage-summary.json"
