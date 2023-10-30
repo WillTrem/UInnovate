@@ -11,7 +11,6 @@ services:
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-
       - ./init.sql:/docker-entrypoint-initdb.d/1_init.sql # Create the schemas, the custom views and the web_anon role
       - db_data:/data/postgres
     networks:
