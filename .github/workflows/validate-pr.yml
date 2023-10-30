@@ -24,10 +24,10 @@ jobs:
         run: npm install
         working-directory: ./UInnovateApp
       - name: "Run Vitest"
-        run: npx vitest --config vite.config.ts --coverage --reporter=json
+        run: npx vitest --coverage --reporter=json
         working-directory: ./UInnovateApp
       - name: "Report Coverage"
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
-          vite-config-path: "./UInnovateApp/vite.config.js"
+          vite-config-path: "./UInnovateApp/vite.config.ts"
