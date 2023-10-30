@@ -1,8 +1,8 @@
-name: 'Test'
+name: "Test"
 on:
   pull_request:
     branches:
-      - main  # Adjust to the appropriate branch name
+      - main # Adjust to the appropriate branch name
 
 jobs:
   test:
@@ -15,19 +15,19 @@ jobs:
       pull-requests: write
 
     steps:
-    - uses: actions/checkout@v2
-    - name: 'Install Node'
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16.x'
-    - name: 'Install Deps'
-      run: npm install
-      working-directory: ./UInnovateApp
-    - name: 'Run Vitest'
-      run: npx vitest --coverage --reporter=json-summary
-      working-directory: ./UInnovateApp
-    - name: 'Report Coverage'
-      if: always()
-      uses: davelosert/vitest-coverage-report-action@v2
-      with:
-        vite-config-path: './UInnovateApp/vite.config.js'
+      - uses: actions/checkout@v2
+      - name: "Install Node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: "Install Deps"
+        run: npm install
+        working-directory: ./UInnovateApp
+      - name: "Run Vitest"
+        run: npx vitest --coverage --reporter=json
+        working-directory: ./UInnovateApp
+      - name: "Report Coverage"
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          vite-config-path: "./UInnovateApp/vite.config.js"
