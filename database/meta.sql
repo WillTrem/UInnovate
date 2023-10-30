@@ -51,11 +51,11 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
 );
 -- Creating the application config values table
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
-	property TEXT,
+	id serial PRIMARY KEY,
+    property TEXT,
 	value TEXT NOT NULL,
 	"table" TEXT,
 	"column" TEXT,
-    PRIMARY KEY (property, "table", "column"),
 	FOREIGN KEY (property) 
 	REFERENCES meta.appconfig_properties(name)
 	ON DELETE CASCADE 
