@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      working-directory: .
+      working-directory: ./UInnovateApp
 
     permissions:
       contents: read
@@ -22,14 +22,10 @@ jobs:
           node-version: "16.x"
       - name: "Install Deps"
         run: npm install
-        working-directory: ./UInnovateApp
       - name: "Run Vitest"
         run: npx vitest --coverage.enabled --reporter=default --coverage.reporter=json-summary
-        working-directory: ./UInnovateApp
       - name: "Report Coverage"
         if: always()
-        env:
-          working-directory: ./UInnovateApp
         uses: davelosert/vitest-coverage-report-action@v2
         with:
           vite-config-path: "./vite.config.ts"
