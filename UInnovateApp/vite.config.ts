@@ -25,11 +25,10 @@ export default defineConfig({
 
   test: {
     environment: "jsdom",
-    reporters: ["json"],
     coverage: {
       include: ["./src/**/*.ts", "src/**/*.tsx", "**/cypress/**"],
       provider: "istanbul", // or 'v8'
-      reporter: ["text", "json", "json-summary", "html"],
+      reporter: ["json-summary"],
     },
   },
 });
