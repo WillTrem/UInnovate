@@ -1,0 +1,9 @@
+FROM python:3.11
+RUN pip install mkdocs
+WORKDIR /docs
+
+COPY . /docs
+
+EXPOSE 8080
+
+CMD ["mkdocs", "serve"]
