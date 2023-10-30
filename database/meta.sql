@@ -51,22 +51,16 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
 );
 -- Creating the application config values table
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
-	property TEXT,
+	id serial PRIMARY KEY,
+    property TEXT,
 	value TEXT NOT NULL,
 	"table" TEXT,
 	"column" TEXT,
-    PRIMARY KEY (property, "table", "column"),
 	FOREIGN KEY (property) 
 	REFERENCES meta.appconfig_properties(name)
 	ON DELETE CASCADE 
 	ON UPDATE CASCADE
 );
-
--- Copying the properties from the csv file into the proper table
-COPY meta.appconfig_properties("name", description, value_type, default_value)
-FROM '/dataFiles/appconfig_properties.csv'
-DELIMITER ','
-CSV HEADER;
 
 -- USAGE 
 GRANT USAGE ON SCHEMA meta TO web_anon;
