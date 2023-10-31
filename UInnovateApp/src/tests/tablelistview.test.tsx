@@ -1,8 +1,9 @@
-import { describe, it } from 'vitest';
+import { describe, it, vi } from 'vitest';
 import TestRenderer from 'react-test-renderer'
 import TableListView from '../components/TableListView';
 import { MemoryRouter } from 'react-router-dom';
 
+vi.mock('axios');
 describe('TableListView component', () => {
   it('renders a table with the specified attributes', () => {
     // Sample data for testing
