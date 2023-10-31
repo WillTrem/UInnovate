@@ -1,0 +1,7 @@
+.sidebar{
+     display: flex;
+width: 200px;
+height: 200px;
+padding: 10px;
+align-items: flex-start;
+}
