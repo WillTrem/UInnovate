@@ -36,3 +36,4 @@ jobs:
           vite-config-path: "./UInnovateApp/vite.config.ts"
           json-summary-path: "./UInnovateApp/coverage/coverage-summary.json"
           json-final-path: "./UInnovateApp/coverage/coverage-final.json"
+          file-coverage-mode: "all"
