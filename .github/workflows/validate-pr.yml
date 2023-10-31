@@ -26,9 +26,6 @@ jobs:
       - name: "Run Vitest"
         run: npx vitest --coverage
         working-directory: ./UInnovateApp
-      - name: "List Files"
-        run: |
-          ls -R ./UInnovateApp
       - name: "Report Coverage"
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
