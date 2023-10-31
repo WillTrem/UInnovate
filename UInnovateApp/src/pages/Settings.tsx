@@ -6,6 +6,7 @@ import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
 import "../styles/settings.css";
 import attr from "../virtualmodel/Tables";
 import { useTableVisibility } from "../TableVisibilityContext";
@@ -58,29 +59,33 @@ export function Settings() {
 								</Tab.Pane>
 								<Tab.Pane eventKey='second'>
 									<div className='customization-title'>Tables</div>
-									{/* <div className='table-list'> */}
-									{tableNames.map((tableName: string) => {
-										return (
-											<div key={tableName} className='table-item'>
-												<div className='text-table'></div>
-												<label>
-													<input
-														type='checkbox'
-														checked={tableVisibility[tableName] || false}
-														onChange={() => handleToggleVisibility(tableName)}
-													/>
-													{tableName}
-												</label>
-												<Form.Select
-													className='form-select'
-													aria-label='Default select example'>
-													<option value='1'>List View</option>
-													<option value='2'>Enumeration View</option>
-												</Form.Select>
-											</div>
-										);
-									})}
-									{/* </div> */}
+									<div className='table-list'>
+										{tableNames.map((tableName: string) => {
+											return (
+												<div key={tableName} className='table-item'>
+													<div className='text-table'>{tableName}</div>
+													<label className='switch'>
+														<input
+															type='checkbox'
+															checked={tableVisibility[tableName] || false}
+															onChange={() => handleToggleVisibility(tableName)}
+														/>
+														<span className='slider round'></span>
+													</label>
+													<Form.Select
+														className='form-select'
+														aria-label='Default select example'>
+														<option value='1'>List View</option>
+														<option value='2'>Enumeration View</option>
+													</Form.Select>
+												</div>
+											);
+										})}
+									</div>
+									{/* Note: Button functionality not yet implemented; currently saves changes to local storage on checkbox toggle. */}
+									<Button variant='primary' className='save-button'>
+										Save Changes
+									</Button>
 								</Tab.Pane>
 							</Tab.Content>
 						</Col>
