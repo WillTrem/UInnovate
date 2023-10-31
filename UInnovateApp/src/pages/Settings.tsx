@@ -59,29 +59,29 @@ export function Settings() {
 								</Tab.Pane>
 								<Tab.Pane eventKey='second'>
 									<div className='customization-title'>Tables</div>
-									<div className='table-list'>
-										{tableNames.map((tableName: string) => {
-											return (
-												<div key={tableName} className='table-item'>
-													<div className='text-table'>{tableName}</div>
-													<label>
-														<input
-															type='checkbox'
-															checked={tableVisibility[tableName] || false}
-															onChange={() => handleToggleVisibility(tableName)}
-														/>
-														{tableName}
-													</label>
-													<Form.Select
-														className='form-select'
-														aria-label='Default select example'>
-														<option value='1'>List View</option>
-														<option value='2'>Enumeration View</option>
-													</Form.Select>
-												</div>
-											);
-										})}
-									</div>
+									{/* <div className='table-list'> */}
+									{tableNames.map((tableName: string) => {
+										return (
+											<div key={tableName} className='table-item'>
+												<div className='text-table'></div>
+												<label>
+													<input
+														type='checkbox'
+														checked={tableVisibility[tableName] || false}
+														onChange={() => handleToggleVisibility(tableName)}
+													/>
+													{tableName}
+												</label>
+												<Form.Select
+													className='form-select'
+													aria-label='Default select example'>
+													<option value='1'>List View</option>
+													<option value='2'>Enumeration View</option>
+												</Form.Select>
+											</div>
+										);
+									})}
+									{/* </div> */}
 								</Tab.Pane>
 							</Tab.Content>
 						</Col>
