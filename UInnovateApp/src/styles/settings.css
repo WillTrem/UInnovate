@@ -1,0 +1,59 @@
+.title {
+  font-size: 30px;
+  margin-bottom: 0.5em;
+  padding-top: 40px;
+  text-align: left;
+}
+.page-layout {
+  padding-inline: 4em;
+}
+
+.customization-title {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 0.5em;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: #6c757d;
+}
+
+.nav {
+  --bs-nav-link-color: black;
+  --bs-nav-link-hover-color: #6c757d !important;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5em;
+  width: 18em;
+}
+
+.table-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+}
+
+#table {
+  border-bottom: none;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2em;
+  font-weight: normal;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.form-select {
+  width: auto;
+  flex: 10%;
+}
+
+.text-table {
+  flex: 0%;
+}

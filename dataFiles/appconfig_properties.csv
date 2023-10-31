@@ -1,0 +1,6 @@
+name, description, value_type, default_value
+table_view, Default layout shown when selecting a table from the object menu., string, list
+hidden, Hides a table/column from the application., boolean, false
+editable, Makes a column editable, boolean, false
+display_column_as_currency, Displays a column as currency type., boolean, false
+metadata_view, Default view when showing the metadata information of a table/column, boolean, false 
