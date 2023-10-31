@@ -8,13 +8,12 @@ import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
 import "../styles/settings.css";
 import attr from "../virtualmodel/Tables";
-// import { TableVisibilityProvider } from "../TableVisibilityContext";
 import { useTableVisibility } from "../TableVisibilityContext";
 
 export function Settings() {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();
 	const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
-	// Toggle the visibility of a table
+	// Toggle table visibility
 	const handleToggleVisibility = (tableName: string) => {
 		setTableVisibility((prevState) => ({
 			...prevState,

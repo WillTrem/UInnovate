@@ -1,9 +1,6 @@
 import { NavBar } from "../components/NavBar";
 import attr from "../virtualmodel/Tables";
 import TableTitles from "../components/TableTitles";
-// import TableComponent from "../components/TableComponent";
-// import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
-// import { Link } from "react-router-dom";
 import { useTableVisibility } from "../TableVisibilityContext";
 
 export function ListView() {

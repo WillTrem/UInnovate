@@ -10,6 +10,7 @@ import { TableVisibilityProvider } from "./TableVisibilityContext";
 
 function App() {
 	return (
+		//Wrapping routes so that we can use the context in all the pages (eventually?)
 		<TableVisibilityProvider>
 			<Routes>
 				<Route path='/' element={<Home />} />

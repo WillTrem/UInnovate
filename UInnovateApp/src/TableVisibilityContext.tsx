@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import attr from "./virtualmodel/Tables";
 
-// Define the shape of the context
 interface TableVisibilityContextType {
 	tableVisibility: { [key: string]: boolean };
 	setTableVisibility: React.Dispatch<
@@ -56,6 +55,7 @@ export const TableVisibilityProvider: React.FC<
 };
 
 // Custom hook to use the TableVisibilityContext
+//-> Breadcrump for later: Fast refresh only works when a file only exports components.
 export const useTableVisibility = (): TableVisibilityContextType => {
 	const context = useContext(TableVisibilityContext);
 	if (!context) {
