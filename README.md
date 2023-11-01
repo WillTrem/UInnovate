@@ -208,15 +208,32 @@ To add a new configuration property to the database, simply add an entry for it 
 
 ## MkDocs Set up with docker
 
+Open a terminal & make sure docker is running.
+
 Follow the following steps:
 
-1. Open a terminal & make sure docker is running
-2. cd documentation
-3. run docker pull polinux/mkdocs
-4. docker build -t polinux/mkdocs .
-5. docker run -it -p 8080:8000  polinux/mkdocs
-6. You should be able to see the mkdocs website: http://localhost:8080/ 
-** you can go through docker to open it (don't use http://0.0.0.0:8000/)
+```bash
+cd documentation
+```
 
-If you want to add pages, they should go under documentation/docs
+```bash
+docker pull polinux/mkdocs
+```
+
+Create the image.
+
+```bash
+docker build -t polinux/mkdocs .
+```
+
+Run the container.
+
+```bash
+docker run -it -p 8080:8000  polinux/mkdocs
+```
+
+You should be able to see the mkdocs website: http://localhost:8080/ 
+You can go also through docker to open it but don't use http://0.0.0.0:8000/
+
+If you want to add pages, they should go under documentation/docs.
 
