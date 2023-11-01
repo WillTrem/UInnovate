@@ -206,3 +206,34 @@ To use Postman for testing the PostgREST API corrrectly accessing the database:
 ### Adding new configuration properties
 To add a new configuration property to the database, simply add an entry for it in `appconfig_properties.csv` (under ./dataFiles). Then, simply refresh the database using the `refresh_database.sh` script.
 
+## MkDocs Set up with docker
+
+Open a terminal & make sure docker is running.
+
+Follow the following steps:
+
+```bash
+cd documentation
+```
+
+```bash
+docker pull polinux/mkdocs
+```
+
+Create the image.
+
+```bash
+docker build -t polinux/mkdocs .
+```
+
+Run the container.
+
+```bash
+docker run -it -p 8080:8000  polinux/mkdocs
+```
+
+You should be able to see the mkdocs website: http://localhost:8080/ 
+You can go also through docker to open it but don't use http://0.0.0.0:8000/
+
+If you want to add pages, they should go under documentation/docs.
+
