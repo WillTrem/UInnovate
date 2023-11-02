@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import attr from "./virtualmodel/Tables";
 
 interface TableVisibilityContextType {
@@ -8,9 +8,19 @@ interface TableVisibilityContextType {
 	>;
 }
 
-const TableVisibilityContext = createContext<
-	TableVisibilityContextType | undefined
->(undefined);
+export type TableVisibilityType = {
+	[key: string]: boolean;
+};
+
+const TableVisibilityContext = React.createContext<{
+	tableVisibility: TableVisibilityType;
+	setTableVisibility: React.Dispatch<React.SetStateAction<TableVisibilityType>>;
+}>({
+	tableVisibility: {},
+	setTableVisibility: () => {},
+});
+// 	TableVisibilityContextType | undefined
+// >(undefined);
 
 type TableVisibilityProviderProps = {
 	children: React.ReactNode;
