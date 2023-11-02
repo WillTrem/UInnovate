@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import attr from "./virtualmodel/Tables";
+import attr from "../virtualmodel/Tables.tsx";
 
 interface TableVisibilityContextType {
 	tableVisibility: { [key: string]: boolean };

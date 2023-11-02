@@ -4,7 +4,7 @@ import TableListView from "../components/TableListView";
 import { useParams } from "react-router-dom";
 import TableTitles from "../components/TableTitles";
 import "./page.css";
-import { useTableVisibility } from "../TableVisibilityContext";
+import { useTableVisibility } from "../contexts/TableVisibilityContext";
 
 //TODO: use useTableVisibility custom hook to get access to the current visibility state (tableVisibility)
 // and the function to change it (setTableVisibility)

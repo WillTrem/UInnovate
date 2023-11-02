@@ -9,7 +9,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "../styles/settings.css";
 import attr from "../virtualmodel/Tables";
-import { useTableVisibility } from "../TableVisibilityContext";
+import { useTableVisibility } from "../contexts/TableVisibilityContext";
 
 export function Settings() {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();

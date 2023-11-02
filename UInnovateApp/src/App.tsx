@@ -6,7 +6,7 @@ import { Element } from "./pages/Element";
 import { ListView } from "./pages/ListView";
 import { EnumView } from "./pages/EnumView";
 import { Settings } from "./pages/Settings";
-import { TableVisibilityProvider } from "./TableVisibilityContext";
+import { TableVisibilityProvider } from "./contexts/TableVisibilityContext";
 
 function App() {
 	return (

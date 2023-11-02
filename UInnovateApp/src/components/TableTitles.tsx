@@ -3,7 +3,7 @@ import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
 import {
 	useTableVisibility,
 	TableVisibilityType,
-} from "../TableVisibilityContext";
+} from "../contexts/TableVisibilityContext";
 
 export default function TableTitles({ attr }) {
 	const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));

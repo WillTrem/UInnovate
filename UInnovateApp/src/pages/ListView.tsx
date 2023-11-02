@@ -1,7 +1,7 @@
 import { NavBar } from "../components/NavBar";
 import attr from "../virtualmodel/Tables";
 import TableTitles from "../components/TableTitles";
-import { useTableVisibility } from "../TableVisibilityContext";
+import { useTableVisibility } from "../contexts/TableVisibilityContext";
 
 export function ListView() {
 	const { tableVisibility } = useTableVisibility();
