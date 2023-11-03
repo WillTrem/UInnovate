@@ -6,6 +6,11 @@ interface Table {
   attributes: string[];
 }
 
+export enum TableDisplayType { 
+  listView = "list",
+  enumView = "enum"
+}
+
 const tables: string[] = [];
 const attr: Table[] = [];
 const table_url = "http://localhost:3000/tables";
