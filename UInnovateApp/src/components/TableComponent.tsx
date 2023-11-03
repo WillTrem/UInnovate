@@ -1,4 +1,4 @@
-import "./TableComponent.css";
+import "../styles/TableComponent.css";
 
 export default function TableComponent({ attr }) {
 	const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
