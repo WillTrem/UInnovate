@@ -1,0 +1,36 @@
+name: "Test"
+on:
+  pull_request:
+    branches:
+      - main # Adjust to the appropriate branch name
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./
+
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Install Node"
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - name: "Install Deps"
+        run: npm install
+        working-directory: ./UInnovateApp
+      - name: "Run Vitest"
+        run: npx vitest --coverage
+        working-directory: ./UInnovateApp
+      - name: "Report Coverage"
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          vite-config-path: "./UInnovateApp/vite.config.ts"
+          json-summary-path: "./UInnovateApp/coverage/coverage-summary.json"
+          json-final-path: "./UInnovateApp/coverage/coverage-final.json"
+          file-coverage-mode: "all"
