@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Definining Table Type
-interface Table {
+export interface Table {
   table_name: string;
   attributes: string[];
 }
