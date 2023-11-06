@@ -1,13 +1,12 @@
 import Button from "react-bootstrap/Button";
-import { useTableVisibility } from "../contexts/TableVisibilityContext";
-import { TableItem } from "./TableItem";
+import { useTableVisibility } from "../../contexts/TableVisibilityContext";
+import { TableItem } from "./TableConfigTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 export const DisplayTab = () => {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();
-
 	// Map over the table names and render TableItem components
 	const tableItems = Object.keys(tableVisibility).map((tableName) => (
 		<TableItem
@@ -17,7 +16,6 @@ export const DisplayTab = () => {
 			toggleVisibility={setTableVisibility}
 		/>
 	));
-		console.log(tableItems)
 	return (
 		<div>
 			<div className='customization-title'>Tables</div>

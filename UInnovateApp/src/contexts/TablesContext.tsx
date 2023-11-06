@@ -26,6 +26,5 @@ export const useTables = (): Table[] | undefined => {
 
 export const useTableAttributes = (tableName: string): string[] | undefined => {
 	const tables = useTables();
-	return tables?.find((table: Table) => {table.table_name === tableName})?.attributes;
-
+	return tables?.find((table: Table) => table.table_name === tableName)?.attributes;
 }

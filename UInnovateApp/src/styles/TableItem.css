@@ -1,4 +1,18 @@
-.table-settings-pane-content{
+.config-pane{
 	display:flex;
 	justify-content: space-evenly;
+}
+
+.column-config-table{
+	width:auto;
+	border: 0;
+}
+
+.column-config-table td{
+	padding: 0.5rem 1rem;
+	text-align: end;
+}
+
+.semi-bold {
+	font-weight: 600;
 }
