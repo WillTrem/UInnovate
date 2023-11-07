@@ -7,10 +7,29 @@ import Row from "react-bootstrap/Row";
 import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
 import "../styles/settings.css";
+import { Table } from "../virtualmodel/Tables";
 import attr from "../virtualmodel/Tables";
+import { ChangeEventHandler } from "react";
+import { useState } from "react";
 
 export function Settings() {
-  const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
+  const [tableData, setTableData] = useState(attr);
+  // Change the view_status of a table
+  const handleViewStatusChange: ChangeEventHandler<HTMLSelectElement> = (
+    event
+  ) => {
+    const newStatus = event.target;
+    const updatedData = attr.map((table) => {
+      if (newStatus.id == table.table_name) {
+        table.view_status = newStatus.value;
+      }
+
+      return table;
+    });
+
+    setTableData(updatedData);
+  };
+
   return (
     <>
       <NavBar />
@@ -49,16 +68,21 @@ export function Settings() {
                 <Tab.Pane eventKey="second">
                   <div className="customization-title">Tables</div>
                   <div className="table-list">
-                    {tableNames.map((tableName: string) => {
+                    {tableData.map((table: Table) => {
                       return (
                         <th id="table">
-                          <div className="text-table">{tableName}</div>
+                          <div key={table.table_name} className="text-table">
+                            {table.table_name}
+                          </div>
                           <Form.Select
+                            id={table.table_name}
                             className="form-select"
-                            aria-label="Default select example"
+                            aria-label="View Status"
+                            value={table.view_status}
+                            onChange={handleViewStatusChange}
                           >
-                            <option value="1">List View</option>
-                            <option value="2">Enumeration View</option>
+                            <option value="list">List View</option>
+                            <option value="enum">Enumeration View</option>
                           </Form.Select>
                         </th>
                       );
