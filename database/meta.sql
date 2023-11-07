@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_values (
 	FOREIGN KEY (property) 
 	REFERENCES meta.appconfig_properties(name)
 	ON DELETE CASCADE 
-	ON UPDATE CASCADE
+	ON UPDATE CASCADE,
+    UNIQUE (property, "table", "column")
 );
 
 -- USAGE 
