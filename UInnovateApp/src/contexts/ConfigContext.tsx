@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 
-type ConfigValueType = {
+export type ConfigValueType = {
 	id?: number,
 	property: string,
 	table?: string,

@@ -11,6 +11,10 @@ import { TableDisplayType } from "../../virtualmodel/Tables";
 
 import "../../styles/TableItem.css"
 import { ColumnConfig } from "./ColumnConfig";
+import { useConfig } from "../../contexts/ConfigContext";
+import ConfigProperty from "../../virtualmodel/ConfigProperties";
+import { ConfigValueType } from "../../contexts/ConfigContext";
+
 
 interface TableItemProps {
 	tableName: string;
@@ -26,17 +30,29 @@ export const TableItem: React.FC<TableItemProps> = ({
 	toggleVisibility,
 }) => {
 	const [displayType, setDisplayType] = useState<string>(TableDisplayType.listView); // Local state keeping the display type value selected
-	
+	const {config, updateConfig} = useConfig();
+
+	const updateTableConfig = (property: ConfigProperty, value: string) => {
+	  const newProperty: ConfigValueType = {
+		property,
+		table: tableName,
+		value
+	  }
+	  updateConfig(newProperty);
+	}
 	// Handle the change event for the toggle switch
 	const handleToggle = () => {
 		toggleVisibility((prevVisibility) => ({
 			...prevVisibility,
 			[tableName]: !isVisible,
 		}));
+		updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString())
 	};
 
 	const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {
-		setDisplayType(event.target.value);
+		const newDisplayType = event.target.value;
+		setDisplayType(newDisplayType);
+		updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
 	}
 
 	return (<>
