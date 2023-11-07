@@ -3,7 +3,7 @@ import attr, { Table } from "../virtualmodel/Tables";
 
 
 // The context returns the list of all tables 
-export const TablesContext = createContext<Table[] | undefined>(undefined);
+const TablesContext = createContext<Table[] | undefined>(undefined);
 
 type TablesContextProviderProps = {
 	children: React.ReactNode;

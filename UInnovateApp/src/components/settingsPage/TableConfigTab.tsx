@@ -27,7 +27,7 @@ export const TableItem: React.FC<TableItemProps> = ({
 }) => {
 	const [displayType, setDisplayType] = useState<string>(TableDisplayType.listView); // Local state keeping the display type value selected
 	
-	// Handle the change event for the checkbox
+	// Handle the change event for the toggle switch
 	const handleToggle = () => {
 		toggleVisibility((prevVisibility) => ({
 			...prevVisibility,
