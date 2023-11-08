@@ -212,3 +212,34 @@ An `enum` type called `ConfigProperty` (under /UInnovateApp/src/virtualmodel/Con
 To sync the `ConfigProperty` enum with the `appconfig_properties.csv` file, a shell tool script `sync_csv_properties_to_enum.sh` has been created. Once you have added new properties to the csv file, simply run the shell script and it will re-generate the `ConfigProperties.ts` file with the enum type containing the updated csv properties. 
 >💡 If you are having trouble running shell scripts on your machine, you can always add the new properties manually to `ConfigProperties.ts`. In this case, please do make sure that the values added are **error-free** and follow the same **notation convention** as the other values!
 
+## MkDocs Set up with docker
+
+Open a terminal & make sure docker is running.
+
+Follow the following steps:
+
+```bash
+cd documentation
+```
+
+```bash
+docker pull polinux/mkdocs
+```
+
+Create the image.
+
+```bash
+docker build -t polinux/mkdocs .
+```
+
+Run the container.
+
+```bash
+docker run -it -p 8080:8000  polinux/mkdocs
+```
+
+You should be able to see the mkdocs website: http://localhost:8080/ 
+You can go also through docker to open it but don't use http://0.0.0.0:8000/
+
+If you want to add pages, they should go under documentation/docs.
+
