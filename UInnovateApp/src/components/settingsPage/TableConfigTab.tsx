@@ -34,12 +34,12 @@ export const TableItem: React.FC<TableItemProps> = ({
 	
 	// Updates the local configuration with a table-specific configuration value 
 	const updateTableConfig = (property: ConfigProperty, value: string) => {
-	  const newProperty: ConfigValueType = {
+	  const newConfigValue: ConfigValueType = {
 		property,
 		table: tableName,
 		value
 	  }
-	  updateConfig(newProperty);
+	  updateConfig(newConfigValue);
 	}
 
 	// Handle the change event for the toggle switch
