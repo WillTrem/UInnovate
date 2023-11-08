@@ -31,7 +31,8 @@ export const TableItem: React.FC<TableItemProps> = ({
 }) => {
 	const [displayType, setDisplayType] = useState<string>(TableDisplayType.listView); // Local state keeping the display type value selected
 	const {config, updateConfig} = useConfig();
-
+	
+	// Updates the local configuration with a table-specific configuration value 
 	const updateTableConfig = (property: ConfigProperty, value: string) => {
 	  const newProperty: ConfigValueType = {
 		property,
@@ -40,6 +41,7 @@ export const TableItem: React.FC<TableItemProps> = ({
 	  }
 	  updateConfig(newProperty);
 	}
+
 	// Handle the change event for the toggle switch
 	const handleToggle = () => {
 		toggleVisibility((prevVisibility) => ({

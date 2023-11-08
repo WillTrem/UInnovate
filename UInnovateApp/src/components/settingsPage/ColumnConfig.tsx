@@ -16,7 +16,7 @@ interface ColumnConfigRowProps{
 export const ColumnConfig: React.FC<ColumnConfigProps> = ({tableName}: ColumnConfigProps) => {
   const attributes = useTableAttributes(tableName);
   const configProperties  = ["Visible"]; // Add more configuration properties for columns here 
-
+	
 	return <table className="column-config-table">
 		<thead>
 			<tr>

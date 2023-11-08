@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 export type ConfigValueType = {
 	id?: number,
@@ -7,7 +7,7 @@ export type ConfigValueType = {
 	column?: string,
 	value: string
 }
-type ConfigType = Array<ConfigValueType> | undefined
+export type ConfigType = Array<ConfigValueType> | undefined
 
 interface ConfigContextType {
 	config: ConfigType,
@@ -23,13 +23,24 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
 	const [config, setConfig] = useState<ConfigType>([])
 
 	const updateConfig = (newValue: ConfigValueType ) => {
+		let found = false;
 		const newConfig: ConfigType = config?.map((value) => {
-			return (value.property === newValue.property && value.table === newValue.table && value.column === newValue.column)
-			? {...value, ...newValue}
-			: value;
+			if(value.property === newValue.property && value.table === newValue.table && value.column === newValue.column){
+				found = true;
+				return {...value, ...newValue};
+			}
+			return value;
 		});
+		if(!found){
+			newConfig?.push(newValue);
+		}
 		setConfig(newConfig);
 	}
+
+	useEffect(() => {
+	console.log("CONFIG");
+	console.log(config);
+	}, [config])
 	
 	return <ConfigContext.Provider value={{config, updateConfig}}>
 		{children}
