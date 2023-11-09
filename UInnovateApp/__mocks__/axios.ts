@@ -1,6 +1,9 @@
 import {vi} from 'vitest'
-const table_url = "http://localhost:3000/tables";
-const attr_url = "http://localhost:3000/columns";
+const tableURL = "http://localhost:3000/tables";
+const attrURL = "http://localhost:3000/columns";
+const appconfig_valuesURL = "http://localhost:3000/appconfig_values";
+
+const noMockErrorMessage = "API call to this URL hasn't been mocked.";
 
 const mock_table_data = [{table: 'Table1', schema: 'Schema1'}, {table: 'Table2', schema: 'Schema1'}]
 const mock_table_attr = [
@@ -15,13 +18,23 @@ export default {
 	get: vi.fn().mockImplementation((url, {headers}) => {
 		if(headers["Accept-Profile"] === "meta"){
 			switch (url) {
-				case table_url:
+				case tableURL:
 				return Promise.resolve({data:mock_table_data});
-				case attr_url:
+				case attrURL:
 				return Promise.resolve({data: mock_table_attr});
 				default:
-				return Promise.reject(new Error("API call to this URL hasn't been mocked."))
+				return Promise.reject(new Error(noMockErrorMessage))
 			}	
+		}
+	}),
+	post: vi.fn().mockImplementation((url, data, {headers}) => {
+		if(headers["Content-Profile"] === "meta"){
+			switch(url){
+				case appconfig_valuesURL:
+					return Promise.resolve();
+				default:
+					return Promise.reject(new Error(noMockErrorMessage))
+			}
 		}
 	})
 };
