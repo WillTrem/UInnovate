@@ -30,7 +30,10 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.3",
     "@cypress/react18": "^2.0.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@mui/material": "^5.14.16",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.0.0",
     "@types/react": "^18.2.15",

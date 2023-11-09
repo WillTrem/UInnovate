@@ -1,14 +1,13 @@
-import "./TableComponent.css";
-import { Table } from "../virtualmodel/Tables";
+import "../styles/TableComponent.css";
 
-export default function TableComponent({ attr }: { attr: Table[] }) {
+export default function TableComponent({ attr }) {
   const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
   return (
     <div>
       <table>
         <thead>
           <tr>
-            {tableNames.map((tableName) => {
+            {tableNames.map((tableName: string) => {
               return <th>{tableName}</th>;
             })}
           </tr>
