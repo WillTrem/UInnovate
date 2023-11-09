@@ -30,48 +30,30 @@ interface ColumnData {
   column: string;
 }
 
-// const attr: Table[] = [];
+const attr: Table[] = [];
 const table_url = "http://localhost:3000/tables";
 const attr_url = "http://localhost:3000/columns";
 
-function fetchData({ onDataFetched }) {
-  const [attr, setAttr] = useState<Table[]>([]);
-  const [isDataFetched, setIsDataFetched] = useState(false);
+// GET Request to get the table names and populate the Table Array
+await axios
+  .get(table_url, { headers: { "Accept-Profile": "meta" } })
+  .then((response) => {
+    response.data.forEach((data: TableData) => {
+      attr.push(new Table(data.table, []));
+    });
+  });
 
-  useEffect(() => {
-    if (!isDataFetched) {
-      // If the data has not been fetched yet,
-      // GET Request to get the table names and populate the Table Array
-      axios
-        .get(table_url, { headers: { "Accept-Profile": "meta" } })
-        .then((response) => {
-          response.data.forEach((data: TableData) => {
-            attr.push(new Table(data.table, []));
-          });
-        });
+// GET Request to get the columns of each table within the Table Array
+await axios
+  .get(attr_url, { headers: { "Accept-Profile": "meta" } })
+  .then((response) => {
+    response.data.forEach((data: ColumnData) => {
+      for (let i = 0; i < attr.length; i++) {
+        if (attr[i].table_name === data.table) {
+          attr[i].attributes.push(data.column);
+        }
+      }
+    });
+  });
 
-      // GET Request to get the columns of each table within the Table Array
-      axios
-        .get(attr_url, { headers: { "Accept-Profile": "meta" } })
-        .then((response) => {
-          response.data.forEach((data: ColumnData) => {
-            for (let i = 0; i < attr.length; i++) {
-              if (attr[i].table_name === data.table) {
-                attr[i].attributes.push(data.column);
-              }
-            }
-          });
-        });
-
-      setIsDataFetched(true);
-    }
-  }, [isDataFetched, attr]);
-
-  useEffect(() => {
-    if (isDataFetched) {
-      onDataFetched(attr);
-    }
-  }, [isDataFetched, attr, onDataFetched]);
-}
-
-export default fetchData;
+export default attr;
