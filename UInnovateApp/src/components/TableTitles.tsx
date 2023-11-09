@@ -7,16 +7,13 @@ import {
 import { Table } from "../virtualmodel/Tables";
 
 export default function TableTitles({ attr }: { attr: Table[] }) {
-  const tableNames = Array.from(
-    new Set(attr.map((table: Table) => table.table_name))
-  );
   const { tableVisibility } = useTableVisibility(); // Only use the visibility state
 
   return (
     <div>
-      {tableNames.map((tableName: string) => {
+      {attr.map((table: Table) => {
         // Check if the table is visible
-        if (tableVisibility[tableName as keyof TableVisibilityType]) {
+        if (tableVisibility[table.table_name as keyof TableVisibilityType]) {
           return (
             <>
               <Sidebar>
@@ -24,7 +21,7 @@ export default function TableTitles({ attr }: { attr: Table[] }) {
                   <MenuItem
                     component={
                       <Link
-                        to={`/app/${tableName}`}
+                        to={`/app/${table.table_name}`}
                         style={{
                           fontSize: "25px",
                           color: "black",
@@ -33,7 +30,7 @@ export default function TableTitles({ attr }: { attr: Table[] }) {
                       />
                     }
                   >
-                    {tableName}
+                    {table.table_name}
                   </MenuItem>
                 </Menu>
               </Sidebar>

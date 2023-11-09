@@ -1,38 +1,32 @@
-import { Menu, MenuItem, Sidebar } from "react-pro-sidebar";
-import { Table } from "../virtualmodel/Tables";
-import { Link } from "react-router-dom";
+import "../styles/TableComponent.css";
+import Table from "react-bootstrap/Table";
+import attr from "../virtualmodel/Tables";
 
-export default function TableEnumView({ attr }: { attr: Table[] }) {
-  const tableNames: string[] = [];
-
-  attr.forEach((table) => {
-    tableNames.push(table.table_name);
-  });
-
+export default function TableEnumView({
+  nameOfTable,
+}: {
+  nameOfTable: string | undefined;
+}) {
   return (
     <div>
-      {tableNames.map((tableName) => {
-        return (
-          <Sidebar>
-            <Menu>
-              <MenuItem
-                component={
-                  <Link
-                    to={`/app/${tableName}`}
-                    style={{
-                      fontSize: "25px",
-                      color: "black",
-                      textDecoration: "none",
-                    }}
-                  />
-                }
-              >
-                {""}
-                {tableName}
-              </MenuItem>
-            </Menu>
-          </Sidebar>
-        );
+      {attr.map((table) => {
+        if (table.table_name !== nameOfTable) {
+          return null;
+        } else {
+          const attributeElements = table.attributes.map((attribute, index) => (
+            <th key={index}>{attribute}</th>
+          ));
+
+          return (
+            <div>
+              <Table striped bordered hover variant="dark">
+                <thead>
+                  <tr>{attributeElements}</tr>
+                </thead>
+              </Table>
+            </div>
+          );
+        }
       })}
     </div>
   );
