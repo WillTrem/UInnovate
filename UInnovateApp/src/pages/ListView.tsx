@@ -1,7 +1,5 @@
 import { NavBar } from "../components/NavBar";
-import { useState } from "react";
 import attr from "../virtualmodel/Tables";
-import fetchData from "../virtualmodel/Tables";
 import TableTitles from "../components/TableTitles";
 import { useTableVisibility } from "../contexts/TableVisibilityContext";
 

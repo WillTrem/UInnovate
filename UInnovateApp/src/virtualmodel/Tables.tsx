@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+
 // Definining Table Type
 export class Table {
   table_name: string;
@@ -15,6 +15,11 @@ export class Table {
   updateViewStatus(newViewStatus: string) {
     this.view_status = newViewStatus;
   }
+}
+
+export enum TableDisplayType {
+  listView = "list",
+  enumView = "enum",
 }
 
 // Defining the TableData interface when calling /tables with the API

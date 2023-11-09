@@ -4,14 +4,17 @@ import {
   useTableVisibility,
   TableVisibilityType,
 } from "../contexts/TableVisibilityContext";
+import { Table } from "../virtualmodel/Tables";
 
-export default function TableTitles({ attr }) {
-  const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
+export default function TableTitles({ attr }: { attr: Table[] }) {
+  const tableNames = Array.from(
+    new Set(attr.map((table: Table) => table.table_name))
+  );
   const { tableVisibility } = useTableVisibility(); // Only use the visibility state
 
   return (
     <div>
-      {tableNames.map((tableName) => {
+      {tableNames.map((tableName: string) => {
         // Check if the table is visible
         if (tableVisibility[tableName as keyof TableVisibilityType]) {
           return (
