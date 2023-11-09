@@ -8,11 +8,11 @@ import Tab from "react-bootstrap/Tab";
 import Form from "react-bootstrap/Form";
 import "../styles/settings.css";
 import attr from "../virtualmodel/Tables";
-import datas from "../virtualmodel/FetchData";
+import schemas from "../virtualmodel/FetchData";
 
 export function Settings() {
   const tableNames = Array.from(new Set(attr.map((table) => table.table_name)));
-  console.log(datas);
+  console.log(schemas);
   return (
     <>
       <NavBar />
