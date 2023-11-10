@@ -1,7 +1,7 @@
 import { ConfigType, useConfig } from "../../contexts/ConfigContext";
 import { useEffect, useRef, useState } from 'react';
 import { updateAppConfigValues } from '../../virtualmodel/Config';
-import { CircularProgress, Snackbar } from "@mui/material";
+import { CircularProgress, Fade, Snackbar, Tooltip, Zoom } from "@mui/material";
 import BuildIcon from '@mui/icons-material/Build';
 import { grey } from "@mui/material/colors";
 
@@ -45,23 +45,25 @@ const ConfigurationSaver: React.FC = () => {
 		setSnackbarVisible(false);
 	}
 	return <>
-		<Snackbar open={isSnackbarVisible} autoHideDuration={CONFIG_SAVE_ANIMATION_DURATION_MS}
-			onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
-			<div>
-				<BuildIcon sx={{
-					color: grey[400]
-				}} />
-				<CircularProgress
-					sx={{
-						color: grey[400],
-						position: 'absolute',
-						top: -5,
-						left: -8,
-						zIndex: 1,
-					}}
-				/>
-			</div>
-		</Snackbar>
+		<Tooltip title="Saving config to database..." arrow placement="left" TransitionComponent={Zoom}>
+			<Snackbar open={isSnackbarVisible} autoHideDuration={CONFIG_SAVE_ANIMATION_DURATION_MS}
+				onClose={handleSnackbarClose} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+				<div>
+					<BuildIcon sx={{
+						color: grey[400]
+					}} />
+					<CircularProgress
+						sx={{
+							color: grey[400],
+							position: 'absolute',
+							top: -5,
+							left: -8,
+							zIndex: 1,
+						}}
+					/>
+				</div>
+			</Snackbar>
+		</Tooltip>
 	</>
 }
 
