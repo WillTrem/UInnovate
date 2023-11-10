@@ -7,6 +7,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { updateAppConfigValues } from "../../virtualmodel/Config";
 import { useConfig } from "../../contexts/ConfigContext";
+
 export const DisplayTab = () => {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();
 	const {config} = useConfig();
@@ -23,10 +24,10 @@ export const DisplayTab = () => {
 
 	return (
 		<div>
-			<div className='customization-title'>Tables</div>
 			<Tab.Container>
 				<Row>
 					<Col sm={3}>
+						<h4>Tables</h4>
 						<Nav variant='pills' className="flex-column">
 							{Object.keys(tableVisibility).map((tableName) => {
 							  return (
