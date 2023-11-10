@@ -1,16 +1,15 @@
-import Button from "react-bootstrap/Button";
 import { useTableVisibility } from "../../contexts/TableVisibilityContext";
 import { TableItem } from "./TableConfigTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import { updateAppConfigValues } from "../../virtualmodel/Config";
-import { useConfig } from "../../contexts/ConfigContext";
+import ConfigurationSaver from "./ConfigurationSaver";
+
 
 export const DisplayTab = () => {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();
-	const {config} = useConfig();
+
 	// Map over the table names and render TableItem components
 	const tableItems = Object.keys(tableVisibility).map((tableName) => (
 		<TableItem
@@ -21,9 +20,9 @@ export const DisplayTab = () => {
 		/>
 	));
 
-
 	return (
 		<div>
+			<ConfigurationSaver />
 			<Tab.Container>
 				<Row>
 					<Col sm={3}>
@@ -51,10 +50,6 @@ export const DisplayTab = () => {
 					</Col>
 				</Row>
 			</Tab.Container>
-			{/* <div className='table-list'>{tableItems}</div> */}
-			<Button variant='primary' className='save-button' onClick={() => {updateAppConfigValues(config)}}>
-				Save Changes
-			</Button>
 		</div>
 	);
 };
