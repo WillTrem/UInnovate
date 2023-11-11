@@ -4,18 +4,19 @@ const data_url = "http://localhost:3000/tables";
 const schema_data_url = "http://localhost:3000/";
 
 const schemas: Schema[] = [];
-// const datas = [];
 
-// /tables with meta header provides the names of the schemas with their corresponding tables
-// so we can get the table names from there along with their schemas
-
+// The directory /tables with the meta header provides the names of the schemas with their corresponding tables
+// So we can get the table names from there along with their schemas
 // We can then use the accept-profile attribute from headers to specify the schema and its corresponding tables
 
+// Defining a Database type for typescript syntax
 type Database = {
   schema: string;
   table: string;
 };
 
+// Defining a class Schema with constructor to facilitate making a data structure
+// made of schema objects
 class Schema {
   name: string;
   tables: Table[];
@@ -29,9 +30,13 @@ class Schema {
     this.tables.push(table);
   }
 }
+
+// Defining a class Table with constructor for type issues and for making a data
+// structure made of table objects
 class Table {
   name: string;
   rows: string[][];
+
   constructor(name: string) {
     this.name = name;
     this.rows = [];
@@ -42,10 +47,12 @@ class Table {
   }
 }
 
+// Type Row for data parsing
 type Row = {
   id: number;
 };
 
+// GET Request to get all the schemas and their corresponding tables
 await axios
   .get(data_url, { headers: { "Accept-Profile": "meta" } })
   .then((response) => {
@@ -65,9 +72,8 @@ await axios
     });
   });
 
-// Here we export a function that returns a Row[] depending on the table specified
+// Here we export a function that returns a String[][] depending on the table specified
 // We still need the schema[] for the Accept-Profile header for the GET request
-
 export async function getRowsFromTable(tableName: string) {
   const rows: string[][] = [];
   for (const schema of schemas) {
@@ -83,7 +89,7 @@ export async function getRowsFromTable(tableName: string) {
             rows.push(row);
           });
         } catch (error) {
-          console.log("Error");
+          console.log("Could not fetch the rows of the desired table.");
         }
       }
     }
@@ -106,24 +112,10 @@ export async function getColumnsFromTable(tableName: string) {
           const attributes = Object.keys(response.data[0]);
           columns = attributes;
         } catch (error) {
-          console.error(error);
+          console.error("Could not fetch the columns of the desired table.");
         }
       }
     }
   }
   return columns;
 }
-// schemas.forEach((schema) => {
-//   schema.tables.forEach((table: Table) => {
-//     const table_url = schema_data_url + table.name;
-//     console.log(table_url);
-//     axios
-//       .get(table_url, { headers: { "Accept-Profile": schema.name } })
-//       .then((response) => {
-//         response.data.forEach((data: string[]) => {
-//           table.pushRow(data);
-//           datas.push(data);
-//         });
-//       });
-//   });
-// });

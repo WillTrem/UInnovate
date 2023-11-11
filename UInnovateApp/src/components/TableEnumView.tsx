@@ -5,17 +5,35 @@ import {
   getColumnsFromTable,
   getRowsFromTable,
 } from "../virtualmodel/FetchData";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 
-export default async function TableEnumView({
+interface TableEnumViewProps {
+  nameOfTable: string;
+}
+
+const TableEnumView: React.FC<TableEnumViewProps> = ({
   nameOfTable,
 }: {
   nameOfTable: string;
-}) {
-  const columns: string[] = await getColumnsFromTable("tools");
-  console.log(columns);
-  const rows = await getRowsFromTable("tools");
-  console.log(rows);
+}) => {
+  const [columns, setColumns] = useState<string[]>([]);
+  const [rows, setRows] = useState<string[][]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const attributes = await getColumnsFromTable(nameOfTable);
+        const lines = await getRowsFromTable(nameOfTable);
+
+        setColumns(attributes);
+        setRows(lines);
+      } catch (error) {
+        console.error("Could not generate the columns and rows.");
+      }
+    };
+
+    fetchData();
+  }, [nameOfTable]);
 
   return (
     <div>
@@ -23,9 +41,6 @@ export default async function TableEnumView({
         if (table.table_name !== nameOfTable) {
           return null;
         } else {
-          // const attributeElements = table.attributes.map((attribute) => (
-          //   <th key={attribute}>{attribute}</th>
-          // ));
           return (
             <div>
               <Table striped bordered hover variant="dark">
@@ -35,9 +50,8 @@ export default async function TableEnumView({
                       return <th key={column}>{column}</th>;
                     })}
                   </tr>
-                  <tr>Yo</tr>
                 </thead>
-                {/* <tbody>
+                <tbody>
                   {rows.map((row) => {
                     console.log(row);
                     return (
@@ -48,7 +62,7 @@ export default async function TableEnumView({
                       </tr>
                     );
                   })}
-                </tbody> */}
+                </tbody>
               </Table>
             </div>
           );
@@ -56,4 +70,6 @@ export default async function TableEnumView({
       })}
     </div>
   );
-}
+};
+
+export default TableEnumView;
