@@ -1,39 +1,54 @@
 import "../styles/TableComponent.css";
 import Table from "react-bootstrap/Table";
 import attr from "../virtualmodel/Tables";
-import { getRowsFromTable } from "../virtualmodel/FetchData";
+import {
+  getColumnsFromTable,
+  getRowsFromTable,
+} from "../virtualmodel/FetchData";
+import { useEffect } from "react";
 
-export default function TableEnumView({
+export default async function TableEnumView({
   nameOfTable,
 }: {
-  nameOfTable: string | undefined;
+  nameOfTable: string;
 }) {
-  const rows = getRowsFromTable("tools");
+  const columns: string[] = await getColumnsFromTable("tools");
+  console.log(columns);
+  const rows = await getRowsFromTable("tools");
   console.log(rows);
+
   return (
     <div>
       {attr.map((table) => {
         if (table.table_name !== nameOfTable) {
           return null;
         } else {
-          const attributeElements = table.attributes.map((attribute, index) => (
-            <th key={index}>{attribute}</th>
-          ));
-
-          const rowElements = rows.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {row.map((cell, cellIndex) => (
-                <td key={cellIndex}>{cell}</td>
-              ))}
-            </tr>
-          ));
+          // const attributeElements = table.attributes.map((attribute) => (
+          //   <th key={attribute}>{attribute}</th>
+          // ));
           return (
             <div>
               <Table striped bordered hover variant="dark">
                 <thead>
-                  <tr>{attributeElements}</tr>
+                  <tr>
+                    {columns.map((column) => {
+                      return <th key={column}>{column}</th>;
+                    })}
+                  </tr>
+                  <tr>Yo</tr>
                 </thead>
-                <tbody>{rowElements}</tbody>
+                {/* <tbody>
+                  {rows.map((row) => {
+                    console.log(row);
+                    return (
+                      <tr>
+                        {row.map((cell) => {
+                          return <td>{cell}</td>;
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody> */}
               </Table>
             </div>
           );
