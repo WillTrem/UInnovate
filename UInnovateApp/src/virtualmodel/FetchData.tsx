@@ -4,7 +4,7 @@ const data_url = "http://localhost:3000/tables";
 const schema_data_url = "http://localhost:3000/";
 
 const schemas: Schema[] = [];
-const datas = [];
+// const datas = [];
 
 // /tables with meta header provides the names of the schemas with their corresponding tables
 // so we can get the table names from there along with their schemas
@@ -41,7 +41,7 @@ class Table {
     this.rows.push(row);
   }
 }
-// export function fetchData() {
+
 await axios
   .get(data_url, { headers: { "Accept-Profile": "meta" } })
   .then((response) => {
@@ -61,20 +61,40 @@ await axios
     });
   });
 
-schemas.forEach((schema) => {
-  schema.tables.forEach((table: Table) => {
-    const table_url = schema_data_url + table.name;
-    console.log(table_url);
-    axios
-      .get(table_url, { headers: { "Accept-Profile": schema.name } })
-      .then((response) => {
-        response.data.forEach((data: string[]) => {
-          table.pushRow(data);
-          datas.push(data);
-        });
-      });
-  });
-});
-// }
+// Here we export a function that returns a Row[] depending on the table specified
+// We still need the schema[] for the Accept-Profile header for the GET request
 
-export default schemas;
+export function getRowsFromTable(tableName: string) {
+  const rows: string[][] = [];
+  schemas.forEach((schema: Schema) => {
+    const table_url = schema_data_url + tableName;
+    schema.tables.forEach((table: Table) => {
+      if (table.name === tableName) {
+        axios
+          .get(table_url, { headers: { "Accept-Profile": schema.name } })
+          .then((response) => {
+            response.data.forEach((data: string[]) => {
+              rows.push(data);
+            });
+          });
+      } else {
+        console.log("This table does not exist in the database.");
+      }
+    });
+  });
+  return rows;
+}
+// schemas.forEach((schema) => {
+//   schema.tables.forEach((table: Table) => {
+//     const table_url = schema_data_url + table.name;
+//     console.log(table_url);
+//     axios
+//       .get(table_url, { headers: { "Accept-Profile": schema.name } })
+//       .then((response) => {
+//         response.data.forEach((data: string[]) => {
+//           table.pushRow(data);
+//           datas.push(data);
+//         });
+//       });
+//   });
+// });

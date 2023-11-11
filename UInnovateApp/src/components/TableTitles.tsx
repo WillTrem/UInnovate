@@ -1,47 +1,68 @@
-import { Link } from "react-router-dom";
-import { Sidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Tab, Nav, Row, Col } from "react-bootstrap";
 import {
   useTableVisibility,
   TableVisibilityType,
 } from "../contexts/TableVisibilityContext";
 import { Table } from "../virtualmodel/Tables";
+import TableListView from "./TableListView";
+import TableEnumView from "./TableEnumView";
+import { useState, useEffect } from "react";
 
-export default function TableTitles({ attr }: { attr: Table[] }) {
+export default function TableTitles({
+  attr,
+  list_display,
+}: {
+  attr: Table[];
+  list_display: string;
+}) {
   const { tableVisibility } = useTableVisibility(); // Only use the visibility state
-
+  const [selectedTable, setSelectedTable] = useState(null);
   return (
-    <div>
-      {attr.map((table: Table) => {
-        // Check if the table is visible
-        if (tableVisibility[table.table_name as keyof TableVisibilityType]) {
-          return (
-            <>
-              <Sidebar>
-                <Menu>
-                  <MenuItem
-                    component={
-                      <Link
-                        to={`/app/${table.table_name}`}
-                        style={{
-                          fontSize: "25px",
-                          color: "black",
-                          textDecoration: "none",
-                        }}
-                      />
-                    }
-                  >
-                    {table.table_name}
-                  </MenuItem>
-                </Menu>
-              </Sidebar>
-            </>
-          );
-        }
-        // If table not visible, don't render anything (or customize as needed)
-        else {
-          return null;
-        }
-      })}
+    <div className="page-layout">
+      <Tab.Container
+        id="left-tabs-example"
+        activeKey={selectedTable}
+        onSelect={(key) => setSelectedTable(key)}
+      >
+        <Row>
+          <Col sm={3}>
+            <Nav variant="pills" className="flex-column">
+              {attr.map((table: Table) => {
+                if (
+                  tableVisibility[table.table_name as keyof TableVisibilityType]
+                ) {
+                  return (
+                    <Nav.Item key={table.table_name}>
+                      <Nav.Link eventKey={table.table_name}>
+                        {table.table_name}
+                      </Nav.Link>
+                    </Nav.Item>
+                  );
+                }
+              })}
+            </Nav>
+          </Col>
+          <Col sm={9}>
+            <Tab.Content>
+              {attr.map((table: Table) => {
+                return (
+                  <Tab.Pane eventKey={table.table_name}>
+                    {list_display === "list" ? (
+                      <TableListView
+                        nameoftable={table.table_name}
+                      ></TableListView>
+                    ) : (
+                      <TableEnumView
+                        nameOfTable={table.table_name}
+                      ></TableEnumView>
+                    )}
+                  </Tab.Pane>
+                );
+              })}
+            </Tab.Content>
+          </Col>
+        </Row>
+      </Tab.Container>
     </div>
   );
 }
