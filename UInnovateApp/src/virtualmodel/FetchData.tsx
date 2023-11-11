@@ -42,6 +42,10 @@ class Table {
   }
 }
 
+type Row = {
+  id: number;
+};
+
 await axios
   .get(data_url, { headers: { "Accept-Profile": "meta" } })
   .then((response) => {
@@ -64,25 +68,50 @@ await axios
 // Here we export a function that returns a Row[] depending on the table specified
 // We still need the schema[] for the Accept-Profile header for the GET request
 
-export function getRowsFromTable(tableName: string) {
+export async function getRowsFromTable(tableName: string) {
   const rows: string[][] = [];
-  schemas.forEach((schema: Schema) => {
+  for (const schema of schemas) {
     const table_url = schema_data_url + tableName;
-    schema.tables.forEach((table: Table) => {
+    for (const table of schema.tables) {
       if (table.name === tableName) {
-        axios
-          .get(table_url, { headers: { "Accept-Profile": schema.name } })
-          .then((response) => {
-            response.data.forEach((data: string[]) => {
-              rows.push(data);
-            });
+        try {
+          const response = await axios.get(table_url, {
+            headers: { "Accept-Profile": schema.name },
           });
-      } else {
-        console.log("This table does not exist in the database.");
+          response.data.forEach((data: Row) => {
+            const row = Object.values(data).map((value) => value.toString());
+            rows.push(row);
+          });
+        } catch (error) {
+          console.log("Error");
+        }
       }
-    });
-  });
+    }
+  }
   return rows;
+}
+
+// Function to fetch the columns from a specific table - appears in the same order
+// as they do when fetching data; this eases frontend rendering
+export async function getColumnsFromTable(tableName: string) {
+  let columns: string[] = [];
+  for (const schema of schemas) {
+    const table_url = schema_data_url + tableName;
+    for (const table of schema.tables) {
+      if (table.name === tableName) {
+        try {
+          const response = await axios.get(table_url, {
+            headers: { "Accept-Profile": schema.name },
+          });
+          const attributes = Object.keys(response.data[0]);
+          columns = attributes;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  }
+  return columns;
 }
 // schemas.forEach((schema) => {
 //   schema.tables.forEach((table: Table) => {
