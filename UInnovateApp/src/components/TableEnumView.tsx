@@ -37,27 +37,26 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
 
   return (
     <div>
-      {attr.map((table) => {
+      {attr.map((table, tableIdx) => {
         if (table.table_name !== nameOfTable) {
           return null;
         } else {
           return (
-            <div>
+            <div key={table.table_name + tableIdx}>
               <Table striped bordered hover variant="dark">
                 <thead>
                   <tr>
-                    {columns.map((column) => {
-                      return <th key={column}>{column}</th>;
+                    {columns.map((column, colIdx) => {
+                      return <th key={column + colIdx}>{column}</th>;
                     })}
                   </tr>
                 </thead>
                 <tbody>
-                  {rows.map((row) => {
-                    console.log(row);
+                  {rows.map((row, rowIdx) => {
                     return (
-                      <tr>
-                        {row.map((cell) => {
-                          return <td>{cell}</td>;
+                      <tr key={rowIdx}>
+                        {row.map((cell, cellIdx) => {
+                          return <td key={cell + cellIdx}>{cell}</td>;
                         })}
                       </tr>
                     );

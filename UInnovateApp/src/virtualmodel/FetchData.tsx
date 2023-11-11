@@ -89,7 +89,7 @@ export async function getRowsFromTable(tableName: string) {
             rows.push(row);
           });
         } catch (error) {
-          console.log("Could not fetch the rows of the desired table.");
+          console.error("Could not fetch the rows of the desired table.");
         }
       }
     }

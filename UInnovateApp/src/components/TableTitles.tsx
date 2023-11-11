@@ -46,7 +46,7 @@ export default function TableTitles({
             <Tab.Content>
               {attr.map((table: Table) => {
                 return (
-                  <Tab.Pane eventKey={table.table_name}>
+                  <Tab.Pane key={table.table_name} eventKey={table.table_name}>
                     {list_display === "list" ? (
                       <TableListView
                         nameoftable={table.table_name}
