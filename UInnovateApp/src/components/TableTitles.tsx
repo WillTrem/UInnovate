@@ -22,7 +22,11 @@ export default function TableTitles({
       <Tab.Container
         id="left-tabs-example"
         activeKey={selectedTable}
-        onSelect={(key) => setSelectedTable(key)}
+        onSelect={(key) => {
+          setSelectedTable((prevSelectedTable) =>
+            prevSelectedTable === key ? null : key
+          );
+        }}
       >
         <Row>
           <Col sm={3}>

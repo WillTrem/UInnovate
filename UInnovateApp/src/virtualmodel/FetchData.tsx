@@ -71,7 +71,7 @@ await axios
       }
     });
   });
-
+console.log(schemas)
 // Here we export a function that returns a String[][] depending on the table specified
 // We still need the schema[] for the Accept-Profile header for the GET request
 export async function getRowsFromTable(tableName: string) {
@@ -89,11 +89,12 @@ export async function getRowsFromTable(tableName: string) {
             rows.push(row);
           });
         } catch (error) {
-          console.log("Could not fetch the rows of the desired table.");
+          console.error("Could not fetch the rows of the desired table.");
         }
       }
     }
   }
+  console.log(rows)
   return rows;
 }
 

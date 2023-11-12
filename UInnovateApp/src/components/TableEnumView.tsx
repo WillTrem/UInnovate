@@ -53,7 +53,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
                 </thead>
                 <tbody>
                   {rows.map((row) => {
-                    console.log(row);
+                    //console.log(row);
                     return (
                       <tr>
                         {row.map((cell) => {
