@@ -33,9 +33,10 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
 
         // If a table was selected as enum type, filter through the attributes
         // to only get columns indicating a "type"
-        const filteredAttributes = attributes.filter(
-          (columnName: string) =>
-            columnName.includes("type") || columnName.includes("name")
+        const filteredAttributes = attributes.filter((columnName: string) =>
+          // columnName.includes("type") ||
+          // columnName.includes("id") ||
+          columnName.includes("name")
         );
 
         // To display only the column of that specific attribute, we need
@@ -96,13 +97,19 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
                       </tr>
                     );
                   })}
-                  <tr key="addBtn">
-                    <td>
-                      <button onClick={() => handleAddRowClick()}>+</button>
-                    </td>
-                  </tr>
                 </tbody>
               </Table>
+              <div
+                className="container"
+                style={{ display: "flex", justifyContent: "center" }}
+              >
+                <button
+                  onClick={() => handleAddRowClick()}
+                  style={{ display: "flex" }}
+                >
+                  +
+                </button>
+              </div>
               {isPopupVisible && (
                 <AddRowPopup
                   onClose={() => setIsPopupVisible(false)}

@@ -6,6 +6,7 @@ let table_url = "http://localhost:300/";
 // This function will add a "type" to an enum type table
 export function addTypeToEnum(tableName: string, values: string[]) {
   // First we have to find under which schema the table appears
+  // We're importing schemas from FetchData for this purpose
   let schema_name = "";
   for (const schema of schemas) {
     for (const table of schema.tables) {
