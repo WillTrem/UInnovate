@@ -1,7 +1,18 @@
 import axios from "axios";
 
 // Definining Table Type
+interface DbTable {
+  schema: string;
+  table: string;
+}
+interface DbColumn {
+  schema: string;
+  table: string;
+  column: string;
+}
+
 interface Table {
+  schema: string;
   table_name: string;
   attributes: string[];
 }
@@ -15,9 +26,13 @@ const attr_url = "http://localhost:3000/columns";
 await axios
   .get(table_url, { headers: { "Accept-Profile": "meta" } })
   .then((response) => {
-    response.data.forEach((data) => {
+    response.data.forEach((data: DbTable) => {
       tables.push(data.table);
-      attr.push({ table_name: data.table, attributes: [] });
+      attr.push({
+        schema: data.schema,
+        table_name: data.table,
+        attributes: [],
+      });
     });
   });
 
@@ -25,7 +40,7 @@ await axios
 await axios
   .get(attr_url, { headers: { "Accept-Profile": "meta" } })
   .then((response) => {
-    response.data.forEach((data) => {
+    response.data.forEach((data: DbColumn) => {
       for (let i = 0; i < attr.length; i++) {
         if (attr[i].table_name === data.table) {
           attr[i].attributes.push(data.column);
