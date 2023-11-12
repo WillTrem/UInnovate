@@ -49,7 +49,7 @@ export default function TableTitles({
                   <Tab.Pane key={table.table_name} eventKey={table.table_name}>
                     {list_display === "list" ? (
                       <TableListView
-                        nameoftable={table.table_name}
+                        nameOfTable={table.table_name}
                       ></TableListView>
                     ) : (
                       <TableEnumView
