@@ -20,7 +20,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
   const [columns, setColumns] = useState<string[]>([]);
   const [rows, setRows] = useState<string[][]>([]);
   const [originalColumns, setOriginalColumns] = useState<string[]>([]);
-  const [originalRows, setOriginalRows] = useState<string[][]>([]);
+  // const [originalRows, setOriginalRows] = useState<string[][]>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
         const attributes = await getColumnsFromTable(nameOfTable);
         const lines = await getRowsFromTable(nameOfTable);
         setOriginalColumns(attributes);
-        setOriginalRows(lines);
+        // setOriginalRows(lines);
 
         // If a table was selected as enum type, filter through the attributes
         // to only get columns indicating a "type"
@@ -113,8 +113,8 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
               {isPopupVisible && (
                 <AddRowPopup
                   onClose={() => setIsPopupVisible(false)}
+                  table={table.table_name}
                   columns={originalColumns}
-                  rows={originalRows}
                 />
               )}
             </div>

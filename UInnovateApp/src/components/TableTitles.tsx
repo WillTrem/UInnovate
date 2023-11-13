@@ -6,7 +6,6 @@ import {
 import { Table } from "../virtualmodel/Tables";
 import TableListView from "./TableListView";
 import TableEnumView from "./TableEnumView";
-import { useState, useEffect } from "react";
 
 export default function TableTitles({
   attr,
@@ -18,8 +17,8 @@ export default function TableTitles({
   const { tableVisibility } = useTableVisibility();
 
   return (
-    <div className="page-layout">
-      <Tab.Container id="left-tabs-example">
+    <div>
+      <Tab.Container>
         <Row>
           <Col sm={3}>
             <Nav variant="pills" className="flex-column">

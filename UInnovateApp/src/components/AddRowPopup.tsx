@@ -1,22 +1,26 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import "../styles/AddEnumModal.css";
+import { useState } from "react";
+import { addTypeToEnum } from "../virtualmodel/AddEnumType";
 
 const AddRowPopup = ({
   onClose,
+  table,
   columns,
-  rows,
 }: {
   onClose: () => void;
+  table: string;
   columns: string[];
-  rows: string[][];
 }) => {
-  const handleFormSubmit = () => {
-    onClose();
+  const [inputValues, setInputValues] = useState<{ [key: string]: string }>();
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValues({ ...inputValues, [e.target.name]: e.target.value });
   };
 
-  function alreadyExists(rowId: string) {
-    return true;
-  }
+  const handleFormSubmit = () => {
+    addTypeToEnum(table, inputValues);
+  };
 
   const style = {
     position: "absolute",
@@ -63,10 +67,16 @@ const AddRowPopup = ({
         <div className="addEnum">
           {columns.map((column: string) => {
             return (
-              <div style={{ marginBottom: 10 }}>
-                <label style={labelStyle}>
+              <div key={column + "Div"} style={{ marginBottom: 10 }}>
+                <label key={column} style={labelStyle}>
                   {column}
-                  <input type="text" name={column} style={inputStyle} />
+                  <input
+                    key={column + "Input"}
+                    type="text"
+                    name={column}
+                    style={inputStyle}
+                    onChange={handleInputChange}
+                  />
                 </label>
               </div>
             );

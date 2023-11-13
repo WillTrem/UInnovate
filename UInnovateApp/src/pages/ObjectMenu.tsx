@@ -1,11 +1,11 @@
 import { NavBar } from "../components/NavBar";
 import TableTitles from "../components/TableTitles";
-import { useTableVisibility } from "../contexts/TableVisibilityContext";
-import { useState, useEffect } from "react";
+// import { useTableVisibility } from "../contexts/TableVisibilityContext";
+import { useState } from "react";
 import attr from "../virtualmodel/Tables";
 
 export function ObjectMenu() {
-  const { tableVisibility } = useTableVisibility();
+  // const { tableVisibility } = useTableVisibility();
   const [view, SetView] = useState("list");
 
   function toggleViewStatus() {
@@ -22,18 +22,7 @@ export function ObjectMenu() {
         <button onClick={() => toggleViewStatus()}>View status: {view}</button>
       </div>
       <div>
-        {Object.keys(tableVisibility).map((tableName) => {
-          if (tableVisibility[tableName]) {
-            return (
-              <TableTitles
-                key={tableName}
-                attr={attr.filter((table) => table.table_name === tableName)}
-                list_display={view}
-              />
-            );
-          }
-          return null;
-        })}
+        <TableTitles attr={attr} list_display={view} />
       </div>
     </>
   );
