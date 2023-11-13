@@ -3,11 +3,12 @@ import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { BsFillWrenchAdjustableCircleFill } from "react-icons/bs";
 import SchemaSelector from "./Schema/SchemaSelector";
-import attr from "../virtualmodel/Tables";
 import DisplayType from "./Schema/DisplayType";
 
-export function NavBar() {
-  const schemas = [...new Set(attr.map((obj) => obj.schema))];
+interface NavBarProps {
+  includeSchemaFilter: boolean;
+}
+export function NavBar({ includeSchemaFilter = true }: NavBarProps) {
   return (
     <Navbar
       bg="dark"
@@ -27,9 +28,14 @@ export function NavBar() {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">
-          <Nav className="justify-content flex-grow-1 pe-3">
+          <Nav
+            className={
+              includeSchemaFilter
+                ? "justify-content flex-grow-1 pe-3"
+                : "d-none"
+            }
+          >
             <SchemaSelector
-              schemaNameList={schemas}
               displayType={DisplayType.Nav} //DisplayType = NavDropdown | NavPills | Nav
             ></SchemaSelector>
           </Nav>

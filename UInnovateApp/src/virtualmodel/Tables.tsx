@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Table } from "./ITable";
 
 // Definining Table Type
 interface DbTable {
@@ -9,12 +10,6 @@ interface DbColumn {
   schema: string;
   table: string;
   column: string;
-}
-
-interface Table {
-  schema: string;
-  table_name: string;
-  attributes: string[];
 }
 
 const tables: string[] = [];

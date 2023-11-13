@@ -1,37 +1,43 @@
-import { useState } from "react";
 import { Nav } from "react-bootstrap";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import DisplayType from "./DisplayType";
+import { updateSelectedSchema } from "../../redux/SchemaSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import attr from "../../virtualmodel/Tables";
 
 interface SchemaSelectorProps {
   displayType?: DisplayType;
-  schemaNameList: string[];
 }
 
 const SchemaSelector = ({
   displayType = DisplayType.NavDropdown,
-  schemaNameList = ["no schema"],
 }: SchemaSelectorProps) => {
-  const [selectedSchema, setSelectedSchema] = useState(schemaNameList[0]);
+  const schemas = [...new Set(attr.map((obj) => obj.schema))];
+
+  const selectedSchema: string = useSelector(
+    (state: RootState) => state.schema.value
+  );
+  const dispatch = useDispatch();
+
   const handleSelect = (
     eventKey: string | null,
     e: React.SyntheticEvent<unknown, Event>
   ) => {
-    console.log(e);
-    const val = eventKey || schemaNameList[0];
+    const val = eventKey || "no schema";
     e.preventDefault();
-    setSelectedSchema(val);
+    dispatch(updateSelectedSchema(val));
   };
   if (displayType === DisplayType.NavDropdown)
     return (
       <>
         <NavDropdown title={selectedSchema} id="collapsible-nav-dropdown">
-          {schemaNameList.map((item) => (
+          {schemas.map((item) => (
             <NavDropdown.Item
               href="#"
               key={item}
               onClick={() => {
-                setSelectedSchema(item);
+                dispatch(updateSelectedSchema(item));
               }}
             >
               {item}
@@ -50,7 +56,7 @@ const SchemaSelector = ({
           className="justify-content-left"
           activeKey={selectedSchema}
         >
-          {schemaNameList.map((item) => (
+          {schemas.map((item) => (
             <Nav.Item title={item} key={item}>
               <Nav.Link eventKey={item}>{item}</Nav.Link>
             </Nav.Item>
@@ -67,7 +73,7 @@ const SchemaSelector = ({
           className="justify-content-left"
           activeKey={selectedSchema}
         >
-          {schemaNameList.map((item: string) => (
+          {schemas.map((item: string) => (
             <Nav.Item title={item} key={item}>
               <Nav.Link eventKey={item}>{item}</Nav.Link>
             </Nav.Item>
