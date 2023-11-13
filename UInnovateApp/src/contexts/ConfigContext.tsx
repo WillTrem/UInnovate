@@ -43,7 +43,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
 
 	useEffect(() => {
 		fetchConfig(); // Fetch configuration on 'ConfigProvider' component mount
-	}, []);
+	}, []); //if they have val already dont apply the default value; else use default value
 
 	const updateConfig = (newValue: ConfigValueType) => {
 		let found = false;
