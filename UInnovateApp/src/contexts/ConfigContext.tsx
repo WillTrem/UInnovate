@@ -1,57 +1,82 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import axios from "axios";
 
 export type ConfigValueType = {
-	id?: number,
-	property: string,
-	table?: string,
-	column?: string,
-	value: string
-}
-export type ConfigType = Array<ConfigValueType> | undefined
+	id?: number;
+	property: string;
+	table?: string;
+	column?: string;
+	value: string;
+};
+export type ConfigType = Array<ConfigValueType> | undefined;
 
 interface ConfigContextType {
-	config: ConfigType,
-	updateConfig: (newValue: ConfigValueType)=>void;
+	config: ConfigType;
+	updateConfig: (newValue: ConfigValueType) => void;
+	fetchConfig: () => void; // Fetch configuration
 }
 
-const ConfigContext = createContext<ConfigContextType>({config: [], updateConfig:() => {}});
+const ConfigContext = createContext<ConfigContextType>({
+	config: [],
+	updateConfig: () => {},
+	fetchConfig: () => {}, // Initialize fetchConfig method
+});
+type ConfigProviderProps = { children: React.ReactNode };
 
-type ConfigProviderProps = {children: React.ReactNode};
+export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
+	const [config, setConfig] = useState<ConfigType>([]);
 
-export const ConfigProvider: React.FC<ConfigProviderProps> = ({children}) => {
-	// TODO : Fetch the config from the DB via PostgREST API call
-	const [config, setConfig] = useState<ConfigType>([])
+	const fetchConfig = async () => {
+		try {
+			const response = await axios.get<ConfigType>(
+				"http://localhost:3000/appconfig_values"
+			);
+			setConfig(response.data);
+		} catch (error) {
+			console.error("Error fetching configuration:", error);
+		}
+	};
 
-	const updateConfig = (newValue: ConfigValueType ) => {
+	useEffect(() => {
+		fetchConfig(); // Fetch configuration on 'ConfigProvider' component mount
+	}, []);
+
+	const updateConfig = (newValue: ConfigValueType) => {
 		let found = false;
 		const newConfig: ConfigType = config?.map((value) => {
-			if(value.property === newValue.property && value.table === newValue.table && value.column === newValue.column){
+			if (
+				value.property === newValue.property &&
+				value.table === newValue.table &&
+				value.column === newValue.column
+			) {
 				found = true;
-				return {...value, ...newValue};
+				return { ...value, ...newValue };
 			}
 			return value;
 		});
-		if(!found){
+		if (!found) {
 			newConfig?.push(newValue);
 		}
 		setConfig(newConfig);
-	}
+	};
 
 	useEffect(() => {
-	console.log("CONFIG");
-	console.log(config);
-	}, [config])
-	
-	return <ConfigContext.Provider value={{config, updateConfig}}>
-		{children}
+		console.log("CONFIG");
+		console.log(config);
+	}, [config]);
+
+	return (
+		<ConfigContext.Provider value={{ config, updateConfig, fetchConfig }}>
+			{children}
 		</ConfigContext.Provider>
-}
+	);
+};
 
 export const useConfig = (): ConfigContextType => {
 	const configContext = useContext(ConfigContext);
-	
-	if(!configContext){
-		throw new Error("useTables must be used within a TablesContextProvider.")
+
+	if (!configContext) {
+		throw new Error("useTables must be used within a TablesContextProvider.");
 	}
 	return configContext;
-}
+};

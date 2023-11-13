@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
 
-
 export const DisplayTab = () => {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();
 
@@ -27,26 +26,27 @@ export const DisplayTab = () => {
 				<Row>
 					<Col sm={3}>
 						<h4>Tables</h4>
-						<Nav variant='pills' className="flex-column">
+						<Nav variant='pills' className='flex-column'>
 							{Object.keys(tableVisibility).map((tableName) => {
-							  return (
-							  <Nav.Item key={tableName}>
-								<Nav.Link eventKey={tableName}>{tableName}</Nav.Link>
-							  </Nav.Item>)
+								return (
+									<Nav.Item key={tableName}>
+										<Nav.Link eventKey={tableName}>{tableName}</Nav.Link>
+									</Nav.Item>
+								);
 							})}
 						</Nav>
 					</Col>
-					<Col sm = {9}>
-					<Tab.Content>
-						{tableItems.map((tableItem) => {
-							const tableName = tableItem.props.tableName;
-						  return(
-							<Tab.Pane key = {tableName} eventKey={tableName}>
-								{tableItem}
-							</Tab.Pane>
-						  )
-						})}
-					</Tab.Content>
+					<Col sm={9}>
+						<Tab.Content>
+							{tableItems.map((tableItem) => {
+								const tableName = tableItem.props.tableName;
+								return (
+									<Tab.Pane key={tableName} eventKey={tableName}>
+										{tableItem}
+									</Tab.Pane>
+								);
+							})}
+						</Tab.Content>
 					</Col>
 				</Row>
 			</Tab.Container>

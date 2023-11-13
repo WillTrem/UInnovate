@@ -1,3 +1,5 @@
 .env
 database/refresh_log.txt
 /UInnovateApp/coverage
+/node_modules
+```
