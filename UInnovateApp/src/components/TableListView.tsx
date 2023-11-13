@@ -1,4 +1,4 @@
-import "./TableComponent.css";
+import "../styles/TableComponent.css";
 import attr from '../virtualmodel/Tables';
 import Table from 'react-bootstrap/Table';
 
