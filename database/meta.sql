@@ -75,7 +75,7 @@ GRANT ALL ON meta.appconfig_values TO web_anon;
 
 
 -- EXPORT FUNCTIONALITY
-CREATE OR REPLACE FUNCTION export_appconfig_to_json()
+CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
 RETURNS json
 LANGUAGE plpgsql
 AS $$
