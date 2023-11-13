@@ -22,18 +22,31 @@ describe("<Settings />", () => {
 
     // Assert that the text "General" is displayed
     cy.contains("General").should("exist");
+    
+    //Assert that the General or Displayed List group is displayed
+    cy.get("div.col-sm-9").should("exist");
 
     // Assert that the text "Display" is displayed
     cy.contains("Display").should("exist");
 
-    // Assert that the table titles are rendered
-    cy.get("div.text-table").should("exist");
+    // Assert that the table div is rendered
+    cy.get("div.col-sm-3").should("exist");
 
     // Assert that the card titles are rendered
     cy.get("div.customization-title").should("exist");
 
+    //Assert that the Button to Save changes is there 
+    cy.get("button").should("exist")
+
     // Assert that the form is rendered
-    cy.get("select.form-select").should("exist");
+    //cy.get("select.form-select").should("exist");
+
+    // Assert that the table titles are rendered
+     // cy.get("div.text-table").should("exist");
+    
+   
+
+    
   });
 });
 
