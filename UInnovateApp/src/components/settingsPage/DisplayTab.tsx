@@ -28,10 +28,10 @@ const DisplayTab = () => {
 					<Col sm={3}>
 						<h4>Tables</h4>
 						<Nav variant='pills' className="flex-column">
-							{Object.keys(tableVisibility).map((tableName) => {
+							{tables?.map(({ table_name }) => {
 							  return (
-									<Nav.Item key={tableName} data-testid="table-setting-nav">
-										<Nav.Link eventKey={tableName}>{tableName}</Nav.Link>
+								  <Nav.Item key={table_name} data-testid="table-setting-nav">
+									  <Nav.Link eventKey={table_name}>{table_name}</Nav.Link>
 									</Nav.Item>)		
 							})}
 						</Nav>
