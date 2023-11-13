@@ -48,7 +48,7 @@ export const TableItem: React.FC<TableItemProps> = ({
 			...prevVisibility,
 			[tableName]: !isVisible,
 		}));
-		updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString())
+		updateTableConfig(ConfigProperty.TABLE_VISIBLE, (!isVisible).toString())
 	};
 
 	const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {

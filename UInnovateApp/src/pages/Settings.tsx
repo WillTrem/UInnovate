@@ -1,6 +1,6 @@
 import { NavBar } from "../components/NavBar";
 import { GeneralTab } from "../components/settingsPage/GeneralTab";
-import { DisplayTab } from "../components/settingsPage/DisplayTab";
+import DisplayTab from "../components/settingsPage/DisplayTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
