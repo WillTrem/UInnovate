@@ -2,7 +2,7 @@ import { NavBar } from "../components/NavBar";
 export function Home() {
   return (
     <>
-      <NavBar includeSchemaFilter={true} />
+      <NavBar />
       <div
         style={{ textAlign: "center", fontSize: "60px", paddingTop: "40px" }}
       >

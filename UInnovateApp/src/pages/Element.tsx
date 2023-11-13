@@ -14,7 +14,7 @@ export function Element() {
   );
   return (
     <>
-      <NavBar includeSchemaFilter={true} />
+      <NavBar />
       <div
         style={{
           textAlign: "center",
