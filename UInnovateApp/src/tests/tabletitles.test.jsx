@@ -1,9 +1,10 @@
 // TableTitles.test.jsx
-import {describe, it} from 'vitest'
+import {describe, it, vi} from 'vitest'
 import { MemoryRouter } from 'react-router-dom'; // To wrap the component with a router context
 import TableTitles from '../components/TableTitles';
 import TestRenderer from 'react-test-renderer'
 
+vi.mock('axios');
 describe('renders table names as links', () => {
     const sampleAttr = [
         { table_name: 'Table1' },

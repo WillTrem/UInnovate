@@ -1,9 +1,14 @@
 import axios from "axios";
 
 // Definining Table Type
-interface Table {
+export interface Table {
   table_name: string;
   attributes: string[];
+}
+
+export enum TableDisplayType { 
+  listView = "list",
+  enumView = "enum"
 }
 
 const tables: string[] = [];

@@ -51,25 +51,27 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
 );
 -- Creating the application config values table
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
-	id serial PRIMARY KEY,
-    property TEXT,
-	value TEXT NOT NULL,
+	id SERIAL PRIMARY KEY,
 	"table" TEXT,
 	"column" TEXT,
+    property TEXT,
+	value TEXT NOT NULL,
 	FOREIGN KEY (property) 
 	REFERENCES meta.appconfig_properties(name)
 	ON DELETE CASCADE 
-	ON UPDATE CASCADE
+	ON UPDATE CASCADE,
+    UNIQUE NULLS NOT DISTINCT (property, "table", "column")
 );
 
 -- USAGE 
 GRANT USAGE ON SCHEMA meta TO web_anon;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
 
 GRANT SELECT ON meta.schemas TO web_anon;
 GRANT SELECT ON meta.tables TO web_anon;
 GRANT SELECT ON meta.columns TO web_anon;
-GRANT SELECT ON meta.appconfig_properties TO web_anon;
-GRANT SELECT ON meta.appconfig_values TO web_anon;
+GRANT ALL ON meta.appconfig_properties TO web_anon;
+GRANT ALL ON meta.appconfig_values TO web_anon;
 
 
 -- EXPORT FUNCTIONALITY
