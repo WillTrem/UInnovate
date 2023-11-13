@@ -72,3 +72,23 @@ GRANT SELECT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT ON meta.appconfig_values TO web_anon;
 
 
+-- EXPORT FUNCTIONALITY
+CREATE OR REPLACE FUNCTION export_appconfig_to_json()
+RETURNS json
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    result json;
+BEGIN
+    SELECT json_agg(row_to_json(t))
+    INTO result
+    FROM (
+        SELECT id, "table", "column", property, value
+        FROM meta.appconfig_values
+    ) t;
+
+    RETURN result;
+END;
+$$;
+
+
