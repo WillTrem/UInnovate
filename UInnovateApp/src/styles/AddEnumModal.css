@@ -1,0 +1,8 @@
+div.addEnum {
+  display: grid;
+  grid-template-columns: max-content;
+  grid-gap: 5px;
+}
+div.addEnum label {
+  text-align: right;
+}

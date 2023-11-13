@@ -6,7 +6,6 @@ import {
 import { Table } from "../virtualmodel/Tables";
 import TableListView from "./TableListView";
 import TableEnumView from "./TableEnumView";
-import { useState, useEffect } from "react";
 
 export default function TableTitles({
   attr,
@@ -15,19 +14,11 @@ export default function TableTitles({
   attr: Table[];
   list_display: string;
 }) {
-  const { tableVisibility } = useTableVisibility(); // Only use the visibility state
-  const [selectedTable, setSelectedTable] = useState(null);
+  const { tableVisibility } = useTableVisibility();
+
   return (
-    <div className="page-layout">
-      <Tab.Container
-        id="left-tabs-example"
-        activeKey={selectedTable}
-        onSelect={(key) => {
-          setSelectedTable((prevSelectedTable) =>
-            prevSelectedTable === key ? null : key
-          );
-        }}
-      >
+    <div>
+      <Tab.Container>
         <Row>
           <Col sm={3}>
             <Nav variant="pills" className="flex-column">
@@ -48,21 +39,19 @@ export default function TableTitles({
           </Col>
           <Col sm={9}>
             <Tab.Content>
-              {attr.map((table: Table) => {
-                return (
-                  <Tab.Pane eventKey={table.table_name}>
-                    {list_display === "list" ? (
-                      <TableListView
-                        nameoftable={table.table_name}
-                      ></TableListView>
-                    ) : (
-                      <TableEnumView
-                        nameOfTable={table.table_name}
-                      ></TableEnumView>
-                    )}
-                  </Tab.Pane>
-                );
-              })}
+              {attr.map((table: Table) => (
+                <Tab.Pane key={table.table_name} eventKey={table.table_name}>
+                  {list_display === "list" ? (
+                    <TableListView
+                      nameOfTable={table.table_name}
+                    ></TableListView>
+                  ) : (
+                    <TableEnumView
+                      nameOfTable={table.table_name}
+                    ></TableEnumView>
+                  )}
+                </Tab.Pane>
+              ))}
             </Tab.Content>
           </Col>
         </Row>
