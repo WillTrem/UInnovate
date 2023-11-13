@@ -229,6 +229,60 @@
 				"url": "localhost:3000/rentals"
 			},
 			"response": []
+		},
+		{
+			"name": "appconfig_values",
+			"id": "ea175711-29e7-4b75-8c46-b89ed1b6b2c3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Profile",
+						"value": "meta",
+						"type": "text"
+					},
+					{
+						"key": "Prefer",
+						"value": "resolution=merge-duplicates",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"tools\",\n    \"value\": \"true\"\n  },\n  {\n    \"property\": \"table_view\",\n    \"table\": \"tools\",\n    \"value\": \"list\"\n  },\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"customers\",\n    \"value\": \"true\"\n  }\n] ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/appconfig_values?columns=property,table,column,value&on_conflict=property,table,column",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"appconfig_values"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "property,table,column,value"
+						},
+						{
+							"key": "on_conflict",
+							"value": "property,table,column"
+						}
+					]
+				},
+				"description": "endpoint for appconfig_values table (the properties we change in settings show up, the unchanged ones do not)"
+			},
+			"response": []
 		}
 	]
 }
