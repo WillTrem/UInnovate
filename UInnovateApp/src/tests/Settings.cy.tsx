@@ -2,13 +2,16 @@
 import { mount } from "@cypress/react18";
 import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
+import { TablesContextProvider } from "../contexts/TablesContext";
 
 describe("<Settings />", () => {
   it("mounts and displays the Settings page", () => {
     mount(
       <MemoryRouter>
-        <Settings />
-      </MemoryRouter>
+                <TablesContextProvider>
+                    <Settings />
+                </TablesContextProvider>
+            </MemoryRouter>
     );
 
     // Assert that the NavBar is rendered

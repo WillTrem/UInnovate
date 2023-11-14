@@ -1,6 +1,5 @@
 import "../styles/TableComponent.css";
 import Table from "react-bootstrap/Table";
-import Table from "react-bootstrap/Table";
 import attr from "../virtualmodel/Tables";
 import {
   getColumnsFromTable,
