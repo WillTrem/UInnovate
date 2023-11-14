@@ -28,12 +28,11 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
 
 	const fetchConfig = async () => {
 		try {
-			const response = await axios.post<ConfigType>(
+			const response = await axios.get<ConfigType>(
 				"http://localhost:3000/appconfig_values?columns=property,table,column,value&on_conflict=property,table,column",
 				{
 					headers: {
-						"Content-Profile": "meta",
-						Prefer: "resolution=merge-duplicates",
+						"Accept-Profile": "meta",
 					},
 				}
 			);

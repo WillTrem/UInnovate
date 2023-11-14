@@ -8,7 +8,8 @@ export function updateAppConfigValues(config: ConfigType) {
 	axios
 		.post(appconfig_valuesUpsertURL, config, {
 			params: {
-				columns: "property,table,column,value",
+				columns:
+					"property,table,column,value, on_conflict=property,table,column",
 			},
 			headers: {
 				"Content-Type": "application/json",

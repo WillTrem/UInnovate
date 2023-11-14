@@ -18,13 +18,15 @@ export async function fetchDefaultAppConfigValues(
 			{
 				headers: {
 					"Content-Type": "application/json",
-					"Content-Profile": "meta",
+					"Accept-Profile": "meta",
 				},
 			}
 		);
 
 		const defaultValues = response.data;
-
+		//Solution 1 (better):Iterate over all of the tables and then columns and check if theres an entry for it in the config ; configwdefaults that would have default values as well as modified values
+		//Sol 2: from def value, initialize global state from configcontext, and apply for each element (object view),
+		//mergedCnfig needs to be deleted and replaced with Solution 1
 		const mergedConfig: ConfigType = defaultValues.map((defaultItem) => {
 			const existingItem = defaultConfigValue?.find(
 				(ec) => ec.property === defaultItem.name
