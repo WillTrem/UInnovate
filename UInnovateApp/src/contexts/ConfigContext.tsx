@@ -14,7 +14,7 @@ interface ConfigContextType {
 	updateConfig: (newValue: ConfigValueType)=>void;
 }
 
-const ConfigContext = createContext<ConfigContextType>({config: [], updateConfig:() => {}});
+const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
 type ConfigProviderProps = {children: React.ReactNode};
 

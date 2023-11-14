@@ -3,6 +3,7 @@ import TestRenderer from "react-test-renderer";
 import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
 import { TablesContextProvider } from "../contexts/TablesContext";
+import { ConfigProvider } from "../contexts/ConfigContext";
 
 vi.mock("axios");
 describe("Settings.tsx", () => {
@@ -10,7 +11,9 @@ describe("Settings.tsx", () => {
         const settings = TestRenderer.create(
             <MemoryRouter>
                 <TablesContextProvider>
-                    <Settings />
+                    <ConfigProvider>
+                        <Settings />
+                    </ConfigProvider>
                 </TablesContextProvider>
             </MemoryRouter>
         ).toJSON;
