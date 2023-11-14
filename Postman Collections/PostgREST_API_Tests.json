@@ -304,7 +304,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"tools\",\n    \"value\": \"true\"\n  },\n  {\n    \"property\": \"table_view\",\n    \"table\": \"tools\",\n    \"value\": \"list\"\n  },\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"customers\",\n    \"value\": \"true\"\n  }\n] ",
+					"raw": "[\n] ",
 					"options": {
 						"raw": {
 							"language": "json"
