@@ -36,27 +36,27 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     fetchData();
   }, [nameOfTable]);
-  const [openPanel, setOpenPanel] = useState(false);
-  const [currentRow, setCurrentRow] = useState<string[]>([]);
+    const [openPanel, setOpenPanel] = useState(false);
+    const [currentRow, setCurrentRow] = useState<string[]>([]);
 
-  // Function to save the current row
-  const handleOpenPanel = (row: string[]) => {
-    setCurrentRow(row);
-    setOpenPanel(true);
-  };
+    // Function to save the current row
+    const handleOpenPanel = (row: string[]) => {
+      setCurrentRow(row);
+      setOpenPanel(true);
+    };
   return (
     <div>
-      {attr.map((table) => {
-        if (table.table_name !== nameoftable) {
+      {attr.map((table, tableIdx) => {
+        if (table.table_name !== nameOfTable) {
           return null;
         } else {
           return (
-            <div>
+            <div key={table.table_name + tableIdx}>
               <Table striped bordered hover variant="dark">
                 <thead>
                   <tr>
-                    {columns.map((column) => {
-                      return <th key={column}>{column}</th>;
+                    {columns.map((column, colIdx) => {
+                      return <th key={column + colIdx}>{column}</th>;
                     })}
                   </tr>
                 </thead>
@@ -65,14 +65,13 @@ const TableListView: React.FC<TableListViewProps> = ({
                     return (
                       <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
                         {row.map((cell, cellIdx) => {
-                           return <td key={cell + cellIdx}>{cell}</td>;
+                          return <td key={cell + cellIdx}>{cell}</td>;
                         })}
                       </tr>
                     );
                   })}
                 </tbody>
               </Table>
-
               <SlidingPanel
                 type={"right"}
                 isOpen={openPanel}
@@ -85,10 +84,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                   <form>
                     <div className="form-group">
                       <label>
-                        {columns.map((column) => {
+                        {columns.map((column, colIdx) => {
                           return (
                             <div className="row-details">
-                              <label key={column}>{column}</label>
+                              <label key={column + colIdx}>{column}</label>
                               <input
                                 type="text"
                                 value={currentRow[columns.indexOf(column)]}
