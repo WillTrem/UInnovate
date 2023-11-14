@@ -5,16 +5,16 @@ import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
+import { useTables } from "../../contexts/TablesContext";
 
-export const DisplayTab = () => {
+const DisplayTab = () => {
 	const { tableVisibility, setTableVisibility } = useTableVisibility();
-
-	// Map over the table names and render TableItem components
-	const tableItems = Object.keys(tableVisibility).map((tableName) => (
+	const tables = useTables();
+	const tableItems = tables?.map(({ table_name }) => (
 		<TableItem
-			key={tableName}
-			tableName={tableName}
-			isVisible={tableVisibility[tableName]}
+			key={table_name}
+			tableName={table_name}
+			isVisible={tableVisibility[table_name]}
 			toggleVisibility={setTableVisibility}
 		/>
 	));
@@ -27,10 +27,10 @@ export const DisplayTab = () => {
 					<Col sm={3}>
 						<h4>Tables</h4>
 						<Nav variant='pills' className='flex-column'>
-							{Object.keys(tableVisibility).map((tableName) => {
+							{tables?.map(({ table_name }) => {
 								return (
-									<Nav.Item key={tableName}>
-										<Nav.Link eventKey={tableName}>{tableName}</Nav.Link>
+									<Nav.Item key={table_name} data-testid='table-setting-nav'>
+										<Nav.Link eventKey={table_name}>{table_name}</Nav.Link>
 									</Nav.Item>
 								);
 							})}
@@ -38,10 +38,13 @@ export const DisplayTab = () => {
 					</Col>
 					<Col sm={9}>
 						<Tab.Content>
-							{tableItems.map((tableItem) => {
+							{tableItems?.map((tableItem) => {
 								const tableName = tableItem.props.tableName;
 								return (
-									<Tab.Pane key={tableName} eventKey={tableName}>
+									<Tab.Pane
+										key={tableName}
+										eventKey={tableName}
+										data-testid='table-settings-content'>
 										{tableItem}
 									</Tab.Pane>
 								);
@@ -53,3 +56,5 @@ export const DisplayTab = () => {
 		</div>
 	);
 };
+
+export default DisplayTab;

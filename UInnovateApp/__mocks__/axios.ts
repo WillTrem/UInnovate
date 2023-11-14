@@ -2,6 +2,9 @@ import { vi } from "vitest";
 const tableURL = "http://localhost:3000/tables";
 const attrURL = "http://localhost:3000/columns";
 const appconfig_valuesURL = "http://localhost:3000/appconfig_values";
+const tools_url = "http://localhost:3000/tools";
+const customers_url = "http://localhost:3000/customers";
+const rentals_url = "http://localhost:3000/rentals";
 
 const noMockErrorMessage = "API call to this URL hasn't been mocked.";
 
@@ -35,6 +38,25 @@ export default {
 			switch (url) {
 				case appconfig_valuesURL:
 					return Promise.resolve();
+				default:
+					return Promise.reject(new Error(noMockErrorMessage));
+			}
+		} else if (headers["Content-Profile"] === "application") {
+			switch (url) {
+				case tools_url:
+					return Promise.resolve({
+						data: { message: `Tool added: ${data.name}` },
+					});
+				case customers_url:
+					return Promise.resolve({
+						data: { message: `Tool added: ${data.firstname}` },
+					});
+				case rentals_url:
+					return Promise.resolve({
+						data: {
+							message: `Tool added: ${data.toolid} for customer: ${data.customerid}`,
+						},
+					});
 				default:
 					return Promise.reject(new Error(noMockErrorMessage));
 			}
