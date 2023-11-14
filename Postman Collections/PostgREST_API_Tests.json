@@ -231,7 +231,7 @@
 			"response": []
 		},
 		{
-			"name": "appconfig_values",
+			"name": "appconfig_properties",
 			"id": "ea175711-29e7-4b75-8c46-b89ed1b6b2c3",
 			"protocolProfileBehavior": {
 				"disableBodyPruning": true
@@ -252,7 +252,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"tools\",\n    \"value\": \"true\"\n  },\n  {\n    \"property\": \"table_view\",\n    \"table\": \"tools\",\n    \"value\": \"list\"\n  },\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"customers\",\n    \"value\": \"true\"\n  }\n] ",
+					"raw": "[\n    {\n        \"name\": \"table_visible\"\n        \"value_type\": \"boolean\"\n        \"default_value\": \"false\"\n    }\n  \n] ",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -260,23 +260,24 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/appconfig_values?columns=property,table,column,value&on_conflict=property,table,column",
+					"raw": "http://localhost:3000/appconfig_properties?columns=name, description, value_type, default_value",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"appconfig_values"
+						"appconfig_properties"
 					],
 					"query": [
 						{
 							"key": "columns",
-							"value": "property,table,column,value"
+							"value": "name, description, value_type, default_value"
 						},
 						{
 							"key": "on_conflict",
-							"value": "property,table,column"
+							"value": "description",
+							"disabled": true
 						}
 					]
 				},
