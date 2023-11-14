@@ -4,7 +4,7 @@ import { ConfigProvider } from '../../../contexts/ConfigContext'
 import { TablesContextProvider } from '../../../contexts/TablesContext'
 import { ColumnConfig } from '../../../components/settingsPage/ColumnConfig'
 vi.mock("axios");
-describe("TableItem component", (() => {
+describe("ColumnConfig component", (() => {
 	it("renders the component", () => {
 		render(
 			<TablesContextProvider>
