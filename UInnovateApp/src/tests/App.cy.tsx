@@ -1,13 +1,12 @@
-
+import App from '../App'
 import { mount } from '@cypress/react18'
 import {MemoryRouter} from 'react-router-dom'
-import { Home } from '../pages/Home'
 
-describe('<Home>', () => {
+describe('<App>', () => {
   it('mounts', () => {
     mount(
     <MemoryRouter>
-      <Home/>
+      <App />
     </MemoryRouter>
     );
 

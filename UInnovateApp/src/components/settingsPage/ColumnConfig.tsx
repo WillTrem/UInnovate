@@ -54,7 +54,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({columnName, isVisible 
 
 	function handleToggle(){
 		setVisible(!visible);
-		updateColumnConfig(ConfigProperty.COLUMN_VISIBLE, (!visible).toString());
+		updateColumnConfig(ConfigProperty.VISIBLE, (!visible).toString());
 	}
 	
 	return <tr>

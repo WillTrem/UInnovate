@@ -35,6 +35,6 @@ CREATE TABLE application.Rentals (
 );
 
 
-GRANT ALL ON application.tools TO web_anon;
-GRANT ALL ON application.customers TO web_anon;
-GRANT ALL ON application.rentals TO web_anon;
+GRANT SELECT ON application.tools TO web_anon;
+GRANT SELECT ON application.customers TO web_anon;
+GRANT SELECT ON application.rentals TO web_anon;

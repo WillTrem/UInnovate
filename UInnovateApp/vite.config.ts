@@ -30,8 +30,5 @@ export default defineConfig({
       provider: "istanbul", // or 'v8'
       reporter: ["json-summary", "json"],
     },
-    setupFiles:"./src/tests/setup.ts",
-    globals: true,
-    css: true,
   },
 });

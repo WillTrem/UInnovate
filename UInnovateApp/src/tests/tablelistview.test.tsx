@@ -9,7 +9,7 @@ describe('TableListView component', () => {
     // Sample data for testing
     const attr = [
       {
-        table_name: 'Table13',
+        table_name: 'Table1',
         attributes: ['Attribute1', 'Attribute2', 'Attribute3'],
       },
       {

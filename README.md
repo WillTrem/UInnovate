@@ -21,19 +21,12 @@
    > 💡 Note that the pgadmin container will only be targeted by a docker compose command if you specify `--profile tool` as shown above. Otherwise, only the PostgreSQL and the PostgREST containers will be affected. Leaving it out can become handy if you try to reset the database, but you don't want to lose your server connection on pgadmin!
 
 7. Run `.\refresh_database.sh` in your terminal to populate the db. (Note: \ on Windows, / on Linux)
-   > 💡 Note: To run bash commands on windows you need to:
-      - Enable WSL on window
-      - A linux distro installed from the windows store
-      - see this [link](https://www.thetechedvocate.org/how-to-install-and-run-bash-on-windows-11/) or [video]( https://youtu.be/sUsTQTJFmjs?si=qx6QiqUiYSZ8W-6U ) for more help
-   > 💡 Note: You may run into this error "The command 'docker' could not be found in this WSL 2 distro.""
-      - Update your docker desktop to the latest version.   
-      - Go to Settings > Resources > WSL integration > check "Enable integration with my default WSL distro" or manually toggle the linux distro from the list
    > 💡 Note: You may need to shut down the db and server containers and restart them after running the refresh database command. To do so, use `docker compose stop && docker compose up  -d` in your terminal after the .\refresh_database.sh command
-9. In a web browser window, access to localhost:5050
-10. Log in to pgAdmin with the credentials you provided in your `.env` file.
-11. On the home page, click on "Add New Server".
-12. In the "General" tab, enter a Name for your local PostgreSQL server (e.g. "UInnovate Local PostgreSQL").
-13. In the "Connection" tab, fill the fields with the following values :
+8. In a web browser window, access to localhost:5050
+9. Log in to pgAdmin with the credentials you provided in your `.env` file.
+10. On the home page, click on "Add New Server".
+11. In the "General" tab, enter a Name for your local PostgreSQL server (e.g. "UInnovate Local PostgreSQL").
+12. In the "Connection" tab, fill the fields with the following values :
 
     1. Host name/address: db (the name of the PostreSQL container)
     2. Port: 5432 (should be by default)
@@ -43,9 +36,9 @@
 
     Leave the other fields/settings untouched.
 
-14. Press the save button.
+13. Press the save button.
 
-15. You should be able to access the PostgREST API from `localhost:3000` on your browser: to view `table_x` in your database, you would go to
+14. You should be able to access the PostgREST API from `localhost:3000` on your browser: to view `table_x` in your database, you would go to
     `localhost:3000/table_x`
 
     Note: Because of the way PostgREST works, if you specified multiple schemas to be exposed in your compose file (`PGRST_DB_SCHEMAS`), you will only have direct

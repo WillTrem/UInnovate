@@ -17,7 +17,7 @@ type Database = {
 
 // Defining a class Schema with constructor to facilitate making a data structure
 // made of schema objects
-export class Schema {
+class Schema {
   name: string;
   tables: Table[];
 
@@ -33,7 +33,7 @@ export class Schema {
 
 // Defining a class Table with constructor for type issues and for making a data
 // structure made of table objects
-export class Table {
+class Table {
   name: string;
   rows: string[][];
 
@@ -120,5 +120,3 @@ export async function getColumnsFromTable(tableName: string) {
   }
   return columns;
 }
-
-export default schemas;

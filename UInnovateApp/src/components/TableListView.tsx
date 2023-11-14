@@ -46,17 +46,17 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
   return (
     <div>
-      {attr.map((table, tableIdx) => {
-        if (table.table_name !== nameOfTable) {
+      {attr.map((table) => {
+        if (table.table_name !== nameoftable) {
           return null;
         } else {
           return (
-            <div key={table.table_name + tableIdx}>
+            <div>
               <Table striped bordered hover variant="dark">
                 <thead>
                   <tr>
-                    {columns.map((column, colIdx) => {
-                      return <th key={column + colIdx}>{column}</th>;
+                    {columns.map((column) => {
+                      return <th key={column}>{column}</th>;
                     })}
                   </tr>
                 </thead>
