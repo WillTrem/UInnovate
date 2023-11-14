@@ -13,3 +13,50 @@ th {
 td {
   text-align: center;
 }
+
+.panel-container {
+  background-color: #f1f1f1;
+  padding-top: 20px;
+}
+
+.row-details {
+  padding-left: 40px;
+  display: flex;
+  gap: 5px;
+  padding-top: 10px;
+  flex-direction: column;
+}
+
+.title-panel {
+  padding-left: 40px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.button-side-panel {
+  padding: 10px;
+  margin-left: 40px;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  width: 60px;
+}
+
+.form-panel-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-content: flex-start;
+  align-items: stretch;
+}
+
+input {
+  width: 90%;
+}
