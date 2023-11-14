@@ -7,12 +7,9 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
 import { useTables } from "../../contexts/TablesContext";
-import { updateDisplayConfig } from "../../virtualmodel/ConfigProperties";
-import { useConfig } from "../../contexts/ConfigContext";
 
 const DisplayTab = () => {
   const { tableVisibility, setTableVisibility } = useTableVisibility();
-  const { config } = useConfig();
 
   const tables = useTables();
   const tableItems = tables?.map(({ table_name }) => (
@@ -23,12 +20,6 @@ const DisplayTab = () => {
       toggleVisibility={setTableVisibility}
     />
   ));
-
-  //Function to update database with new config (called on Save button click)
-  function updateConfigDB() {
-    console.log(config);
-    updateDisplayConfig(config);
-  }
 
   return (
     <div>
@@ -65,13 +56,6 @@ const DisplayTab = () => {
           </Col>
         </Row>
       </Tab.Container>
-      <Button
-        variant="primary"
-        className="save-button"
-        onClick={updateConfigDB}
-      >
-        Save Changes
-      </Button>
     </div>
   );
 };

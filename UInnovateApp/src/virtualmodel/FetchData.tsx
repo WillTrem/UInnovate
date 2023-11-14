@@ -85,7 +85,7 @@ export async function getRowsFromTable(tableName: string) {
             headers: { "Accept-Profile": schema.name },
           });
           response.data.forEach((data: Row) => {
-            const row = Object.values(data).map((value) => value.toString());
+            const row = Object.values(data).map((value) => value?.toString());
             rows.push(row);
           });
         } catch (error) {

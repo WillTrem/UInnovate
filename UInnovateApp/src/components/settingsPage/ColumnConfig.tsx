@@ -105,7 +105,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
                   config_value.column == columnName &&
                   config_value.table == tableName &&
                   config_value.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-              )?.value
+              )?.value || ""
             }
             onChange={handleDisplayChange}
           >
