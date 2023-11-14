@@ -7,7 +7,7 @@ import { Provider } from "react-redux";
 
 describe ("NavBar.jsx", () => {
     const initialState = {schema:"application"}
-    const middlewares:any = [];
+    const middlewares = [];
     const mockStore = configureStore(middlewares);
     let store
 
