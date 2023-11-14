@@ -28,9 +28,9 @@ export default defineConfig({
     coverage: {
       include: ["src/**/*.ts", "src/**/*.tsx", "**/cypress/**"],
       provider: "istanbul", // or 'v8'
-      reporter: ["json-summary", "json"],
+      reporter: ["json-summary", "json", "html"],
     },
-    setupFiles:"./src/tests/setup.ts",
+    setupFiles: "./src/tests/setup.ts",
     globals: true,
     css: true,
   },
