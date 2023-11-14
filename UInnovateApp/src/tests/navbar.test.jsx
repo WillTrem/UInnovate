@@ -19,7 +19,7 @@ describe ("NavBar.jsx", () => {
             <Provider store={store}>
                 <NavBar />
             </Provider>
-        </MemoryRouter>).toJSON
+        </MemoryRouter>).toJSON();
         console.log(navBar)
     })
 })
