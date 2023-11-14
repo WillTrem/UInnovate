@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
 import { TablesContextProvider } from "../contexts/TablesContext";
 import { ConfigProvider } from "../contexts/ConfigContext";
+import { TableVisibilityProvider } from "../contexts/TableVisibilityContext";
 
 vi.mock("axios");
 describe("Settings.tsx", () => {
@@ -12,7 +13,9 @@ describe("Settings.tsx", () => {
             <MemoryRouter>
                 <TablesContextProvider>
                     <ConfigProvider>
-                        <Settings />
+                        <TableVisibilityProvider>
+                            <Settings />
+                        </TableVisibilityProvider>
                     </ConfigProvider>
                 </TablesContextProvider>
             </MemoryRouter>

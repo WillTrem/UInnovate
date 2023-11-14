@@ -12,7 +12,7 @@ const ConfigContextMockComponent = () => {
 	return (
 		<div>
 			<div>Config: {config?.map((value) => <span>{value.value}</span>)}</div>
-			<button onClick={() => { const newValue = updateConfig(newConfigValueMock) }}>Update Config</button>
+				<button onClick={() => updateConfig(newConfigValueMock)}>Update Config</button>
 		</div>
 	)
 }

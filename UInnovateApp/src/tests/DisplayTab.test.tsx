@@ -3,6 +3,7 @@ import DisplayTab from '../components/settingsPage/DisplayTab';
 import { render } from '@testing-library/react';
 import { TablesContextProvider } from '../contexts/TablesContext';
 import { ConfigProvider } from '../contexts/ConfigContext';
+import { TableVisibilityProvider } from '../contexts/TableVisibilityContext';
 
 vi.mock('axios');
 describe('DisplayTab component', () => {
@@ -10,7 +11,9 @@ describe('DisplayTab component', () => {
 		render(
 			<TablesContextProvider>
 				<ConfigProvider>
-					<DisplayTab />
+					<TableVisibilityProvider>
+						<DisplayTab />
+					</TableVisibilityProvider>
 				</ConfigProvider>
 			</TablesContextProvider>);
 	});
@@ -18,7 +21,9 @@ describe('DisplayTab component', () => {
 		const { getAllByTestId } = render(
 			<TablesContextProvider>
 				<ConfigProvider>
-					<DisplayTab />
+					<TableVisibilityProvider>
+						<DisplayTab />
+					</TableVisibilityProvider>
 				</ConfigProvider>
 			</TablesContextProvider>);
 		const tableNavs = getAllByTestId("table-setting-nav");
