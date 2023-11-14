@@ -1,28 +1,29 @@
 import { NavBar } from "../components/NavBar";
-
-import { Link } from "react-router-dom";
+import TableTitles from "../components/TableTitles";
+// import { useTableVisibility } from "../contexts/TableVisibilityContext";
+import { useState } from "react";
+import attr from "../virtualmodel/Tables";
 
 export function ObjectMenu() {
+  // const { tableVisibility } = useTableVisibility();
+  const [view, SetView] = useState("list");
+
+  function toggleViewStatus() {
+    if (view === "list") {
+      SetView("enum");
+    } else {
+      SetView("list");
+    }
+  }
   return (
     <>
       <NavBar />
-      <div
-        style={{ textAlign: "center", fontSize: "40px", paddingTop: "40px" }}>
-        
-        Which View:
+      <div>
+        <button onClick={() => toggleViewStatus()}>View status: {view}</button>
       </div>
-
-
-      <div style={{textAlign:"center"}}>
-      <Link to={`/app`} style={{ fontSize: "25px" , color:'black', textDecoration:'none'}}>List View</Link>
-      <br />
-
-      <Link to={`/enumview`} style={{ fontSize: "25px" , color:'black', textDecoration:'none'}}>Enum View</Link>
-
-      
+      <div>
+        <TableTitles attr={attr} list_display={view} />
       </div>
-      
-
     </>
   );
 }
