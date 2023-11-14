@@ -1,65 +1,123 @@
-import { Table } from "react-bootstrap";
-import { useTableAttributes } from "../../contexts/TablesContext"
+import FormControl from "@mui/material/FormControl";
+import { useTableAttributes } from "../../contexts/TablesContext";
 import { useState } from "react";
 import Switch from "@mui/material/Switch";
-import "../../styles/TableItem.css"
-import { ConfigValueType, useConfig } from "../../contexts/ConfigContext";
-import ConfigProperty from "../../virtualmodel/ConfigProperties";
+import "../../styles/TableItem.css";
+import { Select } from "@mui/material";
+import MenuItem from "@mui/material/MenuItem";
+import { useConfig } from "../../contexts/ConfigContext";
+import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
+import { ColumnDisplayTypes } from "../../virtualmodel/ConfigProperties";
 
-interface ColumnConfigProps{
-	tableName: string
+interface ColumnConfigProps {
+  tableName: string;
 }
 
-interface ColumnConfigRowProps{
-	columnName: string,
-	tableName: string,
-	isVisible?: boolean,
+interface ColumnConfigRowProps {
+  columnName: string;
+  tableName: string;
+  isVisible?: boolean;
 }
 
-export const ColumnConfig: React.FC<ColumnConfigProps> = ({tableName}: ColumnConfigProps) => {
+export const ColumnConfig: React.FC<ColumnConfigProps> = ({
+  tableName,
+}: ColumnConfigProps) => {
   const attributes = useTableAttributes(tableName);
-  const configProperties  = ["Visible"]; // Add more configuration properties for columns here 
+  const configProperties = ["Visible", "Display Component Type"]; // Add more configuration properties for columns here
 
-	return <table className="column-config-table">
-		<thead>
-			<tr>
-			<td></td>
-			{configProperties.map((property) => {
-			return <td key={property} >{property}</td>
-			})}
-			</tr>
-		</thead>
-		<tbody>
-			{attributes && attributes.map((attribute) => {
-			  return <ColumnConfigRow tableName={tableName} columnName={attribute} key={attribute}/>
-			})}
-		</tbody>
-	</table>
-}
+  return (
+    <table className="column-config-table">
+      <thead>
+        <tr>
+          <td></td>
+          {configProperties.map((property) => {
+            return <td key={property}>{property}</td>;
+          })}
+        </tr>
+      </thead>
+      <tbody>
+        {attributes &&
+          attributes.map((attribute) => {
+            return (
+              <ColumnConfigRow
+                columnName={attribute}
+                tableName={tableName}
+                key={attribute}
+              />
+            );
+          })}
+      </tbody>
+    </table>
+  );
+};
 
-const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({columnName, isVisible = true, tableName}: ColumnConfigRowProps) => {
-	const [visible, setVisible] = useState(isVisible);
-	const {config, updateConfig} = useConfig();
-	
-	// Updates the local configuration with a column-specific configuration value 
-	function updateColumnConfig(property: ConfigProperty, value: string){
-		const newConfigValue: ConfigValueType = {
-			property,
-			table: tableName,
-			column: columnName,
-			value
-		  };
-		  updateConfig(newConfigValue);
-	}
+const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
+  columnName,
+  tableName,
+}: ColumnConfigRowProps) => {
+  const [visible, setVisible] = useState();
+  const { config, updateConfig } = useConfig();
 
-	function handleToggle(){
-		setVisible(!visible);
-		updateColumnConfig(ConfigProperty.COLUMN_VISIBLE, (!visible).toString());
-	}
-	
-	return <tr>
-		<td className="semi-bold">{columnName}</td>
-		<td><Switch defaultChecked={isVisible} onChange={handleToggle}/></td>
-		{/* Add more configuration properties for columns here as <td> */}
-	</tr>
-}
+  function handleVisibilityToggle(event) {
+    setVisible(event.target.checked);
+    updateConfig({
+      property: ConfigProperty.VISIBLE,
+      value: event.target.checked,
+      column: columnName,
+      table: tableName,
+    });
+  }
+
+  function handleDisplayChange(event) {
+    updateConfig({
+      property: ConfigProperty.COLUMN_DISPLAY_TYPE,
+      value: event.target.value,
+      column: columnName,
+      table: tableName,
+    });
+  }
+  return (
+    <tr>
+      <td className="semi-bold">{columnName}</td>
+      <td>
+        <Switch
+          checked={
+            visible
+              ? visible
+              : config.find(
+                  (config_value) =>
+                    config_value.column == columnName &&
+                    config_value.table == tableName &&
+                    config_value.property == ConfigProperty.VISIBLE
+                )?.value == "true"
+              ? true
+              : false
+          }
+          onChange={handleVisibilityToggle}
+        />
+      </td>
+      <td>
+        <FormControl size="small">
+          <Select
+            value={
+              config.find(
+                (config_value) =>
+                  config_value.column == columnName &&
+                  config_value.table == tableName &&
+                  config_value.property == ConfigProperty.COLUMN_DISPLAY_TYPE
+              )?.value
+            }
+            onChange={handleDisplayChange}
+          >
+            {Object.keys(ColumnDisplayTypes).map((value) => (
+              <MenuItem key={value} value={value}>
+                {value}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </td>
+      {/* Add more configuration properties for columns here as <td> */}
+    </tr>
+  );
+};
