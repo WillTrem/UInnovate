@@ -3,13 +3,16 @@ import { mount } from "@cypress/react18";
 import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
 import { TablesContextProvider } from "../contexts/TablesContext";
+import { ConfigProvider } from "../contexts/ConfigContext";
 
 describe("<Settings />", () => {
   it("mounts and displays the Settings page", () => {
     mount(
       <MemoryRouter>
                 <TablesContextProvider>
+                  <ConfigProvider>
                     <Settings />
+                  </ConfigProvider>
                 </TablesContextProvider>
             </MemoryRouter>
     );
