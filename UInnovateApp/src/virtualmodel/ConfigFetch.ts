@@ -23,7 +23,7 @@ interface ColumnConfig {
 
 async function fetchTableAndColumnConfig(): Promise<TableConfig[]> {
 	try {
-		//fetching tables and default app config values
+		//fetching tables and default app config values (?)
 		const { data: tables } = await axios.get<TableConfig[]>(tablesURL);
 		const { data: userConfigProperties } = await axios.get<
 			UserConfigProperty[]

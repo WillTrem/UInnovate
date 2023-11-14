@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
-
+// ConfigContext defines a React context for app config, so we can access and manipulate config data through React component tree (UI components)
 export type ConfigValueType = {
 	id?: number;
 	property: string;
