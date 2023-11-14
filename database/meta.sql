@@ -47,7 +47,8 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
 	name TEXT PRIMARY KEY,
 	description TEXT,
 	value_type TEXT NOT NULL,
-	default_value TEXT NOT NULL
+	default_value TEXT NOT NULL,
+    
 );
 -- Creating the application config values table
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
