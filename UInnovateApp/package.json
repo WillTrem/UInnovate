@@ -36,7 +36,7 @@
     "@emotion/styled": "^11.11.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.16",
+    "@mui/material": "^5.14.17",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.1.0",
     "@types/react": "^18.2.15",
