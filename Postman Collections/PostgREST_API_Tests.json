@@ -284,6 +284,59 @@
 				"description": "endpoint for appconfig_values table (the properties we change in settings show up, the unchanged ones do not)"
 			},
 			"response": []
+		},
+		{
+			"name": "appconfig_values",
+			"id": "7f50dd8f-d5de-46c0-95bd-aad45e70f681",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Profile",
+						"value": "meta",
+						"type": "text"
+					},
+					{
+						"key": "Prefer",
+						"value": "resolution=merge-duplicates",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "[\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"tools\",\n    \"value\": \"true\"\n  },\n  {\n    \"property\": \"table_view\",\n    \"table\": \"tools\",\n    \"value\": \"list\"\n  },\n  {\n    \"property\": \"table_visible\",\n    \"table\": \"customers\",\n    \"value\": \"true\"\n  }\n] ",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/appconfig_values?columns=property,table,column,value&on_conflict=property,table,column",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"appconfig_values"
+					],
+					"query": [
+						{
+							"key": "columns",
+							"value": "property,table,column,value"
+						},
+						{
+							"key": "on_conflict",
+							"value": "property,table,column"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
