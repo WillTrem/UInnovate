@@ -4,17 +4,27 @@ import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
 import { TablesContextProvider } from "../contexts/TablesContext";
 import { ConfigProvider } from "../contexts/ConfigContext";
+import configureStore from 'redux-mock-store'
+import { Provider } from "react-redux";
 
 describe("<Settings />", () => {
+  const initialState = {schema:"application"}
+  const middlewares: any = [];
+  const mockStore = configureStore(middlewares);
+  let store
+
   it("mounts and displays the Settings page", () => {
+    store = mockStore(initialState)
     mount(
-      <MemoryRouter>
+        <MemoryRouter>
+            <Provider store={store}>
                 <TablesContextProvider>
                   <ConfigProvider>
                     <Settings />
                   </ConfigProvider>
                 </TablesContextProvider>
-            </MemoryRouter>
+            </Provider>
+        </MemoryRouter>
     );
 
     // Assert that the NavBar is rendered
