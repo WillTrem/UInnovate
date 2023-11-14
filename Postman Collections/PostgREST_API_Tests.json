@@ -336,7 +336,85 @@
 					]
 				}
 			},
-			"response": []
+			"response": [
+				{
+					"id": "2c5b6514-c1a2-4779-a611-bf62ae1a997a",
+					"name": "appconfig_values",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "meta",
+								"type": "text"
+							},
+							{
+								"key": "Prefer",
+								"value": "resolution=merge-duplicates",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n\n] ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/appconfig_values?columns=property,table,column,value&on_conflict=property,table,column",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"appconfig_values"
+							],
+							"query": [
+								{
+									"key": "columns",
+									"value": "property,table,column,value"
+								},
+								{
+									"key": "on_conflict",
+									"value": "property,table,column"
+								}
+							]
+						}
+					},
+					"status": "Created",
+					"code": 201,
+					"_postman_previewlanguage": "plain",
+					"header": [
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						},
+						{
+							"key": "Date",
+							"value": "Tue, 14 Nov 2023 09:01:47 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "postgrest/11.2.2"
+						},
+						{
+							"key": "Content-Range",
+							"value": "*/*"
+						},
+						{
+							"key": "Preference-Applied",
+							"value": "resolution=merge-duplicates"
+						}
+					],
+					"cookie": [],
+					"responseTime": null,
+					"body": null
+				}
+			]
 		}
 	]
 }
