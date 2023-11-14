@@ -5,7 +5,9 @@ import {
   getColumnsFromTable,
   getRowsFromTable,
 } from "../virtualmodel/FetchData";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import SlidingPanel from "react-sliding-side-panel";
+import "react-sliding-side-panel/lib/index.css";
 
 interface TableListViewProps {
   nameOfTable: string;
@@ -34,7 +36,14 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     fetchData();
   }, [nameOfTable]);
+  const [openPanel, setOpenPanel] = useState(false);
+  const [currentRow, setCurrentRow] = useState<string[]>([]);
 
+  // Function to save the current row
+  const handleOpenPanel = (row: string[]) => {
+    setCurrentRow(row);
+    setOpenPanel(true);
+  };
   return (
     <div>
       {attr.map((table, tableIdx) => {
@@ -54,15 +63,50 @@ const TableListView: React.FC<TableListViewProps> = ({
                 <tbody>
                   {rows.map((row, rowIdx) => {
                     return (
-                      <tr key={rowIdx}>
+                      <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
                         {row.map((cell, cellIdx) => {
-                          return <td key={cell + cellIdx}>{cell}</td>;
+                           return <td key={cell + cellIdx}>{cell}</td>;
                         })}
                       </tr>
                     );
                   })}
                 </tbody>
               </Table>
+
+              <SlidingPanel
+                type={"right"}
+                isOpen={openPanel}
+                size={30}
+                panelContainerClassName="panel-container"
+                backdropClicked={() => setOpenPanel(false)}
+              >
+                <div className="form-panel-container">
+                  <div className="title-panel">Details</div>
+                  <form>
+                    <div className="form-group">
+                      <label>
+                        {columns.map((column) => {
+                          return (
+                            <div className="row-details">
+                              <label key={column}>{column}</label>
+                              <input
+                                type="text"
+                                value={currentRow[columns.indexOf(column)]}
+                              />
+                            </div>
+                          );
+                        })}
+                      </label>
+                    </div>
+                  </form>
+                  <button
+                    className="button-side-panel"
+                    onClick={() => setOpenPanel(false)}
+                  >
+                    close
+                  </button>
+                </div>
+              </SlidingPanel>
             </div>
           );
         }
