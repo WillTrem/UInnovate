@@ -70,6 +70,7 @@ export const TableItem: React.FC<TableItemProps> = ({
 							<FormControl size="small">
 								<h6>Display Type</h6>
 								<Select
+							data-testid="display-type-table-config"
 								value={displayType}
 								onChange={handleDisplayTypeSelect}
 								displayEmpty>
