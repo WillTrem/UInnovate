@@ -51,7 +51,7 @@ export const useConfig = (): ConfigContextType => {
 	const configContext = useContext(ConfigContext);
 	
 	if(!configContext){
-		throw new Error("useTables must be used within a TablesContextProvider.")
+		throw new Error("useConfig must be used within a ConfigProvider component.")
 	}
 	return configContext;
 }
