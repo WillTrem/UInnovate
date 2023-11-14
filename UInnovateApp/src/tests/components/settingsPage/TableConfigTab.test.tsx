@@ -35,14 +35,12 @@ describe("TableItem component", (() => {
 
 		it("modifies the config on DisplayType change", async () => {
 			// Arrange
-			const { container } = render(
+			render(
 				<TablesContextProvider>
 					<ConfigProvider>
 						<TableItem tableName='table1' isVisible={true} toggleVisibility={() => { }} />
 					</ConfigProvider>
 				</TablesContextProvider>)
-
-			screen.debug(container);
 
 			// Act - select Enum View display type
 			const inputElement = screen.getByTestId("display-type-table-config").querySelector('input');

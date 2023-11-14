@@ -15,7 +15,7 @@ import { useConfig } from "../../contexts/ConfigContext";
 import ConfigProperty from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
 
-
+vi.mock('axios');
 interface TableItemProps {
 	tableName: string;
 	isVisible: boolean;

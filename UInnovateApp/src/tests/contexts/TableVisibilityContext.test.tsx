@@ -2,6 +2,8 @@ import { describe, expect } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { TableVisibilityProvider, TableVisibilityType, useTableVisibility } from "../../contexts/TableVisibilityContext";
 
+vi.mock('axios');
+
 const newTableVisibilityMock: TableVisibilityType = {
 	"table1": true,
 	"table2": false
