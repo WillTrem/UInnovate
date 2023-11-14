@@ -247,12 +247,13 @@
 					{
 						"key": "Prefer",
 						"value": "resolution=merge-duplicates",
-						"type": "text"
+						"type": "text",
+						"disabled": true
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n    {\n        \"name\": \"table_visible\"\n        \"value_type\": \"boolean\"\n        \"default_value\": \"false\"\n    }\n  \n] ",
+					"raw": "[\n\n] ",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -260,20 +261,16 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:3000/appconfig_properties?columns=name, description, value_type, default_value",
+					"raw": "http://localhost:3000/appconfig_values",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"appconfig_properties"
+						"appconfig_values"
 					],
 					"query": [
-						{
-							"key": "columns",
-							"value": "name, description, value_type, default_value"
-						},
 						{
 							"key": "on_conflict",
 							"value": "description",
