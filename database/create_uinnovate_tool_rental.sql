@@ -80,9 +80,11 @@ CREATE TABLE purchase_order_line_item (
     tool_id int REFERENCES tool(tool_id),
     unit_scheduled_id int,
     tool_rented_qty int,
-    tool_price money
+    tool_price money,
+    PRIMARY KEY (purchase_order_id, tool_id)
 );
 
+--enum table
 CREATE TABLE availability_status (
     availability_status_id serial PRIMARY KEY,
     availability_status_name text
@@ -108,6 +110,7 @@ CREATE TABLE tool_restock_request (
     qty_requested int
 );
 
+--enum table
 CREATE TABLE unit_recalibration_status (
     unit_recalibration_status_id serial PRIMARY KEY,
     recal_status text
@@ -125,6 +128,7 @@ CREATE TABLE unit_recalibration_flag (
 ALTER TABLE unit_scheduler ADD CONSTRAINT fk_unit_scheduler_recal_flag
     FOREIGN KEY (unit_recalibration_flag_id) REFERENCES unit_recalibration_flag(unit_recalibration_flag_id);
 
+--enum table
 CREATE TABLE unit_recalibration_schedule_type (
     unit_recalibration_schedule_type_id serial PRIMARY KEY,
     recal_type_name text
@@ -137,6 +141,7 @@ CREATE TABLE unit_recalibration_schedule (
     unit_scheduled_id int REFERENCES unit_scheduler(unit_scheduled_id),
     last_calibration_certificate_id int,
     unit_recalibration_schedule_type_id int REFERENCES unit_recalibration_schedule_type(unit_recalibration_schedule_type_id),
+    --the counter is to count the amount of the type above (e.g. number of cycles)
     recal_type_counter int,
     recal_start_date timestamp,
     recal_end_date timestamp
