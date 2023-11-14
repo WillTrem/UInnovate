@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -6,9 +7,9 @@ import SchemaSelector from "./Schema/SchemaSelector";
 import DisplayType from "./Schema/DisplayType";
 
 interface NavBarProps {
-  includeSchemaFilter: boolean;
+  showSchemaFilter?: boolean;
 }
-export function NavBar({ includeSchemaFilter = true }: NavBarProps) {
+export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   return (
     <Navbar
       bg="dark"
@@ -17,20 +18,17 @@ export function NavBar({ includeSchemaFilter = true }: NavBarProps) {
       className="bg-body-tertiary"
     >
       <Container>
-        <Navbar.Brand
-          href="/"
-          style={{ fontSize: "30px", margin: "0px 10px 5px 0px" }}
-        >
+        <Navbar.Brand as={Link} to="/" style={{ fontSize: "30px", margin: "0px 10px 5px 0px" }}>
           <BsFillWrenchAdjustableCircleFill></BsFillWrenchAdjustableCircleFill>
         </Navbar.Brand>
-        <Navbar.Brand href="/" style={{ fontSize: "30px" }}>
+        <Navbar.Brand as={Link} to="/" style={{ fontSize: "30px" }}>
           UInnovate
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">
           <Nav
             className={
-              includeSchemaFilter
+              showSchemaFilter
                 ? "justify-content flex-grow-1 pe-3"
                 : "d-none"
             }
@@ -40,10 +38,10 @@ export function NavBar({ includeSchemaFilter = true }: NavBarProps) {
             ></SchemaSelector>
           </Nav>
           <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link href="/objview" style={{ fontSize: "25px" }}>
+            <Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
               ObjectMenu
             </Nav.Link>
-            <Nav.Link href="/settings" style={{ fontSize: "25px" }}>
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }}>
               Settings
             </Nav.Link>
           </Nav>
