@@ -51,18 +51,8 @@ describe("<Settings />", () => {
     // Assert that the card titles are rendered
     cy.get("div.customization-title").should("exist");
 
-    //Assert that the Button to Save changes is there 
+    //Assert that the Button to Save changes is there
     cy.get("button").should("exist")
-
-    // Assert that the form is rendered
-    //cy.get("select.form-select").should("exist");
-
-    // Assert that the table titles are rendered
-     // cy.get("div.text-table").should("exist");
-    
-   
-
-    
   });
 });
 
