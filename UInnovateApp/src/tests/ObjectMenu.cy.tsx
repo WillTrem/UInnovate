@@ -36,6 +36,9 @@ describe("<ObjectMenu>", () => {
     cy.get("div.tab-content").should("exist");
 
     // Assert that the side panel is rendered
+    cy.get("#row-click").click();
+
+    // Assert that the side panel is rendered
     cy.get("div.panel.panel-container").should("exist");
 
     // Assert that the title of the side panel is rendered
@@ -52,5 +55,8 @@ describe("<ObjectMenu>", () => {
 
     // Assert that the close button is rendered from the side panel
     cy.get("button.button-side-panel").should("exist");
+
+    // Assert that the button within the side panel is clicked
+    cy.get("#button-panel").click();
   });
 });
