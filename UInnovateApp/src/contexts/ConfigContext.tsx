@@ -14,7 +14,7 @@ interface ConfigContextType {
 	updateConfig: (newValue: ConfigValueType)=>void;
 }
 
-const ConfigContext = createContext<ConfigContextType>({config: [], updateConfig:() => {}});
+const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
 type ConfigProviderProps = {children: React.ReactNode};
 
@@ -51,7 +51,7 @@ export const useConfig = (): ConfigContextType => {
 	const configContext = useContext(ConfigContext);
 	
 	if(!configContext){
-		throw new Error("useTables must be used within a TablesContextProvider.")
+		throw new Error("useConfig must be used within a ConfigProvider component.")
 	}
 	return configContext;
 }

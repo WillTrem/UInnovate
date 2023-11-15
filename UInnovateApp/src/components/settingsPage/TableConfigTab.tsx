@@ -15,6 +15,10 @@ import { useConfig } from "../../contexts/ConfigContext";
 import ConfigProperty from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
 
+
+
+vi.mock('axios');
+
 interface TableItemProps {
 	tableName: string;
 	isVisible: boolean;
@@ -64,14 +68,17 @@ export const TableItem: React.FC<TableItemProps> = ({
 			<Card>
 				<Card.Body>
 					<Card.Title>Table specific configuration </Card.Title>
-					<div className='config-pane'>
-						<div className='d-flex flex-row align-items-center'>
-							<span className='px-3'>Visible</span>
-							<Switch defaultChecked={isVisible} onChange={handleToggle} />
-						</div>
-						<FormControl size='small'>
-							<h6>Display Type</h6>
-							<Select
+
+						<div className="config-pane">
+							<div className="d-flex flex-row align-items-center">
+								<span className="px-3">Visible</span>
+								<Switch defaultChecked={isVisible} onChange={handleToggle}/>
+							</div>
+							<FormControl size="small">
+								<h6>Display Type</h6>
+								<Select
+							data-testid="display-type-table-config"
+
 								value={displayType}
 								onChange={handleDisplayTypeSelect}
 								displayEmpty>
