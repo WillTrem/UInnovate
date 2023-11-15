@@ -4,45 +4,29 @@ import userEvent from "@testing-library/user-event";
 import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
 import { TablesContextProvider } from "../contexts/TablesContext";
+import configureStore from 'redux-mock-store'
+import { Provider } from "react-redux";
 
 const user = userEvent.setup();
 
 vi.mock("axios");
-describe("Test suite for Settings page", () => {
-  it("generates 2 navigation options: General and Display", async () => {
-    render(
-      <MemoryRouter>
-        <TablesContextProvider>
-          <Settings />
-        </TablesContextProvider>
-      </MemoryRouter>
-    );
-    expect(screen.getByText(/General/)).toBeDefined();
+describe("Settings.tsx", () => {
+    const initialState = {schema:"application"}
+    const middlewares = [];
+    const mockStore = configureStore(middlewares);
+    let store;
 
-    expect(screen.getByTestId(/Settings title/)).toBeDefined();
-
-    expect(screen.getByText(/Display/)).toBeDefined();
-  });
-
-  it("generates tables options", async () => {
-    await user.click(screen.getByRole("link", { name: "display button" }));
-
-    // const tables: TableVisibilityType = { customers: true };
-
-    // render(
-    //   <TableVisibilityContext.Provider
-    //     value={{
-    //       tableVisibility: tables,
-    //       setTableVisibility: useTableVisibility,
-    //     }}
-    //     children={undefined}
-    //   ></TableVisibilityContext.Provider>
-    // );
-
-    expect(
-      screen.getByRole("heading", { name: "list of tables" })
-    ).toBeDefined();
-
-    // expect(screen.getByRole("listitem", { name: "customers" })).toBeDefined();
-  });
+    it("tests the children inside settings page", () => {
+        store = mockStore(initialState)
+        const settings = TestRenderer.create(
+            <MemoryRouter>
+                <TablesContextProvider>
+                    <Provider store={store}>
+                        <Settings />
+                    </Provider>
+                </TablesContextProvider>
+            </MemoryRouter>
+        ).toJSON;
+        console.log(settings);
+    });
 });

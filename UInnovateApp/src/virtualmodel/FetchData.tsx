@@ -85,10 +85,11 @@ export async function getRowsFromTable(tableName: string) {
             headers: { "Accept-Profile": schema.name },
           });
           response.data.forEach((data: Row) => {
-            const row = Object.values(data).map((value) => value?.toString());
+            const row = Object.values(data).map((value) => value?.toString() || "null");
             rows.push(row);
           });
         } catch (error) {
+          console.error(error);
           console.error("Could not fetch the rows of the desired table.");
         }
       }

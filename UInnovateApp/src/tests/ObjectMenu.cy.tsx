@@ -1,13 +1,23 @@
 import { ObjectMenu } from '../pages/ObjectMenu'; // Adjust the import path if needed
 import { mount } from '@cypress/react18';
 import { MemoryRouter } from 'react-router-dom';
+import configureStore from 'redux-mock-store'
+import { Provider } from "react-redux";
 
 
 describe('<ObjectMenu>', () => {
+  const initialState = {schema:"application"}
+  const middlewares: any = [];
+  const mockStore = configureStore(middlewares);
+  let store
+
   it('mounts and displays the ObjectMenu page', () => {
+    store = mockStore(initialState)
     mount(
       <MemoryRouter>
-        <ObjectMenu />
+        <Provider store={store}>
+          <ObjectMenu />
+        </Provider>
       </MemoryRouter>
     );
 
