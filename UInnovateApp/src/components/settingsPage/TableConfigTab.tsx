@@ -5,10 +5,8 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Card from "react-bootstrap/Card";
-
 import { TableVisibilityType } from "../../contexts/TableVisibilityContext"; // Adjust the import path as necessary
 import { TableDisplayType } from "../../virtualmodel/Tables";
-
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
 import { useConfig } from "../../contexts/ConfigContext";
@@ -31,7 +29,7 @@ export const TableItem: React.FC<TableItemProps> = ({
   const [displayType, setDisplayType] = useState<string>(
     TableDisplayType.listView
   ); // Local state keeping the display type value selected
-  const { config, updateConfig } = useConfig();
+  const { updateConfig } = useConfig();
 
   // Updates the local configuration with a table-specific configuration value
   const updateTableConfig = (property: ConfigProperty, value: string) => {
@@ -72,6 +70,7 @@ export const TableItem: React.FC<TableItemProps> = ({
             <FormControl size="small">
               <h6>Display Type</h6>
               <Select
+                data-testid="display-type-table-config"
                 value={displayType}
                 onChange={handleDisplayTypeSelect}
                 displayEmpty

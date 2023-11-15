@@ -7,7 +7,7 @@ import { Select } from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
 import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
-import { ColumnDisplayTypes } from "../../virtualmodel/ConfigProperties";
+import { ColumnDisplayTypes } from "../../virtualmodel/Config";
 
 interface ColumnConfigProps {
   tableName: string;

@@ -51,11 +51,9 @@ export function updateAppConfigValues(config: ConfigType) {
 //Local array that contains all config properties values
 export const config_properties_values: ConfigValue[] = [];
 
-const config_values_url = "http://localhost:3000/appconfig_values";
-
 //Request to fetch all config values and storing them in config_properties_values
 await axios
-  .get(config_values_url, { headers: { "Accept-Profile": "meta" } })
+  .get(appconfig_valuesUpsertURL, { headers: { "Accept-Profile": "meta" } })
   .then((response) => {
     response.data.forEach((data) => {
       config_properties_values.push(data);

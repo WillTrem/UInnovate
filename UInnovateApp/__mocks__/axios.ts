@@ -73,7 +73,7 @@ export default {
         case attrURL:
           return Promise.resolve({ data: mock_table_attr });
         case appconfig_valuesURL:
-          return Promise.resolve();
+          return Promise.resolve({ data: mock_config_values });
         default:
           return Promise.reject(new Error(noMockErrorMessage));
       }

@@ -1,7 +1,7 @@
 import { ConfigType, useConfig } from "../../contexts/ConfigContext";
 import { useEffect, useRef, useState } from "react";
 import { updateAppConfigValues } from "../../virtualmodel/Config";
-import { CircularProgress, Fade, Snackbar, Tooltip, Zoom } from "@mui/material";
+import { CircularProgress, Snackbar, Tooltip, Zoom } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
 import { grey } from "@mui/material/colors";
 

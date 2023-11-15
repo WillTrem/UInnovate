@@ -1,4 +1,3 @@
-import Button from "react-bootstrap/Button";
 import { useTableVisibility } from "../../contexts/TableVisibilityContext";
 import { TableItem } from "./TableConfigTab";
 import Tab from "react-bootstrap/Tab";

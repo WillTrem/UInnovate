@@ -12,30 +12,16 @@ export function Settings() {
     <>
       <NavBar />
       <div className="page-layout">
-        <h1 className="title" data-testid="Settings title">
-          Settings
-        </h1>
+        <h1 className="title">Settings</h1>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row>
             <Col sm={3}>
               <Nav variant="pills" className="flex-column">
                 <Nav.Item>
-                  <Nav.Link
-                    eventKey="general"
-                    role="link"
-                    aria-label="general button"
-                  >
-                    General
-                  </Nav.Link>
+                  <Nav.Link eventKey="general">General</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link
-                    eventKey="display"
-                    role="link"
-                    aria-label="display button"
-                  >
-                    Display
-                  </Nav.Link>
+                  <Nav.Link eventKey="display">Display</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
