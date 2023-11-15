@@ -5,35 +5,26 @@ import { TableItem } from "../../../components/settingsPage/TableConfigTab";
 import { TablesContextProvider } from "../../../contexts/TablesContext";
 import { TableDisplayType } from "../../../virtualmodel/Tables";
 
-vi.mock("axios");
-describe("TableItem component", () => {
-  it("renders the component", () => {
-    render(
-      <TablesContextProvider>
-        <ConfigProvider>
-          <TableItem
-            tableName="table1"
-            isVisible={true}
-            toggleVisibility={() => {}}
-          />
-        </ConfigProvider>
-      </TablesContextProvider>
-    );
-  }),
-    it("modifies the config on visibility toggle", async () => {
-      // Arrange
-      render(
-        <TablesContextProvider>
-          <ConfigProvider>
-            <TableItem
-              tableName="table1"
-              isVisible={true}
-              toggleVisibility={() => {}}
-            />
-          </ConfigProvider>
-        </TablesContextProvider>
-      );
 
+vi.mock('axios');
+
+describe("TableItem component", (() => {
+	it("renders the component", () => {
+		render(
+			<TablesContextProvider>
+				<ConfigProvider>
+					<TableItem tableName='table1' isVisible={true} toggleVisibility={() => { }} />
+				</ConfigProvider>
+			</TablesContextProvider>)
+	}),
+		it("modifies the config on visibility toggle", async () => {
+			// Arrange
+			render(
+				<TablesContextProvider>
+					<ConfigProvider>
+						<TableItem tableName='table1' isVisible={true} toggleVisibility={() => { }} />
+					</ConfigProvider>
+				</TablesContextProvider>)
       // Act - toggle the visibility off
       fireEvent.click(screen.getByRole("checkbox"));
 

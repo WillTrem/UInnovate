@@ -29,7 +29,8 @@ export const TableItem: React.FC<TableItemProps> = ({
   const [displayType, setDisplayType] = useState<string>(
     TableDisplayType.listView
   ); // Local state keeping the display type value selected
-  const { updateConfig } = useConfig();
+
+  const { config, updateConfig } = useConfig();
 
   // Updates the local configuration with a table-specific configuration value
   const updateTableConfig = (property: ConfigProperty, value: string) => {
@@ -47,7 +48,7 @@ export const TableItem: React.FC<TableItemProps> = ({
       ...prevVisibility,
       [tableName]: !isVisible,
     }));
-    updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
+    updateTableConfig(ConfigProperty.TABLE_VISIBLE, (!isVisible).toString());
   };
 
   const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {
@@ -56,7 +57,7 @@ export const TableItem: React.FC<TableItemProps> = ({
     updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
   };
 
-  return (
+    return (
     <>
       {/* Table Specific Pane  */}
       <Card>
