@@ -3,6 +3,8 @@ import TestRenderer from "react-test-renderer";
 import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
 import { TablesContextProvider } from "../contexts/TablesContext";
+import { ConfigProvider } from "../contexts/ConfigContext";
+import { TableVisibilityProvider } from "../contexts/TableVisibilityContext";
 import configureStore from 'redux-mock-store'
 import { Provider } from "react-redux";
 
@@ -18,9 +20,13 @@ describe("Settings.tsx", () => {
         const settings = TestRenderer.create(
             <MemoryRouter>
                 <TablesContextProvider>
-                    <Provider store={store}>
-                        <Settings />
-                    </Provider>
+                    <ConfigProvider>
+                        <TableVisibilityProvider>
+                            <Provider store={store}>
+                                <Settings />
+                             </Provider>
+                        </TableVisibilityProvider>
+                    </ConfigProvider>
                 </TablesContextProvider>
             </MemoryRouter>
         ).toJSON;

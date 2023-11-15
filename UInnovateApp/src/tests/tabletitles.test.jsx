@@ -3,6 +3,7 @@ import { describe, it, vi } from "vitest";
 import { MemoryRouter } from "react-router-dom"; // To wrap the component with a router context
 import TableTitles from "../components/TableTitles";
 import TestRenderer from "react-test-renderer";
+import { TableVisibilityProvider } from "../contexts/TableVisibilityContext";
 
 vi.mock("axios");
 describe("renders table names as links", () => {
@@ -14,7 +15,9 @@ describe("renders table names as links", () => {
   it("tests the children inside component", () => {
     const tabletitles = TestRenderer.create(
       <MemoryRouter>
-        <TableTitles attr={sampleAttr} />
+        <TableVisibilityProvider>
+          <TableTitles attr={sampleAttr} />
+        </TableVisibilityProvider>
       </MemoryRouter>
     ).toJSON();
     console.log(tabletitles);

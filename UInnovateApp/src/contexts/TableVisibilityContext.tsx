@@ -12,15 +12,7 @@ export type TableVisibilityType = {
 	[key: string]: boolean;
 };
 
-const TableVisibilityContext = React.createContext<{
-	tableVisibility: TableVisibilityType;
-	setTableVisibility: React.Dispatch<React.SetStateAction<TableVisibilityType>>;
-}>({
-	tableVisibility: {},
-	setTableVisibility: () => {},
-});
-// 	TableVisibilityContextType | undefined
-// >(undefined);
+const TableVisibilityContext = React.createContext<TableVisibilityContextType | undefined>(undefined);
 
 type TableVisibilityProviderProps = {
 	children: React.ReactNode;
