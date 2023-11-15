@@ -48,7 +48,7 @@ export const TableItem: React.FC<TableItemProps> = ({
       ...prevVisibility,
       [tableName]: !isVisible,
     }));
-    updateTableConfig(ConfigProperty.TABLE_VISIBLE, (!isVisible).toString());
+    updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
   };
 
   const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {
@@ -57,7 +57,7 @@ export const TableItem: React.FC<TableItemProps> = ({
     updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
   };
 
-    return (
+  return (
     <>
       {/* Table Specific Pane  */}
       <Card>
