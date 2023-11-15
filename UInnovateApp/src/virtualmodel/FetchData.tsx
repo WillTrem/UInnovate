@@ -1,4 +1,6 @@
 import axios from "axios";
+import { config_properties_values } from "./Config";
+import { ConfigProperty } from "./ConfigProperties";
 
 const data_url = "http://localhost:3000/tables";
 const schema_data_url = "http://localhost:3000/";
@@ -71,10 +73,24 @@ await axios
       }
     });
   });
+
 // Here we export a function that returns a String[][] depending on the table specified
 // We still need the schema[] for the Accept-Profile header for the GET request
 export async function getRowsFromTable(tableName: string) {
   const rows: string[][] = [];
+  let filtered_columns = "";
+  config_properties_values.map((config_properties_value) => {
+    if (config_properties_value.table == tableName) {
+      if (
+        config_properties_value.property == ConfigProperty.VISIBLE &&
+        config_properties_value.value == "true" &&
+        config_properties_value.column != undefined
+      ) {
+        filtered_columns += config_properties_value.column + ",";
+      }
+    }
+  });
+  filtered_columns = filtered_columns.slice(0, filtered_columns.length - 1);
   for (const schema of schemas) {
     const table_url = schema_data_url + tableName;
     for (const table of schema.tables) {
@@ -82,6 +98,7 @@ export async function getRowsFromTable(tableName: string) {
         try {
           const response = await axios.get(table_url, {
             headers: { "Accept-Profile": schema.name },
+            params: { select: filtered_columns },
           });
           response.data.forEach((data: Row) => {
             const row = Object.values(data).map(
@@ -102,6 +119,19 @@ export async function getRowsFromTable(tableName: string) {
 // Function to fetch the columns from a specific table - appears in the same order
 // as they do when fetching data; this eases frontend rendering
 export async function getColumnsFromTable(tableName: string) {
+  let filtered_columns = "";
+  config_properties_values.map((config_properties_value) => {
+    if (config_properties_value.table == tableName) {
+      if (
+        config_properties_value.property == ConfigProperty.VISIBLE &&
+        config_properties_value.value == "true" &&
+        config_properties_value.column != undefined
+      ) {
+        filtered_columns += config_properties_value.column + ",";
+      }
+    }
+  });
+  filtered_columns = filtered_columns.slice(0, filtered_columns.length - 1);
   let columns: string[] = [];
   for (const schema of schemas) {
     const table_url = schema_data_url + tableName;
@@ -110,6 +140,7 @@ export async function getColumnsFromTable(tableName: string) {
         try {
           const response = await axios.get(table_url, {
             headers: { "Accept-Profile": schema.name },
+            params: { select: filtered_columns },
           });
           const attributes = Object.keys(response.data[0]);
           columns = attributes;
