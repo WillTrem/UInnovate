@@ -8,7 +8,7 @@ export type ConfigValueType = {
   column?: string;
   value: string | boolean;
 };
-type ConfigType = ConfigValueType[];
+export type ConfigType = ConfigValueType[];
 
 interface ConfigContextType {
   config: ConfigType;
