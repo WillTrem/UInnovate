@@ -1,1 +1,8 @@
-site_name: My Docs
+site_name: Tool Rental API Documentation
+theme: readthedocs
+nav:
+  - Home: index.md
+  - Diagram: diagram.md
+  - Tool Management: tool.md
+  - Customer Relationship Management: crm.md
+  - Restock and Recalibration: recal.md
