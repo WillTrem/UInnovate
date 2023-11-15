@@ -7,13 +7,16 @@ import { Table } from "../virtualmodel/Tables";
 import TableListView from "./TableListView";
 import TableEnumView from "./TableEnumView";
 
+interface TableTitlesProps {
+  attr: Table[];
+  selectedSchema: string;
+  list_display: string;
+}
 export default function TableTitles({
   attr,
+  selectedSchema,
   list_display,
-}: {
-  attr: Table[];
-  list_display: string;
-}) {
+}: TableTitlesProps) {
   const { tableVisibility } = useTableVisibility();
 
   return (
@@ -22,19 +25,23 @@ export default function TableTitles({
         <Row>
           <Col sm={3}>
             <Nav variant="pills" className="flex-column">
-              {attr.map((table: Table) => {
-                if (
-                  tableVisibility[table.table_name as keyof TableVisibilityType]
-                ) {
-                  return (
-                    <Nav.Item key={table.table_name}>
-                      <Nav.Link eventKey={table.table_name}>
-                        {table.table_name}
-                      </Nav.Link>
-                    </Nav.Item>
-                  );
-                }
-              })}
+              {attr
+                .filter((table: Table) => table.schema == selectedSchema)
+                .map((table: Table) => {
+                  if (
+                    tableVisibility[
+                      table.table_name as keyof TableVisibilityType
+                    ]
+                  ) {
+                    return (
+                      <Nav.Item key={table.table_name}>
+                        <Nav.Link eventKey={table.table_name}>
+                          {table.table_name}
+                        </Nav.Link>
+                      </Nav.Item>
+                    );
+                  }
+                })}
             </Nav>
           </Col>
           <Col sm={9}>

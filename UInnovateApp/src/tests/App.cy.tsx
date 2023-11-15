@@ -2,13 +2,23 @@
 import { mount } from '@cypress/react18'
 import {MemoryRouter} from 'react-router-dom'
 import { Home } from '../pages/Home'
+import configureStore from 'redux-mock-store'
+import { Provider } from "react-redux";
 
 describe('<Home>', () => {
-  it('mounts', () => {
+    const initialState = { schema: "application" }
+    const middlewares: any = [];
+    const mockStore = configureStore(middlewares);
+    let store;
+
+    it('mounts', () => {
+    store = mockStore(initialState)
     mount(
-    <MemoryRouter>
-      <Home/>
-    </MemoryRouter>
+        <MemoryRouter>
+            <Provider store={store}>
+                <Home/>
+            </Provider>
+        </MemoryRouter>
     );
 
     // Assert that the NavBar is rendered

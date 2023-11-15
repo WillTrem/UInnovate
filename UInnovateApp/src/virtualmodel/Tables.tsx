@@ -2,11 +2,18 @@ import axios from "axios";
 
 // Definining Table Type
 export class Table {
+  schema: string;
   table_name: string;
   attributes: string[];
   view_status: string;
 
-  constructor(name: string, attributes: string[], view_status?: string) {
+  constructor(
+    schema: string,
+    name: string,
+    attributes: string[],
+    view_status?: string
+  ) {
+    this.schema = schema;
     this.table_name = name;
     this.attributes = attributes;
     this.view_status = view_status || "list";
@@ -47,7 +54,7 @@ await axios
   })
   .then((response) => {
     response.data.forEach((data: TableData) => {
-      attr.push(new Table(data.table, []));
+      attr.push(new Table(data.schema, data.table, []));
     });
   });
 
