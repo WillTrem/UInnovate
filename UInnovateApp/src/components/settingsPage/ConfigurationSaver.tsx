@@ -10,23 +10,24 @@ const CONFIG_SAVE_ANIMATION_DURATION_MS = 1000;
 
 // invisible component in charge of saving the configuration at regular intervals and on leave
 const ConfigurationSaver: React.FC = () => {
-	const { config } = useConfig();
-	const configRef = useRef<ConfigType>(config);
-	const [isSnackbarVisible, setSnackbarVisible] = useState(false);
+  const { config } = useConfig();
+  const configRef = useRef<ConfigType>(config);
+  const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
-	// keep configRef up to date with the most recent config value
+
+	// Keeps configRef up to date with the most recent config value
 	useEffect(() => {
 		console.log("ConfigRef updated");
 		configRef.current = config;
 	}, [config]);
 
-	// Initializes the timer and the cleanup functions
-	useEffect(() => {
-		const interval = setInterval(() => {
-			updateAppConfigValues(configRef.current);
-			setSnackbarVisible(true);
-			console.log("Saving the configuration in the DB via timer.");
-		}, CONFIG_UPDATE_TIMER_MS);
+  // Initializes the timer and the cleanup functions
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateAppConfigValues(configRef.current);
+      setSnackbarVisible(true);
+      console.log("Saving the configuration in the DB via timer.");
+    }, CONFIG_UPDATE_TIMER_MS);
 
 		// Cleanup function
 		return () => {

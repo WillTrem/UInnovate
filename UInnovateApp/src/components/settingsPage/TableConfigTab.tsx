@@ -5,14 +5,12 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Card from "react-bootstrap/Card";
-
 import { TableVisibilityType } from "../../contexts/TableVisibilityContext"; // Adjust the import path as necessary
 import { TableDisplayType } from "../../virtualmodel/Tables";
-
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
 import { useConfig } from "../../contexts/ConfigContext";
-import ConfigProperty from "../../virtualmodel/ConfigProperties";
+import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
 
 interface TableItemProps {
@@ -31,6 +29,7 @@ export const TableItem: React.FC<TableItemProps> = ({
   const [displayType, setDisplayType] = useState<string>(
     TableDisplayType.listView
   ); // Local state keeping the display type value selected
+
   const { config, updateConfig } = useConfig();
 
   // Updates the local configuration with a table-specific configuration value
@@ -49,7 +48,7 @@ export const TableItem: React.FC<TableItemProps> = ({
       ...prevVisibility,
       [tableName]: !isVisible,
     }));
-    updateTableConfig(ConfigProperty.TABLE_VISIBLE, (!isVisible).toString());
+    updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
   };
 
   const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {
@@ -64,7 +63,6 @@ export const TableItem: React.FC<TableItemProps> = ({
       <Card>
         <Card.Body>
           <Card.Title>Table specific configuration </Card.Title>
-
           <div className="config-pane">
             <div className="d-flex flex-row align-items-center">
               <span className="px-3">Visible</span>
@@ -93,7 +91,7 @@ export const TableItem: React.FC<TableItemProps> = ({
       <Card>
         <Card.Body>
           <Card.Title>Column specific configuration</Card.Title>
-          <div>
+          <div className="config-pane">
             <ColumnConfig tableName={tableName} />
           </div>
         </Card.Body>

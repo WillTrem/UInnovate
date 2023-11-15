@@ -1,18 +1,18 @@
-.config-pane{
-	display:flex;
-	justify-content: space-evenly;
+.config-pane {
+  display: flex;
+  justify-content: space-evenly;
 }
 
-.column-config-table{
-	width:auto;
-	border: 0;
+.column-config-table {
+  width: 75%;
+  border: 0;
 }
 
-.column-config-table td{
-	padding: 0.5rem 1rem;
-	text-align: end;
+.column-config-table td {
+  padding: 0.5rem 1rem;
 }
 
 .semi-bold {
-	font-weight: 600;
+  font-weight: 600;
+  text-align: start;
 }

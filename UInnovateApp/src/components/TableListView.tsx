@@ -36,14 +36,14 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     fetchData();
   }, [nameOfTable]);
-    const [openPanel, setOpenPanel] = useState(false);
-    const [currentRow, setCurrentRow] = useState<string[]>([]);
+  const [openPanel, setOpenPanel] = useState(false);
+  const [currentRow, setCurrentRow] = useState<string[]>([]);
 
-    // Function to save the current row
-    const handleOpenPanel = (row: string[]) => {
-      setCurrentRow(row);
-      setOpenPanel(true);
-    };
+  // Function to save the current row
+  const handleOpenPanel = (row: string[]) => {
+    setCurrentRow(row);
+    setOpenPanel(true);
+  };
   return (
     <div>
       {attr.map((table, tableIdx) => {

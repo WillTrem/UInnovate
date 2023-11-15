@@ -67,12 +67,11 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_values (
 GRANT USAGE ON SCHEMA meta TO web_anon;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
 
-GRANT SELECT ON meta.schemas TO web_anon;
-GRANT SELECT ON meta.tables TO web_anon;
-GRANT SELECT ON meta.columns TO web_anon;
-GRANT SELECT ON meta.appconfig_properties TO web_anon;
-GRANT SELECT ON meta.appconfig_values TO web_anon;
-
+GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
 
 
 -- EXPORT FUNCTIONALITY
@@ -106,4 +105,3 @@ GRANT SELECT ON TABLE meta.appconfig_values TO web_anon;
 GRANT SELECT ON TABLE meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
-

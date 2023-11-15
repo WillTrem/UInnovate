@@ -20,6 +20,50 @@ const mock_table_attr = [
   { column: "Column2", table: "Table2", schema: "Schema1" },
   { column: "Column3", table: "Table2", schema: "Schema1" },
 ];
+const mock_config_values = [
+  {
+    id: "1",
+    column: "Column1",
+    table: "Table1",
+    property: "Property1",
+    value: "Value1",
+  },
+  {
+    id: "6",
+    column: "Column2",
+    table: "Table1",
+    property: "Property1",
+    value: "Value2",
+  },
+  {
+    id: "4",
+    column: "Column3",
+    table: "Table1",
+    property: "Property1",
+    value: "Value3",
+  },
+  {
+    id: "5",
+    column: "Column1",
+    table: "Table2",
+    property: "Property1",
+    value: "Value4",
+  },
+  {
+    id: "3",
+    column: "Column2",
+    table: "Table2",
+    property: "Property1",
+    value: "Value5",
+  },
+  {
+    id: "2",
+    column: "Column3",
+    table: "Table2",
+    property: "Property1",
+    value: "Value6",
+  },
+];
 export default {
   get: vi.fn().mockImplementation((url, { headers }) => {
     if (headers["Accept-Profile"] === "meta") {
@@ -28,6 +72,8 @@ export default {
           return Promise.resolve({ data: mock_table_data });
         case attrURL:
           return Promise.resolve({ data: mock_table_attr });
+        case appconfig_valuesURL:
+          return Promise.resolve({ data: mock_config_values });
         default:
           return Promise.reject(new Error(noMockErrorMessage));
       }
