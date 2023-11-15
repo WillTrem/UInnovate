@@ -42,6 +42,9 @@ const attr_url = "http://localhost:3000/columns";
 // GET Request to get the table names and populate the Table Array
 await axios
   .get(table_url, { headers: { "Accept-Profile": "meta" } })
+  .catch((error) => {
+    console.log("Unable to fetch tables due to error: " + error);
+  })
   .then((response) => {
     response.data.forEach((data: TableData) => {
       attr.push(new Table(data.table, []));
@@ -51,6 +54,9 @@ await axios
 // GET Request to get the columns of each table within the Table Array
 await axios
   .get(attr_url, { headers: { "Accept-Profile": "meta" } })
+  .catch((error) => {
+    console.log("Unable to fetch columns due to error: " + error);
+  })
   .then((response) => {
     response.data.forEach((data: ColumnData) => {
       for (let i = 0; i < attr.length; i++) {
