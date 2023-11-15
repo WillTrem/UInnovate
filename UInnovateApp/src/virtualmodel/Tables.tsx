@@ -48,9 +48,7 @@ const attr_url = "http://localhost:3000/columns";
 
 // GET Request to get the table names and populate the Table Array
 await axios
-  .get(table_url, { headers: { "Accept-Profile": "meta" }, params: {
-    select: 
-  } })
+  .get(table_url, { headers: { "Accept-Profile": "meta" } })
   .catch((error) => {
     console.log("Unable to fetch tables due to error: " + error);
   })
