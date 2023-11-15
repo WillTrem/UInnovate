@@ -4,17 +4,27 @@ import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
 import { TablesContextProvider } from "../contexts/TablesContext";
 import { ConfigProvider } from "../contexts/ConfigContext";
+import configureStore from 'redux-mock-store'
+import { Provider } from "react-redux";
 
 describe("<Settings />", () => {
+  const initialState = {schema:"application"}
+  const middlewares: any = [];
+  const mockStore = configureStore(middlewares);
+  let store
+
   it("mounts and displays the Settings page", () => {
+    store = mockStore(initialState)
     mount(
-      <MemoryRouter>
+        <MemoryRouter>
+            <Provider store={store}>
                 <TablesContextProvider>
                   <ConfigProvider>
                     <Settings />
                   </ConfigProvider>
                 </TablesContextProvider>
-            </MemoryRouter>
+            </Provider>
+        </MemoryRouter>
     );
 
     // Assert that the NavBar is rendered
@@ -41,18 +51,8 @@ describe("<Settings />", () => {
     // Assert that the card titles are rendered
     cy.get("div.customization-title").should("exist");
 
-    //Assert that the Button to Save changes is there 
+    //Assert that the Button to Save changes is there
     cy.get("button").should("exist")
-
-    // Assert that the form is rendered
-    //cy.get("select.form-select").should("exist");
-
-    // Assert that the table titles are rendered
-     // cy.get("div.text-table").should("exist");
-    
-   
-
-    
   });
 });
 

@@ -63,7 +63,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                 <tbody>
                   {rows.map((row, rowIdx) => {
                     return (
-                      <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
+                      <tr id="row-click" key={rowIdx} onClick={() => handleOpenPanel(row)}>
                         {row.map((cell, cellIdx) => {
                           return <td key={cell + cellIdx}>{cell}</td>;
                         })}
@@ -86,7 +86,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                       <label>
                         {columns.map((column, colIdx) => {
                           return (
-                            <div className="row-details">
+                            <div key={column + 'div'} className="row-details">
                               <label key={column + colIdx}>{column}</label>
                               <input
                                 type="text"
@@ -98,7 +98,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                       </label>
                     </div>
                   </form>
-                  <button
+                  <button id="button-panel"
                     className="button-side-panel"
                     onClick={() => setOpenPanel(false)}
                   >
