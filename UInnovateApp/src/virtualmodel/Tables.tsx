@@ -2,11 +2,18 @@ import axios from "axios";
 
 // Definining Table Type
 export class Table {
+  schema: string;
   table_name: string;
   attributes: string[];
   view_status: string;
 
-  constructor(name: string, attributes: string[], view_status?: string) {
+  constructor(
+    schema: string,
+    name: string,
+    attributes: string[],
+    view_status?: string
+  ) {
+    this.schema = schema;
     this.table_name = name;
     this.attributes = attributes;
     this.view_status = view_status || "list";
@@ -42,15 +49,21 @@ const attr_url = "http://localhost:3000/columns";
 // GET Request to get the table names and populate the Table Array
 await axios
   .get(table_url, { headers: { "Accept-Profile": "meta" } })
+  .catch((error) => {
+    console.log("Unable to fetch tables due to error: " + error);
+  })
   .then((response) => {
     response.data.forEach((data: TableData) => {
-      attr.push(new Table(data.table, []));
+      attr.push(new Table(data.schema, data.table, []));
     });
   });
 
 // GET Request to get the columns of each table within the Table Array
 await axios
   .get(attr_url, { headers: { "Accept-Profile": "meta" } })
+  .catch((error) => {
+    console.log("Unable to fetch columns due to error: " + error);
+  })
   .then((response) => {
     response.data.forEach((data: ColumnData) => {
       for (let i = 0; i < attr.length; i++) {
