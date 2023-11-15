@@ -5,6 +5,8 @@ import { TableItem } from '../../../components/settingsPage/TableConfigTab'
 import { TablesContextProvider } from '../../../contexts/TablesContext'
 import { TableDisplayType } from '../../../virtualmodel/Tables'
 
+vi.mock('axios');
+
 describe("TableItem component", (() => {
 	it("renders the component", () => {
 		render(
