@@ -5,6 +5,7 @@ CREATE TABLE tool_type (
     type_name text,
     type_category text
 );
+COMMENT ON COLUMN tool_type.type_id IS 'non display property';
 
 CREATE TABLE tool (
     tool_id serial PRIMARY KEY,
@@ -14,6 +15,8 @@ CREATE TABLE tool (
     tool_description text,
     tool_qty_available int
 );
+COMMENT ON COLUMN tool.tool_id IS 'non display property';
+COMMENT ON COLUMN tool.tool_type IS 'non display property';
 
 CREATE TABLE unit (
     unit_id serial PRIMARY KEY,
@@ -28,6 +31,10 @@ CREATE TABLE unit (
     unit_last_returned_date timestamp,
     last_calibration_certificate_id int
 );
+COMMENT ON COLUMN unit.unit_id IS 'non display property';
+COMMENT ON COLUMN unit.tool_id IS 'non display property';
+COMMENT ON COLUMN unit.tool_type IS 'non display property';
+COMMENT ON COLUMN unit.last_calibration_certificate_id IS 'non display property';
 
 CREATE TABLE company (
     company_id serial PRIMARY KEY,
@@ -36,6 +43,8 @@ CREATE TABLE company (
     is_prev_customer boolean,
     pricing_rate real
 );
+COMMENT ON COLUMN company.company_id IS 'non display property';
+COMMENT ON COLUMN company.primary_contact_id IS 'non display property';
 
 CREATE TABLE contact (
     contact_id serial PRIMARY KEY,
@@ -44,6 +53,9 @@ CREATE TABLE contact (
     phone_number text,
     email text
 );
+COMMENT ON COLUMN contact.contact_id IS 'non display property';
+COMMENT ON COLUMN contact.company_id IS 'non display property';
+
 
 ALTER TABLE company ADD CONSTRAINT fk_prim_contact
     FOREIGN KEY (primary_contact_id) REFERENCES contact(contact_id);
@@ -54,6 +66,7 @@ CREATE TABLE quotation (
     tools_quoted_qty int,
     totalprice money
 );
+COMMENT ON COLUMN quotation.quotation_id IS 'non display property';
 
 CREATE TABLE quotation_line_item (
     quotation_id int REFERENCES quotation(quotation_id),
@@ -62,6 +75,8 @@ CREATE TABLE quotation_line_item (
     tool_price money,
     PRIMARY KEY (quotation_id, tool_id)
 );
+COMMENT ON COLUMN quotation_line_item.quotation_id IS 'non display property';
+COMMENT ON COLUMN quotation_line_item.tool_id IS 'non display property';
 
 CREATE TABLE purchase_order (
     purchase_order_id serial PRIMARY KEY,
@@ -74,6 +89,9 @@ CREATE TABLE purchase_order (
     qst money,
     final_price money
 );
+COMMENT ON COLUMN purchase_order.purchase_order_id IS 'non display property';
+COMMENT ON COLUMN purchase_order.quotation_id IS 'non display property';
+COMMENT ON COLUMN purchase_order.company_id IS 'non display property';
 
 CREATE TABLE purchase_order_line_item (
     purchase_order_id int REFERENCES purchase_order(purchase_order_id),
@@ -83,12 +101,16 @@ CREATE TABLE purchase_order_line_item (
     tool_price money,
     PRIMARY KEY (purchase_order_id, tool_id)
 );
+COMMENT ON COLUMN purchase_order_line_item.purchase_order_id IS 'non display property';
+COMMENT ON COLUMN purchase_order_line_item.tool_id IS 'non display property';
+COMMENT ON COLUMN purchase_order_line_item.unit_scheduled_id IS 'non display property';
 
 --enum table
 CREATE TABLE availability_status (
     availability_status_id serial PRIMARY KEY,
     availability_status_name text
 );
+COMMENT ON COLUMN availability_status.availability_status_id IS 'non display property';
 
 CREATE TABLE unit_scheduler (
     unit_scheduled_id serial PRIMARY KEY,
@@ -98,6 +120,10 @@ CREATE TABLE unit_scheduler (
     availability_status_id int REFERENCES availability_status(availability_status_id),
     unit_recalibration_flag_id int
 );
+COMMENT ON COLUMN unit_scheduler.unit_scheduled_id IS 'non display property';
+COMMENT ON COLUMN unit_scheduler.unit_id IS 'non display property';
+COMMENT ON COLUMN unit_scheduler.availability_status_id IS 'non display property';
+COMMENT ON COLUMN unit_scheduler.unit_recalibration_flag_id IS 'non display property';
 
 ALTER TABLE purchase_order_line_item ADD CONSTRAINT fk_purchase_order_line_item_unit_scheduler
     FOREIGN KEY (unit_scheduled_id) REFERENCES unit_scheduler(unit_scheduled_id);
@@ -109,12 +135,15 @@ CREATE TABLE tool_restock_request (
     restock_notice_author text,
     qty_requested int
 );
+COMMENT ON COLUMN tool_restock_request.tool_restock_request_id IS 'non display property';
+COMMENT ON COLUMN tool_restock_request.tool_id IS 'non display property';
 
 --enum table
 CREATE TABLE unit_recalibration_status (
     unit_recalibration_status_id serial PRIMARY KEY,
     recal_status text
 );
+COMMENT ON COLUMN unit_recalibration_status.unit_recalibration_status_id IS 'non display property';
 
 CREATE TABLE unit_recalibration_flag (
     unit_recalibration_flag_id serial PRIMARY KEY,
@@ -124,6 +153,9 @@ CREATE TABLE unit_recalibration_flag (
     manual_flagger boolean,
     flagger_name text
 );
+COMMENT ON COLUMN unit_recalibration_flag.unit_recalibration_flag_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_flag.unit_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_flag.unit_recalibration_status_id IS 'non display property';
 
 ALTER TABLE unit_scheduler ADD CONSTRAINT fk_unit_scheduler_recal_flag
     FOREIGN KEY (unit_recalibration_flag_id) REFERENCES unit_recalibration_flag(unit_recalibration_flag_id);
@@ -133,6 +165,7 @@ CREATE TABLE unit_recalibration_schedule_type (
     unit_recalibration_schedule_type_id serial PRIMARY KEY,
     recal_type_name text
 );
+COMMENT ON COLUMN unit_recalibration_schedule_type.unit_recalibration_schedule_type_id IS 'non display property';
 
 CREATE TABLE unit_recalibration_schedule (
     unit_recalibration_schedule_id serial PRIMARY KEY,
@@ -146,6 +179,12 @@ CREATE TABLE unit_recalibration_schedule (
     recal_start_date timestamp,
     recal_end_date timestamp
 );
+COMMENT ON COLUMN unit_recalibration_schedule.unit_recalibration_schedule_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_schedule.unit_recalibration_flag_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_schedule.unit_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_schedule.unit_scheduled_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_schedule.last_calibration_certificate_id IS 'non display property';
+COMMENT ON COLUMN unit_recalibration_schedule.unit_recalibration_schedule_type_id IS 'non display property';
 
 CREATE TABLE unit_calibration_certificate (
     unit_calibration_certificate_id serial PRIMARY KEY,
@@ -154,6 +193,8 @@ CREATE TABLE unit_calibration_certificate (
     recalibration_advised_date timestamp,
     calibration_signature text
 );
+COMMENT ON COLUMN unit_calibration_certificate.unit_calibration_certificate_id IS 'non display property';
+COMMENT ON COLUMN unit_calibration_certificate.unit_id IS 'non display property';
 
 ALTER TABLE unit ADD CONSTRAINT fk_unit_cal_cert
     FOREIGN KEY (last_calibration_certificate_id) REFERENCES unit_calibration_certificate(unit_calibration_certificate_id);
