@@ -72,33 +72,38 @@ GRANT SELECT ON meta.tables TO web_anon;
 GRANT SELECT ON meta.columns TO web_anon;
 GRANT SELECT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT ON meta.appconfig_values TO web_anon;
-GRANT ALL ON meta.appconfig_properties TO web_anon;
-GRANT ALL ON meta.appconfig_values TO web_anon;
+
 
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
-LANGUAGE 'plpgsql'
-STABLE
+RETURNS json  -- Specify the return type here
+LANGUAGE plpgsql
 AS $BODY$
 DECLARE
     result json;
 BEGIN
     SELECT json_build_object(
-        'appconfig_values', json_agg(row_to_json(av)),
-        'appconfig_properties', json_agg(row_to_json(ap))
+        'appconfig_values', COALESCE(json_agg(row_to_json(av)), '[]'),
+        'appconfig_properties', COALESCE(json_agg(row_to_json(ap)), '[]')
     )
     INTO result
     FROM (
         SELECT id, "table", "column", property, value
         FROM meta.appconfig_values
     ) av
-    CROSS JOIN LATERAL (
+    FULL OUTER JOIN LATERAL (
         SELECT name, description, value_type, default_value
         FROM meta.appconfig_properties
-    ) ap;
+    ) ap ON TRUE;
 
     RETURN result;
 END;
 $BODY$;
+
 GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
+GRANT SELECT ON TABLE meta.appconfig_values TO web_anon;
+GRANT SELECT ON TABLE meta.appconfig_properties TO web_anon;
+GRANT ALL ON meta.appconfig_properties TO web_anon;
+GRANT ALL ON meta.appconfig_values TO web_anon;
+
