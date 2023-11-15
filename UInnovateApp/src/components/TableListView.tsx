@@ -86,7 +86,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                       <label>
                         {columns.map((column, colIdx) => {
                           return (
-                            <div className="row-details">
+                            <div key={column + 'div'} className="row-details">
                               <label key={column + colIdx}>{column}</label>
                               <input
                                 type="text"

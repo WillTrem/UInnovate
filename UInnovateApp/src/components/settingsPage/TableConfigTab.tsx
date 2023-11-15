@@ -15,93 +15,89 @@ import { useConfig } from "../../contexts/ConfigContext";
 import ConfigProperty from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
 
-
-
-vi.mock('axios');
-
 interface TableItemProps {
-	tableName: string;
-	isVisible: boolean;
-	toggleVisibility: (
-		updateFn: (prevState: TableVisibilityType) => TableVisibilityType
-	) => void;
+  tableName: string;
+  isVisible: boolean;
+  toggleVisibility: (
+    updateFn: (prevState: TableVisibilityType) => TableVisibilityType
+  ) => void;
 }
 
 export const TableItem: React.FC<TableItemProps> = ({
-	tableName,
-	isVisible,
-	toggleVisibility,
+  tableName,
+  isVisible,
+  toggleVisibility,
 }) => {
-	const [displayType, setDisplayType] = useState<string>(
-		TableDisplayType.listView
-	); // Local state keeping the display type value selected
-	const { config, updateConfig } = useConfig();
+  const [displayType, setDisplayType] = useState<string>(
+    TableDisplayType.listView
+  ); // Local state keeping the display type value selected
+  const { config, updateConfig } = useConfig();
 
-	// Updates the local configuration with a table-specific configuration value
-	const updateTableConfig = (property: ConfigProperty, value: string) => {
-		const newConfigValue: ConfigValueType = {
-			property,
-			table: tableName,
-			value,
-		};
-		updateConfig(newConfigValue);
-	};
+  // Updates the local configuration with a table-specific configuration value
+  const updateTableConfig = (property: ConfigProperty, value: string) => {
+    const newConfigValue: ConfigValueType = {
+      property,
+      table: tableName,
+      value,
+    };
+    updateConfig(newConfigValue);
+  };
 
-	// Handle the change event for the toggle switch
-	const handleToggle = () => {
-		toggleVisibility((prevVisibility) => ({
-			...prevVisibility,
-			[tableName]: !isVisible,
-		}));
-		updateTableConfig(ConfigProperty.TABLE_VISIBLE, (!isVisible).toString());
-	};
+  // Handle the change event for the toggle switch
+  const handleToggle = () => {
+    toggleVisibility((prevVisibility) => ({
+      ...prevVisibility,
+      [tableName]: !isVisible,
+    }));
+    updateTableConfig(ConfigProperty.TABLE_VISIBLE, (!isVisible).toString());
+  };
 
-	const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {
-		const newDisplayType = event.target.value;
-		setDisplayType(newDisplayType);
-		updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
-	};
+  const handleDisplayTypeSelect = (event: SelectChangeEvent<string>) => {
+    const newDisplayType = event.target.value;
+    setDisplayType(newDisplayType);
+    updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
+  };
 
-	return (
-		<>
-			{/* Table Specific Pane  */}
-			<Card>
-				<Card.Body>
-					<Card.Title>Table specific configuration </Card.Title>
+  return (
+    <>
+      {/* Table Specific Pane  */}
+      <Card>
+        <Card.Body>
+          <Card.Title>Table specific configuration </Card.Title>
 
-						<div className="config-pane">
-							<div className="d-flex flex-row align-items-center">
-								<span className="px-3">Visible</span>
-								<Switch defaultChecked={isVisible} onChange={handleToggle}/>
-							</div>
-							<FormControl size="small">
-								<h6>Display Type</h6>
-								<Select
-							data-testid="display-type-table-config"
-
-								value={displayType}
-								onChange={handleDisplayTypeSelect}
-								displayEmpty>
-								<MenuItem value={TableDisplayType.listView}>List View</MenuItem>
-								<MenuItem value={TableDisplayType.enumView}>Enum View</MenuItem>
-							</Select>
-							<FormHelperText>
-								To customize the default layout of the table
-							</FormHelperText>
-						</FormControl>
-					</div>
-				</Card.Body>
-			</Card>
-			<br />
-			{/* Column Specific configuration pane */}
-			<Card>
-				<Card.Body>
-					<Card.Title>Column specific configuration</Card.Title>
-					<div>
-						<ColumnConfig tableName={tableName} />
-					</div>
-				</Card.Body>
-			</Card>
-		</>
-	);
+          <div className="config-pane">
+            <div className="d-flex flex-row align-items-center">
+              <span className="px-3">Visible</span>
+              <Switch defaultChecked={isVisible} onChange={handleToggle} />
+            </div>
+            <FormControl size="small">
+              <h6>Display Type</h6>
+              <Select
+                data-testid="display-type-table-config"
+                value={displayType}
+                onChange={handleDisplayTypeSelect}
+                displayEmpty
+              >
+                <MenuItem value={TableDisplayType.listView}>List View</MenuItem>
+                <MenuItem value={TableDisplayType.enumView}>Enum View</MenuItem>
+              </Select>
+              <FormHelperText>
+                To customize the default layout of the table
+              </FormHelperText>
+            </FormControl>
+          </div>
+        </Card.Body>
+      </Card>
+      <br />
+      {/* Column Specific configuration pane */}
+      <Card>
+        <Card.Body>
+          <Card.Title>Column specific configuration</Card.Title>
+          <div>
+            <ColumnConfig tableName={tableName} />
+          </div>
+        </Card.Body>
+      </Card>
+    </>
+  );
 };
