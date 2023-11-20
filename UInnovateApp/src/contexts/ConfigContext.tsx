@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "axios";
+// import { fetchTableAndColumnConfig } from "../virtualmodel/ConfigFetch";
 // ConfigContext defines a React context for app config, so we can access and manipulate config data through React component tree (UI components)
 export type ConfigValueType = {
 	id?: number;
@@ -14,12 +15,14 @@ interface ConfigContextType {
 	config: ConfigType;
 	updateConfig: (newValue: ConfigValueType) => void;
 	fetchConfig: () => void; // Fetch configuration
+	// fetchTableAndColumnConfig: () => void; // Fetch configuration from ConfigFetch.ts
 }
 
 const ConfigContext = createContext<ConfigContextType>({
 	config: [],
 	updateConfig: () => {},
 	fetchConfig: () => {}, // Initialize fetchConfig method
+	// fetchTableAndColumnConfig: () => {},
 });
 type ConfigProviderProps = { children: React.ReactNode };
 

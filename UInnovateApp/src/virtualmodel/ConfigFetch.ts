@@ -4,6 +4,8 @@ import axios from "axios";
 const appconfig_valuesURL = "http://localhost:3000/appconfig_values";
 const tablesURL = "http://localhost:3000/tables";
 // const columnsURL = "http://localhost:3000/columns";
+//VMD fetches all tables + columns (which is default basically), then fetches appconfig_values
+//VMD then loops through each table and column, and checks if there is a user-modified value for that column
 
 interface UserConfigProperty {
 	name: string;
