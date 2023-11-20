@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ConfigType } from "../contexts/ConfigContext";
+import { ColumnConfig, TableConfig } from "./ConfigFetch";
 
 const appconfig_valuesUpsertURL = "http://localhost:3000/appconfig_values";
 

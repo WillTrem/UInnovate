@@ -21,7 +21,7 @@ interface ColumnConfig {
 	default_value?: string;
 }
 
-async function fetchTableAndColumnConfig(): Promise<TableConfig[]> {
+export async function fetchTableAndColumnConfig(): Promise<TableConfig[]> {
 	try {
 		//fetching tables and default app config values (?)
 		const { data: tables } = await axios.get<TableConfig[]>(tablesURL);
