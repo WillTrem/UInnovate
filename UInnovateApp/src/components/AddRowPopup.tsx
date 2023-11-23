@@ -2,6 +2,7 @@ import { Modal, Box, Typography, Button } from "@mui/material";
 import "../styles/AddEnumModal.css";
 import { useState } from "react";
 import { addTypeToEnum } from "../virtualmodel/AddEnumType";
+import { Column } from "../virtualmodel/VMD";
 
 const AddRowPopup = ({
   onClose,
@@ -10,7 +11,7 @@ const AddRowPopup = ({
 }: {
   onClose: () => void;
   table: string;
-  columns: string[];
+  columns: Column[];
 }) => {
   const [inputValues, setInputValues] = useState<{ [key: string]: string }>();
 
@@ -65,15 +66,15 @@ const AddRowPopup = ({
       <Box sx={style}>
         <Typography variant="h5">Adding a new Enumerated type</Typography>
         <div className="addEnum">
-          {columns.map((column: string) => {
+          {columns.map((column: Column) => {
             return (
               <div key={column + "Div"} style={{ marginBottom: 10 }}>
-                <label key={column} style={labelStyle}>
-                  {column}
+                <label key={column.column_name} style={labelStyle}>
+                  {column.column_name}
                   <input
                     key={column + "Input"}
                     type="text"
-                    name={column}
+                    name={column.column_name}
                     style={inputStyle}
                     onChange={handleInputChange}
                   />

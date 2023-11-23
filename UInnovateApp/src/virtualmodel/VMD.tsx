@@ -1,4 +1,5 @@
 import axios from "axios";
+import { DataAccessor } from "./DataAccessor";
 
 // VMD Class
 class VMD {
@@ -7,23 +8,27 @@ class VMD {
   config_data_fetched = false;
 
   // Constructor for the VMD object
+  // return type : void
   constructor() {
     this.schemas = [];
   }
 
   // Method to add a new schema to the vmd object
+  // return type : void
   addSchema(schema: Schema) {
     this.schemas.push(schema);
   }
 
   // Method to get a schema object from the vmd object
+  // return type : Schema
   getSchema(schema_name: string) {
     return this.schemas.find((schema) => schema.schema_name === schema_name);
   }
 
   /* Method to return the schema of a table
   This method exists for cases where an app configurator has a duplicate name
-  for a table across different schemas */
+  for a table across different schemas 
+  return type : Schema */
   getTableSchema(table_name: string) {
     return this.schemas.find((schema) =>
       schema.tables.some((table) => table.table_name === table_name)
@@ -31,18 +36,35 @@ class VMD {
   }
 
   // Method to get a table object from the vmd object
+  // return type : Table
   getTable(schema_name: string, table_name: string) {
     return this.getSchema(schema_name)?.tables.find(
       (table) => table.table_name === table_name
     );
   }
 
+  // Method to get all tables from a schema
+  // return type : Table[]
+  getTables(schema_name: string) {
+    return this.getSchema(schema_name)?.tables;
+  }
+
+  // Method to get all visible tables from a schema
+  // return type : Table[]
+  getVisibleTables(schema_name: string) {
+    return this.getSchema(schema_name)?.tables.filter(
+      (table) => table.is_visible
+    );
+  }
+
   // Method to get a table's display type from the vmd object
+  // return type : string
   getTableDisplayType(schema_name: string, table_name: string) {
     return this.getTable(schema_name, table_name)?.table_display_type;
   }
 
   // Method to set a table's display type in the vmd object
+  // return type : void
   setTableDisplayType(
     schema_name: string,
     table_name: string,
@@ -52,6 +74,7 @@ class VMD {
   }
 
   // Method to get a column object from the vmd object
+  // return type : Column
   getColumn(schema_name: string, table_name: string, column_name: string) {
     return this.getTable(schema_name, table_name)?.columns.find(
       (column) => column.column_name === column_name
@@ -59,13 +82,15 @@ class VMD {
   }
 
   // Method to get all visible columns for a specific table (for list view)
+  // return type : Column[]
   getVisibleColumns(schema_name: string, table_name: string) {
     return this.getTable(schema_name, table_name)?.columns.filter(
-      (column) => column.isVisible
+      (column) => column.is_visible
     );
   }
 
   // Method to return the enum view's column for a specific table
+  // return type : Column
   getEnumViewColumn(schema_name: string, table_name: string) {
     return this.getVisibleColumns(schema_name, table_name)?.find(
       (column) => column.column_type === "enum"
@@ -73,16 +98,19 @@ class VMD {
   }
 
   // Method to return all schemas in the vmd object
+  // return type : Schema[]
   getSchemas() {
     return this.schemas;
   }
 
   // Method to print the vmd object
+  // return type : void
   printVMD() {
     console.log(this.schemas);
   }
 
   // Method to fetch schemas, tables, and columns from the API
+  // return type : void
   async fetchSchemas() {
     // Check if data has already been fetched; if it has, do not fetch again
     // The fetch method should only be called once, if we want to refetch, use the refetch method
@@ -123,6 +151,7 @@ class VMD {
   }
 
   // Method to fetch app config from the API and update the columns in the vmd object
+  // return type : void
   async fetchConfig() {
     // Check if data has already been fetched; if it has, do not fetch again
     // The fetch method should only be called once, if we want to refetch, use the refetch method
@@ -162,10 +191,12 @@ class VMD {
           return;
         }
 
-        // Update the column properties based on the config
+        // Update the column or table properties based on the config
         switch (config.property) {
           case "visible":
-            column.isVisible = config.value === "true";
+            config.column === null
+              ? (table.is_visible = config.value === "true")
+              : (column.is_visible = config.value === "true");
             break;
           case "column_display_type":
             column.column_type = config.value;
@@ -185,6 +216,7 @@ class VMD {
   }
 
   // Method to refetch schemas, tables, columns and configs from the API when called
+  // return type : void
   async refetchSchemas() {
     // In refetch we clear the schemas array and then fetch them again
     this.schemas = [];
@@ -193,10 +225,24 @@ class VMD {
     await this.fetchSchemas();
     await this.fetchConfig();
   }
+
+  // Method to return a data accessor object to fetch rows from a table
+  // return type : DataAccessor
+  getRowsDataAccessor(schema_name: string, table_name: string) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    if (schema && table) {
+      return new DataAccessor(table.url, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
 }
 
 // Schema, Table, and Column classes
-class Schema {
+export class Schema {
   schema_name: string;
   tables: Table[];
 
@@ -216,15 +262,17 @@ class Schema {
   }
 }
 
-class Table {
+export class Table {
   table_name: string;
   table_display_type: string;
+  is_visible: boolean;
   columns: Column[];
   url: string;
 
   constructor(table_name: string) {
     this.table_name = table_name;
     this.table_display_type = "list";
+    this.is_visible = true;
     this.columns = [];
     this.url = "http://localhost:3000/" + table_name;
   }
@@ -238,17 +286,29 @@ class Table {
   getColumn(column_name: string) {
     return this.columns.find((column) => column.column_name === column_name);
   }
+
+  // Method to get all columns from the table object
+  // return type : Column[]
+  getColumns() {
+    return this.columns;
+  }
+
+  // Method to get all visible columns from the table object
+  // return type : Column[]
+  getVisibleColumns() {
+    return this.columns.filter((column) => column.is_visible);
+  }
 }
 
-class Column {
+export class Column {
   column_name: string;
   column_type: string;
-  isVisible: boolean;
+  is_visible: boolean;
 
   constructor(column_name: string) {
     this.column_name = column_name;
     this.column_type = "";
-    this.isVisible = true;
+    this.is_visible = true;
   }
 }
 

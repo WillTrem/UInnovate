@@ -1,12 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import attr from "../virtualmodel/Tables";
+import vmd from "../virtualmodel/VMD";
 
 interface SchemaState {
   value: string;
 }
 
 const sessionStoreVal =
-  sessionStorage.getItem("selectedSchema") || attr[0].schema;
+  sessionStorage.getItem("selectedSchema") || vmd.getSchemas()[0].schema_name;
 const initialState = { value: sessionStoreVal };
 
 //aitomagic way to update the state without making a copy of the original state before.

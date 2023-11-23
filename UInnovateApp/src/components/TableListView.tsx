@@ -1,10 +1,7 @@
 import "../styles/TableComponent.css";
-import Table from "react-bootstrap/Table";
-import attr from "../virtualmodel/Tables";
-import {
-  getColumnsFromTable,
-  getRowsFromTable,
-} from "../virtualmodel/FetchData";
+import TableComponent from "react-bootstrap/Table";
+import vmd, { Table, Column } from "../virtualmodel/VMD";
+import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
@@ -18,41 +15,60 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 
 interface TableListViewProps {
-  nameOfTable: string;
+  table: Table;
 }
 
 const TableListView: React.FC<TableListViewProps> = ({
-  nameOfTable,
+  table,
 }: {
-  nameOfTable: string;
+  table: Table;
 }) => {
-  const [columns, setColumns] = useState<string[]>([]);
-  const [rows, setRows] = useState<string[][]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
+  const [rows, setRows] = useState<Row[] | undefined>([]);
   const { config } = useConfig();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const attributes = await getColumnsFromTable(nameOfTable);
-        const lines = await getRowsFromTable(nameOfTable);
+    const getRows = async () => {
+      const attributes = table.getVisibleColumns();
+      const schema = vmd.getTableSchema(table.table_name);
 
-        setColumns(attributes);
-        setRows(lines);
-      } catch (error) {
-        console.error("Could not generate the columns and rows.");
+      if (!schema) {
+        return;
       }
+
+      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+        schema.schema_name,
+        table.table_name
+      );
+
+      const lines = await data_accessor.fetchRows();
+
+      // Filter the rows to only include the visible columns
+      const filteredRows = lines?.map((row) => {
+        const filteredRowData: { [key: string]: string | number | boolean } =
+          {};
+        attributes.forEach((column) => {
+          filteredRowData[column.column_name] = row[column.column_name];
+        });
+        return new Row(filteredRowData);
+      });
+
+      setColumns(attributes);
+      setRows(filteredRows);
     };
-
-    fetchData();
-  }, [nameOfTable]);
+    getRows();
+  }, [table]);
   const [openPanel, setOpenPanel] = useState(false);
-  const [currentRow, setCurrentRow] = useState<string[]>([]);
+  const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
 
-  const inputField = (column: string) => {
+  const inputField = (column: Column) => {
+    if (!config) {
+      return null;
+    }
     const columnDisplayType = config.find(
       (element) =>
-        element.column == column &&
-        element.table == nameOfTable &&
+        element.column == column.column_name &&
+        element.table == table.table_name &&
         element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
     );
     if (!columnDisplayType || columnDisplayType.value == "text") {
@@ -100,73 +116,65 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   // Function to save the current row
-  const handleOpenPanel = (row: string[]) => {
+  const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
     setOpenPanel(true);
   };
   return (
     <div>
-      {attr.map((table, tableIdx) => {
-        if (table.table_name !== nameOfTable) {
-          return null;
-        } else {
-          return (
-            <div key={table.table_name + tableIdx}>
-              <Table striped bordered hover variant="dark">
-                <thead>
-                  <tr>
-                    {columns.map((column, colIdx) => {
-                      return <th key={column + colIdx}>{column}</th>;
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, rowIdx) => {
-                    return (
-                      <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
-                        {row.map((cell, cellIdx) => {
-                          return <td key={cell + cellIdx}>{cell}</td>;
-                        })}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </Table>
-              <SlidingPanel
-                type={"right"}
-                isOpen={openPanel}
-                size={30}
-                panelContainerClassName="panel-container"
-                backdropClicked={() => setOpenPanel(false)}
-              >
-                <div className="form-panel-container">
-                  <div className="title-panel">Details</div>
-                  <form>
-                    <div className="form-group">
-                      <label>
-                        {columns.map((column, colIdx) => {
-                          return (
-                            <div className="row-details">
-                              <label key={column + colIdx}>{column}</label>
-                              {inputField(column)}
-                            </div>
-                          );
-                        })}
+      <TableComponent striped bordered hover variant="dark">
+        <thead>
+          <tr>
+            {columns.map((column) => {
+              return <th key={column.column_name}>{column.column_name}</th>;
+            })}
+          </tr>
+        </thead>
+        <tbody>
+          {rows?.map((row, rowIdx) => {
+            return (
+              <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
+                {Object.values(row.row).map((cell, idx) => {
+                  return <td key={idx}>{cell}</td>;
+                })}
+              </tr>
+            );
+          })}
+        </tbody>
+      </TableComponent>
+      <SlidingPanel
+        type={"right"}
+        isOpen={openPanel}
+        size={30}
+        panelContainerClassName="panel-container"
+        backdropClicked={() => setOpenPanel(false)}
+      >
+        <div className="form-panel-container">
+          <div className="title-panel">Details</div>
+          <form>
+            <div className="form-group">
+              <label>
+                {columns.map((column, colIdx) => {
+                  return (
+                    <div key={column.column_name} className="row-details">
+                      <label key={column.column_name + colIdx}>
+                        {column.column_name}
                       </label>
+                      {inputField(column)}
                     </div>
-                  </form>
-                  <button
-                    className="button-side-panel"
-                    onClick={() => setOpenPanel(false)}
-                  >
-                    close
-                  </button>
-                </div>
-              </SlidingPanel>
+                  );
+                })}
+              </label>
             </div>
-          );
-        }
-      })}
+          </form>
+          <button
+            className="button-side-panel"
+            onClick={() => setOpenPanel(false)}
+          >
+            close
+          </button>
+        </div>
+      </SlidingPanel>
     </div>
   );
 };
