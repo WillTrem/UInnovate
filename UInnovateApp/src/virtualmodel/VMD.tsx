@@ -1,0 +1,276 @@
+import axios from "axios";
+
+// VMD Class
+class VMD {
+  schemas: Schema[];
+  data_fetched = false;
+  config_data_fetched = false;
+
+  // Constructor for the VMD object
+  constructor() {
+    this.schemas = [];
+  }
+
+  // Method to add a new schema to the vmd object
+  addSchema(schema: Schema) {
+    this.schemas.push(schema);
+  }
+
+  // Method to get a schema object from the vmd object
+  getSchema(schema_name: string) {
+    return this.schemas.find((schema) => schema.schema_name === schema_name);
+  }
+
+  /* Method to return the schema of a table
+  This method exists for cases where an app configurator has a duplicate name
+  for a table across different schemas */
+  getTableSchema(table_name: string) {
+    return this.schemas.find((schema) =>
+      schema.tables.some((table) => table.table_name === table_name)
+    );
+  }
+
+  // Method to get a table object from the vmd object
+  getTable(schema_name: string, table_name: string) {
+    return this.getSchema(schema_name)?.tables.find(
+      (table) => table.table_name === table_name
+    );
+  }
+
+  // Method to get a table's display type from the vmd object
+  getTableDisplayType(schema_name: string, table_name: string) {
+    return this.getTable(schema_name, table_name)?.table_display_type;
+  }
+
+  // Method to set a table's display type in the vmd object
+  setTableDisplayType(
+    schema_name: string,
+    table_name: string,
+    display_type: string
+  ) {
+    this.getTable(schema_name, table_name)!.table_display_type = display_type;
+  }
+
+  // Method to get a column object from the vmd object
+  getColumn(schema_name: string, table_name: string, column_name: string) {
+    return this.getTable(schema_name, table_name)?.columns.find(
+      (column) => column.column_name === column_name
+    );
+  }
+
+  // Method to get all visible columns for a specific table (for list view)
+  getVisibleColumns(schema_name: string, table_name: string) {
+    return this.getTable(schema_name, table_name)?.columns.filter(
+      (column) => column.isVisible
+    );
+  }
+
+  // Method to return the enum view's column for a specific table
+  getEnumViewColumn(schema_name: string, table_name: string) {
+    return this.getVisibleColumns(schema_name, table_name)?.find(
+      (column) => column.column_type === "enum"
+    );
+  }
+
+  // Method to return all schemas in the vmd object
+  getSchemas() {
+    return this.schemas;
+  }
+
+  // Method to print the vmd object
+  printVMD() {
+    console.log(this.schemas);
+  }
+
+  // Method to fetch schemas, tables, and columns from the API
+  async fetchSchemas() {
+    // Check if data has already been fetched; if it has, do not fetch again
+    // The fetch method should only be called once, if we want to refetch, use the refetch method
+    if (this.data_fetched) {
+      return;
+    }
+    const col_url = "http://localhost:3000/columns";
+
+    try {
+      const response = await axios.get(col_url, {
+        headers: { "Accept-Profile": "meta" },
+      });
+      const data = response.data;
+      data.forEach((data: ColumnData) => {
+        // Check if the specified schema already exists within the vmd object
+        let schema = this.getSchema(data.schema);
+        if (!schema) {
+          // If schema does not exist, make it and add it to the vmd object
+          schema = new Schema(data.schema);
+          this.addSchema(schema);
+        }
+
+        // Check if table already exists within the schema object
+        let table = schema.getTable(data.table);
+        if (!table) {
+          // If table does not exist, make it and add it to the schema object
+          table = new Table(data.table);
+          schema.addTable(table);
+        }
+
+        // Add column to the table object
+        table.addColumn(new Column(data.column));
+      });
+      this.data_fetched = true;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  // Method to fetch app config from the API and update the columns in the vmd object
+  async fetchConfig() {
+    // Check if data has already been fetched; if it has, do not fetch again
+    // The fetch method should only be called once, if we want to refetch, use the refetch method
+    if (this.config_data_fetched) {
+      return;
+    }
+    const config_url = "http://localhost:3000/appconfig_values";
+
+    try {
+      const response = await axios.get(config_url, {
+        headers: { "Accept-Profile": "meta" },
+      });
+      const data: ConfigData[] = response.data;
+
+      data.forEach((config) => {
+        // Find the table's schema
+        const schema = this.getTableSchema(config.table);
+
+        if (!schema) {
+          // If the schema doesn't exist, skip this config
+          return;
+        }
+
+        // Find the corresponding table and column
+        const table = this.getTable(schema?.schema_name, config.table);
+
+        if (!table) {
+          // If the table doesn't exist, skip this config
+          return;
+        }
+        const column = table?.columns.find(
+          (col) => col.column_name === config.column
+        );
+
+        if (!column) {
+          // If the column doesn't exist, skip this config
+          return;
+        }
+
+        // Update the column properties based on the config
+        switch (config.property) {
+          case "visible":
+            column.isVisible = config.value === "true";
+            break;
+          case "column_display_type":
+            column.column_type = config.value;
+            break;
+          case "table_view":
+            table.table_display_type = config.value;
+            break;
+        }
+      });
+      this.config_data_fetched = true;
+    } catch (error) {
+      console.error(
+        "Could not update the configurations for the columns:",
+        error
+      );
+    }
+  }
+
+  // Method to refetch schemas, tables, columns and configs from the API when called
+  async refetchSchemas() {
+    // In refetch we clear the schemas array and then fetch them again
+    this.schemas = [];
+    this.data_fetched = false;
+    this.config_data_fetched = false;
+    await this.fetchSchemas();
+    await this.fetchConfig();
+  }
+}
+
+// Schema, Table, and Column classes
+class Schema {
+  schema_name: string;
+  tables: Table[];
+
+  constructor(schema_name: string) {
+    this.schema_name = schema_name;
+    this.tables = [];
+  }
+
+  // Method to add a new table to the schema object
+  addTable(table: Table) {
+    this.tables.push(table);
+  }
+
+  // Method to get a table object from the schema object
+  getTable(table_name: string) {
+    return this.tables.find((table) => table.table_name === table_name);
+  }
+}
+
+class Table {
+  table_name: string;
+  table_display_type: string;
+  columns: Column[];
+  url: string;
+
+  constructor(table_name: string) {
+    this.table_name = table_name;
+    this.table_display_type = "list";
+    this.columns = [];
+    this.url = "http://localhost:3000/" + table_name;
+  }
+
+  // Method to add a new column to the table object
+  addColumn(column: Column) {
+    this.columns.push(column);
+  }
+
+  // Method to get a column object from the table object
+  getColumn(column_name: string) {
+    return this.columns.find((column) => column.column_name === column_name);
+  }
+}
+
+class Column {
+  column_name: string;
+  column_type: string;
+  isVisible: boolean;
+
+  constructor(column_name: string) {
+    this.column_name = column_name;
+    this.column_type = "";
+    this.isVisible = true;
+  }
+}
+
+// Defining ColumnData interface for type checking when calling /columns with the API
+interface ColumnData {
+  schema: string;
+  table: string;
+  column: string;
+  references_table: string;
+}
+
+// Defining ConfigData interface for type checking when calling /appconfig_values with the API
+interface ConfigData {
+  id: string;
+  table: string;
+  column: string;
+  property: string;
+  value: string;
+}
+
+// Creating a VMD object and exporting it
+const vmd = new VMD();
+await vmd.fetchSchemas();
+await vmd.fetchConfig();
+export default vmd;

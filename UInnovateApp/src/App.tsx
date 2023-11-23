@@ -6,7 +6,13 @@ import { Settings } from "./pages/Settings";
 import { TableVisibilityProvider } from "./contexts/TableVisibilityContext";
 import { TablesContextProvider } from "./contexts/TablesContext";
 import { ConfigProvider } from "./contexts/ConfigContext";
+import vmd from "./virtualmodel/VMD";
+import { useEffect } from "react";
 function App() {
+  useEffect(() => {
+    // Printing the schemas to the console
+    vmd.printVMD();
+  }, []);
   return (
     //Wrapping routes so that we can use the context in all the pages (eventually?)
     <TablesContextProvider>
