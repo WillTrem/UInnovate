@@ -1,34 +1,62 @@
 import { NavBar } from "../components/NavBar";
-import TableTitles from "../components/TableTitles";
-import { useState } from "react";
 import vmd from "../virtualmodel/VMD";
 import { RootState } from "../redux/Store";
 import { useSelector } from "react-redux";
+import { Tab, Nav, Row, Col } from "react-bootstrap";
+import { useState } from "react";
+import { Table } from "../virtualmodel/VMD";
+import TableListView from "../components/TableListView";
+import TableEnumView from "../components/TableEnumView";
 
 export function ObjectMenu() {
-  const [view, SetView] = useState("list");
   const selectedSchema: string = useSelector(
     (state: RootState) => state.schema.value
   );
 
+  const [activeTable, setActiveTable] = useState<Table | null>(null);
+
   // Get the visible tables from the VMD for the selected schema
   const tables = vmd.getVisibleTables(selectedSchema);
 
-  function toggleViewStatus() {
-    if (view === "list") {
-      SetView("enum");
-    } else {
-      SetView("list");
-    }
-  }
   return (
     <>
       <NavBar />
       <div>
-        <button onClick={() => toggleViewStatus()}>View status: {view}</button>
-      </div>
-      <div>
-        <TableTitles tables={tables} />
+        <Tab.Container>
+          <Row>
+            <Col sm={3}>
+              <Nav variant="pills" className="flex-column">
+                {tables?.map((table: Table) => {
+                  return (
+                    <Nav.Item key={table.table_name}>
+                      <Nav.Link
+                        eventKey={table.table_name}
+                        onClick={() => setActiveTable(table)}
+                      >
+                        {table.table_name}
+                      </Nav.Link>
+                    </Nav.Item>
+                  );
+                })}
+              </Nav>
+            </Col>
+            <Col sm={9}>
+              <Tab.Content>
+                {tables?.map((table: Table) => (
+                  <Tab.Pane key={table.table_name} eventKey={table.table_name}>
+                    {activeTable?.table_name === table.table_name ? (
+                      table.table_display_type === "list" ? (
+                        <TableListView table={table}></TableListView>
+                      ) : (
+                        <TableEnumView table={table}></TableEnumView>
+                      )
+                    ) : null}
+                  </Tab.Pane>
+                ))}
+              </Tab.Content>
+            </Col>
+          </Row>
+        </Tab.Container>
       </div>
     </>
   );

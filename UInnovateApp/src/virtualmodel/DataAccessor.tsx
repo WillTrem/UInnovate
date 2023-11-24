@@ -3,12 +3,20 @@ import axios from "axios";
 export class DataAccessor {
   data_url: string;
   headers: { [key: string]: string };
+  values?: Row;
 
-  constructor(data_url: string, headers: { [key: string]: string }) {
+  constructor(
+    data_url: string,
+    headers: { [key: string]: string },
+    values?: Row
+  ) {
     this.data_url = data_url;
     this.headers = headers;
+    this.values = values;
   }
 
+  // Method to fetch rows from a table
+  // return type: Row[]
   async fetchRows() {
     try {
       const rows: Row[] = [];
@@ -24,6 +32,20 @@ export class DataAccessor {
       return rows;
     } catch (error) {
       console.error("Could not fetch data:", error);
+    }
+  }
+
+  // Method to add a row to a table
+  // return type: AxiosResponse
+  async addRow() {
+    try {
+      const response = await axios.post(this.data_url, this.values, {
+        headers: this.headers,
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Could not add row:", error);
     }
   }
 }

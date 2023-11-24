@@ -1,5 +1,5 @@
 import axios from "axios";
-import { DataAccessor } from "./DataAccessor";
+import { DataAccessor, Row } from "./DataAccessor";
 
 // VMD Class
 class VMD {
@@ -235,6 +235,27 @@ class VMD {
       return new DataAccessor(table.url, {
         "Accept-Profile": schema.schema_name,
       });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+  // Method to return a data accessor object to add a row to a table
+  // return type : DataAccessor
+  getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+
+    if (schema && table) {
+      return new DataAccessor(
+        table.url,
+        {
+          Prefer: "return=representation",
+          "Content-Type": "application/json",
+          "Content-Profile": schema_name,
+        },
+        row
+      );
     } else {
       throw new Error("Schema or table does not exist");
     }
