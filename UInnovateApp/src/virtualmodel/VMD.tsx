@@ -2,7 +2,7 @@ import axios from "axios";
 import { DataAccessor, Row } from "./DataAccessor";
 
 // VMD Class
-class VMD {
+class VirtualModelDefinition {
   schemas: Schema[];
   data_fetched = false;
   config_data_fetched = false;
@@ -27,8 +27,8 @@ class VMD {
 
   /* Method to return the schema of a table
   This method exists for cases where an app configurator has a duplicate name
-  for a table across different schemas 
-  return type : Schema */
+  for a table across different schemas */
+  // return type : Schema
   getTableSchema(table_name: string) {
     return this.schemas.find((schema) =>
       schema.tables.some((table) => table.table_name === table_name)
@@ -57,6 +57,28 @@ class VMD {
     );
   }
 
+  // Method to get all tables from the vmd object
+  // return type : Table[]
+  getAllTables() {
+    const tables: Table[] = [];
+    this.schemas.forEach((schema) => {
+      schema.tables.forEach((table) => {
+        tables.push(table);
+      });
+    });
+    return tables;
+  }
+
+  // Method to set a table's visibility in the vmd object
+  // return type : void
+  setTableVisibility(
+    schema_name: string,
+    table_name: string,
+    is_visible: boolean
+  ) {
+    this.getTable(schema_name, table_name)!.is_visible = is_visible;
+  }
+
   // Method to get a table's display type from the vmd object
   // return type : string
   getTableDisplayType(schema_name: string, table_name: string) {
@@ -71,18 +93,6 @@ class VMD {
     display_type: string
   ) {
     this.getTable(schema_name, table_name)!.table_display_type = display_type;
-  }
-
-  // Method to get all tables from the vmd object
-  // return type : Table[]
-  getAllTables() {
-    const tables: Table[] = [];
-    this.schemas.forEach((schema) => {
-      schema.tables.forEach((table) => {
-        tables.push(table);
-      });
-    });
-    return tables;
   }
 
   // Method to get a column object from the vmd object
@@ -177,6 +187,7 @@ class VMD {
         headers: { "Accept-Profile": "meta" },
       });
       const data: ConfigData[] = response.data;
+      console.log("Config data:", data);
 
       data.forEach((config) => {
         // Find the table's schema
@@ -194,27 +205,30 @@ class VMD {
           // If the table doesn't exist, skip this config
           return;
         }
-        const column = table?.columns.find(
+
+        let column = table?.columns.find(
           (col) => col.column_name === config.column
         );
 
         if (!column) {
-          // If the column doesn't exist, skip this config
-          return;
+          column = new Column("Dummy Column");
         }
 
         // Update the column or table properties based on the config
         switch (config.property) {
-          case "visible":
+          case "visible": {
+            // If the config is for the table, set the table's visibility
+            // Otherwise, set the column's visibility
             config.column === null
               ? (table.is_visible = config.value === "true")
               : (column.is_visible = config.value === "true");
             break;
+          }
           case "column_display_type":
-            column.column_type = config.value;
+            column.column_type = config.value as string;
             break;
           case "table_view":
-            table.table_display_type = config.value;
+            table.table_display_type = config.value as string;
             break;
         }
       });
@@ -266,6 +280,33 @@ class VMD {
           "Content-Type": "application/json",
           "Content-Profile": schema_name,
         },
+        row
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+  // Method to return a data accessor object to upsert a row in a table
+  // return type : DataAccessor
+  getUpsertRowDataAccessor(
+    schema_name: string,
+    table_name: string,
+    params: { [key: string]: string },
+    row: Row
+  ) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+
+    if (schema && table) {
+      return new DataAccessor(
+        table.url,
+        {
+          Prefer: "resolution=merge-duplicates",
+          "Content-Type": "application/json",
+          "Content-Profile": schema_name,
+        },
+        params,
         row
       );
     } else {
@@ -331,6 +372,38 @@ export class Table {
   getVisibleColumns() {
     return this.columns.filter((column) => column.is_visible);
   }
+
+  // Method to get the enum view column from the table object
+  // return type : Column
+  getEnumViewColumn() {
+    return this.getVisibleColumns().find(
+      (column) => column.column_type === "enum"
+    );
+  }
+
+  // Method to get the table's display type
+  // return type : string
+  getDisplayType() {
+    return this.table_display_type;
+  }
+
+  // Method to set the table's display type
+  // return type : void
+  setDisplayType(table_display_type: string) {
+    this.table_display_type = table_display_type;
+  }
+
+  // Method to get the table's visibility
+  // return type : boolean
+  getVisibility() {
+    return this.is_visible;
+  }
+
+  // Method to set the table's visibility
+  // return type : void
+  setVisibility(is_visible: boolean) {
+    this.is_visible = is_visible;
+  }
 }
 
 export class Column {
@@ -343,12 +416,25 @@ export class Column {
     this.column_type = "";
     this.is_visible = true;
   }
+
+  // Method to set the column type
+  // return type : void
+  setColumnType(column_type: string) {
+    this.column_type = column_type;
+  }
+
+  // Method to set the column visibility
+  // return type : void
+  setColumnVisibility(is_visible: boolean) {
+    this.is_visible = is_visible;
+  }
 }
 
 export enum TableDisplayType {
   listView = "list",
   enumView = "enum",
 }
+
 // Defining ColumnData interface for type checking when calling /columns with the API
 interface ColumnData {
   schema: string;
@@ -359,15 +445,15 @@ interface ColumnData {
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
 interface ConfigData {
-  id: string;
+  id: number;
   table: string;
-  column: string;
+  column: string | null;
   property: string;
-  value: string;
+  value: string | boolean;
 }
 
 // Creating a VMD object and exporting it
-const vmd = new VMD();
+const vmd = new VirtualModelDefinition();
 await vmd.fetchSchemas();
 await vmd.fetchConfig();
 export default vmd;

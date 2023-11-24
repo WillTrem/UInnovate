@@ -60,66 +60,77 @@ const TableListView: React.FC<TableListViewProps> = ({
   }, [table]);
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
+  const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
+    () => <></>
+  );
 
-  const inputField = (column: Column) => {
-    if (!config) {
-      return null;
-    }
-    const columnDisplayType = config.find(
-      (element) =>
-        element.column == column.column_name &&
-        element.table == table.table_name &&
-        element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-    );
-    if (!columnDisplayType || columnDisplayType.value == "text") {
-      return (
-        <input
-          value={currentRow[columns.indexOf(column)]}
-          type="text"
-          readOnly
-        />
+  useEffect(() => {
+    const newInputField = (column: Column) => {
+      if (!config) {
+        return null;
+      }
+      const columnDisplayType = config.find(
+        (element) =>
+          element.column == column.column_name &&
+          element.table == table.table_name &&
+          element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
-    } else if (columnDisplayType.value == "number") {
-      return (
-        <NumericFormat
-          value={currentRow[columns.indexOf(column)]}
-          allowLeadingZeros
-          thousandSeparator=","
-          readOnly
-        />
-      );
-    } else if (columnDisplayType.value == "longtext") {
-      return (
-        <textarea
-          placeholder="Type anything…"
-          value={currentRow[columns.indexOf(column)]}
-          readOnly
-        />
-      );
-    } else if (columnDisplayType.value == "datetime") {
-      return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DateField
-            value={dayjs(currentRow[columns.indexOf(column)])}
+      if (!columnDisplayType || columnDisplayType.value == "text") {
+        return (
+          <input
+            value={(currentRow.row[column.column_name] as string) || ""}
+            type="text"
             readOnly
           />
-        </LocalizationProvider>
-      );
-    } else if (columnDisplayType.value == "boolean") {
-      return (
-        <Switch
-          checked={currentRow[columns.indexOf(column)] == "true" ? true : false}
-          readOnly
-        />
-      );
-    }
-  };
+        );
+      } else if (columnDisplayType.value == "number") {
+        return (
+          <NumericFormat
+            value={(currentRow.row[column.column_name] as number) || ""}
+            allowLeadingZeros
+            thousandSeparator=","
+            readOnly
+          />
+        );
+      } else if (columnDisplayType.value == "longtext") {
+        return (
+          <textarea
+            placeholder="Type anything…"
+            value={(currentRow.row[column.column_name] as string) || ""}
+            readOnly
+          />
+        );
+      } else if (columnDisplayType.value == "datetime") {
+        return (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateField
+              value={dayjs(currentRow.row[column.column_name] as string) || ""}
+              readOnly
+            />
+          </LocalizationProvider>
+        );
+      } else if (columnDisplayType.value == "boolean") {
+        return (
+          <Switch
+            checked={
+              currentRow.row[column.column_name] == "true"
+                ? true
+                : false || false
+            }
+            readOnly
+          />
+        );
+      }
+    };
+    setInputField(() => newInputField as (column: Column) => JSX.Element);
+  }, [currentRow, columns, config, table]);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
     setOpenPanel(true);
   };
+
   return (
     <div>
       <TableComponent striped bordered hover variant="dark">
