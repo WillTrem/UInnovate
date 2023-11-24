@@ -211,13 +211,9 @@ To use Postman for testing the PostgREST API corrrectly accessing the database:
 ## Configuration
 
 ### Adding new configuration properties
-To add a new configuration property to the database, simply add an entry for it in `appconfig_properties.csv` (under ./dataFiles). Then, simply refresh the database using the `refresh_database.sh` script.
+To add a new configuration property to the database, simply add an entry for it in `meta_data.sql` (under ./database) where indicated. Then, simply refresh the database using the `refresh_database.sh` script.
 
-### Developping with configuration properties
-An `enum` type called `ConfigProperty` (under /UInnovateApp/src/virtualmodel/ConfigProperties.ts) has been created to hold the values the keys of all properties we have in our database. This is to prevent errors when accessing/inserting new property values in the configuration. 
-
-To sync the `ConfigProperty` enum with the `appconfig_properties.csv` file, a shell tool script `sync_csv_properties_to_enum.sh` has been created. Once you have added new properties to the csv file, simply run the shell script and it will re-generate the `ConfigProperties.ts` file with the enum type containing the updated csv properties. 
->💡 If you are having trouble running shell scripts on your machine, you can always add the new properties manually to `ConfigProperties.ts`. In this case, please do make sure that the values added are **error-free** and follow the same **notation convention** as the other values!
+Also, don't forget to add an entry for it in the enum of the `ConfigProperties.ts` file to use it within the code itself.
 
 ## MkDocs Set up with docker
 
