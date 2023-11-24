@@ -106,7 +106,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
           {isPopupVisible && (
             <AddRowPopup
               onClose={() => setIsPopupVisible(false)}
-              table={table.table_name}
+              table={table}
               columns={originalColumns}
             />
           )}

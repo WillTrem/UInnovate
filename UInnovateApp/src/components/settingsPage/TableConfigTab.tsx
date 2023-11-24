@@ -6,7 +6,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Card from "react-bootstrap/Card";
 import { TableVisibilityType } from "../../contexts/TableVisibilityContext"; // Adjust the import path as necessary
-import { TableDisplayType } from "../../virtualmodel/Tables";
+import { TableDisplayType } from "../../virtualmodel/VMD";
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
 import { useConfig } from "../../contexts/ConfigContext";

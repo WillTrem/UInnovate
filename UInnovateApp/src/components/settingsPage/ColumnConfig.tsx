@@ -8,6 +8,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ColumnDisplayTypes } from "../../virtualmodel/Config";
+import { SelectChangeEvent } from "@mui/material";
 
 interface ColumnConfigProps {
   tableName: string;
@@ -40,9 +41,9 @@ export const ColumnConfig: React.FC<ColumnConfigProps> = ({
           attributes.map((attribute) => {
             return (
               <ColumnConfigRow
-                columnName={attribute}
+                columnName={attribute.column_name}
                 tableName={tableName}
-                key={attribute}
+                key={attribute.column_name}
               />
             );
           })}
@@ -55,20 +56,20 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
   columnName,
   tableName,
 }: ColumnConfigRowProps) => {
-  const [visible, setVisible] = useState();
+  const [visible, setVisible] = useState<boolean>(false);
   const { config, updateConfig } = useConfig();
 
-  function handleVisibilityToggle(event) {
+  function handleVisibilityToggle(event: React.ChangeEvent<HTMLInputElement>) {
     setVisible(event.target.checked);
     updateConfig({
       property: ConfigProperty.VISIBLE,
-      value: event.target.checked,
+      value: String(event.target.checked),
       column: columnName,
       table: tableName,
     });
   }
 
-  function handleDisplayChange(event) {
+  function handleDisplayChange(event: SelectChangeEvent<string>) {
     updateConfig({
       property: ConfigProperty.COLUMN_DISPLAY_TYPE,
       value: event.target.value,
@@ -84,7 +85,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
           checked={
             visible
               ? visible
-              : config.find(
+              : config?.find(
                   (config_value) =>
                     config_value.column == columnName &&
                     config_value.table == tableName &&
@@ -100,7 +101,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
         <FormControl size="small">
           <Select
             value={
-              config.find(
+              config?.find(
                 (config_value) =>
                   config_value.column == columnName &&
                   config_value.table == tableName &&

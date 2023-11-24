@@ -3,7 +3,7 @@ import { describe, expect } from "vitest";
 import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { TableItem } from "../../../components/settingsPage/TableConfigTab";
 import { TablesContextProvider } from "../../../contexts/TablesContext";
-import { TableDisplayType } from "../../../virtualmodel/Tables";
+import { TableDisplayType } from "../../../virtualmodel/VMD";
 
 vi.mock("axios");
 

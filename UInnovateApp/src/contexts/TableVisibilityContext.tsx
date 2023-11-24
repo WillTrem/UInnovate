@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import attr from "../virtualmodel/Tables.tsx";
+import vmd from "../virtualmodel/VMD.tsx";
 
 interface TableVisibilityContextType {
   tableVisibility: { [key: string]: boolean };
@@ -25,8 +25,9 @@ export const TableVisibilityProvider: React.FC<
 > = ({ children }) => {
   // Setting default visibility
   const defaultVisibility = () => {
+    const tables = vmd.getAllTables();
     const tableNames = Array.from(
-      new Set(attr.map((table) => table.table_name))
+      new Set(tables.map((table) => table.table_name))
     );
     const visibility: { [key: string]: boolean } = {};
     tableNames.forEach((name) => {

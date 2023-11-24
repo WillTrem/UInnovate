@@ -73,6 +73,18 @@ class VMD {
     this.getTable(schema_name, table_name)!.table_display_type = display_type;
   }
 
+  // Method to get all tables from the vmd object
+  // return type : Table[]
+  getAllTables() {
+    const tables: Table[] = [];
+    this.schemas.forEach((schema) => {
+      schema.tables.forEach((table) => {
+        tables.push(table);
+      });
+    });
+    return tables;
+  }
+
   // Method to get a column object from the vmd object
   // return type : Column
   getColumn(schema_name: string, table_name: string, column_name: string) {
@@ -333,6 +345,10 @@ export class Column {
   }
 }
 
+export enum TableDisplayType {
+  listView = "list",
+  enumView = "enum",
+}
 // Defining ColumnData interface for type checking when calling /columns with the API
 interface ColumnData {
   schema: string;
