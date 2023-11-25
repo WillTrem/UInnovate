@@ -1,25 +1,32 @@
-import { describe, it, vi } from 'vitest';
-import TestRenderer from 'react-test-renderer'
-import TableListView from '../components/TableListView';
-import { MemoryRouter } from 'react-router-dom';
+import { describe, it, vi } from "vitest";
+import TestRenderer from "react-test-renderer";
+import TableListView from "../components/TableListView";
+import { MemoryRouter } from "react-router-dom";
+import { Column, Table } from "../virtualmodel/VMD";
 
-vi.mock('axios');
-describe('TableListView component', () => {
-  it('renders a table with the specified attributes', () => {
+vi.mock("axios");
+describe("TableListView component", () => {
+  it("renders a table with the specified attributes", () => {
     // Sample data for testing
-    const attr = [
-      {
-        table_name: 'Table13',
-        attributes: ['Attribute1', 'Attribute2', 'Attribute3'],
-      },
-      {
-        table_name: 'Table2',
-        attributes: ['Attribute4', 'Attribute5', 'Attribute6'],
-      },
+    // Making a mock single mock table
+    const table = new Table("Table1");
+    // Making a mock column array of three columns
+    const columns = [
+      new Column("Column1"),
+      new Column("Column2"),
+      new Column("Column3"),
     ];
 
+    // Adding the columns to the table
+    columns.forEach((column) => {
+      table.addColumn(column);
+    });
 
-    const tablelistview = TestRenderer.create(<MemoryRouter><TableListView attr={attr} /></MemoryRouter>).toJSON();
-    console.log(tablelistview)
+    const tablelistview = TestRenderer.create(
+      <MemoryRouter>
+        <TableListView table={table} />
+      </MemoryRouter>
+    ).toJSON();
+    console.log(tablelistview);
   });
 });
