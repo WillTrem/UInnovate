@@ -146,7 +146,11 @@ const TableListView: React.FC<TableListViewProps> = ({
             return (
               <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
                 {Object.values(row.row).map((cell, idx) => {
-                  return <td key={idx}>{cell}</td>;
+                  return (
+                    <td key={idx}>
+                      {typeof cell === "boolean" ? cell.toString() : cell}
+                    </td>
+                  );
                 })}
               </tr>
             );

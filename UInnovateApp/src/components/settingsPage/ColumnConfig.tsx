@@ -1,6 +1,4 @@
 import FormControl from "@mui/material/FormControl";
-import { useTableAttributes } from "../../contexts/TablesContext";
-import { useState } from "react";
 import Switch from "@mui/material/Switch";
 import "../../styles/TableItem.css";
 import { Select } from "@mui/material";
@@ -9,21 +7,21 @@ import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ColumnDisplayTypes } from "../../virtualmodel/Config";
 import { SelectChangeEvent } from "@mui/material";
+import { Column, Table } from "../../virtualmodel/VMD";
 
 interface ColumnConfigProps {
-  tableName: string;
+  table: Table;
 }
 
 interface ColumnConfigRowProps {
-  columnName: string;
-  tableName: string;
-  isVisible?: boolean;
+  column: Column;
+  table: Table;
 }
 
 export const ColumnConfig: React.FC<ColumnConfigProps> = ({
-  tableName,
+  table,
 }: ColumnConfigProps) => {
-  const attributes = useTableAttributes(tableName);
+  const attributes = table.getColumns();
   const configProperties = ["Visible", "Display Component Type"]; // Add more configuration properties for columns here
 
   return (
@@ -41,8 +39,8 @@ export const ColumnConfig: React.FC<ColumnConfigProps> = ({
           attributes.map((attribute) => {
             return (
               <ColumnConfigRow
-                columnName={attribute.column_name}
-                tableName={tableName}
+                column={attribute}
+                table={table}
                 key={attribute.column_name}
               />
             );
@@ -53,63 +51,39 @@ export const ColumnConfig: React.FC<ColumnConfigProps> = ({
 };
 
 const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
-  columnName,
-  tableName,
+  column,
+  table,
 }: ColumnConfigRowProps) => {
-  const [visible, setVisible] = useState<boolean>(false);
-  const { config, updateConfig } = useConfig();
+  const { updateConfig } = useConfig();
 
   function handleVisibilityToggle(event: React.ChangeEvent<HTMLInputElement>) {
-    setVisible(event.target.checked);
+    column.setVisibility(event.target.checked);
     updateConfig({
       property: ConfigProperty.VISIBLE,
       value: String(event.target.checked),
-      column: columnName,
-      table: tableName,
+      column: column.column_name,
+      table: table.table_name,
     });
   }
 
   function handleDisplayChange(event: SelectChangeEvent<string>) {
+    column.setType(event.target.value);
     updateConfig({
       property: ConfigProperty.COLUMN_DISPLAY_TYPE,
       value: event.target.value,
-      column: columnName,
-      table: tableName,
+      column: column.column_name,
+      table: table.table_name,
     });
   }
   return (
     <tr>
-      <td className="semi-bold">{columnName}</td>
+      <td className="semi-bold">{column.column_name}</td>
       <td>
-        <Switch
-          checked={
-            visible
-              ? visible
-              : config?.find(
-                  (config_value) =>
-                    config_value.column == columnName &&
-                    config_value.table == tableName &&
-                    config_value.property == ConfigProperty.VISIBLE
-                )?.value == "true"
-              ? true
-              : false
-          }
-          onChange={handleVisibilityToggle}
-        />
+        <Switch checked={column.is_visible} onChange={handleVisibilityToggle} />
       </td>
       <td>
         <FormControl size="small">
-          <Select
-            value={
-              config?.find(
-                (config_value) =>
-                  config_value.column == columnName &&
-                  config_value.table == tableName &&
-                  config_value.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-              )?.value || ""
-            }
-            onChange={handleDisplayChange}
-          >
+          <Select value={column.column_type} onChange={handleDisplayChange}>
             {Object.keys(ColumnDisplayTypes).map((value) => (
               <MenuItem key={value} value={value}>
                 {value}

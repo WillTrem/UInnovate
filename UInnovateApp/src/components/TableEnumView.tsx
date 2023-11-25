@@ -21,17 +21,13 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(table);
       try {
         const schema = vmd.getTableSchema(table.table_name);
         if (!schema) {
           throw new Error("Schema not found");
         }
 
-        const attribute = vmd.getEnumViewColumn(
-          schema.schema_name,
-          table.table_name
-        );
+        const attribute = table.getEnumViewColumn();
         const columns = table.getColumns();
 
         if (!attribute) {
@@ -45,11 +41,10 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
         const lines = await data_accessor.fetchRows();
 
         // Filter the rows to only include the attribute column
-        const filteredRows = lines?.map((row) => {
+        const filteredRows = lines?.map((row: Row) => {
           const filteredRowData: { [key: string]: string | number | boolean } =
             {};
-          filteredRowData[attribute.column_name] =
-            row.row[attribute.column_name];
+          filteredRowData[attribute.column_name] = row[attribute.column_name];
           return new Row(filteredRowData);
         });
 

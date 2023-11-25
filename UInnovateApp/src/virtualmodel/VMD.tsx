@@ -114,9 +114,15 @@ class VirtualModelDefinition {
   // Method to return the enum view's column for a specific table
   // return type : Column
   getEnumViewColumn(schema_name: string, table_name: string) {
-    return this.getVisibleColumns(schema_name, table_name)?.find(
-      (column) => column.column_type === "enum"
+    const visibleColumns = this.getVisibleColumns(schema_name, table_name);
+    const enumColumn = visibleColumns?.find(
+      (column) =>
+        column.column_name.toLowerCase() === "name" ||
+        column.column_name.toLowerCase() === "type"
     );
+
+    // If no enum column is found, return the first column
+    return enumColumn || visibleColumns?.[0];
   }
 
   // Method to return all schemas in the vmd object
@@ -373,12 +379,17 @@ export class Table {
     return this.columns.filter((column) => column.is_visible);
   }
 
-  // Method to get the enum view column from the table object
+  // Method to return the enum view's column from the table object
   // return type : Column
   getEnumViewColumn() {
-    return this.getVisibleColumns().find(
-      (column) => column.column_type === "enum"
+    const visibleColumns = this.getVisibleColumns();
+    const enumColumn = visibleColumns?.find(
+      (column) =>
+        column.column_name.toLowerCase() === "name" ||
+        column.column_name.toLowerCase() === "type"
     );
+    // If no enum column is found, return the first column
+    return enumColumn || visibleColumns?.[0];
   }
 
   // Method to get the table's display type
@@ -419,13 +430,13 @@ export class Column {
 
   // Method to set the column type
   // return type : void
-  setColumnType(column_type: string) {
+  setType(column_type: string) {
     this.column_type = column_type;
   }
 
   // Method to set the column visibility
   // return type : void
-  setColumnVisibility(is_visible: boolean) {
+  setVisibility(is_visible: boolean) {
     this.is_visible = is_visible;
   }
 }

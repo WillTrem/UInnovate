@@ -82,13 +82,12 @@ const AddRowPopup = ({
       <Box sx={style}>
         <Typography variant="h5">Adding a new Enumerated type</Typography>
         <div className="addEnum">
-          {columns.map((column: Column) => {
+          {columns.map((column: Column, idx) => {
             return (
-              <div key={column + "Div"} style={{ marginBottom: 10 }}>
-                <label key={column.column_name} style={labelStyle}>
+              <div key={column.column_name} style={{ marginBottom: 10 }}>
+                <label key={idx} style={labelStyle}>
                   {column.column_name}
                   <input
-                    key={column + "Input"}
                     type="text"
                     name={column.column_name}
                     style={inputStyle}

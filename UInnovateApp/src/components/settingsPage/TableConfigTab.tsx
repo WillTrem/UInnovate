@@ -49,7 +49,6 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     await updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
   };
 
-  console.log(table, table.getDisplayType());
   return (
     <>
       {/* Table Specific Pane  */}
@@ -88,7 +87,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
         <Card.Body>
           <Card.Title>Column specific configuration</Card.Title>
           <div className="config-pane">
-            <ColumnConfig tableName={table.table_name} />
+            <ColumnConfig table={table} />
           </div>
         </Card.Body>
       </Card>
