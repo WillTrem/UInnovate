@@ -193,7 +193,6 @@ class VirtualModelDefinition {
         headers: { "Accept-Profile": "meta" },
       });
       const data: ConfigData[] = response.data;
-      console.log("Config data:", data);
 
       data.forEach((config) => {
         // Find the table's schema

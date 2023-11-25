@@ -7,6 +7,10 @@ import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
 
 vi.mock("axios");
+vi.mock("../virtualmodel/VMD");
+vi.mock("../virtualmodel/DataAccessor");
+vi.mock("../NavBar");
+
 describe("Settings.tsx", () => {
   const initialState = { schema: "application" };
   const middlewares = [];

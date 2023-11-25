@@ -13,6 +13,7 @@ const newConfigValueMock: ConfigValueType = {
 const ConfigContextMockComponent = () => {
   const { config, updateConfig } = useConfig();
 
+  vi.mock("../../virtualmodel/VMD");
   return (
     <div>
       <div>
