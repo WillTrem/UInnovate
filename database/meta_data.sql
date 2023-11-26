@@ -7,6 +7,7 @@ VALUES
     ('display_column_as_currency', 'Displays a column as currency type.', 'boolean', 'false'),
     ('column_display_type', 'How to display a column', 'string', 'text'),
     ('metadata_view', 'Default view when showing the metadata information of a table/column', 'boolean', 'false' );
+    -- ADD ANY NEW CONFIG PROPERTIES HERE
 
 -- Insert the default column display typess for each application column
 INSERT INTO meta.appconfig_values (property, value, "table", "column")
