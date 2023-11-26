@@ -292,9 +292,9 @@ class VirtualModelDefinition {
     }
   }
 
-  // Method to return a data accessor object to upsert a row in a table
+  // Method to return a data accessor object to upsert a set of rows in a table
   // return type : DataAccessor
-  getUpsertRowDataAccessor(
+  getUpsertDataAccessor(
     schema_name: string,
     table_name: string,
     params: { [key: string]: string },

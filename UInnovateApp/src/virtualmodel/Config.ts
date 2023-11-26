@@ -22,7 +22,7 @@ export enum ColumnDisplayTypes {
 
 // This function will update the appconfig_values table in the database by inserting new values and updating exisiting ones
 export function updateAppConfigValues(config: ConfigType) {
-  const data_accessor: DataAccessor = vmd.getUpsertRowDataAccessor(
+  const data_accessor: DataAccessor = vmd.getUpsertDataAccessor(
     "meta",
     "appconfig_values",
     {
@@ -33,7 +33,7 @@ export function updateAppConfigValues(config: ConfigType) {
   );
 
   data_accessor
-    .upsertRow()
+    .upsert()
     .then(() => {
       console.log(
         "Sucessfully updated appconfig_values database table with new configuration."

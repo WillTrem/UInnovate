@@ -51,9 +51,9 @@ export class DataAccessor {
     }
   }
 
-  // Method to upsert a row in a table
+  // Method to upsert a set of rows in a table
   // return type: AxiosResponse
-  async upsertRow() {
+  async upsert() {
     try {
       const response = await axios.post(this.data_url, this.values, {
         params: this.params,
