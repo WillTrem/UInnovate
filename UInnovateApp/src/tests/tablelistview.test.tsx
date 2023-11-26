@@ -4,7 +4,6 @@ import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 
-vi.mock("axios");
 describe("TableListView component", () => {
   it("renders a table with the specified attributes", () => {
     // Sample data for testing

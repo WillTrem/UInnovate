@@ -5,9 +5,7 @@ import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { TableItem } from "../../../components/settingsPage/TableConfigTab";
 
 console.log("Testing to see if prints work here");
-vi.mock("axios");
-vi.mock("../../../virtualmodel/VMD");
-vi.mock("../../../virtualmodel/DataAccessor");
+
 vi.mock("../../../virtualmodel/Config");
 vi.mock("../../../contexts/ConfigContext");
 

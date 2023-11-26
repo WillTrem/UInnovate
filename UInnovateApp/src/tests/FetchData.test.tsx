@@ -6,7 +6,6 @@ import {
 } from "../virtualmodel/FetchData";
 import schemas from "../virtualmodel/FetchData";
 
-vi.mock("axios");
 
 describe("FetchData should fetch us tables with their schemas, table and data", () => {
   it("should fetch us schemas and table titles", () => {

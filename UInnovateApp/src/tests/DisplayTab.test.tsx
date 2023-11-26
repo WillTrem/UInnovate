@@ -3,7 +3,6 @@ import DisplayTab from "../components/settingsPage/DisplayTab";
 import { render } from "@testing-library/react";
 import { ConfigProvider } from "../contexts/ConfigContext";
 
-vi.mock("axios");
 describe("DisplayTab component", () => {
   it("renders the component", () => {
     render(

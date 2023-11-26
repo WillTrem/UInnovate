@@ -13,7 +13,6 @@ const newConfigValueMock: ConfigValueType = {
 const ConfigContextMockComponent = () => {
   const { config, updateConfig } = useConfig();
 
-  vi.mock("../../virtualmodel/VMD");
   return (
     <div>
       <div>
@@ -28,7 +27,6 @@ const ConfigContextMockComponent = () => {
     </div>
   );
 };
-vi.mock("axios");
 describe("ConfigContext", () => {
   it("provides the context value", () => {
     render(

@@ -4,9 +4,6 @@ import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { ColumnConfig } from "../../../components/settingsPage/ColumnConfig";
 import { Table } from "../../../virtualmodel/VMD";
 
-vi.mock("axios");
-vi.mock("../../../virtualmodel/VMD");
-vi.mock("../../../virtualmodel/DataAccessor");
 
 describe("ColumnConfig component", () => {
   const table = new Table("Table1");

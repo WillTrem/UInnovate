@@ -6,9 +6,7 @@ import { ConfigProvider } from "../contexts/ConfigContext";
 import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
 
-vi.mock("axios");
-vi.mock("../virtualmodel/VMD");
-vi.mock("../virtualmodel/DataAccessor");
+
 vi.mock("../NavBar");
 
 describe("Settings.tsx", () => {
