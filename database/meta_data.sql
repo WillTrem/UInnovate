@@ -24,3 +24,8 @@ SELECT
 FROM meta.tables as T, meta.appconfig_properties as CFP
 WHERE schema = 'application' AND CFP.name = 'table_view'
 OR CFP.name = 'visible' OR CFP.name = 'metadata_view';
+
+-- Insert a default script for the scripts table
+INSERT INTO meta.scripts (name, description, content)
+VALUES
+    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World")');

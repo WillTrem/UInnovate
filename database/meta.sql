@@ -63,16 +63,14 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_values (
     UNIQUE NULLS NOT DISTINCT (property, "table", "column")
 );
 
--- USAGE 
-GRANT USAGE ON SCHEMA meta TO web_anon;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
-
-GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
-
+-- Creating the scripts table
+CREATE TABLE IF NOT EXISTS meta.scripts (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    description TEXT,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
@@ -100,8 +98,18 @@ BEGIN
 END;
 $BODY$;
 
+-- USAGE 
+GRANT USAGE ON SCHEMA meta TO web_anon;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
+
+GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
+
 GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
-GRANT SELECT ON TABLE meta.appconfig_values TO web_anon;
-GRANT SELECT ON TABLE meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
+GRANT ALL on meta.scripts TO web_anon;
