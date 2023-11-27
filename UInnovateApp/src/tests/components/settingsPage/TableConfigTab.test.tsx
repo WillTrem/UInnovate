@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { ReactNode } from "react";
 import { describe, expect } from "vitest";
 import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { TableItem } from "../../../components/settingsPage/TableConfigTab";
@@ -6,7 +7,9 @@ import VMD from "../../../virtualmodel/__mocks__/VMD";
 
 vi.mock("../../../virtualmodel/Config");
 vi.mock("../../../contexts/ConfigContext", () => ({
-  ConfigProvider: ({ children }) => <div>{children}</div>,
+  ConfigProvider: ({ children }: { children: ReactNode }) => (
+    <div>{children}</div>
+  ),
   useConfig: () => ({
     updateConfig: vi.fn(),
   }),
@@ -29,8 +32,6 @@ describe("TableItem component", () => {
           <TableItem table={table} />
         </ConfigProvider>
       );
-
-      screen.debug();
 
       // Act - toggle the visibility off
       const checkbox = await screen.findByTestId("visibility-switch");
@@ -64,11 +65,7 @@ describe("TableItem component", () => {
 
       // Assert
       await waitFor(() => {
-        // Assert
-        const updatedDisplayType = screen.getByDisplayValue(
-          VMD.TableDisplayType.enumView
-        );
-        expect(updatedDisplayType).toBeInTheDocument();
+        expect(table.getDisplayType()).toEqual(VMD.TableDisplayType.enumView);
       });
     });
 });

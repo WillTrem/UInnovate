@@ -3,7 +3,9 @@ import TestRenderer from "react-test-renderer";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
+import { ConfigProvider } from "../contexts/ConfigContext";
 
+vi.mock("../contexts/ConfigContext)");
 describe("TableListView component", () => {
   it("renders a table with the specified attributes", () => {
     // Sample data for testing
@@ -22,9 +24,11 @@ describe("TableListView component", () => {
     });
 
     const tablelistview = TestRenderer.create(
-      <MemoryRouter>
-        <TableListView table={table} />
-      </MemoryRouter>
+      <ConfigProvider>
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+      </ConfigProvider>
     ).toJSON();
     console.log(tablelistview);
   });

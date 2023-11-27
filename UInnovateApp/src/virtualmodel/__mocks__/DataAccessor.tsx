@@ -1,4 +1,7 @@
 import { vi } from "vitest";
+import { Row } from "../DataAccessor";
+
+export { Row };
 export class DataAccessorMock {
   constructor() {}
 
@@ -7,5 +10,8 @@ export class DataAccessorMock {
     return Promise.resolve([]);
   });
 
-  // Add any other methods that you want to mock
+  upsert = vi.fn().mockImplementation(() => {
+    console.log("upsert in DataAccessor mock was called");
+    return Promise.resolve();
+  });
 }

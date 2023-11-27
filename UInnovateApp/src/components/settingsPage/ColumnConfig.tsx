@@ -79,7 +79,11 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
     <tr>
       <td className="semi-bold">{column.column_name}</td>
       <td>
-        <Switch checked={column.is_visible} onChange={handleVisibilityToggle} />
+        <Switch
+          data-testid="visibility-switch"
+          checked={column.is_visible}
+          onChange={handleVisibilityToggle}
+        />
       </td>
       <td>
         <FormControl size="small">

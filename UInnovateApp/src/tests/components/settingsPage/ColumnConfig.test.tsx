@@ -2,11 +2,13 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { ColumnConfig } from "../../../components/settingsPage/ColumnConfig";
-import { Table } from "../../../virtualmodel/VMD";
-
+import VMD from "../../../virtualmodel/__mocks__/VMD";
 
 describe("ColumnConfig component", () => {
-  const table = new Table("Table1");
+  const column = new VMD.Column("Column1");
+  const table = new VMD.Table("Table1");
+  table.addColumn(column);
+
   it("renders the component", () => {
     render(
       <ConfigProvider>
@@ -23,7 +25,7 @@ describe("ColumnConfig component", () => {
       );
 
       // Act - toggle the visibility off for the first column
-      fireEvent.click(screen.getAllByRole("checkbox")[0]);
+      fireEvent.click(screen.getByTestId("visibility-switch"));
 
       // Assert
       await waitFor(() => {
