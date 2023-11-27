@@ -1,7 +1,8 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import "../styles/AddEnumModal.css";
 import { useState } from "react";
-import { addTypeToEnum } from "../virtualmodel/AddEnumType";
+import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
+import vmd, { Column, Table } from "../virtualmodel/VMD";
 
 const AddRowPopup = ({
   onClose,
@@ -9,17 +10,33 @@ const AddRowPopup = ({
   columns,
 }: {
   onClose: () => void;
-  table: string;
-  columns: string[];
+  table: Table;
+  columns: Column[];
 }) => {
-  const [inputValues, setInputValues] = useState<{ [key: string]: string }>();
+  const [inputValues, setInputValues] = useState<Row>(new Row({}));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValues({ ...inputValues, [e.target.name]: e.target.value });
+    setInputValues({
+      ...inputValues,
+      row: { ...inputValues.row, [e.target.name]: e.target.value },
+    });
   };
 
   const handleFormSubmit = () => {
-    addTypeToEnum(table, inputValues);
+    const schema = vmd.getTableSchema(table.table_name);
+    if (!schema) {
+      console.error("Could not find schema for table ", table.table_name);
+      return;
+    }
+
+    const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
+      schema?.schema_name,
+      table.table_name,
+      inputValues
+    );
+
+    data_accessor.addRow();
+    onClose();
   };
 
   const style = {
@@ -65,15 +82,14 @@ const AddRowPopup = ({
       <Box sx={style}>
         <Typography variant="h5">Adding a new Enumerated type</Typography>
         <div className="addEnum">
-          {columns.map((column: string) => {
+          {columns.map((column: Column, idx) => {
             return (
-              <div key={column + "Div"} style={{ marginBottom: 10 }}>
-                <label key={column} style={labelStyle}>
-                  {column}
+              <div key={column.column_name} style={{ marginBottom: 10 }}>
+                <label key={idx} style={labelStyle}>
+                  {column.column_name}
                   <input
-                    key={column + "Input"}
                     type="text"
-                    name={column}
+                    name={column.column_name}
                     style={inputStyle}
                     onChange={handleInputChange}
                   />

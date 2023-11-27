@@ -27,7 +27,6 @@ const ConfigContextMockComponent = () => {
     </div>
   );
 };
-vi.mock("axios");
 describe("ConfigContext", () => {
   it("provides the context value", () => {
     render(

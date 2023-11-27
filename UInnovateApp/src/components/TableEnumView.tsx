@@ -1,63 +1,55 @@
 import "../styles/TableComponent.css";
-import Table from "react-bootstrap/Table";
-import attr from "../virtualmodel/Tables";
-import {
-  getColumnsFromTable,
-  getRowsFromTable,
-} from "../virtualmodel/FetchData";
+import TableComponent from "react-bootstrap/Table";
+import vmd, { Table, Column } from "../virtualmodel/VMD";
+import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import { useState, useEffect } from "react";
 import AddRowPopup from "./AddRowPopup";
 
 interface TableEnumViewProps {
-  nameOfTable: string;
+  table: Table;
 }
 
 const TableEnumView: React.FC<TableEnumViewProps> = ({
-  nameOfTable,
+  table,
 }: {
-  nameOfTable: string;
+  table: Table;
 }) => {
-  const [columns, setColumns] = useState<string[]>([]);
-  const [rows, setRows] = useState<string[][]>([]);
-  const [originalColumns, setOriginalColumns] = useState<string[]>([]);
-  // const [originalRows, setOriginalRows] = useState<string[][]>([]);
+  const [column, setColumn] = useState<Column>();
+  const [originalColumns, setOriginalColumns] = useState<Column[]>([]);
+  const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const attributes = await getColumnsFromTable(nameOfTable);
-        const lines = await getRowsFromTable(nameOfTable);
-        setOriginalColumns(attributes);
-        // setOriginalRows(lines);
+        const schema = vmd.getTableSchema(table.table_name);
+        if (!schema) {
+          throw new Error("Schema not found");
+        }
 
-        // If a table was selected as enum type, filter through the attributes
-        // to only get columns indicating a "type"
-        const filteredAttributes = attributes.filter((columnName: string) =>
-          // columnName.includes("type") ||
-          // columnName.includes("id") ||
-          columnName.includes("name")
+        const attribute = table.getEnumViewColumn();
+        const columns = table.getColumns();
+
+        if (!attribute) {
+          throw new Error("Attribute not found");
+        }
+
+        const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+          schema.schema_name,
+          table.table_name
         );
+        const lines = await data_accessor.fetchRows();
 
-        // To display only the column of that specific attribute, we need
-        // to find the indices of all the columns we keep
-        const columnIndices = attributes.reduce(
-          (indices: number[], columnName: string, index: number) => {
-            if (filteredAttributes.includes(columnName)) {
-              indices.push(index);
-            }
-            return indices;
-          },
-          [] as number[]
-        );
+        // Filter the rows to only include the attribute column
+        const filteredRows = lines?.map((row: Row) => {
+          const filteredRowData: { [key: string]: string | number | boolean } =
+            {};
+          filteredRowData[attribute.column_name] = row[attribute.column_name];
+          return new Row(filteredRowData);
+        });
 
-        // Now we only keep the columns of the rows containing the data
-        // of the matched indices
-        const filteredRows = lines.map((row) =>
-          columnIndices.map((index: number) => row[index])
-        );
-
-        setColumns(filteredAttributes);
+        setColumn(attribute);
+        setOriginalColumns(columns);
         setRows(filteredRows);
       } catch (error) {
         console.error("Could not generate the columns and rows.");
@@ -65,7 +57,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
     };
 
     fetchData();
-  }, [nameOfTable]);
+  }, [table]);
 
   const handleAddRowClick = () => {
     setIsPopupVisible(true);
@@ -73,54 +65,48 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
 
   return (
     <div>
-      {attr.map((table, tableIdx) => {
-        if (table.table_name !== nameOfTable) {
-          return null;
-        } else {
-          return (
-            <div key={table.table_name + tableIdx}>
-              <Table striped bordered hover variant="dark">
-                <thead>
-                  <tr>
-                    {columns.map((column, colIdx) => {
-                      return <th key={column + colIdx}>{column}</th>;
-                    })}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((row, rowIdx) => {
-                    return (
-                      <tr key={rowIdx}>
-                        {row.map((cell, cellIdx) => {
-                          return <td key={cell + cellIdx}>{cell}</td>;
-                        })}
-                      </tr>
-                    );
+      <div>
+        <TableComponent striped bordered hover variant="dark">
+          <thead>
+            <tr>
+              <th>{column?.column_name}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows?.map((row, rowIdx) => {
+              return (
+                <tr key={rowIdx}>
+                  {Object.values(row.row).map((cell, cellIdx) => {
+                    return <td key={cellIdx}>{cell}</td>;
                   })}
-                </tbody>
-              </Table>
-              <div
-                className="container"
-                style={{ display: "flex", justifyContent: "center" }}
-              >
-                <button
-                  onClick={() => handleAddRowClick()}
-                  style={{ display: "flex" }}
-                >
-                  +
-                </button>
-              </div>
-              {isPopupVisible && (
-                <AddRowPopup
-                  onClose={() => setIsPopupVisible(false)}
-                  table={table.table_name}
-                  columns={originalColumns}
-                />
-              )}
-            </div>
-          );
-        }
-      })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </TableComponent>
+      </div>
+      <div>
+        <div>
+          <div
+            className="container"
+            style={{ display: "flex", justifyContent: "center" }}
+          >
+            <button
+              onClick={() => handleAddRowClick()}
+              style={{ display: "flex" }}
+            >
+              +
+            </button>
+          </div>
+          {isPopupVisible && (
+            <AddRowPopup
+              onClose={() => setIsPopupVisible(false)}
+              table={table}
+              columns={originalColumns}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };

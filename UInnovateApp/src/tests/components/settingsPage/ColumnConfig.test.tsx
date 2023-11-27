@@ -1,31 +1,31 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import { ConfigProvider } from "../../../contexts/ConfigContext";
-import { TablesContextProvider } from "../../../contexts/TablesContext";
 import { ColumnConfig } from "../../../components/settingsPage/ColumnConfig";
-vi.mock("axios");
+import VMD from "../../../virtualmodel/__mocks__/VMD";
+
 describe("ColumnConfig component", () => {
+  const column = new VMD.Column("Column1");
+  const table = new VMD.Table("Table1");
+  table.addColumn(column);
+
   it("renders the component", () => {
     render(
-      <TablesContextProvider>
-        <ConfigProvider>
-          <ColumnConfig tableName="Table1" />
-        </ConfigProvider>
-      </TablesContextProvider>
+      <ConfigProvider>
+        <ColumnConfig table={table} />
+      </ConfigProvider>
     );
   }),
     it("modifies the config on visibility toggle", async () => {
       // Arrange
       render(
-        <TablesContextProvider>
-          <ConfigProvider>
-            <ColumnConfig tableName="Table1" />
-          </ConfigProvider>
-        </TablesContextProvider>
+        <ConfigProvider>
+          <ColumnConfig table={table} />
+        </ConfigProvider>
       );
 
       // Act - toggle the visibility off for the first column
-      fireEvent.click(screen.getAllByRole("checkbox")[0]);
+      fireEvent.click(screen.getByTestId("visibility-switch"));
 
       // Assert
       await waitFor(() => {
