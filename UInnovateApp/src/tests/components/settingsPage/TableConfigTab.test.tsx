@@ -1,16 +1,20 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { Table, TableDisplayType } from "../../../virtualmodel/VMD";
 import { describe, expect } from "vitest";
 import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { TableItem } from "../../../components/settingsPage/TableConfigTab";
-
-console.log("Testing to see if prints work here");
+import VMD from "../../../virtualmodel/__mocks__/VMD";
 
 vi.mock("../../../virtualmodel/Config");
-vi.mock("../../../contexts/ConfigContext");
+vi.mock("../../../contexts/ConfigContext", () => ({
+  ConfigProvider: ({ children }) => <div>{children}</div>,
+  useConfig: () => ({
+    updateConfig: vi.fn(),
+  }),
+}));
 
 describe("TableItem component", () => {
-  const table = new Table("Mock Table");
+  const table = new VMD.Table("Mock Table");
+
   it("renders the component", () => {
     render(
       <ConfigProvider>
@@ -25,12 +29,18 @@ describe("TableItem component", () => {
           <TableItem table={table} />
         </ConfigProvider>
       );
+
+      screen.debug();
+
       // Act - toggle the visibility off
-      fireEvent.click(screen.getByRole("checkbox"));
+      const checkbox = await screen.findByTestId("visibility-switch");
+      fireEvent.click(checkbox);
 
       // Assert
       await waitFor(() => {
-        const updatedToggle = screen.getByRole("checkbox") as HTMLInputElement;
+        const updatedToggle = screen.getByTestId(
+          "visibility-switch"
+        ) as HTMLInputElement;
         expect(updatedToggle.checked).toBeFalsy();
       });
     }),
@@ -48,7 +58,7 @@ describe("TableItem component", () => {
         .querySelector("input");
       if (inputElement) {
         fireEvent.change(inputElement, {
-          target: { value: TableDisplayType.enumView },
+          target: { value: VMD.TableDisplayType.enumView },
         });
       }
 
@@ -56,7 +66,7 @@ describe("TableItem component", () => {
       await waitFor(() => {
         // Assert
         const updatedDisplayType = screen.getByDisplayValue(
-          TableDisplayType.enumView
+          VMD.TableDisplayType.enumView
         );
         expect(updatedDisplayType).toBeInTheDocument();
       });

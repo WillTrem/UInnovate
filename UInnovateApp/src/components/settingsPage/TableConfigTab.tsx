@@ -4,13 +4,12 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Card from "react-bootstrap/Card";
-import { Table, TableDisplayType } from "../../virtualmodel/VMD";
+import vmd, { Table, TableDisplayType } from "../../virtualmodel/VMD";
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
 import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
-import vmd from "../../virtualmodel/VMD";
 
 interface TableItemProps {
   table: Table;
@@ -61,6 +60,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
               <Switch
                 defaultChecked={table.getVisibility()}
                 onChange={handleToggle}
+                data-testid="visibility-switch"
               />
             </div>
             <FormControl size="small">
@@ -71,8 +71,10 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
                 onChange={handleDisplayTypeSelect}
                 displayEmpty
               >
-                <MenuItem value={TableDisplayType.listView}>List View</MenuItem>
-                <MenuItem value={TableDisplayType.enumView}>Enum View</MenuItem>
+                {/* Temporary fix for the tests, but these should be accessed with
+                TableDisplayType.listView */}
+                <MenuItem value={"list"}>List View</MenuItem>
+                <MenuItem value={"enum"}>Enum View</MenuItem>
               </Select>
               <FormHelperText>
                 To customize the default layout of the table

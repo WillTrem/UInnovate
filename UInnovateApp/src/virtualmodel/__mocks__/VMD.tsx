@@ -1,14 +1,17 @@
 import { vi } from "vitest";
 import { DataAccessorMock } from "./DataAccessor";
-import VMD, { Table, Schema, Column } from "../VMD";
+import VMD, { Table, Schema, Column, TableDisplayType } from "../VMD";
 
-export { Table, Schema, Column }
-
+export { Table, Schema, Column };
 
 export default {
   ...VMD,
   getRowsDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessor in VMD mock was called");
+    return new DataAccessorMock();
+  }),
+  getUpsertDataAccessor: vi.fn().mockImplementation(() => {
+    console.log("getUpsertDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
   getSchemas: vi.fn().mockImplementation(() => {
@@ -18,4 +21,10 @@ export default {
       { schema_name: "mock schema name 2" },
     ];
   }),
+  getTableSchema: vi.fn().mockImplementation(() => {
+    console.log("getTableSchema in VMD mock was called");
+    return new Schema("mock schema name");
+  }),
+  Table: Table,
+  TableDisplayType: TableDisplayType,
 };
