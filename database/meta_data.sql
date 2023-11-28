@@ -28,4 +28,4 @@ OR CFP.name = 'visible' OR CFP.name = 'metadata_view';
 -- Insert a default script for the scripts table
 INSERT INTO meta.scripts (name, description, content, "table")
 VALUES
-    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World")', 'scripts');
+    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts');

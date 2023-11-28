@@ -4,7 +4,14 @@ import { useState } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem, TextField } from "@mui/material";
 import vmd from "../../virtualmodel/VMD";
+import AceEditor from "react-ace";
+import ace from "ace-builds";
 
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/theme-github";
+import "ace-builds/src-noconflict/ext-language_tools";
+
+ace.config.set("basePath", "../../../node_modules/ace-builds/src-noconflict");
 interface ScriptEditorProps {
   script: Row;
 }
@@ -58,6 +65,23 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
               );
             })}
           </Select>
+          <AceEditor
+            mode="javascript"
+            theme="github"
+            value={content}
+            onChange={(value) => {
+              setContent(value);
+            }}
+            name="script-editor"
+            readOnly={!isEditing}
+            editorProps={{ $blockScrolling: true }}
+            setOptions={{
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true,
+              enableSnippets: true,
+            }}
+          />
+          <button onClick={() => setIsEditing(!isEditing)}>Edit</button>
         </Card.Body>
       </Card>
     </div>
