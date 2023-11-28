@@ -1,8 +1,12 @@
 .config-pane {
   display: flex;
   justify-content: space-evenly;
+  margin-bottom: 2em;
 }
-
+.overall-config-panel {
+  display: flex;
+  flex-direction: column;
+}
 .column-config-table {
   width: 75%;
   border: 0;

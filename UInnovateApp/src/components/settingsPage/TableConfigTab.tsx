@@ -17,6 +17,7 @@ interface TableItemProps {
 
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
+  console.log(schema);
 
   if (!schema) {
     throw new Error("Schema not found for table: " + table.table_name);
@@ -54,32 +55,64 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
       <Card>
         <Card.Body>
           <Card.Title>Table specific configuration </Card.Title>
-          <div className="config-pane">
-            <div className="d-flex flex-row align-items-center">
-              <span className="px-3">Visible</span>
-              <Switch
-                defaultChecked={table.getVisibility()}
-                onChange={handleToggle}
-                data-testid="visibility-switch"
-              />
-            </div>
-            <FormControl size="small">
-              <h6>Display Type</h6>
-              <Select
-                data-testid="display-type-table-config"
-                value={displayType}
-                onChange={handleDisplayTypeSelect}
-                displayEmpty
-              >
-                {/* Temporary fix for the tests, but these should be accessed with
+          <div className="overall-config-panel">
+
+            <div className="config-pane">
+              <div className="d-flex flex-row align-items-center">
+                <span className="px-5" style={{width:'200px'}}>Visible</span>
+                <Switch
+                  defaultChecked={table.getVisibility()}
+                  onChange={handleToggle}
+                  data-testid="visibility-switch"
+                />
+              </div>
+              <FormControl size="small">
+                <h6>Display Type</h6>
+                <Select
+                  data-testid="display-type-table-config"
+                  value={displayType}
+                  onChange={handleDisplayTypeSelect}
+                  displayEmpty
+                >
+                  {/* Temporary fix for the tests, but these should be accessed with
                 TableDisplayType.listView */}
-                <MenuItem value={"list"}>List View</MenuItem>
-                <MenuItem value={"enum"}>Enum View</MenuItem>
-              </Select>
-              <FormHelperText>
-                To customize the default layout of the table
-              </FormHelperText>
-            </FormControl>
+                  <MenuItem value={"list"}>List View</MenuItem>
+                  <MenuItem value={"enum"}>Enum View</MenuItem>
+                </Select>
+                <FormHelperText>
+                  To customize the default layout of the table
+                </FormHelperText>
+              </FormControl>
+            </div>
+            <div className="config-pane">
+              <div className="d-flex flex-row align-items-center">
+                <span className="px-3" style={{width:'200px'}}>Display Details View</span>
+                <Switch
+                  defaultChecked={table.getVisibility()}
+                  onChange={handleToggle}
+                  data-testid="visibility-switch"
+                />
+              </div>
+              <FormControl size="small">
+                <h6>Lookup Tables</h6>
+                <Select
+                  data-testid="display-type-table-config"
+                  value={displayType}
+                  onChange={handleDisplayTypeSelect}
+                  displayEmpty
+                >
+                  {/* Temporary fix for the tests, but these should be accessed with
+                TableDisplayType.listView */}
+                  <MenuItem value={"list"}>List View</MenuItem>
+                  <MenuItem value={"enum"}>Enum View</MenuItem>
+                </Select>
+                <FormHelperText>
+                  To customize the default layout of the table
+                </FormHelperText>
+              </FormControl>
+            </div>
+
+
           </div>
         </Card.Body>
       </Card>
