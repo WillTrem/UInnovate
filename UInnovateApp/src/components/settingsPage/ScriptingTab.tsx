@@ -2,6 +2,7 @@ import { Col, Row as Line, Tab, Nav } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
+import { ScriptEditor } from "./ScriptEditor";
 
 export const ScriptingTab = () => {
   const schema = vmd.getSchema("meta");
@@ -46,6 +47,18 @@ export const ScriptingTab = () => {
                 );
               })}
             </Nav>
+          </Col>
+          <Col sm={9}>
+            <Tab.Content>
+              {scripts?.map((script: Row) => {
+                const script_name = script["name"];
+                return (
+                  <Tab.Pane key={script_name} eventKey={script_name}>
+                    <ScriptEditor script={script} />
+                  </Tab.Pane>
+                );
+              })}
+            </Tab.Content>
           </Col>
         </Line>
       </Tab.Container>

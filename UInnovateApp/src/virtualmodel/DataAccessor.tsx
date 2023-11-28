@@ -14,6 +14,7 @@ export class DataAccessor {
   ) {
     this.data_url = data_url;
     this.headers = headers;
+    this.params = params;
     this.values = values;
   }
 
@@ -68,9 +69,9 @@ export class DataAccessor {
 }
 
 export class Row {
-  row: { [key: string]: string | number | boolean };
+  row?: { [key: string]: string | number | boolean };
 
-  constructor(row: { [key: string]: string | number | boolean }) {
+  constructor(row?: { [key: string]: string | number | boolean }) {
     this.row = row;
   }
 

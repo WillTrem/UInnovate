@@ -67,8 +67,9 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_values (
 CREATE TABLE IF NOT EXISTS meta.scripts (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
     content TEXT NOT NULL,
+    "table" TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
