@@ -39,3 +39,5 @@ done
 
 # Log completion time
 echo "Database refresh completed at $(date)" | tee -a $LOG_FILE
+
+$SHELL
