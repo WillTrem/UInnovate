@@ -2,8 +2,14 @@ import { Row } from "../../virtualmodel/DataAccessor";
 import { Card } from "react-bootstrap";
 import { useState } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import { MenuItem, TextField } from "@mui/material";
+import {
+  FormControl,
+  FormHelperText,
+  MenuItem,
+  TextField,
+} from "@mui/material";
 import vmd from "../../virtualmodel/VMD";
+import "../../styles/TableItem.css";
 import AceEditor from "react-ace";
 import ace from "ace-builds";
 
@@ -25,6 +31,7 @@ interface ScriptRow {
 }
 
 export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
+  const script_name = script["name"];
   const tables = vmd.getAllTables();
   const [content, setContent] = useState<string>(script["content"] || "");
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -53,18 +60,30 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
     <div>
       <Card>
         <Card.Body>
-          <TextField defaultValue="Do a magic trick!" variant="outlined">
-            Apply Code Button
-          </TextField>
-          <Select value={script["table"]} onChange={handleTableChange}>
-            {tables.map((table) => {
-              return (
-                <MenuItem key={table.table_name} value={table.table_name}>
-                  {table.table_name}
-                </MenuItem>
-              );
-            })}
-          </Select>
+          <Card.Title>Script: {script_name}</Card.Title>
+          <div className="config-pane">
+            <div className="d-flex flex-row align-items-center">
+              <span className="px-3">Button Name</span>
+              <TextField defaultValue="Do a magic trick!">
+                Apply Code Button
+              </TextField>
+            </div>
+            <FormControl size="small">
+              <h6>Script Table</h6>
+              <Select value={script["table_name"]} onChange={handleTableChange}>
+                {tables.map((table) => {
+                  return (
+                    <MenuItem key={table.table_name} value={table.table_name}>
+                      {table.table_name}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+              <FormHelperText>
+                The table that this script will be applied to.
+              </FormHelperText>
+            </FormControl>
+          </div>
           <AceEditor
             mode="javascript"
             theme="github"
