@@ -11,7 +11,7 @@ mandatory_flag=false
 while getopts "i:" opt; do
   case $opt in
     i)
-      NEW_CONFIG=`cat D:/SOEN490/UInnovate/database/$OPTARG/appconfig_values.json`
+      NEW_CONFIG=`cat ./database/$OPTARG/appconfig_values.json`
       mandatory_flag=true
       ;;
     :)
