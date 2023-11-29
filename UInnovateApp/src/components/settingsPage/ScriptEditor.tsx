@@ -56,8 +56,6 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
       updatedScript
     );
 
-    console.log(data_accessor);
-
     data_accessor?.updateRow();
   };
 
