@@ -14,7 +14,7 @@ export const ScriptingTab = () => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newScript, setNewScript] = useState<Row>({});
 
-  useEffect(() => {
+  const getScripts = async () => {
     if (!schema || !script_table) {
       throw new Error("Schema or table not found");
     }
@@ -24,35 +24,16 @@ export const ScriptingTab = () => {
       script_table?.table_name
     );
 
-    const getScripts = async () => {
-      const scripts_rows = await data_accessor?.fetchRows();
-      setScripts(scripts_rows);
-    };
+    const scripts_rows = await data_accessor?.fetchRows();
+    setScripts(scripts_rows);
+  };
 
+  useEffect(() => {
     getScripts();
   }, [schema, script_table]);
 
   const handleAddScript = async () => {
     setShowModal(true);
-    // const row: Row = {
-    //   name: "New Script",
-    //   description: "New Script",
-    //   content: "New Script",
-    // };
-
-    // const data_accessor = vmd.getUpsertDataAccessor(
-    //   "meta",
-    //   "scripts",
-    //   {
-    //     columns: "name, description, content",
-    //     on_conflict: "id",
-    //   },
-    //   row
-    // );
-
-    // await data_accessor?.upsert();
-    // const scripts_rows = await data_accessor?.fetchRows();
-    // setScripts(scripts_rows);
   };
 
   const handleClose = () => {
@@ -71,8 +52,7 @@ export const ScriptingTab = () => {
     );
 
     await data_accessor?.upsert();
-    const scripts_rows = await data_accessor?.fetchRows();
-    setScripts(scripts_rows);
+    getScripts();
     setShowModal(false);
   };
   return (
@@ -92,7 +72,7 @@ export const ScriptingTab = () => {
                     if (
                       column.column_name === "id" ||
                       column.column_name === "created_at" ||
-                      column.column_name === "table"
+                      column.column_name === "table_name"
                     )
                       return null;
                     return (
