@@ -2,6 +2,7 @@
   display: flex;
   justify-content: space-evenly;
   margin-bottom: 2em;
+  align-items: center;
 }
 .overall-config-panel {
   display: flex;
@@ -19,4 +20,17 @@
 .semi-bold {
   font-weight: 600;
   text-align: start;
+}
+.detail-view{
+  display: flex;
+  margin-left: 92px;
+  margin-bottom: 2em;
+  align-items:start
+}
+.look-tables{
+  display: flex;
+  flex-direction: row;
+  margin-left: 200px;
+  align-items: center;
+
 }

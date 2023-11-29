@@ -10,6 +10,8 @@ import { ColumnConfig } from "./ColumnConfig";
 import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
+import LookUpTable from "./LookupSetting";
+import { Menu } from "react-pro-sidebar";
 
 interface TableItemProps {
   table: Table;
@@ -78,41 +80,17 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
                 TableDisplayType.listView */}
                   <MenuItem value={"list"}>List View</MenuItem>
                   <MenuItem value={"enum"}>Enum View</MenuItem>
+                  <MenuItem value={"detail"}>Detail View</MenuItem>
                 </Select>
                 <FormHelperText>
                   To customize the default layout of the table
                 </FormHelperText>
               </FormControl>
             </div>
-            <div className="config-pane">
-              <div className="d-flex flex-row align-items-center">
-                <span className="px-3" style={{width:'200px'}}>Display Details View</span>
-                <Switch
-                  defaultChecked={table.getVisibility()}
-                  onChange={handleToggle}
-                  data-testid="visibility-switch"
-                />
+
+              <div className="detail-view">
+                <LookUpTable/>
               </div>
-              <FormControl size="small">
-                <h6>Lookup Tables</h6>
-                <Select
-                  data-testid="display-type-table-config"
-                  value={displayType}
-                  onChange={handleDisplayTypeSelect}
-                  displayEmpty
-                >
-                  {/* Temporary fix for the tests, but these should be accessed with
-                TableDisplayType.listView */}
-                  <MenuItem value={"list"}>List View</MenuItem>
-                  <MenuItem value={"enum"}>Enum View</MenuItem>
-                </Select>
-                <FormHelperText>
-                  To customize the default layout of the table
-                </FormHelperText>
-              </FormControl>
-            </div>
-
-
           </div>
         </Card.Body>
       </Card>
