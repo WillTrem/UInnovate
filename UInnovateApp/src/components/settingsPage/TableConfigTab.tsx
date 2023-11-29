@@ -45,11 +45,19 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     await updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
   };
 
+  const handleToggleDetails = async () => {
+    const isVisible = table.getHasDetailsView();
+    console.log(isVisible);
+    table.setHasDetailsView(!isVisible);
+    await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
+  };
+
   const handleDisplayTypeSelect = async (event: SelectChangeEvent<string>) => {
     const newDisplayType = event.target.value;
     table.setDisplayType(newDisplayType);
     await updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
   };
+
 
   return (
     <>
@@ -61,7 +69,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
 
             <div className="config-pane">
               <div className="d-flex flex-row align-items-center">
-                <span className="px-5" style={{width:'200px'}}>Visible</span>
+                <span className="px-5" style={{ width: '200px' }}>Visible</span>
                 <Switch
                   defaultChecked={table.getVisibility()}
                   onChange={handleToggle}
@@ -80,7 +88,6 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
                 TableDisplayType.listView */}
                   <MenuItem value={"list"}>List View</MenuItem>
                   <MenuItem value={"enum"}>Enum View</MenuItem>
-                  <MenuItem value={"detail"}>Detail View</MenuItem>
                 </Select>
                 <FormHelperText>
                   To customize the default layout of the table
@@ -88,9 +95,17 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
               </FormControl>
             </div>
 
-              <div className="detail-view">
-                <LookUpTable/>
-              </div>
+            <div className="details-view">
+            <span className="px-1" style={{ width: '100px' }}>Details View</span>
+            <Switch
+                  defaultChecked={table.getHasDetailsView()}
+                  onChange={handleToggleDetails}
+                  data-testid="detail-visibility-switch"
+                />
+
+
+              <LookUpTable />
+            </div>
           </div>
         </Card.Body>
       </Card>

@@ -6,7 +6,8 @@ VALUES
     ('editable', 'Makes a column editable', 'boolean', 'false'),
     ('display_column_as_currency', 'Displays a column as currency type.', 'boolean', 'false'),
     ('column_display_type', 'How to display a column', 'string', 'text'),
-    ('metadata_view', 'Default view when showing the metadata information of a table/column', 'boolean', 'false' );
+    ('metadata_view', 'Default view when showing the metadata information of a table/column', 'boolean', 'false' ),
+    ('details_view', 'Visbility state of the details view for a table', 'boolean', 'true');
     -- ADD ANY NEW CONFIG PROPERTIES HERE
 
 -- Insert the default column display typess for each application column
@@ -14,7 +15,7 @@ INSERT INTO meta.appconfig_values (property, value, "table", "column")
 SELECT
     CFP.name, default_value, C.table, C.column
 FROM meta.columns as C, meta.appconfig_properties as CFP
-WHERE schema = 'application' AND CFP.name != 'table_view';
+WHERE schema = 'application' AND (CFP.name != 'table_view' AND CFP.name != 'details_view');
 
 
 -- Insert the default column display typess for each application table
@@ -23,4 +24,4 @@ SELECT
     CFP.name, default_value, T.table
 FROM meta.tables as T, meta.appconfig_properties as CFP
 WHERE schema = 'application' AND CFP.name = 'table_view'
-OR CFP.name = 'visible' OR CFP.name = 'metadata_view';
+OR CFP.name = 'visible' OR CFP.name = 'metadata_view' OR CFP.name = 'details_view';

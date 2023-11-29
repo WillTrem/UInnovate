@@ -21,16 +21,16 @@
   font-weight: 600;
   text-align: start;
 }
-.detail-view{
+.details-view{
   display: flex;
-  margin-left: 92px;
   margin-bottom: 2em;
-  align-items:start
+  align-items:center;
+  justify-content: space-evenly;
 }
 .look-tables{
   display: flex;
   flex-direction: row;
-  margin-left: 200px;
+  margin-left: 100px;
   align-items: center;
 
 }

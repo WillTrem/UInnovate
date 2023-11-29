@@ -105,3 +105,4 @@ GRANT SELECT ON TABLE meta.appconfig_values TO web_anon;
 GRANT SELECT ON TABLE meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
+GRANT ALL ON meta.columns TO web_anon;

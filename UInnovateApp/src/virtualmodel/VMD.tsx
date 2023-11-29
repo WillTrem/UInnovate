@@ -235,6 +235,9 @@ class VirtualModelDefinition {
           case "table_view":
             table.table_display_type = config.value as string;
             break;
+          case "details_view":
+            table.has_details_view = config.value === "true";
+            break; 
         }
       });
       this.config_data_fetched = true;
@@ -345,6 +348,7 @@ export class Table {
   table_name: string;
   table_display_type: string;
   is_visible: boolean;
+  has_details_view: boolean;
   columns: Column[];
   url: string;
 
@@ -352,6 +356,7 @@ export class Table {
     this.table_name = table_name;
     this.table_display_type = "list";
     this.is_visible = true;
+    this.has_details_view = true;
     this.columns = [];
     this.url = "http://localhost:3000/" + table_name;
   }
@@ -414,7 +419,20 @@ export class Table {
   setVisibility(is_visible: boolean) {
     this.is_visible = is_visible;
   }
+
+  // Method to get the table's details view
+  // return type : boolean
+  getHasDetailsView() {
+    return this.has_details_view;
+  }
+
+  // Method to set the table's details view
+  // return type : void
+  setHasDetailsView(has_details_view: boolean) {
+    this.has_details_view = has_details_view;
+  }
 }
+
 
 export class Column {
   column_name: string;
