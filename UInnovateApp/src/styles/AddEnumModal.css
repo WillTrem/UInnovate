@@ -2,4 +2,5 @@ div.addEnum {
   display: flex;
   flex-direction: column;
   padding-top: 20px;
+  background-color: #f1f1f1;
 }
