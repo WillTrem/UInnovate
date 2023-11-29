@@ -71,12 +71,10 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
               <span className="px-3">Button Name</span>
               <TextField
                 defaultValue={script["btn_name"]}
-                onSubmit={(event) =>
+                onChange={(event) =>
                   handleChange(event as SelectChangeEvent, "btn_name")
                 }
-              >
-                Apply Code Button
-              </TextField>
+              ></TextField>
             </div>
             <FormControl size="small">
               <h6>Script Table</h6>
@@ -103,12 +101,13 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
                 <EditIcon />
               </IconButton>
               <IconButton
-                onClick={() =>
+                onClick={() => {
                   handleChange(
                     { target: { value: content } } as SelectChangeEvent,
                     "content"
-                  )
-                }
+                  );
+                  setIsEditing(false);
+                }}
               >
                 <SaveIcon />
               </IconButton>

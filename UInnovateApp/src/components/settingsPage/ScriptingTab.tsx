@@ -3,7 +3,14 @@ import { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
 import { ScriptEditor } from "./ScriptEditor";
-import { Button, Modal, Form } from "react-bootstrap";
+import { Modal, Form } from "react-bootstrap";
+import { Button } from "@mui/material";
+import { IoMdAddCircle } from "react-icons/io";
+
+const buttonStyle = {
+  marginRight: 10,
+  backgroundColor: "#404040",
+};
 
 export const ScriptingTab = () => {
   const schema = vmd.getSchema("meta");
@@ -30,7 +37,7 @@ export const ScriptingTab = () => {
 
   useEffect(() => {
     getScripts();
-  }, [schema, script_table]);
+  });
 
   const handleAddScript = async () => {
     setShowModal(true);
@@ -57,7 +64,6 @@ export const ScriptingTab = () => {
         <Line>
           <Col sm={3}>
             <h4>Scripts</h4>
-            <Button onClick={handleAddScript}>Add Script</Button>
             <Modal show={showModal} onHide={handleClose}>
               <Modal.Header>
                 <Modal.Title>Add New Script</Modal.Title>
@@ -90,10 +96,18 @@ export const ScriptingTab = () => {
                 </Form>
               </Modal.Body>
               <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button
+                  onClick={handleClose}
+                  style={buttonStyle}
+                  variant="contained"
+                >
                   Close
                 </Button>
-                <Button variant="primary" onClick={handleSave}>
+                <Button
+                  onClick={handleSave}
+                  style={buttonStyle}
+                  variant="contained"
+                >
                   Add Script
                 </Button>
               </Modal.Footer>
@@ -108,6 +122,14 @@ export const ScriptingTab = () => {
                 );
               })}
             </Nav>
+
+            <Button
+              onClick={handleAddScript}
+              style={buttonStyle}
+              variant="contained"
+            >
+              <IoMdAddCircle className="button-icon" />
+            </Button>
           </Col>
           <Col sm={9}>
             <Tab.Content>
