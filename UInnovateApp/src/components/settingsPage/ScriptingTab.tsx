@@ -74,7 +74,8 @@ export const ScriptingTab = () => {
                     if (
                       column.column_name === "id" ||
                       column.column_name === "created_at" ||
-                      column.column_name === "table_name"
+                      column.column_name === "table_name" ||
+                      column.column_name === "btn_name"
                     )
                       return null;
                     return (

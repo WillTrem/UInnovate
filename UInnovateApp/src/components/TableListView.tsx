@@ -7,7 +7,7 @@ import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { useConfig } from "../contexts/ConfigContext";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
-import { Switch } from "@mui/material";
+import { Switch, Button } from "@mui/material";
 import { NumericFormat } from "react-number-format";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -17,6 +17,11 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 interface TableListViewProps {
   table: Table;
 }
+
+const buttonStyle = {
+  marginRight: 10,
+  backgroundColor: "#404040",
+};
 
 const TableListView: React.FC<TableListViewProps> = ({
   table,
@@ -58,11 +63,37 @@ const TableListView: React.FC<TableListViewProps> = ({
     };
     getRows();
   }, [table]);
+
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
   const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
     () => <></>
   );
+
+  const schema = vmd.getSchema("meta");
+  const script_table = vmd.getTable("meta", "scripts");
+  const [scripts, setScripts] = useState<Row[] | undefined>([]);
+
+  const getScripts = async () => {
+    if (!schema || !script_table) {
+      throw new Error("Schema or table not found");
+    }
+
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+      schema?.schema_name,
+      script_table?.table_name
+    );
+
+    const scripts_rows = await data_accessor?.fetchRows();
+    const filteredScripts = scripts_rows?.filter(
+      (script) => script.table_name === table.table_name
+    );
+    setScripts(filteredScripts);
+  };
+
+  useEffect(() => {
+    getScripts();
+  });
 
   useEffect(() => {
     const newInputField = (column: Column) => {
@@ -133,6 +164,32 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   return (
     <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: "10px",
+        }}
+      >
+        <div>
+          <Button style={buttonStyle} variant="contained">
+            Add Row
+          </Button>
+        </div>
+        <div>
+          {scripts?.map((script) => {
+            return (
+              <Button
+                key={script["id"]}
+                style={buttonStyle}
+                variant="contained"
+              >
+                {script["btn_name"]}
+              </Button>
+            );
+          })}
+        </div>
+      </div>
       <TableComponent striped bordered hover variant="dark">
         <thead>
           <tr>
