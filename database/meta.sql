@@ -73,9 +73,6 @@ GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
 
-ALTER TABLE meta.appconfig_properties OWNER TO web_anon;
-ALTER TABLE meta.appconfig_values OWNER TO web_anon;
-
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
 RETURNS json  -- Specify the return type here
@@ -121,19 +118,19 @@ DECLARE
     import_data json;
 BEGIN
     -- Extract data for appconfig_values and insert into meta.appconfig_values
-    DELETE FROM meta.appconfig_values;
-    DELETE FROM meta.appconfig_properties;
     import_data = $1;
     av_data = import_data->'appconfig_values';
+    ap_data = import_data->'appconfig_properties';
+    DELETE FROM meta.appconfig_properties;
+    INSERT INTO meta.appconfig_properties (name, description, value_type, default_value)
+    SELECT ap_row->>'name', ap_row->>'description', ap_row->>'value_type', ap_row->>'default_value'
+    FROM json_array_elements(ap_data) AS ap_row;
+    DELETE FROM meta.appconfig_values;
     INSERT INTO meta.appconfig_values (id, "table", "column", property, value)
     SELECT (av_row->>'id')::int, av_row->>'table', av_row->>'column', av_row->>'property', av_row->>'value'
     FROM json_array_elements(av_data) AS av_row;
 
     -- Extract data for appconfig_properties and insert into meta.appconfig_properties
-    ap_data = import_data->'appconfig_properties';
-    INSERT INTO meta.appconfig_properties (name, description, value_type, default_value)
-    SELECT ap_row->>'name', ap_row->>'description', ap_row->>'value_type', ap_row->>'default_value'
-    FROM json_array_elements(ap_data) AS ap_row;
 
 END;
 $BODY$;
