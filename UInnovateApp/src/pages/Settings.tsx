@@ -11,7 +11,7 @@ export function Settings() {
   return (
     <>
       <NavBar />
-      <div className="page-layout">
+      <div className="page-container">
         <h1 className="title">Settings</h1>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row>

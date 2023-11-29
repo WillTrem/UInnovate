@@ -47,7 +47,7 @@ const AddRowPopup = ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: "auto",
-    bgcolor: "background.paper",
+    bgcolor: "#f1f1f1",
     border: "2px solid #000",
     borderRadius: 8,
     boxShadow: 24,
@@ -61,9 +61,8 @@ const AddRowPopup = ({
   };
 
   const inputStyle = {
-    marginLeft: 10,
     padding: 8,
-    borderRadiu: 4,
+    borderRadius: 4,
     border: "1px solid #ccc",
   };
 
@@ -98,16 +97,18 @@ const AddRowPopup = ({
             );
           })}
         </div>
-        <Button
-          variant="contained"
-          onClick={handleFormSubmit}
-          style={buttonStyle}
-        >
-          Save Changes
-        </Button>
-        <Button variant="contained" onClick={onClose} style={buttonStyle}>
-          Close
-        </Button>
+        <div>
+          <Button
+            variant="contained"
+            onClick={handleFormSubmit}
+            style={buttonStyle}
+          >
+            Save Changes
+          </Button>
+          <Button variant="contained" onClick={onClose} style={buttonStyle}>
+            Close
+          </Button>
+        </div>
       </Box>
     </Modal>
   );
