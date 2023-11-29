@@ -7,13 +7,12 @@ import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { useConfig } from "../contexts/ConfigContext";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
-import { Switch, Button } from "@mui/material";
 import { NumericFormat } from "react-number-format";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { Button, Typography } from "@mui/material";
+import { Switch, Button, Typography } from "@mui/material";
 
 interface TableListViewProps {
   table: Table;
@@ -199,7 +198,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           })}
         </div>
       </div>
-      <TableComponent striped bordered hover variant="dark">
+      <TableComponent striped bordered hover>
         <thead>
           <tr>
             {columns.map((column) => {
