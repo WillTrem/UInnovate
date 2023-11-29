@@ -52,6 +52,20 @@ export class DataAccessor {
     }
   }
 
+  // Method to update a row in a table
+  // return type: AxiosResponse
+  async updateRow() {
+    try {
+      const response = await axios.patch(this.data_url, this.values, {
+        headers: this.headers,
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Could not update row:", error);
+    }
+  }
+
   // Method to upsert a set of rows in a table
   // return type: AxiosResponse
   async upsert() {

@@ -2,6 +2,9 @@ import { Row } from "../../virtualmodel/DataAccessor";
 import { Card } from "react-bootstrap";
 import { useState } from "react";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
+import { IconButton } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import SaveIcon from "@mui/icons-material/Save";
 import {
   FormControl,
   FormHelperText,
@@ -22,38 +25,40 @@ interface ScriptEditorProps {
   script: Row;
 }
 
-interface ScriptRow {
-  id: string;
-  name?: string;
-  description?: string;
-  content?: string;
-  table: string;
-}
-
 export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
   const script_name = script["name"];
   const tables = vmd.getAllTables();
+
+  const [updateScript, setUpdateScript] = useState<Row>(script);
   const [content, setContent] = useState<string>(script["content"] || "");
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
-  const handleTableChange = (event: SelectChangeEvent) => {
-    const row: ScriptRow = {
-      id: script["id"],
-      table: event.target.value,
-    };
+  const handleChange = (event: SelectChangeEvent, changed_property: string) => {
+    let updatedScript = updateScript;
 
-    const data_accessor = vmd.getUpsertDataAccessor(
+    switch (changed_property) {
+      case "table_name":
+        updatedScript = { ...updateScript, table_name: event.target.value };
+        break;
+      case "content":
+        updatedScript = { ...updateScript, content: event.target.value };
+        break;
+      case "btn_name":
+        updatedScript = { ...updateScript, btn_name: event.target.value };
+        break;
+    }
+
+    setUpdateScript(updatedScript);
+
+    const data_accessor = vmd.getUpdateRowDataAccessor(
       "meta",
       "scripts",
-      {
-        columns: "table",
-        on_conflict: "id",
-      },
-      row
+      updatedScript
     );
+
     console.log(data_accessor);
 
-    data_accessor?.upsert();
+    data_accessor?.updateRow();
   };
 
   return (
@@ -64,13 +69,21 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
           <div className="config-pane">
             <div className="d-flex flex-row align-items-center">
               <span className="px-3">Button Name</span>
-              <TextField defaultValue="Do a magic trick!">
+              <TextField
+                defaultValue={script["btn_name"]}
+                onSubmit={(event) =>
+                  handleChange(event as SelectChangeEvent, "btn_name")
+                }
+              >
                 Apply Code Button
               </TextField>
             </div>
             <FormControl size="small">
               <h6>Script Table</h6>
-              <Select value={script["table_name"]} onChange={handleTableChange}>
+              <Select
+                value={updateScript["table_name"]}
+                onChange={(event) => handleChange(event, "table_name")}
+              >
                 {tables.map((table) => {
                   return (
                     <MenuItem key={table.table_name} value={table.table_name}>
@@ -84,23 +97,40 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
               </FormHelperText>
             </FormControl>
           </div>
-          <AceEditor
-            mode="javascript"
-            theme="github"
-            value={content}
-            onChange={(value) => {
-              setContent(value);
-            }}
-            name="script-editor"
-            readOnly={!isEditing}
-            editorProps={{ $blockScrolling: true }}
-            setOptions={{
-              enableBasicAutocompletion: true,
-              enableLiveAutocompletion: true,
-              enableSnippets: true,
-            }}
-          />
-          <button onClick={() => setIsEditing(!isEditing)}>Edit</button>
+          <div style={{ display: "flex", flexDirection: "row" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <IconButton onClick={() => setIsEditing(!isEditing)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                onClick={() =>
+                  handleChange(
+                    { target: { value: content } } as SelectChangeEvent,
+                    "content"
+                  )
+                }
+              >
+                <SaveIcon />
+              </IconButton>
+            </div>
+            <AceEditor
+              mode="javascript"
+              theme="github"
+              value={content}
+              onChange={(value) => {
+                setContent(value);
+              }}
+              name="script-editor"
+              readOnly={!isEditing}
+              editorProps={{ $blockScrolling: true }}
+              setOptions={{
+                enableBasicAutocompletion: true,
+                enableLiveAutocompletion: true,
+                enableSnippets: true,
+              }}
+              style={{ opacity: isEditing ? 1 : 0.5 }}
+            />
+          </div>
         </Card.Body>
       </Card>
     </div>

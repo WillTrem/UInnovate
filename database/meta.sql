@@ -70,6 +70,7 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
     description TEXT NOT NULL,
     content TEXT NOT NULL,
     table_name TEXT DEFAULT 'scripts',
+    btn_name TEXT DEFAULT 'Do a magic trick!',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

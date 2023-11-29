@@ -41,17 +41,13 @@ export const ScriptingTab = () => {
   };
 
   const handleSave = async () => {
-    const data_accessor = vmd.getUpsertDataAccessor(
+    const data_accessor = vmd.getAddRowDataAccessor(
       "meta",
       "scripts",
-      {
-        columns: "name, description, content",
-        on_conflict: "id",
-      },
       newScript
     );
 
-    await data_accessor?.upsert();
+    await data_accessor?.addRow();
     getScripts();
     setShowModal(false);
   };
@@ -64,7 +60,7 @@ export const ScriptingTab = () => {
             <Button onClick={handleAddScript}>Add Script</Button>
             <Modal show={showModal} onHide={handleClose}>
               <Modal.Header>
-                <Modal.Title>Add New Scipt</Modal.Title>
+                <Modal.Title>Add New Script</Modal.Title>
               </Modal.Header>
               <Modal.Body>
                 <Form>
@@ -98,7 +94,7 @@ export const ScriptingTab = () => {
                   Close
                 </Button>
                 <Button variant="primary" onClick={handleSave}>
-                  Save Changes
+                  Add Script
                 </Button>
               </Modal.Footer>
             </Modal>
