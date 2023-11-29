@@ -61,7 +61,6 @@ const AddRowPopup = ({
   };
 
   const inputStyle = {
-    marginLeft: 10,
     padding: 8,
     borderRadiu: 4,
     border: "1px solid #ccc",

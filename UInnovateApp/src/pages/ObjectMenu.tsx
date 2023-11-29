@@ -21,7 +21,8 @@ export function ObjectMenu() {
   return (
     <>
       <NavBar />
-      <div>
+      <div className="page-container">
+        <h1 className="title">Tables</h1>
         <Tab.Container>
           <Row>
             <Col sm={3}>

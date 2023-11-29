@@ -4,10 +4,17 @@ import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import { useState, useEffect } from "react";
 import AddRowPopup from "./AddRowPopup";
+import { Button } from "@mui/material";
+import { IoMdAddCircle } from "react-icons/io";
 
 interface TableEnumViewProps {
   table: Table;
 }
+
+const buttonStyle = {
+  marginRight: 10,
+  backgroundColor: "#404040",
+};
 
 const TableEnumView: React.FC<TableEnumViewProps> = ({
   table,
@@ -66,7 +73,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
   return (
     <div>
       <div>
-        <TableComponent striped bordered hover variant="dark">
+        <TableComponent striped bordered hover>
           <thead>
             <tr>
               <th>{column?.column_name}</th>
@@ -91,12 +98,13 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
             className="container"
             style={{ display: "flex", justifyContent: "center" }}
           >
-            <button
+            <Button
+              variant="contained"
+              style={buttonStyle}
               onClick={() => handleAddRowClick()}
-              style={{ display: "flex" }}
             >
-              +
-            </button>
+              <IoMdAddCircle className="button-icon" />
+            </Button>
           </div>
           {isPopupVisible && (
             <AddRowPopup

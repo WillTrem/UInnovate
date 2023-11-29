@@ -4,9 +4,6 @@
   padding-top: 40px;
   text-align: left;
 }
-.page-layout {
-  padding-inline: 4em;
-}
 
 .customization-title {
   font-weight: bold;
@@ -16,7 +13,7 @@
 
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
-  background-color: #6c757d;
+  background-color: #C0C0C0;
 }
 
 .nav {
