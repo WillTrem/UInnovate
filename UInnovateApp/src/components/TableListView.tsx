@@ -13,14 +13,22 @@ import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
+import { Button, Typography } from "@mui/material";
 
 interface TableListViewProps {
   table: Table;
 }
 
 const buttonStyle = {
-  marginRight: 10,
+  marginTop: 20,
   backgroundColor: "#404040",
+  width: "fit-content",
+};
+
+const inputStyle = {
+  padding: 8,
+  borderRadius: 4,
+  border: "1px solid #ccc",
 };
 
 const TableListView: React.FC<TableListViewProps> = ({
@@ -111,6 +119,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           <input
             value={(currentRow.row[column.column_name] as string) || ""}
             type="text"
+            style={inputStyle}
             readOnly
           />
         );
@@ -222,7 +231,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         backdropClicked={() => setOpenPanel(false)}
       >
         <div className="form-panel-container">
-          <div className="title-panel">Details</div>
+          <Typography variant="h5">Details</Typography>
           <form>
             <div className="form-group">
               <label>
@@ -239,12 +248,13 @@ const TableListView: React.FC<TableListViewProps> = ({
               </label>
             </div>
           </form>
-          <button
-            className="button-side-panel"
+          <Button
+            variant="contained"
+            style={buttonStyle}
             onClick={() => setOpenPanel(false)}
           >
             close
-          </button>
+          </Button>
         </div>
       </SlidingPanel>
     </div>
