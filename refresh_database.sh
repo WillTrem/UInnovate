@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$(readlink -f "$0")")"
 # Load environment variables from .env file
 source .env
 
@@ -39,5 +39,3 @@ done
 
 # Log completion time
 echo "Database refresh completed at $(date)" | tee -a $LOG_FILE
-
-$SHELL
