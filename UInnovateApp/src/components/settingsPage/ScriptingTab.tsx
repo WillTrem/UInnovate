@@ -23,7 +23,7 @@ export const ScriptingTab = () => {
 
   const getScripts = async () => {
     if (!schema || !script_table) {
-      throw new Error("Schema or table not found");
+      return;
     }
 
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
