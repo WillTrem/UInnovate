@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$(readlink -f "$0")")"
 POSTGREST_ENDPOINT="http://localhost:3000"
 FUNCTION_ENDPOINT="$POSTGREST_ENDPOINT/rpc/import_appconfig_from_json"
 
@@ -37,8 +37,3 @@ curl -s "$FUNCTION_ENDPOINT" \
  --header 'Content-Type: application/json' \
  --data-raw "$NEW_CONFIG"
 echo "Import completed. The configuration is saved in the database"
-
-echo "Closing terminal in 5 seconds.."
-
-sleep 5
-
