@@ -37,5 +37,3 @@ fi
 curl -s "$FUNCTION_ENDPOINT" \
  -X POST -H "Content-Profile: meta" -H "Content-Type: application/json" > "$OUTPUT_FILE"
 echo "Export completed. The configuration is saved in $OUTPUT_FILE"
-
-$SHELL

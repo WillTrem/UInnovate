@@ -35,4 +35,6 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-$SHELL
+echo "Closing terminal in 5 seconds.."
+
+sleep 5

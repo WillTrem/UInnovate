@@ -37,6 +37,3 @@ curl -s "$FUNCTION_ENDPOINT" \
  --header 'Content-Type: application/json' \
  --data-raw "$NEW_CONFIG"
 echo "Import completed. The configuration is saved in the database"
-
-$SHELL
-
