@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$(readlink -f "$0")")"
 POSTGREST_ENDPOINT="http://localhost:3000"
 FUNCTION_ENDPOINT="$POSTGREST_ENDPOINT/rpc/export_appconfig_to_json"
 # specifgy accept profile header tn endpoint

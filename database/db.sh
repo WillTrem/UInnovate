@@ -1,14 +1,12 @@
-mandatory_flag=false
+#!/bin/bash
+cd "$(dirname "$(readlink -f "$0")")"
+
 r_flag=false
-c_flag=false
-export_config_flag=false
-import_config_flag=false
-new_project_flag=false
 while [ $# -gt 0 ]; do
   case $1 in
     -r)
       r_flag=true
-      /bin/bash ./refresh_database.sh
+      /bin/bash ../refresh_database.sh
       ;;
     -c)
       if [ "$r_flag" != true ]; then

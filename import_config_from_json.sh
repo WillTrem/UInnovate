@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$(readlink -f "$0")")"
 POSTGREST_ENDPOINT="http://localhost:3000"
 FUNCTION_ENDPOINT="$POSTGREST_ENDPOINT/rpc/import_appconfig_from_json"
 

@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$(readlink -f "$0")")"
 # Load environment variables from .env file
 source .env
 
