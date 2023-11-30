@@ -1,5 +1,6 @@
 import { NavBar } from "../components/NavBar";
 import { GeneralTab } from "../components/settingsPage/GeneralTab";
+import { CronJobsTab } from "../components/settingsPage/CronJobsTab";
 import DisplayTab from "../components/settingsPage/DisplayTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
@@ -23,6 +24,9 @@ export function Settings() {
                 <Nav.Item>
                   <Nav.Link eventKey="display">Display</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="schedule">Scheduled Activities</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Col>
             <Col sm={9}>
@@ -32,6 +36,9 @@ export function Settings() {
                 </Tab.Pane>
                 <Tab.Pane eventKey="display">
                   <DisplayTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="schedule">
+                  <CronJobsTab />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
