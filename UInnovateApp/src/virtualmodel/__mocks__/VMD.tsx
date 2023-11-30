@@ -14,12 +14,20 @@ export default {
     console.log("getUpsertDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
+  getSchema: vi.fn().mockImplementation(() => {
+    console.log("getSchema in VMD mock was called");
+    return new Schema("mock schema name");
+  }),
   getSchemas: vi.fn().mockImplementation(() => {
     console.log("getSchemas in VMD mock was called");
     return [
       { schema_name: "mock schema name" },
       { schema_name: "mock schema name 2" },
     ];
+  }),
+  getTable: vi.fn().mockImplementation(() => {
+    console.log("getTable in VMD mock was called");
+    return new Table("mock table name");
   }),
   getTableSchema: vi.fn().mockImplementation(() => {
     console.log("getTableSchema in VMD mock was called");
