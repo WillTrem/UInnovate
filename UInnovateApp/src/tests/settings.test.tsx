@@ -10,7 +10,10 @@ import "@testing-library/jest-dom";
 vi.mock("../NavBar");
 
 describe("Settings.tsx", () => {
-  const initialState = { schema: "application" };
+  const initialState = {
+    schema: { schema_name: "application" },
+    script_table: { table_name: "script_mock" },
+  };
   const middlewares = [];
   const mockStore = configureStore(middlewares);
   let store;
