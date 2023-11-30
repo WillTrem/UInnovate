@@ -24,9 +24,11 @@ const UserManagementTab = () => {
 			<Tabs defaultActiveKey="users" variant="underline">
 				<Tab eventKey="users" title="Users" className="users-container">
 					<div className="users-container">
-						<Button variant="contained" className="mt-3 mb-2" onClick={handleOnClick} sx={{ backgroundColor: "#404040" }}>
-							Add User
-						</Button>
+						<div className="add-button-container">
+							<Button variant="contained" className="mt-3 mb-2" onClick={handleOnClick} sx={{ backgroundColor: "#404040" }}>
+								Add User
+							</Button>
+						</div>
 						<TableComponent bordered>
 							<thead>
 								<tr>
