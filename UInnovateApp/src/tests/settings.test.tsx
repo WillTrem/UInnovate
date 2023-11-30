@@ -5,19 +5,22 @@ import { Settings } from "../pages/Settings";
 import { ConfigProvider } from "../contexts/ConfigContext";
 import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
-
+import "@testing-library/jest-dom";
 
 vi.mock("../NavBar");
 
 describe("Settings.tsx", () => {
-  const initialState = { schema: "application" };
+  const initialState = {
+    schema: { schema_name: "application" },
+    script_table: { table_name: "script_mock" },
+  };
   const middlewares = [];
   const mockStore = configureStore(middlewares);
   let store;
 
-  it("tests the children inside settings page", () => {
+  it("tests the children inside settings page", async () => {
     store = mockStore(initialState);
-    const settings = TestRenderer.create(
+    const testRenderer = TestRenderer.create(
       <MemoryRouter>
         <ConfigProvider>
           <Provider store={store}>
@@ -25,6 +28,9 @@ describe("Settings.tsx", () => {
           </Provider>
         </ConfigProvider>
       </MemoryRouter>
-    ).toJSON;
+    );
+
+    const testInstance = await testRenderer.root;
+    expect(testInstance.findByType(Settings)).to.be.ok;
   });
 });

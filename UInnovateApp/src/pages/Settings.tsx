@@ -1,6 +1,7 @@
 import { NavBar } from "../components/NavBar";
 import { GeneralTab } from "../components/settingsPage/GeneralTab";
 import DisplayTab from "../components/settingsPage/DisplayTab";
+import { ScriptingTab } from "../components/settingsPage/ScriptingTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
@@ -25,6 +26,9 @@ export function Settings() {
                   <Nav.Link eventKey="display">Display</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
+                  <Nav.Link eventKey="scripting">Scripting</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
                   <Nav.Link eventKey="users">Users</Nav.Link>
                 </Nav.Item>
               </Nav>
@@ -36,6 +40,9 @@ export function Settings() {
                 </Tab.Pane>
                 <Tab.Pane eventKey="display">
                   <DisplayTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="scripting">
+                  <ScriptingTab />
                 </Tab.Pane>
                 <Tab.Pane eventKey="users">
                   <UserManagementTab />
