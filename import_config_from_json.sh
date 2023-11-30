@@ -38,5 +38,7 @@ curl -s "$FUNCTION_ENDPOINT" \
  --data-raw "$NEW_CONFIG"
 echo "Import completed. The configuration is saved in the database"
 
-$SHELL
+echo "Closing terminal in 5 seconds.."
+
+sleep 5
 
