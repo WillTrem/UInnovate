@@ -285,6 +285,29 @@ class VirtualModelDefinition {
           "Content-Type": "application/json",
           "Content-Profile": schema_name,
         },
+        undefined,
+        row
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+  // Method to return a data accessor object to update a row in a table
+  // return type : DataAccessor
+  getUpdateRowDataAccessor(schema_name: string, table_name: string, row: Row) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+
+    if (schema && table) {
+      return new DataAccessor(
+        `${table.url}?id=eq.${row["id"]}`, // PostgREST URL for updating a row from its id
+        {
+          Prefer: "return=representation",
+          "Content-Type": "application/json",
+          "Content-Profile": schema_name,
+        },
+        undefined,
         row
       );
     } else {
