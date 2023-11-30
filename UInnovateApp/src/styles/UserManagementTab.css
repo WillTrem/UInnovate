@@ -1,10 +1,10 @@
-.customButton{
+.custom-button{
 	margin-top: 20;
 	background-color: #404040; 
 	width: "fit-content";
 }
 
-.usersContainer{
+.users-container{
 	display: flex;
 	flex-direction: column;
 	align-items: baseline;
@@ -15,4 +15,7 @@
 
 td{
 	vertical-align: middle;
+}
+.MuiSelect-select{
+	background-color: white;
 }

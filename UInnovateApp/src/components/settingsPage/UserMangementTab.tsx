@@ -7,19 +7,27 @@ import "../../styles/TableComponent.css";
 import "../../styles/UserManagementTab.css";
 import vmd from "../../virtualmodel/VMD";
 import React, { useState } from "react";
+import AddUserModal from "./AddUserModal";
+
+
 
 // Component containing the Users Management tab of the Settings page
 const UserManagementTab = () => {
+	const [isModalOpen, setModalOpen] = useState(false);
+
+	function handleOnClick() {
+		setModalOpen(true);
+	}
 
 	return (
 		<div>
 			<Tabs defaultActiveKey="users" variant="underline">
-				<Tab eventKey="users" title="Users" className="usersContainer">
-					<div className="usersContainer">
-						<Button variant="contained" className="customButton mt-3 mb-2">
+				<Tab eventKey="users" title="Users" className="users-container">
+					<div className="users-container">
+						<Button variant="contained" className="mt-3 mb-2" onClick={handleOnClick} sx={{ backgroundColor: "#404040" }}>
 							Add User
 						</Button>
-						<TableComponent striped bordered hover>
+						<TableComponent bordered>
 							<thead>
 								<tr>
 									<th>First Name</th>
@@ -42,6 +50,7 @@ const UserManagementTab = () => {
 				</Tab>
 
 			</Tabs>
+			<AddUserModal open={isModalOpen} setOpen={setModalOpen} />
 		</div>
 	)
 
@@ -84,7 +93,7 @@ interface MultiSelectProps {
 }
 
 // Component obtained from https://codesandbox.io/s/mui-multi-select-kptq04?from-embed=&file=%2Fsrc%2FApp.js%3A238-291
-const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelectedList, choiceList }) => {
+export const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelectedList, choiceList }) => {
 
 	return (
 		<FormControl sx={{
