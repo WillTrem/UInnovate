@@ -72,7 +72,17 @@ GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON TABLE information_schema.constraint_column_usage TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON TABLE information_schema.columns TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON TABLE information_schema.referential_constraints TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON TABLE information_schema.constraint_column_usage TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON TABLE meta.tables TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON TABLE meta.columns TO web_anon;
 
+GRANT DELETE ON meta.appconfig_values TO web_anon;
+GRANT EXECUTE ON FUNCTION meta.export_appconfig_to_json() TO web_anon;
+GRANT SELECT ON meta.columns TO web_anon;
+GRANT INSERT, UPDATE, DELETE ON meta.columns TO web_anon;
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
