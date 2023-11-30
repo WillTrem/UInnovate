@@ -1,23 +1,15 @@
-import { useTableVisibility } from "../../contexts/TableVisibilityContext";
 import { TableItem } from "./TableConfigTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
-import { useTables } from "../../contexts/TablesContext";
+import vmd from "../../virtualmodel/VMD";
 
 const DisplayTab = () => {
-  const { tableVisibility, setTableVisibility } = useTableVisibility();
-
-  const tables = useTables();
-  const tableItems = tables?.map(({ table_name }) => (
-    <TableItem
-      key={table_name}
-      tableName={table_name}
-      isVisible={tableVisibility[table_name]}
-      toggleVisibility={setTableVisibility}
-    />
+  const tables = vmd.getAllTables();
+  const tableItems = tables?.map((table) => (
+    <TableItem key={table.table_name} table={table} />
   ));
 
   return (
@@ -39,11 +31,11 @@ const DisplayTab = () => {
           </Col>
           <Col sm={9}>
             <Tab.Content>
-              {tableItems?.map((tableItem) => {
-                const tableName = tableItem.props.tableName;
+              {tableItems?.map((tableItem, idx) => {
+                const tableName = tableItem.props.table.table_name;
                 return (
                   <Tab.Pane
-                    key={tableName}
+                    key={idx}
                     eventKey={tableName}
                     data-testid="table-settings-content"
                   >

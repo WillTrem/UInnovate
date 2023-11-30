@@ -4,7 +4,7 @@ import DisplayType from "./DisplayType";
 import { updateSelectedSchema } from "../../redux/SchemaSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import attr from "../../virtualmodel/Tables";
+import vmd from "../../virtualmodel/VMD";
 
 interface SchemaSelectorProps {
   displayType?: DisplayType;
@@ -13,7 +13,9 @@ interface SchemaSelectorProps {
 const SchemaSelector = ({
   displayType = DisplayType.NavDropdown,
 }: SchemaSelectorProps) => {
-  const schemas = [...new Set(attr.map((obj) => obj.schema))];
+  const schemas = [
+    ...new Set(vmd.getSchemas().map((schema) => schema.schema_name)),
+  ];
 
   const selectedSchema: string = useSelector(
     (state: RootState) => state.schema.value

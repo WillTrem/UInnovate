@@ -2,29 +2,26 @@
 import { mount } from "@cypress/react18";
 import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
-import { TablesContextProvider } from "../contexts/TablesContext";
 import { ConfigProvider } from "../contexts/ConfigContext";
-import configureStore from 'redux-mock-store'
+import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
 
 describe("<Settings />", () => {
-  const initialState = {schema:"application"}
+  const initialState = { schema: "application" };
   const middlewares: any = [];
   const mockStore = configureStore(middlewares);
-  let store
+  let store;
 
   it("mounts and displays the Settings page", () => {
-    store = mockStore(initialState)
+    store = mockStore(initialState);
     mount(
-        <MemoryRouter>
-            <Provider store={store}>
-                <TablesContextProvider>
-                  <ConfigProvider>
-                    <Settings />
-                  </ConfigProvider>
-                </TablesContextProvider>
-            </Provider>
-        </MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
+          <ConfigProvider>
+            <Settings />
+          </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Assert that the NavBar is rendered
@@ -38,7 +35,7 @@ describe("<Settings />", () => {
 
     // Assert that the text "General" is displayed
     cy.contains("General").should("exist");
-    
+
     //Assert that the General or Displayed List group is displayed
     cy.get("div.col-sm-9").should("exist");
 
@@ -52,7 +49,6 @@ describe("<Settings />", () => {
     cy.get("div.customization-title").should("exist");
 
     //Assert that the Button to Save changes is there
-    cy.get("button").should("exist")
+    cy.get("button").should("exist");
   });
 });
-

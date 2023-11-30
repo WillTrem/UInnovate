@@ -14,13 +14,18 @@ td {
   text-align: center;
 }
 
+.page-container {
+  padding-inline: 4em;
+  padding-bottom: 2em;
+}
+
 .panel-container {
   background-color: #f1f1f1;
   padding-top: 20px;
+  padding-left: 20px;
 }
 
 .row-details {
-  padding-left: 40px;
   display: flex;
   gap: 5px;
   padding-top: 10px;
@@ -33,21 +38,11 @@ td {
   font-weight: bold;
 }
 
-.button-side-panel {
-  padding: 10px;
-  margin-left: 40px;
-  background-color: #6c757d;
-  color: white;
-  border-radius: 5px;
-  border: none;
-  width: 60px;
-}
-
 .form-panel-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 20px;
+  padding: 1em;
 }
 
 .form-group {
@@ -59,4 +54,13 @@ td {
 
 input {
   width: 90%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px;
+  border-width: solid;
+  border-color: #ccc;
+}
+
+.button-icon {
+  font-size: 16px;
 }
