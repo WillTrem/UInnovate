@@ -1,13 +1,15 @@
 import { describe, it, vi } from "vitest";
-import TestRenderer from "react-test-renderer";
+import { render, screen } from "@testing-library/react";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 import { ConfigProvider } from "../contexts/ConfigContext";
+import "@testing-library/jest-dom";
 
+vi.mock("axios");
 vi.mock("../contexts/ConfigContext)");
 describe("TableListView component", () => {
-  it("renders a table with the specified attributes", () => {
+  it("renders a table with the specified attributes", async () => {
     // Sample data for testing
     // Making a mock single mock table
     const table = new Table("Table1");
@@ -23,13 +25,16 @@ describe("TableListView component", () => {
       table.addColumn(column);
     });
 
-    const tablelistview = TestRenderer.create(
+    render(
       <ConfigProvider>
         <MemoryRouter>
           <TableListView table={table} />
         </MemoryRouter>
       </ConfigProvider>
-    ).toJSON();
-    console.log(tablelistview);
+    );
+
+    // Wait for the table to be rendered
+    const tableElement = await screen.findByRole("table");
+    expect(tableElement).toBeInTheDocument();
   });
 });
