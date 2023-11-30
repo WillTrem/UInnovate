@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Switch from "@mui/material/Switch";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
@@ -10,6 +10,17 @@ import "../../styles/TableItem.css";
 const LookUpTable: React.FC = () => {
 
 
+
+
+  Storage.prototype.setObj = function (key:string, obj:string) {
+    return this.setItem(key, JSON.stringify(obj))
+  }
+  Storage.prototype.getObj = function (key: string) {
+    const item = this.getItem(key);
+    return item ? JSON.parse(item) : null;
+  }
+  localStorage.setObj("test", 4)
+  console.log(localStorage.getObj("test"))
   const MyButtonComponent = () => {
     return (
       <FormControl size="small">
@@ -29,7 +40,17 @@ const LookUpTable: React.FC = () => {
   };
 
 
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(() => {
+    // Retrieve the counter value from local storage when initializing state
+    const savedCounter = localStorage.getItem('counter');
+    return savedCounter !== null ? Number(savedCounter) : 0;
+  });
+
+
+  useEffect(() => {
+    // Store the counter value in local storage whenever it changes
+    localStorage.setItem('counter', counter.toString());
+  }, [counter]);
 
   const handleButtonClick = () => {
     setCounter((Counter) => Counter + 1);
