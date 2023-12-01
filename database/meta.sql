@@ -17,16 +17,22 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 -- Creating the columns view
 CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table") AS 
 (
-    SELECT c.table_schema, c.table_name, c.column_name,  rc.table_name
+    SELECT c.table_schema, c.table_name, c.column_name,  rc.referenced_table
     FROM information_schema.columns AS c
     LEFT JOIN 
     (
-        SELECT * FROM information_schema.referential_constraints
-        INNER JOIN  information_schema.constraint_column_usage AS ccu
-        USING (constraint_name)
+        SELECT cl.relname as referee_table,  att.attname as referee_column, cl2.relname as referenced_table, att2.attname as referenced_column FROM pg_catalog.pg_constraint as co
+		LEFT JOIN pg_catalog.pg_class as cl
+		ON co.conrelid = cl.oid
+		LEFT JOIN pg_catalog.pg_class as cl2
+		ON co.confrelid = cl2.oid
+		LEFT JOIN pg_catalog.pg_attribute as att
+		ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
+		LEFT JOIN pg_catalog.pg_attribute as att2
+		ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
+		WHERE contype = 'f'
     ) AS rc
-    LEFT JOIN meta.constraints AS rc
-    ON c.column_name = rc.column_name AND rc.constraint_name LIKE c.table_name || '%'
+    ON c.column_name = rc.referee_column AND c.table_name != rc.referenced_table
     WHERE c.table_name IN 
     (
         SELECT "table" FROM meta.tables
