@@ -38,6 +38,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const { config } = useConfig();
+  
 
   useEffect(() => {
     const getRows = async () => {
