@@ -36,21 +36,15 @@ export const CronJobsTab = () => {
         "process_updates"
     ];
 
-    // Assume this function makes an API call to schedule the cron job
     const scheduleCronJob = () => {
-
-        const job_table =  vmd.getTable("cron", "job");
-        if (!selectedProc || !cronSchedule) {
-            alert('Please select a stored procedure and enter a cron schedule.');
-            return;
-        }
         const sql = `SELECT cron.schedule('${selectedProc}', '${cronSchedule}', 'CALL ${selectedProc}()');`;
 
-        // need to be able to run this somehow.
+         // To be implemented
     };
 
     const cancelCronJob = () => {
-        // Implementation here...
+        const sql = `SELECT cron.unschedule('${selectedProc}');`;
+        // To be implemented
     };
 
     const formatDuration = (ms: number | 'N/A') => {
