@@ -2,11 +2,13 @@ import { NavBar } from "../components/NavBar";
 import { GeneralTab } from "../components/settingsPage/GeneralTab";
 import { CronJobsTab } from "../components/settingsPage/CronJobsTab";
 import DisplayTab from "../components/settingsPage/DisplayTab";
+import { ScriptingTab } from "../components/settingsPage/ScriptingTab";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "../styles/settings.css";
+import UserManagementTab from "../components/settingsPage/UserMangementTab";
 
 export function Settings() {
   return (
@@ -26,6 +28,10 @@ export function Settings() {
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link eventKey="schedule">Scheduled Activities</Nav.Link>
+                  <Nav.Link eventKey="scripting">Scripting</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="users">Users</Nav.Link>
                 </Nav.Item>
               </Nav>
             </Col>
@@ -39,6 +45,12 @@ export function Settings() {
                 </Tab.Pane>
                 <Tab.Pane eventKey="schedule">
                   <CronJobsTab />
+                  </Tab.Pane>
+                <Tab.Pane eventKey="scripting">
+                  <ScriptingTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="users">
+                  <UserManagementTab />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
