@@ -68,50 +68,50 @@ INSERT INTO unit (tool_id, tool_type, unit_serial_number, unit_weight, unit_heig
     (20, 20, 'SN678901', 12.0, 22.0, 'Good', true, '2023-11-20', '2023-11-20', NULL);
 
 -- Sample data for company table
-INSERT INTO company (address, primary_contact_id, is_prev_customer, pricing_rate) VALUES
-    ('123 Main St, Cityville', NULL, true, 0.85),
-    ('456 Oak Ave, Townburg', NULL, false, 1.00),
-    ('789 Pine Blvd, Villageton', NULL, true, 0.90),
-    ('101 Cedar Ln, Hamletown', NULL, false, 0.95),
-    ('202 Maple Dr, Suburbia', NULL, true, 0.88),
-    ('303 Elm Rd, Ruralville', NULL, false, 0.92),
-    ('404 Birch Dr, Countryside', NULL, true, 0.87),
-    ('505 Walnut Ln, Seaside', NULL, false, 0.96),
-    ('606 Pine Dr, Mountainview', NULL, true, 0.89),
-    ('707 Oak St, Hilltop', NULL, false, 0.94),
-    ('808 Maple Ave, Lakeside', NULL, true, 0.91),
-    ('909 Cedar Blvd, Riverside', NULL, false, 0.93),
-    ('1010 Birch Ave, Skyline', NULL, true, 0.86),
-    ('1111 Elm Ln, Valleyview', NULL, false, 0.97),
-    ('1212 Walnut Rd, Cliffside', NULL, true, 0.83),
-    ('1313 Pine Blvd, Oceanview', NULL, false, 0.98),
-    ('1414 Oak Dr, Summit', NULL, true, 0.80),
-    ('1515 Maple St, Horizon', NULL, false, 0.99),
-    ('1616 Cedar Ave, Riverside', NULL, true, 0.82),
-    ('1717 Birch Ln, Crestview', NULL, false, 1.01);
+INSERT INTO company (company_name, address, primary_contact_id, is_prev_customer, pricing_rate) VALUES
+    ('Google', '123 Main St, Cityville', NULL, true, 0.85),
+    ('Alpha','456 Oak Ave, Townburg', NULL, false, 1.00),
+    ('Amazon','789 Pine Blvd, Villageton', NULL, true, 0.90),
+    ('Shopify','101 Cedar Ln, Hamletown', NULL, false, 0.95),
+    ('Meta','202 Maple Dr, Suburbia', NULL, true, 0.88),
+    ('Matrox','303 Elm Rd, Ruralville', NULL, false, 0.92),
+    ('Genetec','404 Birch Dr, Countryside', NULL, true, 0.87),
+    ('RBC','505 Walnut Ln, Seaside', NULL, false, 0.96),
+    ('Scotiabank','606 Pine Dr, Mountainview', NULL, true, 0.89),
+    ('Walmart','707 Oak St, Hilltop', NULL, false, 0.94),
+    ('Target','808 Maple Ave, Lakeside', NULL, true, 0.91),
+    ('Lego','909 Cedar Blvd, Riverside', NULL, false, 0.93),
+    ('Sephora','1010 Birch Ave, Skyline', NULL, true, 0.86),
+    ('Gap','1111 Elm Ln, Valleyview', NULL, false, 0.97),
+    ('Bed, Bath and Beyond','1212 Walnut Rd, Cliffside', NULL, true, 0.83),
+    ('GameStop','1313 Pine Blvd, Oceanview', NULL, false, 0.98),
+    ('The Bay','1414 Oak Dr, Summit', NULL, true, 0.80),
+    ('Pharmaprix','1515 Maple St, Horizon', NULL, false, 0.99),
+    ('Aperture Science','1616 Cedar Ave, Riverside', NULL, true, 0.82),
+    ('Evil Inc.','1717 Birch Ln, Crestview', NULL, false, 1.01);
 
 -- Sample data for contact table
-INSERT INTO contact (company_id, contact_position, phone_number, email) VALUES
-    (1, 'Manager', '+1234567890', 'manager@company1.com'),
-    (2, 'Coordinator', '+2345678901', 'coordinator@company2.com'),
-    (3, 'Supervisor', '+3456789012', 'supervisor@company3.com'),
-    (4, 'Director', '+4567890123', 'director@company4.com'),
-    (5, 'Executive', '+5678901234', 'executive@company5.com'),
-    (6, 'Manager', '+6789012345', 'manager@company6.com'),
-    (7, 'Coordinator', '+7890123456', 'coordinator@company7.com'),
-    (8, 'Supervisor', '+8901234567', 'supervisor@company8.com'),
-    (9, 'Director', '+9012345678', 'director@company9.com'),
-    (10, 'Executive', '+0123456789', 'executive@company10.com'),
-    (11, 'Manager', '+1122334455', 'manager@company11.com'),
-    (12, 'Coordinator', '+2233445566', 'coordinator@company12.com'),
-    (13, 'Supervisor', '+3344556677', 'supervisor@company13.com'),
-    (14, 'Director', '+4455667788', 'director@company14.com'),
-    (15, 'Executive', '+5566778899', 'executive@company15.com'),
-    (16, 'Manager', '+6677889900', 'manager@company16.com'),
-    (17, 'Coordinator', '+7788990011', 'coordinator@company17.com'),
-    (18, 'Supervisor', '+8899001122', 'supervisor@company18.com'),
-    (19, 'Director', '+9900112233', 'director@company19.com'),
-    (20, 'Executive', '+0011223344', 'executive@company20.com');
+INSERT INTO contact (company_id, firstname, lastname, contact_position, phone_number, email, active) VALUES
+    (1, 'Jack', 'Brody', 'Manager', '+1234567890', 'manager@company1.com', true),
+    (2, 'Sleiman', 'Bee', 'Coordinator', '+2345678901', 'coordinator@company2.com', true),
+    (3, 'Yi', 'Wang', 'Supervisor', '+3456789012', 'supervisor@company3.com', true),
+    (4, 'Sadegh', 'Garpedarp', 'Director', '+4567890123', 'director@company4.com', true),
+    (5, 'Valerie', 'Plante', 'Executive', '+5678901234', 'executive@company5.com', true),
+    (6, 'Joumana', 'Dargham', 'Manager', '+6789012345', 'manager@company6.com', true),
+    (7, 'Hakim', 'Mellah', 'Coordinator', '+7890123456', 'coordinator@company7.com', true),
+    (8, 'Ali', 'Jannatpour', 'Supervisor', '+8901234567', 'supervisor@company8.com', true),
+    (9, 'Peter', 'Rigby', 'Director', '+9012345678', 'director@company9.com', true),
+    (10, 'Hassan', 'Hajjab', 'Executive', '+0123456789', 'executive@company10.com', true),
+    (11, 'Leila', 'Kosseim', 'Manager', '+1122334455', 'manager@company11.com', true),
+    (12, 'Ryan', 'Gosling', 'Coordinator', '+2233445566', 'coordinator@company12.com', true),
+    (13, 'Chris', 'Pratt', 'Supervisor', '+3344556677', 'supervisor@company13.com', true),
+    (14, 'Rick', 'Roll', 'Director', '+4455667788', 'director@company14.com', false),
+    (15, 'Hugh', 'Jackman', 'Executive', '+5566778899', 'executive@company15.com', true),
+    (16, 'Harry', 'Styles', 'Manager', '+6677889900', 'manager@company16.com', true),
+    (17, 'James', 'Corden', 'Coordinator', '+7788990011', 'coordinator@company17.com', true),
+    (18, 'Leslie', 'Snyder', 'Supervisor', '+8899001122', 'supervisor@company18.com', true),
+    (19, 'Shrek', 'The Third', 'Director', '+9900112233', 'director@company19.com', true),
+    (20, 'Macho', 'Man', 'Executive', '+0011223344', 'executive@company20.com', true);
 
 -- Update primary_contact_id in company table
 UPDATE company SET primary_contact_id = 1 WHERE company_id = 1;
@@ -182,27 +182,27 @@ INSERT INTO quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_pr
     (10, 20, 9, 40.00);
 
 -- Sample data for purchase_order table
-INSERT INTO purchase_order (quotation_id, company_id, order_date, tools_rented_qty, total_adjusted_price, gst, qst, final_price) VALUES
-    (1, 1, '2023-11-01', 5, 150.00, 7.50, 8.50, 166.00),
-    (2, 2, '2023-11-02', 8, 240.00, 12.00, 13.60, 265.60),
-    (3, 3, '2023-11-03', 10, 300.00, 15.00, 17.00, 332.00),
-    (4, 4, '2023-11-04', 6, 180.00, 9.00, 10.20, 199.20),
-    (5, 5, '2023-11-05', 12, 360.00, 18.00, 20.40, 398.40),
-    (6, 6, '2023-11-06', 15, 450.00, 22.50, 25.50, 498.00),
-    (7, 7, '2023-11-07', 7, 210.00, 10.50, 11.90, 232.40),
-    (8, 8, '2023-11-08', 9, 270.00, 13.50, 15.30, 298.80),
-    (9, 9, '2023-11-09', 11, 330.00, 16.50, 18.70, 365.20),
-    (10, 10, '2023-11-10', 14, 420.00, 21.00, 23.80, 464.80),
-    (11, 11, '2023-11-11', 16, 480.00, 24.00, 27.20, 531.20),
-    (12, 12, '2023-11-12', 18, 540.00, 27.00, 30.60, 598.60),
-    (13, 13, '2023-11-13', 20, 600.00, 30.00, 34.00, 666.00),
-    (14, 14, '2023-11-14', 22, 660.00, 33.00, 37.40, 733.40),
-    (15, 15, '2023-11-15', 24, 720.00, 36.00, 40.80, 800.80),
-    (16, 16, '2023-11-16', 26, 780.00, 39.00, 44.20, 868.20),
-    (17, 17, '2023-11-17', 28, 840.00, 42.00, 47.60, 935.60),
-    (18, 18, '2023-11-18', 30, 900.00, 45.00, 51.00, 1003.00),
-    (19, 19, '2023-11-19', 32, 960.00, 48.00, 54.40, 1070.40),
-    (20, 20, '2023-11-20', 34, 1020.00, 51.00, 57.80, 1137.80);
+INSERT INTO purchase_order (quotation_id, company_id, order_date, tools_rented_qty, total_adjusted_price) VALUES
+    (1, 1, '2023-11-01', 5, 150.00),
+    (2, 2, '2023-11-02', 8, 240.00),
+    (3, 3, '2023-11-03', 10, 300.00),
+    (4, 4, '2023-11-04', 6, 180.00),
+    (5, 5, '2023-11-05', 12, 360.00),
+    (6, 6, '2023-11-06', 15, 450.00),
+    (7, 7, '2023-11-07', 7, 210.00),
+    (8, 8, '2023-11-08', 9, 270.00),
+    (9, 9, '2023-11-09', 11, 330.00),
+    (10, 10, '2023-11-10', 14, 420.00),
+    (11, 11, '2023-11-11', 16, 480.00),
+    (12, 12, '2023-11-12', 18, 540.00),
+    (13, 13, '2023-11-13', 20, 600.00),
+    (14, 14, '2023-11-14', 22, 660.00),
+    (15, 15, '2023-11-15', 24, 720.00),
+    (16, 16, '2023-11-16', 26, 780.00),
+    (17, 17, '2023-11-17', 28, 840.00),
+    (18, 18, '2023-11-18', 30, 900.00),
+    (19, 19, '2023-11-19', 32, 960.00),
+    (20, 20, '2023-11-20', 34, 1020.00);
 
 -- Sample data for purchase_order_line_item table
 INSERT INTO purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
