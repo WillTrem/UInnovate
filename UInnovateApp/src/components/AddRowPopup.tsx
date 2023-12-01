@@ -16,6 +16,7 @@ const AddRowPopup = ({
   const [inputValues, setInputValues] = useState<Row>(new Row({}));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //console.log(inputValues+"hello");
     setInputValues({
       ...inputValues,
       row: { ...inputValues.row, [e.target.name]: e.target.value },
@@ -28,6 +29,8 @@ const AddRowPopup = ({
       console.error("Could not find schema for table ", table.table_name);
       return;
     }
+    
+    console.log(schema.schema_name + " schema " + table.table_name + " table " + inputValues + " inputValues ");
 
     const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
       schema?.schema_name,

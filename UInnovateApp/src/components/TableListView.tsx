@@ -37,7 +37,9 @@ const TableListView: React.FC<TableListViewProps> = ({
 }) => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
+  const [inputValues, setInputValues] = useState<Row>(new Row({}));
   const { config } = useConfig();
+  
 
   useEffect(() => {
     const getRows = async () => {
@@ -102,6 +104,31 @@ const TableListView: React.FC<TableListViewProps> = ({
     getScripts();
   });
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.name+" hello");
+    setInputValues({
+      ...inputValues,
+      row: { ...inputValues.row, [e.target.name]: e.target.value },
+    });
+  };
+
+  const handleFormSubmit = () => {
+    const schema = vmd.getTableSchema(table.table_name);
+    if (!schema) {
+      console.error("Could not find schema for table ", table.table_name);
+      return;
+    }
+    console.log(schema.schema_name + " schema " + table.table_name + " table " + inputValues + " inputValues ");
+    const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
+      schema?.schema_name,
+      table.table_name,
+      inputValues
+    );
+
+   // data_accessor.updateRow();
+    setOpenPanel(false);
+
+  };
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!config) {
@@ -116,10 +143,13 @@ const TableListView: React.FC<TableListViewProps> = ({
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
           <input
-            value={(currentRow.row[column.column_name] as string) || ""}
+            //value={inputValues.row[column.column_name] as string || ""}
+            placeholder={currentRow.row[column.column_name] as string || ""}
+            name={column.column_name}
             type="text"
             style={inputStyle}
-            readOnly
+            onChange={handleInputChange}
+            
           />
         );
       } else if (columnDisplayType.value == "number") {
@@ -128,7 +158,9 @@ const TableListView: React.FC<TableListViewProps> = ({
             value={(currentRow.row[column.column_name] as number) || ""}
             allowLeadingZeros
             thousandSeparator=","
-            readOnly
+            onChange={(event) => {console.log(event.target.value); }}
+
+            
           />
         );
       } else if (columnDisplayType.value == "longtext") {
@@ -136,7 +168,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           <textarea
             placeholder="Type anything…"
             value={(currentRow.row[column.column_name] as string) || ""}
-            readOnly
+            
           />
         );
       } else if (columnDisplayType.value == "datetime") {
@@ -144,7 +176,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DateField
               value={dayjs(currentRow.row[column.column_name] as string) || ""}
-              readOnly
+              
             />
           </LocalizationProvider>
         );
@@ -156,7 +188,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                 ? true
                 : false || false
             }
-            readOnly
+            
           />
         );
       }
@@ -169,6 +201,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     setCurrentRow(row);
     setOpenPanel(true);
   };
+
 
   return (
     <div>
@@ -240,13 +273,15 @@ const TableListView: React.FC<TableListViewProps> = ({
                       <label key={column.column_name + colIdx}>
                         {column.column_name}
                       </label>
-                      {inputField(column)}
+                      
+                  {inputField(column)}
                     </div>
                   );
                 })}
               </label>
             </div>
           </form>
+          <div>
           <Button
             variant="contained"
             style={buttonStyle}
@@ -254,6 +289,13 @@ const TableListView: React.FC<TableListViewProps> = ({
           >
             close
           </Button>
+          <Button
+            variant="contained"
+            style={{marginTop: 20, backgroundColor: "#403eb5", width: "fit-content", marginLeft:10}}
+            onClick={handleFormSubmit}>
+            Save
+            </Button>
+          </div>
         </div>
       </SlidingPanel>
     </div>
