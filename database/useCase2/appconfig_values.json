@@ -1,0 +1,42 @@
+{
+  "appconfig_values": [
+  ],
+  "appconfig_properties": [
+    {
+      "name": "table_view",
+      "description": "Default layout shown when selecting a table from the object menu.",
+      "value_type": "string",
+      "default_value": "list"
+    },
+    {
+      "name": "visible",
+      "description": "Visibility state of a table/column.",
+      "value_type": "boolean",
+      "default_value": "true"
+    },
+    {
+      "name": "editable",
+      "description": "Makes a column editable",
+      "value_type": "boolean",
+      "default_value": "false"
+    },
+    {
+      "name": "display_column_as_currency",
+      "description": "Displays a column as currency type.",
+      "value_type": "boolean",
+      "default_value": "false"
+    },
+    {
+      "name": "column_display_type",
+      "description": "How to display a column",
+      "value_type": "string",
+      "default_value": "text"
+    },
+    {
+      "name": "metadata_view",
+      "description": "Default view when showing the metadata information of a table/column",
+      "value_type": "boolean",
+      "default_value": "false"
+    }
+  ]
+}
