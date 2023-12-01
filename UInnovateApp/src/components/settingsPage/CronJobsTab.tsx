@@ -38,6 +38,7 @@ export const CronJobsTab = () => {
 
     // Assume this function makes an API call to schedule the cron job
     const scheduleCronJob = () => {
+
         const job_table =  vmd.getTable("cron", "job");
         if (!selectedProc || !cronSchedule) {
             alert('Please select a stored procedure and enter a cron schedule.');
@@ -45,6 +46,7 @@ export const CronJobsTab = () => {
         }
         const sql = `SELECT cron.schedule('${selectedProc}', '${cronSchedule}', 'CALL ${selectedProc}()');`;
 
+        // need to be able to run this somehow.
     };
 
     const cancelCronJob = () => {
@@ -144,7 +146,7 @@ export const CronJobsTab = () => {
         <Card>
             <Row>
                 <Col sm={4}>
-                    {/* List of stored procedures */}
+                    {/* list of stored procedures */}
                     <ListGroup>
                         {procedures.map(proc => (
                             <ListGroup.Item
@@ -152,7 +154,7 @@ export const CronJobsTab = () => {
                                 action
                                 active={proc === selectedProc}
                                 onClick={() => handleProcSelection(proc)}
-                                style={{ fontSize: '1.25rem' }} // Bigger font for procedure list
+                                style={{ fontSize: '1.25rem' }}
                             >
                                 {proc}
                             </ListGroup.Item>
