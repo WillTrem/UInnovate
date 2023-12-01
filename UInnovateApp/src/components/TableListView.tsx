@@ -13,10 +13,12 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { Switch, Button, Typography } from "@mui/material";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 
 interface TableListViewProps {
   table: Table;
 }
+console.log(Table)
 
 const buttonStyle = {
   marginTop: 20,
@@ -37,9 +39,11 @@ const TableListView: React.FC<TableListViewProps> = ({
 }) => {
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
-  const [inputValues, setInputValues] = useState<Row>(new Row({}));
+  const [inputValues, setInputValues] = useState<Row>({});
+  const [currentid, setCurrentid] = useState<string>("");
   const { config } = useConfig();
   
+  console.log(table +"check")
 
   useEffect(() => {
     const getRows = async () => {
@@ -105,27 +109,29 @@ const TableListView: React.FC<TableListViewProps> = ({
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.name+" hello");
-    setInputValues({
-      ...inputValues,
-      row: { ...inputValues.row, [e.target.name]: e.target.value },
-    });
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [e.target.name]: e.target.value,
+    }));
   };
 
   const handleFormSubmit = () => {
+    console.log(currentRow.row.id)
+    const id= currentRow.row.id.toString();
     const schema = vmd.getTableSchema(table.table_name);
     if (!schema) {
       console.error("Could not find schema for table ", table.table_name);
       return;
     }
-    console.log(schema.schema_name + " schema " + table.table_name + " table " + inputValues + " inputValues ");
-    const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
+    console.log(  inputValues );
+    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorLIST(
       schema?.schema_name,
       table.table_name,
-      inputValues
+      inputValues,
+      id
     );
-
-   // data_accessor.updateRow();
+  console.log(  data_accessor );
+   data_accessor?.updateRow();
     setOpenPanel(false);
 
   };
@@ -143,12 +149,15 @@ const TableListView: React.FC<TableListViewProps> = ({
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
           <input
+            readOnly = {column.column_name == "id" ? true : false}
+
             //value={inputValues.row[column.column_name] as string || ""}
             placeholder={currentRow.row[column.column_name] as string || ""}
             name={column.column_name}
             type="text"
             style={inputStyle}
             onChange={handleInputChange}
+            
             
           />
         );
@@ -244,6 +253,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             return (
               <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
                 {Object.values(row.row).map((cell, idx) => {
+
                   return (
                     <td key={idx}>
                       {typeof cell === "boolean" ? cell.toString() : cell}

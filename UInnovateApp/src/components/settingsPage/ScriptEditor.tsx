@@ -49,12 +49,13 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
     }
 
     setUpdateScript(updatedScript);
-
+    console.log(updatedScript)
     const data_accessor = vmd.getUpdateRowDataAccessor(
       "meta",
       "scripts",
       updatedScript
     );
+    console.log(  data_accessor );
 
     data_accessor?.updateRow();
   };
@@ -86,7 +87,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
                       {table.table_name}
                     </MenuItem>
                   );
-                })}
+nm                   })}
               </Select>
               <FormHelperText>
                 The table that this script will be applied to.
