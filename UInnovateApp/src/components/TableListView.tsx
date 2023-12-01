@@ -187,14 +187,18 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          <Button style={buttonStyle} variant="contained" onClick={() => handleAddRowClick()}>
+          <Button
+            style={buttonStyle}
+            variant="contained"
+            onClick={() => handleAddRowClick()}
+          >
             Add {table.table_name}
           </Button>
           {isPopupVisible && (
             <AddRowPopup
               onClose={() => setIsPopupVisible(false)}
               table={table}
-              columns={table.getRequiredColumns()}
+              columns={table.getColumns()}
             />
           )}
         </div>
