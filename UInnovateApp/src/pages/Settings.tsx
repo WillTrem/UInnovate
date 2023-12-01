@@ -7,6 +7,7 @@ import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "../styles/settings.css";
+import UserManagementTab from "../components/settingsPage/UserMangementTab";
 
 export function Settings() {
   return (
@@ -27,6 +28,9 @@ export function Settings() {
                 <Nav.Item>
                   <Nav.Link eventKey="scripting">Scripting</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="users">Users</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Col>
             <Col sm={9}>
@@ -39,6 +43,9 @@ export function Settings() {
                 </Tab.Pane>
                 <Tab.Pane eventKey="scripting">
                   <ScriptingTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="users">
+                  <UserManagementTab />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
