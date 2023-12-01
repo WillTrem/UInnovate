@@ -19,27 +19,6 @@ CREATE OR REPLACE VIEW meta.tables ( "schema", "table" ) AS
     FROM information_schema.tables
     WHERE table_schema IN (SELECT * FROM meta.schemas)
     AND table_type = 'BASE TABLE'
--- VIEWS
--- Creating the custom schema holding the views
-DROP SCHEMA IF EXISTS meta CASCADE ;
-CREATE SCHEMA IF NOT EXISTS meta ;
-
--- Creating the schema view
-CREATE OR REPLACE VIEW meta.schemas ("schema") AS 
-(
-    SELECT nspname
-    FROM pg_catalog.pg_namespace
-    WHERE nspname NOT LIKE 'pg_%' -- Filtering out postgres default schemas
-    AND nspname NOT LIKE 'information_schema' -- ^
-) ;
-    
--- Creating the table view
-CREATE OR REPLACE VIEW meta.tables ( "schema", "table" ) AS
-(
-    SELECT table_schema, table_name
-    FROM information_schema.tables
-    WHERE table_schema IN (SELECT * FROM meta.schemas)
-    AND table_type = 'BASE TABLE'
   ORDER BY table_schema
 ) ;
 

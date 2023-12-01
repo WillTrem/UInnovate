@@ -170,7 +170,7 @@ class VirtualModelDefinition {
         }
 
         // Add column to the table object
-        table.addColumn(new Column(data.column), data.references_table);
+        table.addColumn(new Column(data.column));
       });
       this.data_fetched = true;
     } catch (error) {
@@ -385,8 +385,7 @@ export class Table {
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column, reference_table: string) {
-    column.setReferenceTable(reference_table);
+  addColumn(column: Column) {
     this.columns.push(column);
   }
 
@@ -455,10 +454,6 @@ export class Table {
   setHasDetailsView(has_details_view: boolean) {
     this.has_details_view = has_details_view;
   }
-
-  getColumnsWithReferences() {
-    return this.columns.filter(column => column.references_table !== null);
-  }
 }
 
 
@@ -466,13 +461,11 @@ export class Column {
   column_name: string;
   column_type: string;
   is_visible: boolean;
-  references_table: string 
 
   constructor(column_name: string) {
     this.column_name = column_name;
     this.column_type = "";
     this.is_visible = true;
-    this.references_table = "";
   }
 
   // Method to set the column type
@@ -485,12 +478,6 @@ export class Column {
   // return type : void
   setVisibility(is_visible: boolean) {
     this.is_visible = is_visible;
-  }
-
-  // Method to set the column reference table
-  // return type : void
-  setReferenceTable(references_table: string) {
-    this.references_table = references_table;
   }
 }
 
