@@ -10,14 +10,19 @@ interface ExecutionLogEntry {
     duration: string;
     result: string;
     successful: string;
-  }
-  interface QueuedJob {
+}
+interface QueuedJob {
     id: any;
     name: string;
     schedule: string;
     active: string; 
-  }
+}
 
+const containerStyle = {
+    display: 'flex',
+    gap: '10px', // Adjust the gap size as needed
+    marginTop: '20px', // Adjust the top margin as needed
+  };
 const buttonStyle = {
     marginTop: 20,
     backgroundColor: "#404040",
@@ -167,10 +172,11 @@ export const CronJobsTab = () => {
                                     value={cronSchedule}
                                     onChange={e => setCronSchedule(e.target.value)}
                                 />
-                                <div>
-                                    <Button variant="contained" style={buttonStyle} onClick={scheduleCronJob} >Set Schedule</Button>
-                                    <Button variant="contained" style={buttonStyle} onClick={cancelCronJob} >Deactivate</Button>
+                                <div style={containerStyle}>
+                                    <Button variant="contained" style={buttonStyle} onClick={scheduleCronJob}>Set Schedule</Button>
+                                    <Button variant="contained" style={buttonStyle} onClick={cancelCronJob}>Deactivate</Button>
                                 </div>
+
                             </Form.Group>
                         </ListGroup.Item>
 
