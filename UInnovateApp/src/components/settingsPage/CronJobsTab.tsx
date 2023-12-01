@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import {Button, Typography} from "@mui/material"
+import { useEffect, useState } from 'react';
+import {Button} from "@mui/material"
 import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
 
 interface ExecutionLogEntry {
-    id: number; // or string, depending on your ID type
+    id: any; 
     datetime: string;
     duration: string;
-    result: string; // Assuming 'log' is a string
+    result: string;
     successful: string;
+  }
+  interface QueuedJob {
+    id: any;
+    name: string;
+    schedule: string;
+    active: string; 
   }
 
 const buttonStyle = {
@@ -21,18 +27,24 @@ export const CronJobsTab = () => {
     const [selectedProc, setSelectedProc] = useState('');
     const [cronSchedule, setCronSchedule] = useState('');
     const [executionLogs, setExecutionLogs] = useState<ExecutionLogEntry[]>([]);
-    const [queuedLogs, setQueuedLogs] = useState<ExecutionLogEntry[]>([]);
+    const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
 
     // Dummy data for procedures
     const procedures = [
         "Stored Proc 1",
         "Stored Proc 2",
-        "Stored Proc 3"
+        "process_updates"
     ];
 
     // Assume this function makes an API call to schedule the cron job
     const scheduleCronJob = () => {
-        // Implementation here...
+        const job_table =  vmd.getTable("cron", "job");
+        if (!selectedProc || !cronSchedule) {
+            alert('Please select a stored procedure and enter a cron schedule.');
+            return;
+        }
+        const sql = `SELECT cron.schedule('${selectedProc}', '${cronSchedule}', 'CALL ${selectedProc}()');`;
+
     };
 
     const cancelCronJob = () => {
@@ -56,52 +68,65 @@ export const CronJobsTab = () => {
     };
     
     const fetchExecutionLogsForProc = async (procName: string) => {
-        const table = vmd.getTable("application", "task_queue");
-        
-        if (!table) {
-            console.error("Table 'task_queue' not found.");
+        const details_table = vmd.getTable("cron", "job_run_details");
+        const job_table =  vmd.getTable("cron", "job");
+
+        if (!details_table || !job_table) {
+            console.error("Table not found.");
             return;
         }
         
-        const dataAccessor: DataAccessor = vmd.getRowsDataAccessor(
-            "application",
-            "task_queue"
+        const detailsDataAccessor: DataAccessor = vmd.getRowsDataAccessor(
+            "cron",
+            "job_run_details"
+        );
+
+        const jobDataAccessor: DataAccessor = vmd.getRowsDataAccessor(
+            "cron",
+            "job"
         );
         
-        const logs = await dataAccessor.fetchRows(); // Assuming fetchRows returns the rows from the task_queue table
 
-        // Transform the fetched rows into the format expected by the component's state
-        const formattedLogs: ExecutionLogEntry[] = logs
-        ?.filter((logRow) => logRow['name'] === selectedProc)
-        .map((logRow) => {
-            const startTime = new Date(logRow['start_time']);
-            const endTime = logRow['end_time'] ? new Date(logRow['end_time']) : null;
-            const duration = endTime ? endTime.getTime() - startTime.getTime() : 'N/A';
-            return {
-                id: logRow['id'], // Ensure this is a number if your ID type is a number
-                datetime: startTime.toLocaleString(),
-                duration:  formatDuration(duration),
-                result: logRow['log'],
-                successful: logRow['successful'] ? 'Yes' : 'No'
-              };
-            }) ?? [];
+        const jobLogs = await jobDataAccessor.fetchRows() ?? []; // get job rows
+        const detailsLogs = await detailsDataAccessor.fetchRows() ?? []; // get job run details rows
+        const executionLogEntries: ExecutionLogEntry[] = [];
+    
+        // iterate through each queued job
+        jobLogs
+        ?.forEach(job => {
+            // find corresponding job run details
+            const jobDetails = detailsLogs?.filter(detail => detail.jobid === job.jobid);
+    
+            jobDetails?.forEach(detail => {
+                if (job.command.includes(procName)) {
+                    executionLogEntries.push({
+                        id: job.jobid, // Assuming the jobid is at the top level of the job object
+                        datetime: detail.start_time ? new Date(detail.start_time).toLocaleString() : 'N/A',
+                        duration: detail.end_time && detail.start_time
+                            ? formatDuration(new Date(detail.end_time).getTime() - new Date(detail.start_time).getTime())
+                            : 'N/A',
+                        result: detail.return_message,
+                        successful: detail.status
+                    });
+                }
+            });
+        });
+        const newQueuedJobs: QueuedJob[] = jobLogs
+        .filter(job => job.jobname.includes(selectedProc)) // select queued jobs dependent on selected proc
+        .map(job => {
+          // put in the QueuedJob format
+          return {
+            id: job.jobid,
+            name: job.jobname,
+            schedule: job.schedule,
+            active: job.active === true ? 'Yes': 'No',
+          };
+        });
+       
 
-            const queuedTasks: ExecutionLogEntry[] = logs
-            ?.filter((logRow) => logRow['name'] === procName && logRow['successful'] === null)
-            .map((logRow) => {
-              const startTime = logRow['start_time'] ? new Date(logRow['start_time']).toLocaleString() : 'N/A';
-              const duration = 'N/A';
-              return {
-                  id: logRow['id'],
-                  datetime: startTime,
-                  duration: duration,
-                  result: logRow['log'] || 'Pending', // Assuming log is empty for pending tasks
-                  successful: 'Pending' // Since the task hasn't run yet
-              };
-          }) ?? [];
-
-        setExecutionLogs(formattedLogs);
-        setQueuedLogs(queuedTasks);
+        setExecutionLogs(executionLogEntries);
+        
+        setQueuedLogs(newQueuedJobs);
     };
 
     useEffect(() => {
@@ -158,17 +183,17 @@ export const CronJobsTab = () => {
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>
-                                        <th>Datetime</th>
-                                        <th>Duration</th>
-                                        <th>Result</th>
+                                        <th>Name</th>
+                                        <th>Schedule</th>
+                                        <th>Active</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                 {queuedLogs.map(log => (
                                         <tr key={log.id}>
-                                            <td>{log.datetime}</td>
-                                            <td>{log.duration}</td>
-                                            <td>{log.result}</td>
+                                            <td>{log.name}</td>
+                                            <td>{log.schedule}</td>
+                                            <td>{log.active}</td>
                                         </tr>
                                     ))} 
                                 </tbody>
