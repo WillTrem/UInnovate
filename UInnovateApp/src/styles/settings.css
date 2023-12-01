@@ -13,7 +13,7 @@
 
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
-  background-color: #C0C0C0;
+  background-color: #c0c0c0;
 }
 
 .nav {
@@ -53,4 +53,11 @@
 
 .text-table {
   flex: 0%;
+}
+
+.save-config-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
