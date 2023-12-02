@@ -11,7 +11,6 @@ const DisplayTab = () => {
   const tableItems = tables?.map((table) => (
     <TableItem key={table.table_name} table={table} />
   ));
-  console.log(tableItems);
 
   return (
     <div>
