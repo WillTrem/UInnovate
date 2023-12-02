@@ -20,6 +20,8 @@ interface TableItemProps {
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
   console.log(schema);
+  
+
 
   if (!schema) {
     throw new Error("Schema not found for table: " + table.table_name);
@@ -95,17 +97,19 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
               </FormControl>
             </div>
 
-            <div className="details-view">
-            <span className="px-1" style={{ width: '100px' }}>Details View</span>
+            <div className="details-views">
+            <span className="px-1" style={{ width: '180px' }}>Details View</span>
             <Switch
                   defaultChecked={table.getHasDetailsView()}
                   onChange={handleToggleDetails}
                   data-testid="detail-visibility-switch"
                 />
 
-
-              <LookUpTable />
+                </div>  
+              <div className="details-view">
+                <LookUpTable table={table}/>
             </div>
+            
           </div>
         </Card.Body>
       </Card>

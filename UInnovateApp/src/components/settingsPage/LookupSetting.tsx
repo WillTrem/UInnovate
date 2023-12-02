@@ -5,11 +5,32 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem } from '@mui/material';
 import "../../styles/TableItem.css";
+import {Table } from "../../virtualmodel/VMD";
+import buttonStyle from '../TableEnumView'
 
+type LookUpTableProps = {
+  table:Table;
+}
 
-const LookUpTable: React.FC = () => {
+const LookUpTable: React.FC<LookUpTableProps> = ({table,}:LookUpTableProps) => {
 
+  
 
+  const attributes = table.getColumns();
+  let count = 0;
+  const referencesTableList: string[] = [];
+
+  attributes?.map((attribute) => {
+    if (attribute.references_table != "null" && attribute.references_table != null) {
+      count = count + 1;
+      referencesTableList.push(attribute.references_table);
+    }
+    else {
+      count = count + 0;
+    }
+  });
+  console.log(table.table_name)
+console.log(  count)
 
 
   Storage.prototype.setObj = function (key:string, obj:string) {
@@ -23,36 +44,43 @@ const LookUpTable: React.FC = () => {
   console.log(localStorage.getObj("test"))
   const MyButtonComponent = () => {
     return (
+      <div >
       <FormControl size="small">
-        <h6>Extra Lookup Tables</h6>
-        <Select
-          onChange={HandleChange}
-
-        >
-          <MenuItem value={"Option1"}>option 1</MenuItem>
-          <MenuItem value={"Option2"}>option 2</MenuItem>
+        <h6> Lookup Tables</h6>
+        <Select onChange={HandleChange}>
+          {referencesTableList.map((ref, index) => (
+            <MenuItem key={index} value={ref}>
+              {ref}
+            </MenuItem>
+          ))}
         </Select>
         <FormHelperText>
           To customize the default layout of the table
         </FormHelperText>
       </FormControl>
+      </div>
     );
   };
 
 
   const [counter, setCounter] = useState(() => {
     // Retrieve the counter value from local storage when initializing state
-    const savedCounter = localStorage.getItem('counter');
+    const savedCounter = localStorage.getItem(table.table_name);
     return savedCounter !== null ? Number(savedCounter) : 0;
   });
 
 
   useEffect(() => {
     // Store the counter value in local storage whenever it changes
-    localStorage.setItem('counter', counter.toString());
+    localStorage.setItem(table.table_name, counter.toString());
   }, [counter]);
 
   const handleButtonClick = () => {
+    if(count -1 == counter|| count==0)
+    {
+      alert("You can't add more lookup tables")
+    }
+    else
     setCounter((Counter) => Counter + 1);
   };
   const HandleChange = () => {
@@ -64,16 +92,23 @@ const LookUpTable: React.FC = () => {
     else
       setCounter(0);
   };
-
+if(count==0)
+{
+  return (<></>)
+}
+else
   return (
     <div>
       <div className='look-tables'>
 
         <FormControl style={{ marginRight: '30px' }} size="small">
           <h6>Lookup Tables</h6>
-          <Select>
-            <MenuItem value={"Option1"}>option 1</MenuItem>
-            <MenuItem value={"Option2"}>option 2</MenuItem>
+          <Select onChange={HandleChange}>
+          {referencesTableList.map((ref, index) => (
+            <MenuItem key={index} value={ref}>
+              {ref}
+            </MenuItem>
+          ))}
           </Select>
           <FormHelperText>
             To customize the default layout of the table
@@ -93,7 +128,7 @@ const LookUpTable: React.FC = () => {
           -
         </button>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '200px', width: '273.08' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08', marginTop:'2em' }}>
         {[...Array(counter)].map((_, index) => (
 
           <MyButtonComponent key={index} />
