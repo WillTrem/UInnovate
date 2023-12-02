@@ -79,7 +79,12 @@ const AddRowPopup = ({
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography variant="h5">Adding a new Enumerated type</Typography>
+        {/* Verify if we need a modal for the Enum Type or the List Type to display the title */}
+        {table.table_display_type === "enum" ? (
+          <Typography variant="h5">Adding a new Enumerated type</Typography>
+        ) : (
+          <Typography variant="h5">Adding a new List type</Typography>
+        )}
         <div className="addEnum">
           {columns.map((column: Column, idx) => {
             return (

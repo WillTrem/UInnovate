@@ -13,6 +13,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { Switch, Button, Typography } from "@mui/material";
+import AddRowPopup from "./AddRowPopup";
 
 interface TableListViewProps {
   table: Table;
@@ -38,6 +39,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const { config } = useConfig();
+  const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
 
   useEffect(() => {
     const getRows = async () => {
@@ -173,6 +175,11 @@ const TableListView: React.FC<TableListViewProps> = ({
     setOpenPanel(true); 
   };
 
+  // Function to open the popup
+  const handleAddRowClick = () => {
+    setIsPopupVisible(true);
+  };
+
   return (
     <div>
       <div
@@ -183,9 +190,20 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          <Button style={buttonStyle} variant="contained">
-            Add Row
+          <Button
+            style={buttonStyle}
+            variant="contained"
+            onClick={() => handleAddRowClick()}
+          >
+            Add {table.table_name}
           </Button>
+          {isPopupVisible && (
+            <AddRowPopup
+              onClose={() => setIsPopupVisible(false)}
+              table={table}
+              columns={table.getColumns()}
+            />
+          )}
         </div>
         <div>
           {scripts?.map((script) => {

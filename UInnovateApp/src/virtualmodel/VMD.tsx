@@ -401,6 +401,12 @@ export class Table {
     return this.columns;
   }
 
+  // Method to get the table's required columns
+  // return type : Column[]
+  getRequiredColumns() {
+    return this.columns.filter((column) => column.reqOnCreate === true);
+  }
+
   // Method to get all visible columns from the table object
   // return type : Column[]
   getVisibleColumns() {
@@ -462,6 +468,7 @@ export class Column {
   column_name: string;
   column_type: string;
   is_visible: boolean;
+  reqOnCreate: boolean;
   references_table: string;
 
 
@@ -469,6 +476,7 @@ export class Column {
     this.column_name = column_name;
     this.column_type = "";
     this.is_visible = true;
+    this.reqOnCreate = false;
     this.references_table = "";
   }
 
