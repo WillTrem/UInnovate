@@ -29,8 +29,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table,}:LookUpTableProps) => {
       count = count + 0;
     }
   });
-  console.log(table.table_name)
-console.log(  count)
+  
 
 
   Storage.prototype.setObj = function (key:string, obj:string) {
@@ -41,7 +40,7 @@ console.log(  count)
     return item ? JSON.parse(item) : null;
   }
   localStorage.setObj("test", 4)
-  console.log(localStorage.getObj("test"))
+  
   const MyButtonComponent = () => {
     return (
       <div >

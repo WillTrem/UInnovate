@@ -19,7 +19,6 @@ interface TableItemProps {
 
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
-  console.log(schema);
   
 
 
@@ -49,7 +48,6 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
 
   const handleToggleDetails = async () => {
     const isVisible = table.getHasDetailsView();
-    console.log(isVisible);
     table.setHasDetailsView(!isVisible);
     await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
   };

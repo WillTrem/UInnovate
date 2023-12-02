@@ -32,7 +32,6 @@ export function updateAppConfigValues(config: ConfigType) {
     config as unknown as Row
   );
 
-  console.log(data_accessor);
   
   data_accessor
     .upsert()

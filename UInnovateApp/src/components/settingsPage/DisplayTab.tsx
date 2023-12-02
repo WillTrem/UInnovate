@@ -8,8 +8,6 @@ import vmd from "../../virtualmodel/VMD";
 
 const DisplayTab = () => {
   const tables = vmd.getAllTables();
-  console.log(tables);
-  console.log(tables[1].table_name)
   const tableItems = tables?.map((table) => (
     <TableItem key={table.table_name} table={table} />
   ));
