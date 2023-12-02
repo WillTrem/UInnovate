@@ -1,0 +1,28 @@
+.custom-button{
+	margin-top: 20;
+	background-color: #404040; 
+	width: "fit-content";
+}
+
+.users-container{
+	display: flex;
+	flex-direction: column;
+	align-items: baseline;
+	justify-content: space-evenly;
+	height: 100%;
+	
+}
+
+td{
+	vertical-align: middle;
+}
+.MuiSelect-select{
+	background-color: white;
+}
+
+div.add-button-container{
+	display:flex;
+	width:100%;
+	flex-direction: row;
+	justify-content: end;
+}
