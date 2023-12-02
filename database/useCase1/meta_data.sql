@@ -14,7 +14,7 @@ INSERT INTO meta.appconfig_values (property, value, "table", "column")
 SELECT
     CFP.name, default_value, C.table, C.column
 FROM meta.columns as C, meta.appconfig_properties as CFP
-WHERE schema = 'application' AND CFP.name != 'table_view';
+WHERE schema = 'app_rentals' AND CFP.name != 'table_view';
 
 
 -- Insert the default column display typess for each application table
@@ -22,7 +22,7 @@ INSERT INTO meta.appconfig_values (property, value, "table")
 SELECT
     CFP.name, default_value, T.table
 FROM meta.tables as T, meta.appconfig_properties as CFP
-WHERE schema = 'application' AND CFP.name = 'table_view'
+WHERE schema = 'app_rentals' AND CFP.name = 'table_view'
 OR CFP.name = 'visible' OR CFP.name = 'metadata_view';
 
 -- Insert a default script for the scripts table

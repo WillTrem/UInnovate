@@ -1,4 +1,10 @@
--- Database: uinnovate_tool_rental
+-- SCHEMA: app_rentals
+
+DROP SCHEMA IF EXISTS app_rentals CASCADE ;
+
+CREATE SCHEMA IF NOT EXISTS app_rentals ;
+
+GRANT USAGE ON SCHEMA app_rentals TO web_anon;
 
 CREATE OR REPLACE FUNCTION my_concat_immutable(text, text)
 RETURNS text LANGUAGE SQL IMMUTABLE AS $$
@@ -277,3 +283,21 @@ ALTER TABLE unit ADD CONSTRAINT fk_unit_cal_cert
 
 ALTER TABLE unit_recalibration_schedule ADD CONSTRAINT fk_unit_cal_cert_schedule
     FOREIGN KEY (last_calibration_certificate_id) REFERENCES unit_calibration_certificate(unit_calibration_certificate_id);
+
+GRANT ALL ON app_rentals.tool_type TO web_anon;
+GRANT ALL ON app_rentals.tool TO web_anon;
+GRANT ALL ON app_rentals.unit TO web_anon;
+GRANT ALL ON app_rentals.company TO web_anon;
+GRANT ALL ON app_rentals.contact TO web_anon;
+GRANT ALL ON app_rentals.quotation TO web_anon;
+GRANT ALL ON app_rentals.quotation_line_item TO web_anon;
+GRANT ALL ON app_rentals.purchase_order TO web_anon;
+GRANT ALL ON app_rentals.purchase_order_line_item TO web_anon;
+GRANT ALL ON app_rentals.availability_status TO web_anon;
+GRANT ALL ON app_rentals.unit_scheduler TO web_anon;
+GRANT ALL ON app_rentals.tool_restock_request TO web_anon;
+GRANT ALL ON app_rentals.unit_recalibration_status TO web_anon;
+GRANT ALL ON app_rentals.unit_recalibration_flag TO web_anon;
+GRANT ALL ON app_rentals.unit_recalibration_schedule_type TO web_anon;
+GRANT ALL ON app_rentals.unit_recalibration_schedule TO web_anon;
+GRANT ALL ON app_rentals.unit_calibration_certificate TO web_anon;

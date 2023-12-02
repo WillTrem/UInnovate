@@ -1,10 +1,10 @@
 -- SCHEMA: application
 
-DROP SCHEMA IF EXISTS application CASCADE ;
+DROP SCHEMA IF EXISTS app_rentals CASCADE ;
 
-CREATE SCHEMA IF NOT EXISTS application ;
+CREATE SCHEMA IF NOT EXISTS app_rentals ;
 
-GRANT USAGE ON SCHEMA application TO web_anon;
+GRANT USAGE ON SCHEMA app_rentals TO web_anon;
 
 -- Create the Tools Table
 CREATE TABLE application.Tools (
@@ -35,6 +35,6 @@ CREATE TABLE application.Rentals (
 );
 
 
-GRANT ALL ON application.tools TO web_anon;
-GRANT ALL ON application.customers TO web_anon;
-GRANT ALL ON application.rentals TO web_anon;
+GRANT ALL ON app_rentals.tools TO web_anon;
+GRANT ALL ON app_rentals.customers TO web_anon;
+GRANT ALL ON app_rentals.rentals TO web_anon;
