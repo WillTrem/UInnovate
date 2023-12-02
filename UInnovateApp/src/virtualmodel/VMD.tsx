@@ -170,7 +170,7 @@ class VirtualModelDefinition {
         }
 
         // Add column to the table object
-        table.addColumn(new Column(data.column));
+        table.addColumn(new Column(data.column), data.references_table);
       });
       this.data_fetched = true;
     } catch (error) {
@@ -235,6 +235,9 @@ class VirtualModelDefinition {
           case "table_view":
             table.table_display_type = config.value as string;
             break;
+          case "details_view":
+            table.has_details_view = config.value === "true";
+            break; 
         }
       });
       this.config_data_fetched = true;
@@ -368,6 +371,7 @@ export class Table {
   table_name: string;
   table_display_type: string;
   is_visible: boolean;
+  has_details_view: boolean;
   columns: Column[];
   url: string;
 
@@ -375,12 +379,14 @@ export class Table {
     this.table_name = table_name;
     this.table_display_type = "list";
     this.is_visible = true;
+    this.has_details_view = true;
     this.columns = [];
     this.url = "http://localhost:3000/" + table_name;
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column) {
+  addColumn(column: Column, references_table: string) {
+    column.setReferenceTable(references_table);
     this.columns.push(column);
   }
 
@@ -393,6 +399,12 @@ export class Table {
   // return type : Column[]
   getColumns() {
     return this.columns;
+  }
+
+  // Method to get the table's required columns
+  // return type : Column[]
+  getRequiredColumns() {
+    return this.columns.filter((column) => column.reqOnCreate === true);
   }
 
   // Method to get all visible columns from the table object
@@ -437,17 +449,35 @@ export class Table {
   setVisibility(is_visible: boolean) {
     this.is_visible = is_visible;
   }
+
+  // Method to get the table's details view
+  // return type : boolean
+  getHasDetailsView() {
+    return this.has_details_view;
+  }
+
+  // Method to set the table's details view
+  // return type : void
+  setHasDetailsView(has_details_view: boolean) {
+    this.has_details_view = has_details_view;
+  }
 }
+
 
 export class Column {
   column_name: string;
   column_type: string;
   is_visible: boolean;
+  reqOnCreate: boolean;
+  references_table: string;
+
 
   constructor(column_name: string) {
     this.column_name = column_name;
     this.column_type = "";
     this.is_visible = true;
+    this.reqOnCreate = false;
+    this.references_table = "";
   }
 
   // Method to set the column type
@@ -460,6 +490,18 @@ export class Column {
   // return type : void
   setVisibility(is_visible: boolean) {
     this.is_visible = is_visible;
+  }
+
+  // Method to set the column's reference table
+  // return type : void
+  setReferenceTable(references_table: string) {
+    this.references_table = references_table;
+  }
+
+  // Method to get the column's reference table
+  // return type : string
+  getReferenceTable() {
+    return this.references_table;
   }
 }
 

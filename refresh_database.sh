@@ -3,16 +3,32 @@ cd "$(dirname "$(readlink -f "$0")")"
 # Load environment variables from .env file
 source .env
 
+USECASE_FOLDER="/useCase1"
+# Parse command-line arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -f|--folder)
+            USECASE_FOLDER="$2"
+            shift 2
+            echo "Using use case folder: $USECASE_FOLDER"
+            ;;
+        *)
+            echo "defaulting to option: $USECASE_FOLDER usecase folder"
+            break
+            ;;
+    esac
+done
+
 # Set database credentials and file paths
 DB_USER=$POSTGRES_USER
 DB_PASS=$POSTGRES_PASSWORD
 DB_NAME=$POSTGRES_DB_NAME
 DB_HOST="db"
 META_FILE="./database/meta.sql"
-SCHEMA_FILE="./database/application.sql"
-DATA_FILE="./database/data.sql"
+SCHEMA_FILE="./database$USECASE_FOLDER/application.sql"
+DATA_FILE="./database$USECASE_FOLDER/data.sql"
 CRON_FILE="./database/cron.sql"
-META_DATA_FILE="./database/meta_data.sql"
+META_DATA_FILE="./database$USECASE_FOLDER/meta_data.sql"
 LOG_FILE="./database/refresh_log.txt"
 APPCONFIG_PROPERTIES_FILE="./dataFiles/appconfig_properties.csv"
 

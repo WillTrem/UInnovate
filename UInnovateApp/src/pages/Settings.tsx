@@ -9,13 +9,17 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "../styles/settings.css";
 import UserManagementTab from "../components/settingsPage/UserMangementTab";
+import ButtonConfigurationSaver from "../components/settingsPage/ButtonConfigurationSaver";
 
 export function Settings() {
   return (
     <>
       <NavBar />
       <div className="page-container">
-        <h1 className="title">Settings</h1>
+        <div className="save-config-container">
+          <h1 className="title">Settings</h1>
+          <ButtonConfigurationSaver />
+        </div>
         <Tab.Container id="left-tabs-example" defaultActiveKey="first">
           <Row>
             <Col sm={3}>

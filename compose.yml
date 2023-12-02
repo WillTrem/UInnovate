@@ -34,6 +34,7 @@ services:
 
   server:
     image: postgrest/postgrest
+    container_name: prest
     ports:
       - "3000:3000"
     environment:
