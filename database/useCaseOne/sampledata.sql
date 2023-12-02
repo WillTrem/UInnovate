@@ -91,7 +91,7 @@ INSERT INTO company (company_name, address, primary_contact_id, is_prev_customer
     ('Evil Inc.','1717 Birch Ln, Crestview', NULL, false, 1.01);
 
 -- Sample data for contact table
-INSERT INTO contact (company_id, firstname, lastname, contact_position, phone_number, email, active) VALUES
+INSERT INTO contact (company_id, first_name, last_name, contact_position, phone_number, email, active) VALUES
     (1, 'Jack', 'Brody', 'Manager', '+1234567890', 'manager@company1.com', true),
     (2, 'Sleiman', 'Bee', 'Coordinator', '+2345678901', 'coordinator@company2.com', true),
     (3, 'Yi', 'Wang', 'Supervisor', '+3456789012', 'supervisor@company3.com', true),
