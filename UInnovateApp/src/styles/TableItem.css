@@ -25,9 +25,9 @@
   display: flex;
   margin-bottom: 2em;
   align-items:center;
-  justify-content:left;
+  justify-content:center;
   flex-direction: row;
-  margin-left: 21px;
+  
 }
 .look-tables{
   display: flex;
@@ -40,9 +40,9 @@
 .details-views{
   display: flex;
   margin-bottom: 2em;
-  gap: 0px;
-  margin-right: 392px;
+  gap: 20px;
   align-items:center;
   justify-content:center;
   flex-direction: row;
+  
 }
