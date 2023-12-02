@@ -169,7 +169,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
-    setOpenPanel(true);
+    if (!table.has_details_view) { 
+      return;
+    }   
+    setOpenPanel(true); 
   };
 
   // Function to open the popup
