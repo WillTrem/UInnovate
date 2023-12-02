@@ -32,6 +32,7 @@ if USECASE_FOLDER == "/useCase1"; then
 else 
     SCHEMA_FILE="./database$USECASE_FOLDER/application.sql"
     DATA_FILE="./database$USECASE_FOLDER/data.sql"
+fi
 META_DATA_FILE="./database$USECASE_FOLDER/meta_data.sql"
 LOG_FILE="./database/refresh_log.txt"
 APPCONFIG_PROPERTIES_FILE="./dataFiles/appconfig_properties.csv"

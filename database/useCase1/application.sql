@@ -7,7 +7,7 @@ CREATE SCHEMA IF NOT EXISTS app_rentals ;
 GRANT USAGE ON SCHEMA app_rentals TO web_anon;
 
 -- Create the Tools Table
-CREATE TABLE application.Tools (
+CREATE TABLE  app_rentals.Tools (
     ToolID serial PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     Description TEXT,
@@ -16,7 +16,7 @@ CREATE TABLE application.Tools (
 );
 
 -- Create the Customers Table
-CREATE TABLE application.Customers (
+CREATE TABLE  app_rentals.Customers (
     CustomerID serial PRIMARY KEY,
     FirstName VARCHAR(255) NOT NULL,
     LastName VARCHAR(255) NOT NULL,
@@ -25,10 +25,10 @@ CREATE TABLE application.Customers (
 );
 
 -- Create the Rentals Table
-CREATE TABLE application.Rentals (
+CREATE TABLE  app_rentals.Rentals (
     RentalID serial PRIMARY KEY,
-    ToolID INT REFERENCES application.Tools(ToolID),
-    CustomerID INT REFERENCES application.Customers(CustomerID),
+    ToolID INT REFERENCES  app_rentals.Tools(ToolID),
+    CustomerID INT REFERENCES  app_rentals.Customers(CustomerID),
     RentalDate DATE NOT NULL,
     DueDate DATE NOT NULL,
     ActualReturnDate DATE
