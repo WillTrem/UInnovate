@@ -8,7 +8,7 @@ GRANT USAGE ON SCHEMA application TO web_anon;
 
 -- Create the Tools Table
 CREATE TABLE application.Tools (
-    ID serial PRIMARY KEY,
+    ToolID serial PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
     Description TEXT,
     RentalRate DECIMAL(10, 2) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE application.Tools (
 
 -- Create the Customers Table
 CREATE TABLE application.Customers (
-    ID serial PRIMARY KEY,
+    CustomerID serial PRIMARY KEY,
     FirstName VARCHAR(255) NOT NULL,
     LastName VARCHAR(255) NOT NULL,
     Email VARCHAR(255),
@@ -26,9 +26,9 @@ CREATE TABLE application.Customers (
 
 -- Create the Rentals Table
 CREATE TABLE application.Rentals (
-    ID serial PRIMARY KEY,
-    ToolID INT REFERENCES application.Tools(ID),
-    CustomerID INT REFERENCES application.Customers(ID),
+    RentalID serial PRIMARY KEY,
+    ToolID INT REFERENCES application.Tools(ToolID),
+    CustomerID INT REFERENCES application.Customers(CustomerID),
     RentalDate DATE NOT NULL,
     DueDate DATE NOT NULL,
     ActualReturnDate DATE

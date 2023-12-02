@@ -315,26 +315,6 @@ class VirtualModelDefinition {
     }
   }
 
-
-  getUpdateRowDataAccessorLIST(schema_name: string, table_name: string, row: Row, id: string) {
-    const schema = this.getSchema(schema_name);
-    const table = this.getTable(schema_name, table_name);
-
-    if (schema && table) {
-      return new DataAccessor(
-        `${table.url}?id=eq.${id}`, // PostgREST URL for updating a row from its id
-        {
-          Prefer: "return=representation",
-          "Content-Type": "application/json",
-          "Content-Profile": schema_name,
-        },
-        undefined,
-        row
-      );
-    } else {
-      throw new Error("Schema or table does not exist");
-    }
-  }
   // Method to return a data accessor object to upsert a set of rows in a table
   // return type : DataAccessor
   getUpsertDataAccessor(
