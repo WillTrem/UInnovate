@@ -23,7 +23,13 @@ CREATE TABLE application.ticket_categories (
 --  ticket priorities
 CREATE TABLE application.ticket_priorities (
     priority_id SERIAL PRIMARY KEY,
-    priority_name VARCHAR(20) UNIQUE NOT NULL
+    priority_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+--  ticket status
+CREATE TABLE application.ticket_status (
+    status_id SERIAL PRIMARY KEY,
+    status_name VARCHAR(50) UNIQUE NOT NULL
 );
 
 --  service tickets
@@ -32,8 +38,8 @@ CREATE TABLE application.service_tickets (
     user_id INT REFERENCES application.users(user_id) NOT NULL,
     category_id INT REFERENCES application.ticket_categories(category_id) NOT NULL,
     priority_id INT REFERENCES application.ticket_priorities(priority_id) NOT NULL,
+    status_id INT REFERENCES application.ticket_status(status_id) NOT NULL,
     description TEXT NOT NULL,
-    status VARCHAR(20) DEFAULT 'Open' NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMPTZ,
     resolved_at TIMESTAMPTZ,
@@ -65,11 +71,26 @@ CREATE TABLE application.system_logs (
     timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
+-- Table to store ticket tags
+CREATE TABLE application.ticket_tags (
+    tag_id SERIAL PRIMARY KEY,
+    tag_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- many-to-many relationship between service_tickets and ticket_tags
+CREATE TABLE application.service_ticket_tags (
+    ticket_id INT REFERENCES application.service_tickets(ticket_id) NOT NULL,
+    tag_id INT REFERENCES application.ticket_tags(tag_id) NOT NULL,
+    PRIMARY KEY (ticket_id, tag_id)
+);
 
 GRANT ALL ON application.users TO web_anon;
 GRANT ALL ON application.ticket_categories TO web_anon;
 GRANT ALL ON application.ticket_priorities TO web_anon;
+GRANT ALL ON application.ticket_status TO web_anon;
 GRANT ALL ON application.service_tickets TO web_anon;
 GRANT ALL ON application.ticket_comments TO web_anon;
 GRANT ALL ON application.ticket_assignments TO web_anon;
 GRANT ALL ON application.system_logs TO web_anon;
+GRANT ALL ON application.ticket_tags TO web_anon;
+GRANT ALL ON application.service_ticket_tags TO web_anon;
