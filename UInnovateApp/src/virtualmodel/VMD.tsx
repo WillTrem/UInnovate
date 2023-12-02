@@ -501,7 +501,7 @@ export class Column {
   // Method to get the column's reference table
   // return type : string
   getReferenceTable() {
-    return this.refrerences_table;
+    return this.references_table;
   }
 }
 
