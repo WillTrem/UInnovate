@@ -74,6 +74,14 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating the envronment variables table
+CREATE TABLE IF NOT EXISTS meta.env_vars (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    value TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
 RETURNS json  -- Specify the return type here
