@@ -40,8 +40,8 @@ export function Settings() {
 								</Tab.Pane>
 								<Tab.Pane eventKey='scripting'>
 									<ScriptingTab />
+									<EnvVarCreator />
 								</Tab.Pane>
-								<EnvVarCreator />
 							</Tab.Content>
 						</Col>
 					</Row>

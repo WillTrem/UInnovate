@@ -118,8 +118,10 @@ GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.env_vars TO web_anon;
 
 GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
 GRANT ALL on meta.scripts TO web_anon;
+GRANT ALL on meta.env_vars TO web_anon;
