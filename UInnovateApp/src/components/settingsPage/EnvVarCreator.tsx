@@ -5,7 +5,7 @@ import vmd from "../../virtualmodel/VMD";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
-import { IoLockClosed, IoLockOpen } from "react-icons/io5"; // Assuming react-icons usage
+import { IoLockClosed, IoLockOpen } from "react-icons/io5";
 
 export const EnvVarCreator = () => {
 	const schema = vmd.getSchema("meta");
@@ -16,19 +16,6 @@ export const EnvVarCreator = () => {
 	const [newEnvVar, setNewEnvVar] = useState<Row>({}); //expect valid type for the row
 	const [showModal, setShowModal] = useState<boolean>(false);
 
-	const getEnvVars = async () => {
-		if (!schema || !env_var_table) {
-			return;
-		}
-
-		const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-			schema?.schema_name,
-			env_var_table?.table_name
-		);
-
-		const env_var_rows = await data_accessor?.fetchRows();
-		setEnvVar(env_var_rows);
-	};
 	useEffect(() => {
 		getEnvVars();
 	});
@@ -83,7 +70,9 @@ export const EnvVarCreator = () => {
 				"env_vars", // table name
 				//params new row data: needs changing
 				{
-					value: updatedEnvVar.value,
+					columns: "id, name, value, created-at",
+					on_conflict: "id, name, value, created-at",
+					// value: updatedEnvVar.value,
 				},
 				//updated row data:
 				updatedEnvVar
@@ -97,6 +86,24 @@ export const EnvVarCreator = () => {
 			console.error("Error in upserting environment variable:", error);
 			alert("Failed to update environment variable."); // User sad :(
 		}
+	};
+
+	const getEnvVars = async () => {
+		if (!schema || !env_var_table) {
+			return;
+		}
+
+		const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+			schema?.schema_name,
+			env_var_table?.table_name
+		);
+
+		const env_var_rows = await data_accessor?.fetchRows();
+		setEnvVar(env_var_rows);
+		//alternative:
+		// env_var_rows?.forEach((envVar) => {
+		// 	env_var_rows.push(envVar);
+		// });
 	};
 
 	return (
@@ -197,6 +204,7 @@ export const EnvVarCreator = () => {
 								{editMode ? <IoLockOpen /> : <IoLockClosed />}
 								<h5>Click to edit</h5>
 							</Button>
+
 							{envVar?.map((envVarItem) => {
 								return (
 									<Nav.Item key={envVarItem.id}>
