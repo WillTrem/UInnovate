@@ -16,6 +16,7 @@ import { Switch, Button, Typography } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import { as, c, s } from "vitest/dist/reporters-5f784f42.js";
 import { current } from "@reduxjs/toolkit";
+import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 
 interface TableListViewProps {
   table: Table;
@@ -354,7 +355,9 @@ const TableListView: React.FC<TableListViewProps> = ({
           </Button>
           </div>
         </div>
-        
+      
+        <LookUpTableDetails table={table} />
+
       </SlidingPanel>
       
     </div>
