@@ -12,7 +12,7 @@ type LookUpTableProps = {
   table:Table;
 }
 
-const LookUpTable: React.FC<LookUpTableProps> = ({table,}:LookUpTableProps) => {
+const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
 
   
 

@@ -485,6 +485,18 @@ export class Table {
   setHasDetailsView(has_details_view: boolean) {
     this.has_details_view = has_details_view;
   }
+
+  // Method to get the table's url
+  // return type : string
+  getURL() {
+    return this.url;
+  }
+
+  // Method to set the table's url
+  // return type : void
+  setURL(url: string) {
+    this.url = url;
+  }
 }
 
 

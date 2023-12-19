@@ -44,7 +44,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] =  useState<string | null>(null);
-  const [currentPrimaryKeyValue, setCurrentPrimaryKeyValue] = useState<string | null>(null);
 
 
 
@@ -119,7 +118,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
       }
-    setCurrentPrimaryKeyValue("go")
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
@@ -150,8 +148,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
     console.log(data_accessor)
     data_accessor.updateRow();
-    setCurrentPrimaryKey(null);
-    setCurrentPrimaryKeyValue(null);
     setOpenPanel(false);
   };
 
@@ -181,11 +177,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
 
       if (
-        column.is_editable == false &&
-        currentPrimaryKey !== column.column_name &&
-        currentPrimaryKeyValue !== (currentRow.row[column.column_name] as string) &&
-        currentPrimaryKey !== null &&
-        currentPrimaryKeyValue !== null) {
+        column.is_editable == false) {
 
         localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
 
@@ -241,7 +233,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
     };
     setInputField(() => newInputField as (column: Column) => JSX.Element);
-  }, [currentRow, columns, config, table, currentPrimaryKey, currentPrimaryKeyValue]);
+  }, [currentRow, columns, config, table]);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
@@ -362,7 +354,9 @@ const TableListView: React.FC<TableListViewProps> = ({
           </Button>
           </div>
         </div>
+        
       </SlidingPanel>
+      
     </div>
   );
 };
