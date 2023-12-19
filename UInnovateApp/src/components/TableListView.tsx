@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { Switch, Button, Typography } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
+import { as, c, s } from "vitest/dist/reporters-5f784f42.js";
+import { current } from "@reduxjs/toolkit";
 
 interface TableListViewProps {
   table: Table;
@@ -40,6 +42,13 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const { config } = useConfig();
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+  const [inputValues, setInputValues] = useState<Row>({});
+  const [currentPrimaryKey, setCurrentPrimaryKey] =  useState<string | null>(null);
+  const [currentPrimaryKeyValue, setCurrentPrimaryKeyValue] = useState<string | null>(null);
+
+
+
+
 
   useEffect(() => {
     const getRows = async () => {
@@ -104,24 +113,92 @@ const TableListView: React.FC<TableListViewProps> = ({
     getScripts();
   });
 
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nonEditableColumn = table.columns.find(column => column.is_editable === false);
+    if (nonEditableColumn) {
+      setCurrentPrimaryKey(nonEditableColumn.column_name);
+      }
+    setCurrentPrimaryKeyValue("go")
+
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [event.target.name]: event.target.value,
+    }));
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    console.log(table.columns)
+    
+    event.preventDefault();
+
+    console.log(currentPrimaryKey)
+    const schema = vmd.getTableSchema(table.table_name);
+    if (!schema) {
+      console.error("Schema not found");
+      return;
+    }
+
+    const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
+
+    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+      schema.schema_name,
+      table.table_name,
+      inputValues,
+      currentPrimaryKey as string,
+      storedPrimaryKeyValue as string
+    );
+    console.log(data_accessor)
+    data_accessor.updateRow();
+    setCurrentPrimaryKey(null);
+    setCurrentPrimaryKeyValue(null);
+    setOpenPanel(false);
+  };
+
+  // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
+  
+  // }
+
+
+
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!config) {
         return null;
       }
+  
+    
+
       const columnDisplayType = config.find(
         (element) =>
           element.column == column.column_name &&
           element.table == table.table_name &&
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
+
+     
+      
+
+
+      if (
+        column.is_editable == false &&
+        currentPrimaryKey !== column.column_name &&
+        currentPrimaryKeyValue !== (currentRow.row[column.column_name] as string) &&
+        currentPrimaryKey !== null &&
+        currentPrimaryKeyValue !== null) {
+
+        localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
+
+      }
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
           <input
-            value={(currentRow.row[column.column_name] as string) || ""}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={(currentRow.row[column.column_name] as string) || ""}
+            name={column.column_name}
             type="text"
             style={inputStyle}
-            readOnly
+            onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "number") {
@@ -164,7 +241,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
     };
     setInputField(() => newInputField as (column: Column) => JSX.Element);
-  }, [currentRow, columns, config, table]);
+  }, [currentRow, columns, config, table, currentPrimaryKey, currentPrimaryKeyValue]);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
@@ -268,6 +345,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               </label>
             </div>
           </form>
+          <div>
           <Button
             variant="contained"
             style={buttonStyle}
@@ -275,6 +353,14 @@ const TableListView: React.FC<TableListViewProps> = ({
           >
             close
           </Button>
+          <Button
+          variant="contained"
+          style={{marginTop:20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10}}
+          onClick={handleFormSubmit}
+          >
+            Save
+          </Button>
+          </div>
         </div>
       </SlidingPanel>
     </div>
