@@ -127,11 +127,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    console.log(table.columns)
     
     event.preventDefault();
 
-    console.log(currentPrimaryKey)
     const schema = vmd.getTableSchema(table.table_name);
     if (!schema) {
       console.error("Schema not found");
@@ -147,7 +145,6 @@ const TableListView: React.FC<TableListViewProps> = ({
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
-    console.log(data_accessor)
     data_accessor.updateRow();
     setOpenPanel(false);
   };
