@@ -197,18 +197,23 @@ const TableListView: React.FC<TableListViewProps> = ({
       } else if (columnDisplayType.value == "number") {
         return (
           <NumericFormat
-            value={(currentRow.row[column.column_name] as number) || ""}
-            allowLeadingZeros
-            thousandSeparator=","
-            readOnly
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          name={column.column_name}
+          type="text"
+          style={inputStyle}
+          onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "longtext") {
         return (
           <textarea
-            placeholder="Type anything…"
-            value={(currentRow.row[column.column_name] as string) || ""}
-            readOnly
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          name={column.column_name}
+          type="text"
+          style={inputStyle}
+          onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "datetime") {
