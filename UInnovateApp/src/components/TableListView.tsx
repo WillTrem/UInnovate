@@ -187,7 +187,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         return (
           <input
             readOnly={column.is_editable === false ? true : false}
-            placeholder={(currentRow.row[column.column_name] as string) || ""}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
             name={column.column_name}
             type="text"
             style={inputStyle}
