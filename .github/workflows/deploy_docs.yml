@@ -3,7 +3,7 @@ name: Deploy MkDocs Documentation
 on:
   push:
     branches:
-      - main
+      - 143-documentation-deployment
 
 jobs:
   deploy_docs:
