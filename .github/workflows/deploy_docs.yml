@@ -20,7 +20,7 @@ jobs:
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
-        mkdocs build -d docs_build/
+        mkdocs build -d docs/
 
     - name: Checkout PostGOAT repository
       uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
     - name: Copy MkDocs build to PostGOAT repository
       run: |
         mkdir -p PostGOAT/docs  
-        cp -r docs_build/* PostGOAT/docs/
+        cp -r ./documentation/docs/* PostGOAT/docs/
 
     - name: Commit and push changes to PostGOAT
       run: |
