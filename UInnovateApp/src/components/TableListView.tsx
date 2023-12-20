@@ -357,7 +357,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           </Button>
           </div>
         </div>
-      
+        {console.log(inputField)}
         <LookUpTableDetails table={table} />
 
       </SlidingPanel>

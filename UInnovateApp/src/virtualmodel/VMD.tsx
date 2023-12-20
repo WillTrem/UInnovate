@@ -395,6 +395,7 @@ export class Table {
   has_details_view: boolean;
   columns: Column[];
   url: string;
+  lookup_tables: Row;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -403,6 +404,7 @@ export class Table {
     this.has_details_view = true;
     this.columns = [];
     this.url = "http://localhost:3000/" + table_name;
+    this.lookup_tables = {"-1":"none"}   ;
     
   }
 
@@ -497,6 +499,19 @@ export class Table {
   setURL(url: string) {
     this.url = url;
   }
+
+  // Method to get the table's lookup tables
+  // return type : Row
+  getLookupTables() {
+    return this.lookup_tables;
+  }
+
+  // Method to set the table's lookup tables
+  // return type : void
+  setLookupTables(lookup_tables: Row) {
+    this.lookup_tables = lookup_tables;
+  }
+  
 }
 
 

@@ -7,6 +7,8 @@ import { MenuItem } from '@mui/material';
 import "../../styles/TableItem.css";
 import {Table } from "../../virtualmodel/VMD";
 import buttonStyle from '../TableEnumView'
+import { Row } from '../../virtualmodel/DataAccessor';
+
 
 type LookUpTableProps = {
   table:Table;
@@ -14,8 +16,10 @@ type LookUpTableProps = {
 
 const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
 
-  
+  const [SelectInput , setSelectInput] = useState<Row>(table.lookup_tables);
+  console.log(Object.keys(SelectInput).length)
 
+  console.log(table.table_name +" " +table.lookup_tables[-1]+"        hhhhhhhhhhhhhhhiiiiiiiiiiiiiiiii");
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -39,16 +43,24 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
     const item = this.getItem(key);
     return item ? JSON.parse(item) : null;
   }
-  localStorage.setObj("test", 4)
   
-  const MyButtonComponent = () => {
+// useEffect(() => {
+//   Object.entries(SelectInput).map(([key, value]) => {
+//     console.log(`Key: ${key}, Value: ${value}`);
+//   });
+// } , [SelectInput]);
+
+// console.log(SelectInput["customers"])
+  const MyButtonComponent = ({buttonIndex}: { buttonIndex: number }) => {
     return (
       <div >
+        here is my {buttonIndex} 
       <FormControl size="small">
         <h6> Lookup Tables</h6>
-        <Select onChange={HandleChange}>
-          {referencesTableList.map((ref, index) => (
-            <MenuItem key={index} value={ref}>
+        <Select  defaultValue={"none"} >
+          <MenuItem value={"none"} >None</MenuItem>
+          {referencesTableList.map((ref,index) => (
+            <MenuItem  value = {ref} key={index} >
               {ref}
             </MenuItem>
           ))}
@@ -69,10 +81,35 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
   });
 
 
+
   useEffect(() => {
     // Store the counter value in local storage whenever it changes
     localStorage.setItem(table.table_name, counter.toString());
+    if (counter>0 && Object.keys(SelectInput).length==1) {
+
+      console.log("here")
+      
+    }
   }, [counter]);
+
+
+  useEffect(() => {
+    table.setLookupTables(SelectInput);
+
+    console.log(table.lookup_tables[-1]+"        heyyyyyyyyyyyyyyyyyy");
+  }, [SelectInput]);
+
+
+
+  const HandleChange = (event: SelectChangeEvent) => {
+    setSelectInput((prevSelectInput) => ({
+      ...prevSelectInput,
+      [-1]: event.target.value,
+    }));
+
+    
+  };
+
 
   const handleButtonClick = () => {
     if(count -1 == counter|| count==0)
@@ -82,9 +119,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
     else
     setCounter((Counter) => Counter + 1);
   };
-  const HandleChange = () => {
-    console.log()
-  }
+  
   const handleButtonClickDelete = () => {
     if (counter > 0)
       setCounter((Counter) => Counter - 1);
@@ -102,7 +137,8 @@ else
 
         <FormControl style={{ marginRight: '30px' }} size="small">
           <h6>Lookup Tables</h6>
-          <Select onChange={HandleChange}>
+          <Select onChange={HandleChange} value={SelectInput["-1"]== undefined? "error": SelectInput["-1"]}>
+          <MenuItem value={"none"} >None</MenuItem>
           {referencesTableList.map((ref, index) => (
             <MenuItem key={index} value={ref}>
               {ref}
@@ -113,7 +149,7 @@ else
             To customize the default layout of the table
           </FormHelperText>
         </FormControl>
-
+          
         <button
           onClick={handleButtonClick}
           style={{ width: '26.5px', height: '30px', marginRight: '30px' }}
@@ -130,7 +166,8 @@ else
       <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08', marginTop:'2em' }}>
         {[...Array(counter)].map((_, index) => (
 
-          <MyButtonComponent key={index} />
+          <MyButtonComponent key={index} buttonIndex={index} />
+          
         ))}
       </div>
     </div>
