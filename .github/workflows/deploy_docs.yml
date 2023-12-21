@@ -36,8 +36,8 @@ jobs:
     - name: Commit and push changes to PostGOAT
       run: |
         cd PostGOAT
-        git config --local user.email "ma_iv@live.concordia.ca"
-        git config --local user.name "MariaR001"
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
         git add .
         git commit -m "Deploy MkDocs documentation from UInnovate"
-        git push
+        git push https:// POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET@github.com/MariaR001/PostGOAT.git HEAD:main
