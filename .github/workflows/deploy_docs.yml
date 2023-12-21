@@ -40,4 +40,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Deploy MkDocs documentation from UInnovate"
-        git push https:// POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET@github.com/MariaR001/PostGOAT.git HEAD:main
+        git push https://$POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET@github.com/MariaR001/PostGOAT.git HEAD:main
