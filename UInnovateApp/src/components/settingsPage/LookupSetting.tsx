@@ -13,13 +13,16 @@ import { Row } from '../../virtualmodel/DataAccessor';
 type LookUpTableProps = {
   table:Table;
 }
+type DefaultRow = {
+  [key: number]: string;
+};
 
 const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
 
-  const [SelectInput , setSelectInput] = useState<Row>(table.lookup_tables);
-  console.log(Object.keys(SelectInput).length)
 
-  console.log(table.table_name +" " +table.lookup_tables[-1]+"        hhhhhhhhhhhhhhhiiiiiiiiiiiiiiiii");
+  
+
+  // console.log(table.table_name +" " +table.lookup_tables[-1]+"        hhhhhhhhhhhhhhhiiiiiiiiiiiiiiiii");
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -33,8 +36,33 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
       count = count + 0;
     }
   });
-  
+  if(count==0)
+  {
+    return (<></>)
+  }
+  else {
+  console.log(count + "        hhhhhhhhhhhhhhhiiiiiiiiiiiiiiiii");
 
+  let defaultRow =  new Row({});
+  for (let i = -1; i < count-1; i++) {
+    console.log(table.table_name+" I looped " + i + " times")
+
+    defaultRow[i] = 'none';
+  }
+  console.log(defaultRow[0]+"        bruh");
+
+ 
+  const name = table.table_name +"T";
+  const [SelectInput , setSelectInput] = useState<Row>(() => {
+    const savedLookUp = localStorage.getItem(name);
+    if (savedLookUp && savedLookUp !== '{}' && savedLookUp !== '""') {
+      
+      return JSON.parse(savedLookUp);
+    } else {
+      return (defaultRow);
+    }
+  })
+ 
 
   Storage.prototype.setObj = function (key:string, obj:string) {
     return this.setItem(key, JSON.stringify(obj))
@@ -54,21 +82,21 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
   const MyButtonComponent = ({buttonIndex}: { buttonIndex: number }) => {
     return (
       <div >
-        here is my {buttonIndex} 
+      
       <FormControl size="small">
-        <h6> Lookup Tables</h6>
-        <Select  defaultValue={"none"} >
+          <h6>Lookup Tables</h6>
+          <Select onChange={HandleChange(buttonIndex)} value={SelectInput[buttonIndex]== undefined? "error": SelectInput[buttonIndex]}>
           <MenuItem value={"none"} >None</MenuItem>
-          {referencesTableList.map((ref,index) => (
-            <MenuItem  value = {ref} key={index} >
+          {referencesTableList.map((ref) => (
+            <MenuItem value={ref}>
               {ref}
             </MenuItem>
           ))}
-        </Select>
-        <FormHelperText>
-          To customize the default layout of the table
-        </FormHelperText>
-      </FormControl>
+          </Select>
+          <FormHelperText>
+            To customize the default layout of the table
+          </FormHelperText>
+        </FormControl>
       </div>
     );
   };
@@ -85,26 +113,26 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
   useEffect(() => {
     // Store the counter value in local storage whenever it changes
     localStorage.setItem(table.table_name, counter.toString());
-    if (counter>0 && Object.keys(SelectInput).length==1) {
-
-      console.log("here")
-      
+    if (counter>0 && Object.keys(SelectInput).length==1) {      
     }
   }, [counter]);
 
-
   useEffect(() => {
-    table.setLookupTables(SelectInput);
-
-    console.log(table.lookup_tables[-1]+"        heyyyyyyyyyyyyyyyyyy");
+    localStorage.setItem(name, JSON.stringify(SelectInput));
   }, [SelectInput]);
 
+  console.log(SelectInput[0] +"        heyyyyyyyyyrrrbrhrhrhrhrhyyyyyyyyy")
+  // useEffect(() => {
+
+  //   console.log(table.lookup_tables[-1]+"        heyyyyyyyyyyyyyyyyyy");
+  // }, [SelectInput]);
 
 
-  const HandleChange = (event: SelectChangeEvent) => {
+
+  const HandleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
     setSelectInput((prevSelectInput) => ({
       ...prevSelectInput,
-      [-1]: event.target.value,
+      [index]: event.target.value,
     }));
 
     
@@ -121,26 +149,33 @@ const LookUpTable: React.FC<LookUpTableProps> = ({table}:LookUpTableProps) => {
   };
   
   const handleButtonClickDelete = () => {
-    if (counter > 0)
+    if (counter > 0) {
       setCounter((Counter) => Counter - 1);
+      handleReset();
+    }
     else
       setCounter(0);
   };
-if(count==0)
-{
-  return (<></>)
+
+ const handleReset = () => {
+  setSelectInput((prevSelectInput) => ({
+    ...prevSelectInput,
+    [counter-1]: "none",
+  }));
 }
-else
+
+
+
   return (
     <div>
       <div className='look-tables'>
 
         <FormControl style={{ marginRight: '30px' }} size="small">
           <h6>Lookup Tables</h6>
-          <Select onChange={HandleChange} value={SelectInput["-1"]== undefined? "error": SelectInput["-1"]}>
+          <Select onChange={HandleChange(-1)} value={SelectInput[-1]== undefined? "error": SelectInput[-1]}>
           <MenuItem value={"none"} >None</MenuItem>
           {referencesTableList.map((ref, index) => (
-            <MenuItem key={index} value={ref}>
+            <MenuItem value={ref}>
               {ref}
             </MenuItem>
           ))}
@@ -172,6 +207,7 @@ else
       </div>
     </div>
   );
+        }
 };
 export default LookUpTable;
 
