@@ -12,7 +12,7 @@ authentication.users (
 );
 
 CREATE TABLE IF NOT EXISTS 
-authentication.user_schema_access (
+meta.user_schema_access (
 	email text REFERENCES authentication.users,
 	schema text -- Add trigger to verify if schema exists in schema view
 );
@@ -39,7 +39,7 @@ create constraint trigger ensure_user_role_exists
 -- TRIGGER to ensure the schemas from user_schema_access are existing schemas
 
 CREATE OR REPLACE FUNCTION 
-authentication.check_schema_exists() returns trigger as $$
+meta.check_schema_exists() returns trigger as $$
 begin
 	if not exists(select 1 from meta.schemas as s where s.schema = new.schema) then
 		raise foreign_key_violation using message = 
@@ -50,11 +50,11 @@ begin
 end
 $$ language plpgsql;
 
-drop trigger if exists ensure_schema_exists on authentication.user_schema_access; 
+drop trigger if exists ensure_schema_exists on meta.user_schema_access; 
 create constraint trigger ensure_schema_exists
-	after insert or update on authentication.user_schema_access
+	after insert or update on meta.user_schema_access
 	for each row
-	execute procedure authentication.check_schema_exists();
+	execute procedure meta.check_schema_exists();
 
 -- TRIGGER to keep the passwords encrypted with pgcrypto
 create extension if not exists pgcrypto;
@@ -62,7 +62,7 @@ create extension if not exists pgcrypto;
 create or replace function
 authentication.encrypt_password() returns trigger as $$
 begin
-	if tg_op = 'INSERT' or new.password <> old.password then
+	if tg_op = 'INSERT' or new.password <> old.password or old.password IS NULL then
 		new.password = crypt(new.password, gen_salt('bf'));
 	end if;
 	return new;
@@ -94,7 +94,6 @@ $$;
 DROP ROLE IF EXISTS administrator;
 DROP ROLE IF EXISTS configurator;
 DROP ROLE IF EXISTS "user";
-DROP ROLE IF EXISTS authenticator;
 
 create role "user" noinherit;
 
@@ -132,25 +131,27 @@ GRANT SELECT ON TABLE meta.schemas to "user";
 GRANT SELECT ON TABLE meta.tables to "user";
 GRANT SELECT ON TABLE meta.columns to "user";
 GRANT SELECT ON TABLE meta.constraints to "user";
+GRANT SELECT ON TABLE meta.user_schema_access to "user";
 
 
 create role configurator;
 grant "user" to configurator;
 
-GRANT ALL ON SCHEMA meta TO "user";
-GRANT ALL ON TABLE meta.appconfig_properties to "user";
-GRANT ALL ON TABLE meta.appconfig_values to "user";
-GRANT ALL ON TABLE meta.scripts to "user";
-GRANT ALL ON TABLE meta.schemas to "user";
-GRANT ALL ON TABLE meta.tables to "user";
-GRANT ALL ON TABLE meta.columns to "user";
-GRANT ALL ON TABLE meta.constraints to "user";
+GRANT ALL ON SCHEMA meta TO configurator;
+GRANT ALL ON TABLE meta.appconfig_properties to configurator;
+GRANT ALL ON TABLE meta.appconfig_values to configurator;
+GRANT ALL ON TABLE meta.scripts to configurator;
+GRANT ALL ON TABLE meta.schemas to configurator;
+GRANT ALL ON TABLE meta.tables to configurator;
+GRANT ALL ON TABLE meta.columns to configurator;
+GRANT ALL ON TABLE meta.constraints to configurator;
+GRANT ALL ON TABLE meta.user_schema_access to configurator;
+
 
 create role administrator; 
 grant configurator to administrator;
 -- ADD user management-related capabilities HERE
 
-create role authenticator LOGIN NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER;
 grant "user" to authenticator;
 grant configurator to authenticator;
 grant administrator to authenticator;
@@ -158,16 +159,6 @@ grant web_anon to authenticator;
 
 -- JWT TOKENS
 
--- Generating a random 32 characters long database secret for jwt 
-DO
-$$
-DECLARE
-   secret text;
-BEGIN
-   SELECT encode(gen_random_bytes(16), 'hex') INTO secret;
-   EXECUTE format('ALTER DATABASE uinnovate_test_db SET "app.jwt_secret" TO %L', secret);
-END
-$$;
 
 -- Generating JWT token using pgjwt
 create extension if not exists pgjwt;
@@ -179,7 +170,7 @@ create TYPE authentication.jwt_token AS (
 -- Function to test the generation of jwt tokens
 create or replace function meta.jwt_test() RETURNS authentication.jwt_token AS $$
 	select sign(
-		row_to_json(r), current_setting('app.jwt_secret')
+		row_to_json(r), current_setting('custom.jwt_secret')
 	) as token
 	from (
 		select
@@ -208,7 +199,7 @@ begin
 	
 	-- signs the jwt token
 	select sign(
-		row_to_json(r), current_setting('app.jwt_secret')
+		row_to_json(r), current_setting('custom.jwt_secret')
 	) as token
 	from (
 		select _role as role, login.email as email,
@@ -222,7 +213,48 @@ $$  language plpgsql security definer;
 
 grant execute on function meta.login(text, text) to web_anon;
 
+-- FUNCTION CREATE USER, for administrators to create the users in the database before they can sign up 
+create or replace function 
+meta.create_user(email text, role name) 
+returns SETOF integer as $$
+begin
+	INSERT INTO authentication.users(email, role, is_active) VALUES
+	(email, role, true);
+	RETURN;
+end;
+$$ language plpgsql security definer;
+REVOKE EXECUTE ON FUNCTION meta.create_user(TEXT, NAME) FROM public;
+grant execute on function meta.create_user(text, name) to administrator;
+
+-- FUNCTION for users to SIGNUP given an administrator previously created a user in the database for them
+create or replace function meta.signup(email text, password text, first_name text, last_name text)
+returns setof integer as $$
+begin
+-- 	Verify if the user has been created by an administrator prior
+	if NOT EXISTS (SELECT users.email FROM authentication.users WHERE users.email = signup.email ) then
+		raise exception using message = format('User %L was not found. Please ensure an administrator has created a corresponding user in the system before trying to sign up.', signup.email);
+	else
+-- 		Verify if the user has a password (i.e. if it already signed up)
+		if EXISTS (SELECT users.email FROM authentication.users WHERE users.email = signup.email and users.password IS NOT NULL ) then
+			raise exception using message = format('User %L has already been signed up.', signup.email);
+			UPDATE authentication.users
+			SET password = signup.password, first_name = signup.first_name, last_name = signup.last_name
+			WHERE users.email = signup.email;
+		end if;
+	
+	end if;
+	RETURN;
+end
+$$ language plpgsql security definer;
+
+grant execute on function meta.signup to web_anon;
 
 -- TO REMOVE AT SOME POINT - Creates a test administrator account for dev purposes
 insert into authentication.users(email, first_name, last_name, password, is_active, role)
-values ('test@test.com', 'test', 'admin', 'test123', true, 'administrator');
+values ('admin@test.com', 'test', 'admin', 'admin123', true, 'administrator'),
+('config@test.com', 'test', 'admin', 'config123', true, 'configurator'),
+('user@test.com', 'test', 'admin', 'user123', true, 'user')
+ON CONFLICT (email) DO NOTHING; -- If you change anything here after they've been created once in the database, it won't have any effect. You need to remove them first from the database.
+
+NOTIFY pgrst, 'reload schema';
+
