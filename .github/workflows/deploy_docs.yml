@@ -16,10 +16,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install mkdocs
-    
-    - name: Copy .md files from usecase to root
-      run: |
-        cp ./documentation/*.md ./documentation/
 
     - name: Build MkDocs documentation
       working-directory: ./documentation
