@@ -34,13 +34,12 @@ jobs:
         cp -r ./documentation/build_docs/* PostGOAT/docs/
 
     - name: Commit and push changes to PostGOAT
-      uses: MariaR001/commit-and-push@v1
-      with:
-        github_token: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       run: |
         cd PostGOAT
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "Deploy MkDocs documentation from UInnovate"
-        git push https://$POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET@github.com/MariaR001/PostGOAT.git HEAD:main
+        git push origin HEAD:main
