@@ -38,7 +38,7 @@ jobs:
         cp -r ./documentation/build_docs/* PostGOAT/docs/
 
     - name: Push generated webpage to another repository
-      uses: MariaR001/push-files-to-another-repository@1.1.0
+      uses: MariaR001/PostGOAT@main
       env:
         API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       with:
