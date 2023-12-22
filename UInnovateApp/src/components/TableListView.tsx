@@ -180,6 +180,10 @@ const TableListView: React.FC<TableListViewProps> = ({
         localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
 
       }
+      if(column.references_table != null){
+       const string= column.column_name + "L"
+      localStorage.setItem(string, currentRow.row[column.column_name] as string);
+      }
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
           <input
@@ -357,8 +361,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           </Button>
           </div>
         </div>
-        {console.log(inputField)}
-        <LookUpTableDetails table={table} />
+        <LookUpTableDetails table={table}/>
 
       </SlidingPanel>
       
