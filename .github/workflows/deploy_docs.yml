@@ -16,6 +16,10 @@ jobs:
     - name: Install dependencies
       run: |
         pip install mkdocs
+    
+    - name: Copy .md files from usecase to root
+      run: |
+        cp ./documentation/*.md ./documentation/
 
     - name: Build MkDocs documentation
       working-directory: ./documentation
@@ -33,11 +37,22 @@ jobs:
         mkdir -p PostGOAT/docs  
         cp -r ./documentation/build_docs/* PostGOAT/docs/
 
-    - name: Commit and push changes to PostGOAT
-      run: |
-        cd PostGOAT
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .
-        git commit -m "Deploy MkDocs documentation from UInnovate"
-        git push https://$POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET@github.com/MariaR001/PostGOAT.git HEAD:main
+    - name: Push generated webpage to another repository
+      uses: MariaR001/push-files-to-another-repository@1.1.0
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
+      with:
+        source-files: 'PostGOAT/docs/'
+        destination-username: 'MariaR001'
+        destination-repository: 'PostGOAT'
+        destination-directory: 'docs'
+        commit-email: 'action@github.com'
+
+   ## - name: Commit and push changes to PostGOAT
+    ##  run: |
+      ##  cd PostGOAT
+        ##git config --local user.email "action@github.com"
+        ##git config --local user.name "GitHub Action"
+        ##git add .
+        ##git commit -m "Deploy MkDocs documentation from UInnovate"
+        ##git push https://$POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET@github.com/MariaR001/PostGOAT.git HEAD:main
