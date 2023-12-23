@@ -17,5 +17,9 @@ As a [ user X ], I want to [ do Y ], so that [ I can accomplish Z ].
 
 ## Risks
 
+## Pre-requisites
+- [ ] Meet with the stakeholder to clarify the requirements
+- [ ] Complete the requirements of this US
+
 ## Tasks
 - [ ] Task

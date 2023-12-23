@@ -32,19 +32,24 @@ CREATE TABLE application.ticket_status (
     status_name VARCHAR(50) UNIQUE NOT NULL
 );
 
---  service tickets
+--  issue location
+CREATE TABLE application.locations (
+    location_id SERIAL PRIMARY KEY,
+    location_name VARCHAR(50) UNIQUE NOT NULL
+);
+
+-- service tickets
 CREATE TABLE application.service_tickets (
     ticket_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES application.users(user_id) NOT NULL,
     category_id INT REFERENCES application.ticket_categories(category_id) NOT NULL,
     priority_id INT REFERENCES application.ticket_priorities(priority_id) NOT NULL,
     status_id INT REFERENCES application.ticket_status(status_id) NOT NULL,
+    location_id INT REFERENCES application.locations(location_id) NOT NULL,
     description TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at TIMESTAMPTZ,
-    resolved_at TIMESTAMPTZ,
-    ticket_tags Text
-);
+    resolved_at TIMESTAMPTZ);
 
 --  ticket comments
 CREATE TABLE application.ticket_comments (
@@ -88,6 +93,7 @@ GRANT ALL ON application.users TO web_anon;
 GRANT ALL ON application.ticket_categories TO web_anon;
 GRANT ALL ON application.ticket_priorities TO web_anon;
 GRANT ALL ON application.ticket_status TO web_anon;
+GRANT ALL ON application.locations TO web_anon;
 GRANT ALL ON application.service_tickets TO web_anon;
 GRANT ALL ON application.ticket_comments TO web_anon;
 GRANT ALL ON application.ticket_assignments TO web_anon;
