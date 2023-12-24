@@ -85,7 +85,7 @@ const UserManagementTab = () => {
 				</Tab>
 
 			</Tabs>
-			<AddUserModal open={isModalOpen} setOpen={setModalOpen} data-testid="add-user-modal" />
+			<AddUserModal open={isModalOpen} setOpen={setModalOpen} getUsers={getUsers} data-testid="add-user-modal" />
 		</div>
 	)
 

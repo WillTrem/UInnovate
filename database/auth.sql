@@ -250,6 +250,7 @@ GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
 -- TO BE REMOVED AT SOME POINT
 GRANT SELECT ON TABLE meta.user_info TO web_anon;
+GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO web_anon;
 
 GRANT "user" TO authenticator;
 GRANT configurator TO authenticator;

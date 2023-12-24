@@ -6,15 +6,18 @@ import "../../styles/UserManagementTab.css"
 import vmd from "../../virtualmodel/VMD"
 import { Row } from "../../virtualmodel/DataAccessor"
 import { MultiSelect } from "./UserMangementTab"
+import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
 
 
 interface AddUserModalProps extends Omit<ModalProps, 'children'> {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+	getUsers: () => Promise<void>
 }
 // Modal component allowing a user to be added to the database
-const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, ...props }) => {
+const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props }) => {
 	// Input values of the modal
-	const [inputValues, setInputValues] = useState<Row>(new Row({}))
+	const defaultInputValues = { role: "user" };
+	const [inputValues, setInputValues] = useState<Row>(defaultInputValues)
 
 	// Role selection state
 	const [role, setRole] = useState("user");
@@ -23,17 +26,27 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, ...props }) => {
 	const [schemaAccessList, setSchemaAccessList] = useState<string[]>([]);
 	const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
 
+	// Function accessor
+	const functionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "create_user");
+
 	// Handles change in input field
 	function handleInputChange(e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>) {
-		setInputValues({
+		const newInput = {
 			...inputValues,
-			row: { ...inputValues.row, [e.target.name]: e.target.value },
-		});
+			[e.target.name]: e.target.value,
+		}
+		setInputValues(newInput);
 	};
 
 	function handleRoleChange(e: SelectChangeEvent<string>) {
 		setRole(e.target.value);
 		handleInputChange(e);
+	}
+
+	function resetModal() {
+		setInputValues(defaultInputValues);
+		setRole("user");
+		handleClose();
 	}
 
 	// Handles modal close
@@ -44,6 +57,16 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, ...props }) => {
 	// Handles adding a user 
 	function handleFormSubmit() {
 		// TODO: Implement function
+		functionAccessor.setBody(inputValues);
+		functionAccessor.executeFunction()
+			.then((response) => {
+				console.log("User " + inputValues["email"] + " created successfully");
+				getUsers();
+				resetModal();
+			})
+			.catch((error) => {
+				console.error("An error occured while creating user " + inputValues["email"]);
+			});
 	}
 
 	// All the props from AddUserModal are directly passed down to the Modal component
@@ -65,6 +88,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, ...props }) => {
 					<label>
 						Role
 						<Select
+							name="role"
 							value={role}
 							onChange={(event) => handleRoleChange(event)}
 							displayEmpty

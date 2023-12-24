@@ -1,5 +1,6 @@
 import axios from "axios";
 import { DataAccessor, Row } from "./DataAccessor";
+import { FunctionAccessor } from "./FunctionAccessor";
 
 const API_BASE_URL = "http://localhost:3000/"; // TO CHANGE TO ENV VAR WHEN WE DEPLOY
 
@@ -390,9 +391,23 @@ class VirtualModelDefinition {
       throw new Error("Schema or view does not exist");
     }
   }
+  // Method to return a function accessor to call a database function (stored procedure)
+  // return type: FunctionAccessor
+  getFunctionAccessor(
+    schema_name: string,
+    function_name: string,
+  ): FunctionAccessor {
+    const schema = this.getSchema(schema_name);
+    if (schema) {
+      const function_url = API_BASE_URL + "rpc/" + function_name;
+      return new FunctionAccessor(function_url, {
+        "Content-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema does not exist");
+    }
+  }
 }
-
-
 
 // Schema, Table, and Column classes
 export class Schema {
