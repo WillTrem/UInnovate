@@ -1,6 +1,8 @@
 import axios from "axios";
 import { DataAccessor, Row } from "./DataAccessor";
 
+const API_BASE_URL = "http://localhost:3000/"; // TO CHANGE TO ENV VAR WHEN WE DEPLOY
+
 // VMD Class
 class VirtualModelDefinition {
   schemas: Schema[];
@@ -145,13 +147,14 @@ class VirtualModelDefinition {
     if (this.data_fetched) {
       return;
     }
-    const col_url = "http://localhost:3000/columns";
+    const col_url = API_BASE_URL + "columns";
+    const views_url = API_BASE_URL + "views";
 
     try {
-      const response = await axios.get(col_url, {
+      let response = await axios.get(col_url, {
         headers: { "Accept-Profile": "meta" },
       });
-      const data = response.data;
+      let data = response.data;
       data.forEach((data: ColumnData) => {
         // Check if the specified schema already exists within the vmd object
         let schema = this.getSchema(data.schema);
@@ -172,6 +175,30 @@ class VirtualModelDefinition {
         // Add column to the table object
         table.addColumn(new Column(data.column), data.references_table);
       });
+
+      // Fetching all the VIEWS 
+      response = await axios.get(views_url, {
+        headers: { "Accept-Profile": "meta" },
+      });
+
+      data.forEach((data: ViewData) => {
+        // Check if the specified schema already exists within the vmd object
+        let schema = this.getSchema(data.schema);
+        if (!schema) {
+          // If schema does not exist, make it and add it to the vmd object
+          schema = new Schema(data.schema);
+          this.addSchema(schema);
+        }
+
+        // Check if view already exists within the schema object
+        let view = schema.getView(data.view);
+        if (!view) {
+          // If view does not exist, make it and add it to the schema object
+          view = new View(data.view);
+          schema.addView(view);
+        }
+      });
+
       this.data_fetched = true;
     } catch (error) {
       console.error("Error:", error);
@@ -186,7 +213,7 @@ class VirtualModelDefinition {
     if (this.config_data_fetched) {
       return;
     }
-    const config_url = "http://localhost:3000/appconfig_values";
+    const config_url = API_BASE_URL + "appconfig_values";
 
     try {
       const response = await axios.get(config_url, {
@@ -344,16 +371,37 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
+
+  // Method to return a data accessor to get all the rows from a view of a given schema
+  // return type: DataAccessor
+  getViewRowsDataAccessor(
+    schema_name: string,
+    view_name: string,
+  ): DataAccessor {
+    const schema = this.getSchema(schema_name);
+    const view = schema?.getView(view_name)
+    if (schema && view) {
+      return new DataAccessor(view.url, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
 }
+
+
 
 // Schema, Table, and Column classes
 export class Schema {
   schema_name: string;
   tables: Table[];
+  views: View[];
 
   constructor(schema_name: string) {
     this.schema_name = schema_name;
     this.tables = [];
+    this.views = [];
   }
 
   // Method to add a new table to the schema object
@@ -364,6 +412,15 @@ export class Schema {
   // Method to get a table object from the schema object
   getTable(table_name: string) {
     return this.tables.find((table) => table.table_name === table_name);
+  }
+  // Method to add a new view to the schema object
+  addView(view: View) {
+    this.views.push(view);
+  }
+
+  // Method to get a view object from the schema object
+  getView(view_name: string) {
+    return this.views.find((view) => view.view_name === view_name);
   }
 }
 
@@ -381,7 +438,7 @@ export class Table {
     this.is_visible = true;
     this.has_details_view = true;
     this.columns = [];
-    this.url = "http://localhost:3000/" + table_name;
+    this.url = API_BASE_URL + table_name;
   }
 
   // Method to add a new column to the table object
@@ -505,6 +562,17 @@ export class Column {
   }
 }
 
+export class View {
+  view_name: string;
+  url: string;
+
+  constructor(view_name: string) {
+    this.view_name = view_name;
+    this.url = API_BASE_URL + view_name;
+  }
+}
+
+
 export enum TableDisplayType {
   listView = "list",
   enumView = "enum",
@@ -516,6 +584,11 @@ interface ColumnData {
   table: string;
   column: string;
   references_table: string;
+}
+// Defining ViewData interface for type checking when calling /views with the API
+interface ViewData {
+  schema: string;
+  view: string;
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API

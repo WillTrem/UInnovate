@@ -58,6 +58,17 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     ORDER BY c.table_schema, c.table_name
 ) ;
 
+-- Creates a VIEW that shows all the views of the database
+CREATE OR REPLACE VIEW meta.views AS (
+        SELECT pg_views.schemaname AS "schema",
+            pg_views.viewname AS "view"
+        FROM pg_catalog.pg_views
+        WHERE pg_views.schemaname IN (
+                SELECT *
+                FROM meta.schemas
+            )
+    );
+GRANT SELECT ON TABLE meta.views TO web_anon;
 
 
 -- TABLES
