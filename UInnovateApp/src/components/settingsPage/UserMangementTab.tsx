@@ -109,8 +109,8 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 
 	return <tr>
 		<td>{emailAddress}</td>
-		<td>{firstName}</td>
-		<td>{lastName}</td>
+		<td>{firstName || "-"}</td>
+		<td>{lastName || "-"}</td>
 		<td>{role}</td>
 		<td>
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
