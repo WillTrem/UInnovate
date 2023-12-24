@@ -181,6 +181,8 @@ class VirtualModelDefinition {
         headers: { "Accept-Profile": "meta" },
       });
 
+      data = response.data;
+
       data.forEach((data: ViewData) => {
         // Check if the specified schema already exists within the vmd object
         let schema = this.getSchema(data.schema);
@@ -385,7 +387,7 @@ class VirtualModelDefinition {
         "Accept-Profile": schema.schema_name,
       });
     } else {
-      throw new Error("Schema or table does not exist");
+      throw new Error("Schema or view does not exist");
     }
   }
 }
@@ -599,6 +601,15 @@ interface ConfigData {
   property: string;
   value: string | boolean;
 }
+// Defining UserData interface for type checking when calling /user_info with the API
+export interface UserData {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: string;
+  is_active: boolean;
+}
+
 
 // Creating a VMD object and exporting it
 const vmd = new VirtualModelDefinition();
