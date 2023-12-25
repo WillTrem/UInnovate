@@ -274,6 +274,24 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to fetch rows from a table For Look up Table
+  // return type : DataAccessor
+  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue:string) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    
+    if (schema && table) {
+      return new DataAccessor(table.url+ "?"+SearchKey+"=eq."+SearchValue, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+
+
+
   // Method to return a data accessor object to add a row to a table
   // return type : DataAccessor
   getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {

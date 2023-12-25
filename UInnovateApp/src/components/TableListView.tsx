@@ -49,7 +49,6 @@ const TableListView: React.FC<TableListViewProps> = ({
 
 
 
-
   useEffect(() => {
     const getRows = async () => {
       const attributes = table.getVisibleColumns();
@@ -124,6 +123,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       ...prevInputValues,
       [event.target.name]: event.target.value,
     }));
+    
   };
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -137,6 +137,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
 
     const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
+    
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,

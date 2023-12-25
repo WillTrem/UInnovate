@@ -1,4 +1,7 @@
-import vmd from "../../virtualmodel/VMD";
+import { useEffect, useState } from "react";
+import vmd, { Column, Table } from "../../virtualmodel/VMD";
+import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import TableComponent from "react-bootstrap/Table";
 
 
 interface TableListViewProps {
@@ -12,6 +15,10 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
     return (<>no</>)
   }
   else {
+    const [Columns, setColumns] = useState<Column[][]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [connect, setConnect] = useState<string>("");
+    const [rows, setRows] = useState<Row[][] | undefined>([]);
     const getTable = JSON.parse(Local!);
     var count = Object.keys(getTable).length - 1;
     let currentPrimaryKey: string;
@@ -21,38 +28,114 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
     }
     const LookUpTables = (num: number) => {
       num = num - 1;
+
       if (getTable[num] == 'none') {
         return (<>nothing</>);
       }
       else {
-        const tableName= getTable[num];
-        const bruh = vmd.getTable("application", tableName);
+        const tableName = getTable[num];
+          const search = table.getColumns()
 
-        const swag = bruh?.getColumns();
-        const search = table.getColumns()
-        let toolsColumn;
-        search?.map((attribute) => {  
-          if (attribute.references_table == tableName) {
-            toolsColumn = attribute.column_name;
+          let toolsColumn: string = "none";
+          search?.map((attribute) => {
+            if (attribute.references_table == tableName) {
+              toolsColumn = attribute.column_name;
+            }
+            else {
+              return (<>nothing</>);
+            }
+          });
+          const temp = toolsColumn + "L";
+          const connectionID = localStorage.getItem(temp);
+          if (connectionID == undefined) {
+            return (<>nothing</>);
           }
-          else {
+          localStorage.setItem('connect', connectionID);
+          useEffect(() => {
+            console.log("connectionId")
+            console.log(connectionID)
+            setConnect(connectionID);
+            console.log(connect)
+          }, []);
+          console.log(connect)
 
+
+        useEffect(() => {
+          setLoading(true);
+          
+          const getRows = async () => {
+            const schemaObj = vmd.getTableSchema(tableName)
+            if (!schemaObj) {
+              return (<>SchemaObj did not work</>);
+            }
+            const tableObj = vmd.getTable(schemaObj.schema_name, tableName);
+            if (!tableObj) {
+              return (<>tableObj did not work</>);
+            }
+            const Colss = tableObj.getColumns();
+            setColumns(prevColumns => [...prevColumns, Colss]);
+            const data_accessor: DataAccessor = vmd.getRowsDataAccessorForLookUpTable(
+              schemaObj.schema_name,
+              tableName,
+              toolsColumn,
+              "1"
+            );
+            console.log(data_accessor);
+            const lines = await data_accessor.fetchRows();
+            if (!lines) {
+              return console.error("Could not fetch rows Damn...");
+            }
+            setRows(prevRows => [...prevRows, lines]);
+
+          };
+          getRows();
+        }, [num]);
+
+        useEffect(() => {
+          setLoading(false);
+        }, [Columns, rows]);
+
+        if (loading) {
+          return (
+            <div>
+              <p>Loading...</p>
+            </div>
+          );
         }
-      });
-        const connectionID = localStorage.getItem(toolsColumn+"L");
         return (
           <div>
-            hello 
-            {bruh?.table_name}
-            aaa
-            
-            {connectionID}
-            hey
-            {toolsColumn}
-            
+            Here is the connectionID: {connectionID}
+
+            <div>
+              {/* Here is the table name: {toolsColumn} */}
+            </div>
+            <TableComponent striped bordered hover>
+              <thead>
+                <tr>
+                  {Columns[num + 1].map((column) => {
+                    return <th key={column.column_name}>{column.column_name}</th>;
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+      {Array.isArray(rows[num + 1]) && rows[num + 1].map((row, rowIdx) => (
+        <tr key={rowIdx}>
+          {Object.values(row).map((cell, idx) => (
+            <td key={idx}>
+              {cell && typeof cell !== 'object' ? cell.toString() : ''}
+            </td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+            </TableComponent>
+
+
           </div>
 
+
         )
+
       }
 
     }
