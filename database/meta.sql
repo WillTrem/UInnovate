@@ -19,7 +19,7 @@ CREATE OR REPLACE VIEW meta.tables ( "schema", "table" ) AS
     FROM information_schema.tables
     WHERE table_schema IN (SELECT * FROM meta.schemas)
     AND table_type = 'BASE TABLE'
-  ORDER BY table_schema
+    ORDER BY table_schema
 ) ;
 
 -- Creating the constraints view
@@ -98,11 +98,49 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating the languages table
+CREATE TABLE IF NOT EXISTS meta.i18n_languages (
+    id SERIAL PRIMARY KEY,
+    language_code VARCHAR(2) UNIQUE NOT NULL,
+    language_name VARCHAR(100) NOT NULL
+);
+
+-- Creating the keys table
+CREATE TABLE IF NOT EXISTS meta.i18n_keys (
+    id SERIAL PRIMARY KEY,
+    key_code VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Creating the values table
+CREATE TABLE IF NOT EXISTS meta.i18n_values (
+    id SERIAL PRIMARY KEY,
+    language_id INT REFERENCES meta.i18n_languages(id),
+    key_id INT REFERENCES meta.i18n_keys(id),
+    value TEXT NOT NULL,
+    CONSTRAINT unique_translation UNIQUE (language_id, key_id)
+);
+
+-- Creating the translation view
+CREATE OR REPLACE VIEW meta.i18n_translation AS
+SELECT
+    v.id AS translation_id,
+    l.language_code,
+    k.key_code,
+    v.value
+FROM
+    meta.i18n_values v
+JOIN
+    meta.i18n_languages l ON v.language_id = l.id
+JOIN
+    meta.i18n_keys k ON v.key_id = k.id;
+
+
 -- USAGE 
 GRANT USAGE ON SCHEMA information_schema TO web_anon;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO web_anon;
 GRANT SELECT ON information_schema.referential_constraints TO web_anon;
 GRANT SELECT ON information_schema.constraint_column_usage TO web_anon;
+
 GRANT USAGE ON SCHEMA meta TO web_anon;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
