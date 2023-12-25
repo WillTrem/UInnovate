@@ -27,7 +27,7 @@ DB_HOST="db"
 META_FILE="./database/meta.sql"
 SCHEMA_FILE="./database$USECASE_FOLDER/application.sql"
 DATA_FILE="./database$USECASE_FOLDER/data.sql"
-META_DATA_FILE="./database$USECASE_FOLDER/meta_data.sql"
+META_DATA_FILE="./database/meta_data.sql"
 LOG_FILE="./database/refresh_log.txt"
 APPCONFIG_PROPERTIES_FILE="./dataFiles/appconfig_properties.csv"
 

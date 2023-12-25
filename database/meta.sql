@@ -97,53 +97,12 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
     btn_name TEXT DEFAULT 'Do a magic trick!',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
 -- USAGE 
-
-
-GRANT USAGE ON SCHEMA meta TO web_anon;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.constraints TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
-
-
-
 GRANT USAGE ON SCHEMA information_schema TO web_anon;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO web_anon;
 GRANT SELECT ON information_schema.referential_constraints TO web_anon;
 GRANT SELECT ON information_schema.constraint_column_usage TO web_anon;
--- EXPORT FUNCTIONALITY
-
-CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
-RETURNS json  -- Specify the return type here
-LANGUAGE plpgsql
-AS $BODY$
-DECLARE
-    result json;
-BEGIN
-    SELECT json_build_object(
-        'appconfig_values', COALESCE(json_agg(row_to_json(av)), '[]'),
-        'appconfig_properties', COALESCE(json_agg(row_to_json(ap)), '[]')
-    )
-    INTO result
-    FROM (
-        SELECT id, "table", "column", property, value
-        FROM meta.appconfig_values
-    ) av
-    FULL OUTER JOIN LATERAL (
-        SELECT name, description, value_type, default_value
-        FROM meta.appconfig_properties
-    ) ap ON TRUE;
-    RETURN result;
-END;
-$BODY$;
-
-
--- IMPORT FUNCTIONALITY
--- USAGE 
 GRANT USAGE ON SCHEMA meta TO web_anon;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
@@ -153,7 +112,6 @@ GRANT SELECT, UPDATE, INSERT ON meta.constraints TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
-GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
 GRANT ALL on meta.scripts TO web_anon;
