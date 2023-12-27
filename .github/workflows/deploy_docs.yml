@@ -5,10 +5,9 @@ on:
     branches:
       - 143-documentation-deployment
 permissions:
-  contents: write # We generate static HTML, JS, CSS so we need write access to the repo
-  pages: write
-  id-token: write
-
+  contents: write
+  pull-requests: write
+  
 jobs:
   deploy_docs:
     runs-on: ubuntu-latest
