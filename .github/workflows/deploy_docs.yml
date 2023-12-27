@@ -35,7 +35,7 @@ jobs:
     - name: Copy MkDocs build to PostGOAT repository
       run: |
         mkdir -p PostGOAT/docs  
-        cp -r ./documentation/build_docs/* PostGOAT/docs/
+        cp -r ./documentation/* PostGOAT/docs/
 
     - name: Commit and push changes to PostGOAT
       run: |
