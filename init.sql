@@ -1,3 +1,4 @@
+-- CREATE ROLE authenticator LOGIN NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER;
 -- Creating role web_anon
 CREATE ROLE web_anon nologin;
 
@@ -7,11 +8,20 @@ CREATE ROLE web_anon nologin;
 -- GRANT SELECT ON meta.tables TO web_anon;
 -- GRANT SELECT ON meta.columns TO web_anon;
 
---dynamically set schema names
+
+-- https://postgrest.org/en/stable/references/api/schemas.html
+-- create a dedicated schema, hidden from the API
+DROP SCHEMA IF EXISTS postgrest CASCADE;
+create schema postgrest;
+-- grant usage on this schema to the web_anon
+grant usage on schema postgrest to web_anon;
+-- the function can configure postgREST by using set_config
 create or replace function postgrest.pre_config()
+--dynamically set schema names
+
 returns void as $$
   select
     set_config('pgrst.db_schemas', string_agg(nspname, ','), true)
   from pg_namespace
-  where nspname like 'app_%';
+  where nspname = 'meta' or nspname like 'app_%';
 $$ language sql;

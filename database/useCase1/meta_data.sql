@@ -95,4 +95,5 @@ $BODY$;
 GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO web_anon;
 GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO web_anon;
 
-NOTIFY pgrst, 'reload schema'
+NOTIFY pgrst, 'reload config';
+NOTIFY pgrst, 'reload schema';

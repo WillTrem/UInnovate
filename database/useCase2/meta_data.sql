@@ -10,20 +10,20 @@ VALUES
     ('details_view', 'Visbility state of the details view for a table', 'boolean', 'true');
     -- ADD ANY NEW CONFIG PROPERTIES HERE
 
--- Insert the default column display typess for each application column
+-- Insert the default column display typess for each  app_service_support column
 INSERT INTO meta.appconfig_values (property, value, "table", "column")
 SELECT
     CFP.name, default_value, C.table, C.column
 FROM meta.columns as C, meta.appconfig_properties as CFP
-WHERE schema = 'application' AND (CFP.name != 'table_view' AND CFP.name != 'details_view');
+WHERE schema = ' app_service_support' AND (CFP.name != 'table_view' AND CFP.name != 'details_view');
 
 
--- Insert the default column display typess for each application table
+-- Insert the default column display typess for each  app_service_support table
 INSERT INTO meta.appconfig_values (property, value, "table")
 SELECT
     CFP.name, default_value, T.table
 FROM meta.tables as T, meta.appconfig_properties as CFP
-WHERE schema = 'application' AND CFP.name = 'table_view'
+WHERE schema = ' app_service_support' AND CFP.name = 'table_view'
 OR CFP.name = 'visible' OR CFP.name = 'metadata_view' OR CFP.name = 'details_view';
 
 -- Insert a default script for the scripts table

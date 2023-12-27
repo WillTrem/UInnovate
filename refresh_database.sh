@@ -20,6 +20,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Set database credentials and file paths
+INIT_SQL="init.sql"
 DB_USER=$POSTGRES_USER
 DB_PASS=$POSTGRES_PASSWORD
 DB_NAME=$POSTGRES_DB_NAME
@@ -54,10 +55,17 @@ check_file_existence $DATA_FILE
 echo "Database refresh started at $(date)" | tee -a $LOG_FILE
 
 # Recreate meta tables and views, schema (drop and create tables), and data (insert new data)
-for SQL_FILE in $META_FILE $SCHEMA_FILE $DATA_FILE $META_DATA_FILE; do
+for SQL_FILE in $INIT_SQL $META_FILE $SCHEMA_FILE $DATA_FILE $META_DATA_FILE; do
     echo "Executing $SQL_FILE..." | tee -a $LOG_FILE
     docker exec -i db psql -U $DB_USER -d $DB_NAME -a -f - < $SQL_FILE 2>&1 | tee -a $LOG_FILE
 done
 
 # Log completion time
 echo "Database refresh completed at $(date)" | tee -a $LOG_FILE
+
+#restarting docker compose
+echo "restarting containers ..."
+
+docker compose stop
+docker compose up  -d
+

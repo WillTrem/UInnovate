@@ -6,6 +6,9 @@ CREATE SCHEMA IF NOT EXISTS app_rentals ;
 
 GRANT USAGE ON SCHEMA app_rentals TO web_anon;
 
+NOTIFY pgrst, 'reload config';
+NOTIFY pgrst, 'reload schema';
+
 -- Create the Tools Table
 CREATE TABLE  app_rentals.Tools (
     ToolID serial PRIMARY KEY,

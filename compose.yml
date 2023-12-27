@@ -41,6 +41,7 @@ services:
       # PGRST_DB_SCHEMAS: application, meta (shouldnt be necessary if I did this right, check init.sql)
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
       PGRST_DB_ANON_ROLE: web_anon
+      PGRST_DB_PRE_CONFIG: postgrest.pre_config
     depends_on:
       - db
     networks:
