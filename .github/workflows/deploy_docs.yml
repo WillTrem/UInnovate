@@ -23,7 +23,7 @@ jobs:
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
-        mkdocs build -d build_docs/ --config-file mkdocs.yml
+        mkdocs build -d build_docs/
         ls -R ./build_docs/
 
     - name: Debug MkDocs build output
@@ -40,7 +40,7 @@ jobs:
     - name: Copy MkDocs build to PostGOAT repository
       run: |
         mkdir -p PostGOAT/docs  
-        cp -r ./documentation/build_docs/* PostGOAT/docs/
+        cp -r UInnovate/documentation/build_docs/* PostGOAT/docs/
     
     - name: Debug copied files in PostGOAT
       run: |
