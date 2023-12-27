@@ -23,12 +23,12 @@ jobs:
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
-        mkdocs build -d docs/
-        ls -R ./docs/
+        mkdocs build -d build_docs/ --config-file mkdocs.yml
+        ls -R ./build_docs/
 
     - name: Debug MkDocs build output
       run: |
-        ls -R ./documentation/docs/
+        ls -R ./documentation/build_docs/
 
     - name: Checkout PostGOAT repository
       uses: actions/checkout@v2
@@ -40,7 +40,7 @@ jobs:
     - name: Copy MkDocs build to PostGOAT repository
       run: |
         mkdir -p PostGOAT/docs  
-        cp -r ./documentation/docs/* PostGOAT/docs/
+        cp -r ./documentation/build_docs/* PostGOAT/docs/
     
     - name: Debug copied files in PostGOAT
       run: |
