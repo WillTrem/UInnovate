@@ -102,7 +102,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-  });
+  }, []);
 
   useEffect(() => {
     const newInputField = (column: Column) => {
