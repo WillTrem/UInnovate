@@ -20,6 +20,11 @@ jobs:
       run: |
         pip install mkdocs
 
+   - name: Copy .md files from usecase to root documentation
+      run: |
+        cp UInnovate/documentation/docs/*.md UInnovate/documentation/build_docs/
+        ls -R UInnovate/documentation/build_docs/
+
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
