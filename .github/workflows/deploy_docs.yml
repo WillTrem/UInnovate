@@ -44,7 +44,7 @@ jobs:
     - name: Copy MkDocs build to PostGOAT repository
       run: |
         mkdir -p PostGOAT/docs  
-        cp -r $GITHUB_WORKSPACE/documentation/build_docs/* $GITHUB_WORKSPACE/PostGOAT/docs/
+        cp -r ./documentation/build_docs/* PostGOAT/docs/
     
     - name: Debug copied files in PostGOAT
       run: |
