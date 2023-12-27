@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  
+
 jobs:
   deploy_docs:
     runs-on: ubuntu-latest
@@ -29,7 +29,8 @@ jobs:
       uses: actions/checkout@v2
       with:
         repository: MariaR001/PostGOAT
-        path: PostGOAT
+        ref: 'master'
+        token: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
 
     - name: Copy MkDocs build to PostGOAT repository
       run: |
