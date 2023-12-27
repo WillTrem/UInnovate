@@ -5,7 +5,9 @@ on:
     branches:
       - 143-documentation-deployment
 permissions:
-  contents: write
+  pull-requests: write
+  issues: write
+  repository-projects: write
 
 jobs:
   deploy_docs:
