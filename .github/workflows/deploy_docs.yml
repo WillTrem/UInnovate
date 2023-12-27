@@ -5,9 +5,9 @@ on:
     branches:
       - 143-documentation-deployment
 permissions:
-  pull-requests: write
-  issues: write
-  repository-projects: write
+  contents: write # We generate static HTML, JS, CSS so we need write access to the repo
+  pages: write
+  id-token: write
 
 jobs:
   deploy_docs:
