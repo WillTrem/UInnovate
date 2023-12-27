@@ -26,15 +26,9 @@ DB_PASS=$POSTGRES_PASSWORD
 DB_NAME=$POSTGRES_DB_NAME
 DB_HOST="db"
 META_FILE="./database/meta.sql"
-# temporary until we refactor the names of all the databases
-if USECASE_FOLDER == "/useCase1"; then
-    SCHEMA_FILE="./database$USECASE_FOLDER/structure.sql"
-    DATA_FILE="./database$USECASE_FOLDER/sampledata.sql"
-else 
-    SCHEMA_FILE="./database$USECASE_FOLDER/application.sql"
-    DATA_FILE="./database$USECASE_FOLDER/data.sql"
-fi
-META_DATA_FILE="./database$USECASE_FOLDER/meta_data.sql"
+SCHEMA_FILE="./database$USECASE_FOLDER/application.sql"
+DATA_FILE="./database$USECASE_FOLDER/data.sql"
+META_DATA_FILE="./database/meta_data.sql"
 LOG_FILE="./database/refresh_log.txt"
 APPCONFIG_PROPERTIES_FILE="./dataFiles/appconfig_properties.csv"
 
