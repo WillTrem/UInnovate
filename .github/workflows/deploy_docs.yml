@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 143-documentation-deployment
+permissions:
+  contents: write
 
 jobs:
   deploy_docs:
