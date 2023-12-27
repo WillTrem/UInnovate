@@ -38,8 +38,6 @@ jobs:
         cp -r ./documentation/build_docs/* PostGOAT/docs/
 
     - name: Commit and push changes to PostGOAT
-      env:
-        GITHUB_TOKEN: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       run: |
         cd PostGOAT
         git config --local user.email "action@github.com"
