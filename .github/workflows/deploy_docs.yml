@@ -24,7 +24,7 @@ jobs:
       working-directory: ./documentation
       run: |
         mkdocs build -d build_docs/
-        ls -R ./Build_docs/
+        ls -R ./build_docs/
 
     - name: Debug MkDocs build output
       run: |
