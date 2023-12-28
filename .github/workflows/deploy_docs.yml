@@ -31,7 +31,7 @@ jobs:
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
-        mkdocs build -d
+        mkdocs build -d documentation
 
     - name: Copy files to another repository
       uses: nkoppel/push-files-to-another-repository@v1.1.2      
