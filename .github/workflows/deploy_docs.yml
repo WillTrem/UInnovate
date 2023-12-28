@@ -8,6 +8,12 @@ on:
 jobs:
   deploy_docs:
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./
+
+    permissions:
+      contents: write
+      pull-requests: write
 
     steps:
     - name: Checkout UInnovate repository
