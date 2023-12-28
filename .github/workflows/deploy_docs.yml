@@ -2,7 +2,7 @@ name: Deploy MkDocs Documentation
 
 on:
   push:
-    path: 'documentation/docs/**'
+    path: 'documentation/**'
     branches:
       - 143-documentation-deployment
 
