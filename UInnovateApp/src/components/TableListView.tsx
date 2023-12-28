@@ -47,38 +47,38 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentPrimaryKey, setCurrentPrimaryKey] =  useState<string | null>(null);
 
 
+  const getRows = async () => {
+    const attributes = table.getVisibleColumns();
+    const schema = vmd.getTableSchema(table.table_name);
 
+    if (!schema) {
+      return;
+    }
+
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+      schema.schema_name,
+      table.table_name
+    );
+
+    const lines = await data_accessor.fetchRows();
+
+    // Filter the rows to only include the visible columns
+    const filteredRows = lines?.map((row) => {
+      const filteredRowData: { [key: string]: string | number | boolean } =
+        {};
+      attributes.forEach((column) => {
+        filteredRowData[column.column_name] = row[column.column_name];
+      });
+      return new Row(filteredRowData);
+    });
+
+    setColumns(attributes);
+    setRows(filteredRows);
+  };
 
 
   useEffect(() => {
-    const getRows = async () => {
-      const attributes = table.getVisibleColumns();
-      const schema = vmd.getTableSchema(table.table_name);
-
-      if (!schema) {
-        return;
-      }
-
-      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-        schema.schema_name,
-        table.table_name
-      );
-
-      const lines = await data_accessor.fetchRows();
-
-      // Filter the rows to only include the visible columns
-      const filteredRows = lines?.map((row) => {
-        const filteredRowData: { [key: string]: string | number | boolean } =
-          {};
-        attributes.forEach((column) => {
-          filteredRowData[column.column_name] = row[column.column_name];
-        });
-        return new Row(filteredRowData);
-      });
-
-      setColumns(attributes);
-      setRows(filteredRows);
-    };
+    
     getRows();
   }, [table]);
 
@@ -145,7 +145,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
-    data_accessor.updateRow();
+    data_accessor.updateRow().then(() => getRows());
     setOpenPanel(false);
   };
 
