@@ -1,6 +1,10 @@
 services:
   db:
-    image: postgres:16
+    build:
+      context: .
+      dockerfile: Dockerfile.postgres
+      args:
+        - JWT_SECRET
     container_name: db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -8,10 +12,11 @@ services:
       POSTGRES_DB: ${POSTGRES_DB_NAME} # Default database's name
       PGDATA: /data/postgres
       PGUSER: web_anon
+      JWT_SECRET: ${JWT_SECRET}
     ports:
       - "127.0.0.1:5432:5432"
     volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/1_init.sql # Create the schemas, the custom views and the web_anon role
+      - ./init.sh:/docker-entrypoint-initdb.d/init.sh # Create the schemas, the custom views and the web_anon role
       - db_data:/data/postgres
     networks:
       - backend
@@ -37,10 +42,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      PGRST_DB_URI: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB_NAME}
+      PGRST_DB_URI: postgres://authenticator:${JWT_SECRET}@db:5432/${POSTGRES_DB_NAME} #The authenticator roles has the JWT_SECRET as password (set in init.sh)
       PGRST_DB_SCHEMAS: application, meta
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
       PGRST_DB_ANON_ROLE: web_anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
     depends_on:
       - db
     networks:
