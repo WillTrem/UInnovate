@@ -48,9 +48,10 @@ jobs:
         token: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
 
     - name: Copy MkDocs build to PostGOAT repository
+      working-directory: ./documentation
       run: |
         mkdir -p PostGOAT/docs  
-        cp -r ./documentation/build_docs/* PostGOAT/docs/
+        cp -r ./build_docs/* PostGOAT/docs/
     
     - name: Debug copied files in PostGOAT
       run: |
