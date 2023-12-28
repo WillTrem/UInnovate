@@ -40,28 +40,13 @@ jobs:
       run: |
         ls -R ./documentation/build_docs/
 
-    - name: Checkout PostGOAT repository
-      uses: actions/checkout@v2
+    - name: Push generated webpage to another repository
+      uses: nkoppel/push-files-to-another-repository@1.1.0
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       with:
-        repository: MariaR001/PostGOAT
-        ref: 'main'
-        token: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
-
-    - name: Copy MkDocs build to PostGOAT repository
-      run: |
-        mkdir -p PostGOAT/docs  
-        cp -r ./documentation/build_docs/* PostGOAT/docs/
-      working-directory: ./
-    
-    - name: Debug copied files in PostGOAT
-      run: |
-        ls -R PostGOAT/docs/
-
-    - name: Commit and push changes to PostGOAT
-      run: |
-        cd PostGOAT
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .
-        git commit -m "Deploy MkDocs documentation from UInnovate"
-        git push origin HEAD:main
+        source-files: 'documentation/build_docs/'
+        destination-username: 'MariaR001'
+        destination-repository: 'PostGOAT'
+        destination-directory: 'docs'
+        commit-email: 'ma_iv@live.concordia.ca'
