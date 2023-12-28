@@ -25,18 +25,13 @@ jobs:
 
     - name: Copy .md files from usecase to root documentation
       run: |
-        cp ./documentation/docs/*.md ./documentation
-        ls -R ./documentation/build_docs/
+        cp documentation/docs/*.md ./documentation
 
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
         mkdocs build -d build_docs/
         ls -R ./build_docs/
-
-    - name: Debug MkDocs build output
-      run: |
-        ls -R ./documentation/build_docs/
 
     - name: Copy files to another repository
       uses: nkoppel/push-files-to-another-repository@v1.1.2      
