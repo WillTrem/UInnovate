@@ -41,11 +41,12 @@ jobs:
         ls -R ./documentation/build_docs/
 
     - name: Copy files to another repository
+      working-directory: ./documentation
       uses: nkoppel/push-files-to-another-repository@v1.1.2      
       env:
         API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       with:
-        source-files: 'documentation/build_docs'
+        source-files: 'build_docs/'
         destination-username: 'MariaR001'
         destination-repository: 'PostGOAT'
         destination-branch: 'main'
