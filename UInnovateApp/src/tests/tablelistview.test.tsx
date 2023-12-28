@@ -1,5 +1,5 @@
 import { describe, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
@@ -36,5 +36,23 @@ describe("TableListView component", () => {
     // Wait for the table to be rendered
     const tableElement = await screen.findByRole("table");
     expect(tableElement).toBeInTheDocument();
+
+
+    it("opens and closes the sliding panel", () => {
+      // Render the component
+      render(<TableListView table={table} /* props */ />);
+  
+      // Check if the sliding panel is not open by default
+      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+  
+      // Find the button that opens the sliding panel and simulate a click event
+      const openButton = screen.getAllByRole('button',);
+      fireEvent.click(openButton[1]);
+  
+      // Check if the sliding panel is now open
+      expect(screen.getByText("LookUpTableDetails")).toBeInTheDocument();
+  
+    
   });
+});
 });
