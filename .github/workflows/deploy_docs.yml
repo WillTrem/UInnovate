@@ -2,6 +2,7 @@ name: Deploy MkDocs Documentation
 
 on:
   push:
+    path: 'documentation/**'
     branches:
       - 143-documentation-deployment
 
@@ -30,8 +31,7 @@ jobs:
     - name: Build MkDocs documentation
       working-directory: ./documentation
       run: |
-        mkdocs build -d build_docs/
-        ls -R ./build_docs/
+        mkdocs build -d
 
     - name: Copy files to another repository
       uses: nkoppel/push-files-to-another-repository@v1.1.2      
