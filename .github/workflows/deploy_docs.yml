@@ -25,9 +25,7 @@ jobs:
 
     - name: Copy .md files from usecase to root documentation
       run: |
-        mkdir -p ./documentation/build_docs/
-        rm -rf ./documentation/build_docs/*
-        cp ./documentation/docs/*.md ./documentation/build_docs/
+        cp ./documentation/docs/*.md ./documentation
         ls -R ./documentation/build_docs/
 
     - name: Build MkDocs documentation
