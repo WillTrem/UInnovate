@@ -27,7 +27,7 @@ jobs:
 
     - name: Copy .md files from usecase to root documentation
       run: |
-        cp documentation/docs/*.md ./documentation
+        cp database/useCaseOne/*.md ./documentation
 
     - name: Build MkDocs documentation
       working-directory: ./documentation
