@@ -262,11 +262,11 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to fetch rows from a table
   // return type : DataAccessor
-  getRowsDataAccessor(schema_name: string, table_name: string) {
+  getRowsDataAccessor(schema_name: string, table_name: string, order_by: string) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
     if (schema && table) {
-      return new DataAccessor(table.url, {
+      return new DataAccessor(table.url+"?order="+order_by, {
         "Accept-Profile": schema.schema_name,
       });
     } else {

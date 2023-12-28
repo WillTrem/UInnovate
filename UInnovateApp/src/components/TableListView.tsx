@@ -12,11 +12,11 @@ import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { Switch, Button, Typography } from "@mui/material";
+import { Switch, Button, Typography, Select, MenuItem, FormControl, FormHelperText, SelectChangeEvent } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
-import { as, c, s } from "vitest/dist/reporters-5f784f42.js";
-import { current } from "@reduxjs/toolkit";
+
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
+import { current } from "@reduxjs/toolkit";
 
 interface TableListViewProps {
   table: Table;
@@ -44,8 +44,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const { config } = useConfig();
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
-  const [currentPrimaryKey, setCurrentPrimaryKey] =  useState<string | null>(null);
-
+  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(null);
+  const defaultOrderValue = table.columns.find(column => column.is_editable === false)?.column_name;
+  const [OrderValue, setOrderValue] = useState(defaultOrderValue || 'bruh');
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -57,7 +58,8 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
       schema.schema_name,
-      table.table_name
+      table.table_name,
+      OrderValue
     );
 
     const lines = await data_accessor.fetchRows();
@@ -77,9 +79,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   useEffect(() => {
-    
+
     getRows();
-  }, [table]);
+  }, [table, OrderValue]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -112,22 +114,27 @@ const TableListView: React.FC<TableListViewProps> = ({
     getScripts();
   }, []);
 
+  const handleOrderchange = (event: SelectChangeEvent) => {
+    setOrderValue(event.target.value as string);
+    // getRows();
+    
+  }
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nonEditableColumn = table.columns.find(column => column.is_editable === false);
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
-      }
+    }
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
       [event.target.name]: event.target.value,
     }));
-    
+
   };
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    
+
     event.preventDefault();
 
     const schema = vmd.getTableSchema(table.table_name);
@@ -137,7 +144,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
 
     const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
-    
+
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -151,7 +158,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
-  
+
   // }
 
 
@@ -161,8 +168,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       if (!config) {
         return null;
       }
-  
-    
+
+
 
       const columnDisplayType = config.find(
         (element) =>
@@ -171,8 +178,8 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-     
-      
+
+
 
 
       if (
@@ -181,9 +188,9 @@ const TableListView: React.FC<TableListViewProps> = ({
         localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
 
       }
-      if(column.references_table != null){
-       const string= column.column_name + "L"
-      localStorage.setItem(string, currentRow.row[column.column_name] as string);
+      if (column.references_table != null) {
+        const string = column.column_name + "L"
+        localStorage.setItem(string, currentRow.row[column.column_name] as string);
       }
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
@@ -199,23 +206,23 @@ const TableListView: React.FC<TableListViewProps> = ({
       } else if (columnDisplayType.value == "number") {
         return (
           <NumericFormat
-          readOnly={column.is_editable === false ? true : false}
-          placeholder={String(currentRow.row[column.column_name]) || ""}
-          name={column.column_name}
-          type="text"
-          style={inputStyle}
-          onChange={handleInputChange}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            name={column.column_name}
+            type="text"
+            style={inputStyle}
+            onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "longtext") {
         return (
           <textarea
-          readOnly={column.is_editable === false ? true : false}
-          placeholder={String(currentRow.row[column.column_name]) || ""}
-          name={column.column_name}
-          type="text"
-          style={inputStyle}
-          onChange={handleInputChange}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            name={column.column_name}
+            type="text"
+            style={inputStyle}
+            onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "datetime") {
@@ -246,10 +253,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
-    if (!table.has_details_view) { 
+    if (!table.has_details_view) {
       return;
-    }   
-    setOpenPanel(true); 
+    }
+    setOpenPanel(true);
   };
 
   // Function to open the popup
@@ -294,6 +301,26 @@ const TableListView: React.FC<TableListViewProps> = ({
               </Button>
             );
           })}
+
+        </div>
+        <div>
+          <FormControl size="small">
+            <h6 style={{ textAlign: 'left' }}>Ordering</h6>
+            <Select
+              value={OrderValue}
+              displayEmpty
+              onChange={handleOrderchange}
+
+            >
+              {table.columns.map((column, index) => (
+                <MenuItem value={column.column_name} key={index}>
+                  {column.column_name}
+                </MenuItem>
+              ))}
+
+            </Select>
+          </FormControl>
+
         </div>
       </div>
       <TableComponent striped bordered hover>
@@ -346,26 +373,26 @@ const TableListView: React.FC<TableListViewProps> = ({
             </div>
           </form>
           <div>
-          <Button
-            variant="contained"
-            style={buttonStyle}
-            onClick={() => setOpenPanel(false)}
-          >
-            close
-          </Button>
-          <Button
-          variant="contained"
-          style={{marginTop:20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10}}
-          onClick={handleFormSubmit}
-          >
-            Save
-          </Button>
+            <Button
+              variant="contained"
+              style={buttonStyle}
+              onClick={() => setOpenPanel(false)}
+            >
+              close
+            </Button>
+            <Button
+              variant="contained"
+              style={{ marginTop: 20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10 }}
+              onClick={handleFormSubmit}
+            >
+              Save
+            </Button>
           </div>
         </div>
-        <LookUpTableDetails table={table}/>
+        <LookUpTableDetails table={table} />
 
       </SlidingPanel>
-      
+
     </div>
   );
 };
