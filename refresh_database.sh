@@ -57,10 +57,3 @@ done
 
 # Log completion time
 echo "Database refresh completed at $(date)" | tee -a $LOG_FILE
-
-#restarting docker compose
-echo "restarting containers ..."
-
-docker compose stop
-docker compose up  -d
-
