@@ -45,6 +45,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] =  useState<string | null>(null);
+  const [shouldUpdateRows, setShouldUpdateRows] = useState(true);
+
+
 
 
 
@@ -78,9 +81,12 @@ const TableListView: React.FC<TableListViewProps> = ({
 
       setColumns(attributes);
       setRows(filteredRows);
+      setShouldUpdateRows(false);
     };
+    if (shouldUpdateRows) {
     getRows();
-  }, [table]);
+    }
+  }, [ shouldUpdateRows]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -147,12 +153,10 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
     data_accessor.updateRow();
     setOpenPanel(false);
+    setShouldUpdateRows(true);
   };
 
-  // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
   
-  // }
-
 
 
   useEffect(() => {
