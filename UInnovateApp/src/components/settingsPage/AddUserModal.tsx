@@ -122,27 +122,4 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 	</Modal>
 }
 
-// interface FormInputProps {
-// 	label: string,
-
-// 	children?: ReactNode
-// 	onChange: () => {},
-// }
-// // Component representing an input field from the modal 
-// const FormInput: React.FC<FormInputProps> = ({ label, children, onChange }) => {
-// 	return <div style={{ marginBottom: 10 }}>
-// 		<label >
-// 			{label}
-// 			{/* By default, the field will be a text input field */}
-// 			{children ? React.cloneElement(children, { onChange }) :
-// 				<input
-// 					type="text"
-// 					name={column.column_name}
-// 					onChange={onChange}
-// 				/>
-// 			}
-// 		</label>
-// 	</div>;
-// }
-
 export default AddUserModal;
