@@ -43,5 +43,4 @@ jobs:
         destination-username: 'MariaR001'
         destination-repository: 'PostGOAT'
         destination-branch: 'main'
-        destination-directory: 'docs'
         commit-email: 'ma_iv@live.concordia.ca'
