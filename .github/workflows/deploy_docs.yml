@@ -4,7 +4,7 @@ on:
   push:
     path: './documentation/**'
     branches:
-      - main
+      - 143-documentation-deployment
 
 jobs:
   deploy_docs:
@@ -27,7 +27,7 @@ jobs:
 
     - name: Copy .md files from usecase to root documentation
       run: |
-        cp database/useCaseOne/*.md ./documentation
+        cp -RT database/useCaseOne/*.md documentation
 
     - name: Build MkDocs documentation
       working-directory: ./documentation
