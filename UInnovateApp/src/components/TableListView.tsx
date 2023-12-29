@@ -179,7 +179,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       storedPrimaryKeyValue as string
     );
     data_accessor.updateRow().then(() => getRows());
+    setInputValues({});
     setOpenPanel(false);
+    
   };
 
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
