@@ -4,7 +4,7 @@ on:
   push:
     path: './documentation/**'
     branches:
-      - 143-documentation-deployment
+      - main
 
 jobs:
   deploy_docs:
@@ -28,7 +28,7 @@ jobs:
     - name: Copy .md files from usecase to root documentation
       run: |
         cp database/useCaseOne/*.md documentation/
-        
+
     - name: Check copied files
       run: |
         echo "Contents of documentation directory:"
