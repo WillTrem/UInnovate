@@ -28,6 +28,11 @@ jobs:
     - name: Copy .md files from usecase to root documentation
       run: |
         cp database/useCaseOne/*.md documentation/
+        
+    - name: Check copied files
+      run: |
+        echo "Contents of documentation directory:"
+        ls -l documentation
 
     - name: Build MkDocs documentation
       working-directory: ./documentation
