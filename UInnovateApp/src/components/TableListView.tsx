@@ -136,7 +136,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-  });
+  }, []);
 
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
