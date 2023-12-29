@@ -24,10 +24,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install mkdocs
-    
-    - name: Delete previously copied documentation folder in PostGOAT
-      run: |
-        rm -rf PostGOAT/documentation
 
     - name: Copy .md files from usecase to root documentation
       run: |
