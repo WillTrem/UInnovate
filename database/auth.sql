@@ -174,6 +174,7 @@ IF EXISTS (
 	'User %L has already been signed up.',
 	signup.email
 );
+ELSE
 UPDATE authentication.users
 SET PASSWORD = signup.password,
 	first_name = signup.first_name,
