@@ -44,3 +44,16 @@ jobs:
         destination-repository: 'PostGOAT'
         destination-branch: 'main'
         commit-email: 'ma_iv@live.concordia.ca'
+
+    - name: Configure Git
+      run: |
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+
+    - name: Commit and push changes to PostGOAT repository
+      run: |
+        cd PostGOAT
+        git init
+        git add .
+        git commit -m "Update documentation files"
+        git push --force https://${{ secrets.POSTGOAT_GITHUB_TOKEN }}@github.com/MariaR001/PostGOAT.git master:main
