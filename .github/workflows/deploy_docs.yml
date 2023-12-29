@@ -4,7 +4,7 @@ on:
   push:
     path: './documentation/**'
     branches:
-      - 143-documentation-deployment
+      - main
 
 jobs:
   deploy_docs:
