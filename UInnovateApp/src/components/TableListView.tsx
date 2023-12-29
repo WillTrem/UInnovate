@@ -119,7 +119,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-  });
+  }, []);
 
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
