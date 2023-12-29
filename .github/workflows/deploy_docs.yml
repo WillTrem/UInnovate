@@ -52,7 +52,7 @@ jobs:
 
     - name: Commit and Push changes to PostGOAT repository
       run: |
-        cd documentation
+        cd UInnovate
         git add .
         git diff --quiet && exit 0  # Exit if there are no changes to commit
         git commit -m "Update documentation"
