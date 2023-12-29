@@ -9,6 +9,7 @@ import Col from "react-bootstrap/Col";
 import "../styles/settings.css";
 import UserManagementTab from "../components/settingsPage/UserMangementTab";
 import ButtonConfigurationSaver from "../components/settingsPage/ButtonConfigurationSaver";
+import InternationalizationTab from "../components/settingsPage/InternationalizationTab";
 
 export function Settings() {
   return (
@@ -35,6 +36,9 @@ export function Settings() {
                 <Nav.Item>
                   <Nav.Link eventKey="users">Users</Nav.Link>
                 </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey="internationalization">Internationalization</Nav.Link>
+                </Nav.Item>
               </Nav>
             </Col>
             <Col sm={9}>
@@ -50,6 +54,9 @@ export function Settings() {
                 </Tab.Pane>
                 <Tab.Pane eventKey="users">
                   <UserManagementTab />
+                </Tab.Pane>
+                <Tab.Pane eventKey="internationalization">
+                  <InternationalizationTab />
                 </Tab.Pane>
               </Tab.Content>
             </Col>
