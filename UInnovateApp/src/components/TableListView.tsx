@@ -51,10 +51,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const name = table.table_name + "T";
   const Local = localStorage.getItem(name);
   if (Local == null) {
-    return (<></>)
+    const nulll = Local
   }
   const getTable = JSON.parse(Local!);
-console.log(getTable[0])
 
 
   const getRows = async () => {
