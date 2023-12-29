@@ -1,5 +1,5 @@
 -- Sample data for tool_type table
-INSERT INTO app_rentals.tool_type (type_name, type_category) VALUES
+INSERT INTO tool_type (type_name, type_category) VALUES
     ('Drill', 'Power Tools'),
     ('Hammer', 'Hand Tools'),
     ('Saw', 'Power Tools'),
@@ -22,7 +22,7 @@ INSERT INTO app_rentals.tool_type (type_name, type_category) VALUES
     ('Table Saw', 'Power Tools');
 
 -- Sample data for tool table
-INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description, tool_qty_available) VALUES
+INSERT INTO tool (tool_type, tool_name, tool_price, tool_description, tool_qty_available) VALUES
     (1, 'Cordless Drill', 99.99, 'Powerful cordless drill for various applications', 15),
     (2, 'Claw Hammer', 12.99, 'Sturdy hammer for carpentry work', 20),
     (3, 'Circular Saw', 149.99, 'High-performance circular saw with laser guide', 10),
@@ -45,7 +45,7 @@ INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description
     (20, 'Sledgehammer', 24.99, 'Powerful sledgehammer for heavy demolition work', 7);
 
 -- Sample data for unit table
-INSERT INTO app_rentals.unit (tool_id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES
+INSERT INTO unit (tool_id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES
     (1, 1, 'SN123456', 10.0, 15.0, 'Good', true, '2023-11-01', '2023-11-01', NULL),
     (2, 2, 'SN789012', 5.0, 10.0, 'Excellent', true, '2023-11-02', '2023-11-02', NULL),
     (3, 3, 'SN345678', 7.0, 12.0, 'Fair', true, '2023-11-03', '2023-11-03', NULL),
@@ -68,7 +68,7 @@ INSERT INTO app_rentals.unit (tool_id, tool_type, unit_serial_number, unit_weigh
     (20, 20, 'SN678901', 12.0, 22.0, 'Good', true, '2023-11-20', '2023-11-20', NULL);
 
 -- Sample data for company table
-INSERT INTO app_rentals.company (company_name, address, primary_contact_id, is_prev_customer, pricing_rate) VALUES
+INSERT INTO company (company_name, address, primary_contact_id, is_prev_customer, pricing_rate) VALUES
     ('Google', '123 Main St, Cityville', NULL, true, 0.85),
     ('Alpha','456 Oak Ave, Townburg', NULL, false, 1.00),
     ('Amazon','789 Pine Blvd, Villageton', NULL, true, 0.90),
@@ -91,7 +91,7 @@ INSERT INTO app_rentals.company (company_name, address, primary_contact_id, is_p
     ('Evil Inc.','1717 Birch Ln, Crestview', NULL, false, 1.01);
 
 -- Sample data for contact table
-INSERT INTO app_rentals.contact (company_id, first_name, last_name, contact_position, phone_number, email, active) VALUES
+INSERT INTO contact (company_id, first_name, last_name, contact_position, phone_number, email, active) VALUES
     (1, 'Jack', 'Brody', 'Manager', '+1234567890', 'manager@company1.com', true),
     (2, 'Sleiman', 'Bee', 'Coordinator', '+2345678901', 'coordinator@company2.com', true),
     (3, 'Yi', 'Wang', 'Supervisor', '+3456789012', 'supervisor@company3.com', true),
@@ -114,29 +114,29 @@ INSERT INTO app_rentals.contact (company_id, first_name, last_name, contact_posi
     (20, 'Macho', 'Man', 'Executive', '+0011223344', 'executive@company20.com', true);
 
 -- Update primary_contact_id in company table
-UPDATE app_rentals.company  SET primary_contact_id = 1 WHERE company_id = 1;
-UPDATE app_rentals.company  SET primary_contact_id = 2 WHERE company_id = 2;
-UPDATE app_rentals.company  SET primary_contact_id = 3 WHERE company_id = 3;
-UPDATE app_rentals.company  SET primary_contact_id = 4 WHERE company_id = 4;
-UPDATE app_rentals.company  SET primary_contact_id = 5 WHERE company_id = 5;
-UPDATE app_rentals.company  SET primary_contact_id = 6 WHERE company_id = 6;
-UPDATE app_rentals.company  SET primary_contact_id = 7 WHERE company_id = 7;
-UPDATE app_rentals.company  SET primary_contact_id = 8 WHERE company_id = 8;
-UPDATE app_rentals.company  SET primary_contact_id = 9 WHERE company_id = 9;
-UPDATE app_rentals.company  SET primary_contact_id = 10 WHERE company_id = 10;
-UPDATE app_rentals.company  SET primary_contact_id = 11 WHERE company_id = 11;
-UPDATE app_rentals.company  SET primary_contact_id = 12 WHERE company_id = 12;
-UPDATE app_rentals.company  SET primary_contact_id = 13 WHERE company_id = 13;
-UPDATE app_rentals.company  SET primary_contact_id = 14 WHERE company_id = 14;
-UPDATE app_rentals.company  SET primary_contact_id = 15 WHERE company_id = 15;
-UPDATE app_rentals.company  SET primary_contact_id = 16 WHERE company_id = 16;
-UPDATE app_rentals.company  SET primary_contact_id = 17 WHERE company_id = 17;
-UPDATE app_rentals.company  SET primary_contact_id = 18 WHERE company_id = 18;
-UPDATE app_rentals.company  SET primary_contact_id = 19 WHERE company_id = 19;
-UPDATE app_rentals.company  SET primary_contact_id = 20 WHERE company_id = 20;
+UPDATE company SET primary_contact_id = 1 WHERE company_id = 1;
+UPDATE company SET primary_contact_id = 2 WHERE company_id = 2;
+UPDATE company SET primary_contact_id = 3 WHERE company_id = 3;
+UPDATE company SET primary_contact_id = 4 WHERE company_id = 4;
+UPDATE company SET primary_contact_id = 5 WHERE company_id = 5;
+UPDATE company SET primary_contact_id = 6 WHERE company_id = 6;
+UPDATE company SET primary_contact_id = 7 WHERE company_id = 7;
+UPDATE company SET primary_contact_id = 8 WHERE company_id = 8;
+UPDATE company SET primary_contact_id = 9 WHERE company_id = 9;
+UPDATE company SET primary_contact_id = 10 WHERE company_id = 10;
+UPDATE company SET primary_contact_id = 11 WHERE company_id = 11;
+UPDATE company SET primary_contact_id = 12 WHERE company_id = 12;
+UPDATE company SET primary_contact_id = 13 WHERE company_id = 13;
+UPDATE company SET primary_contact_id = 14 WHERE company_id = 14;
+UPDATE company SET primary_contact_id = 15 WHERE company_id = 15;
+UPDATE company SET primary_contact_id = 16 WHERE company_id = 16;
+UPDATE company SET primary_contact_id = 17 WHERE company_id = 17;
+UPDATE company SET primary_contact_id = 18 WHERE company_id = 18;
+UPDATE company SET primary_contact_id = 19 WHERE company_id = 19;
+UPDATE company SET primary_contact_id = 20 WHERE company_id = 20;
 
 -- Sample data for quotation table
-INSERT INTO app_rentals.quotation (quotation_date, tools_quoted_qty, totalprice) VALUES
+INSERT INTO quotation (quotation_date, tools_quoted_qty, totalprice) VALUES
     ('2023-11-01', 5, 150.00),
     ('2023-11-02', 8, 240.00),
     ('2023-11-03', 10, 300.00),
@@ -159,7 +159,7 @@ INSERT INTO app_rentals.quotation (quotation_date, tools_quoted_qty, totalprice)
     ('2023-11-20', 34, 1020.00);
 
 -- Sample data for quotation_line_item table
-INSERT INTO app_rentals.quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price) VALUES
+INSERT INTO quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price) VALUES
     (1, 1, 2, 30.00),
     (1, 2, 1, 40.00),
     (2, 3, 3, 30.00),
@@ -182,7 +182,7 @@ INSERT INTO app_rentals.quotation_line_item (quotation_id, tool_id, tool_quoted_
     (10, 20, 9, 40.00);
 
 -- Sample data for purchase_order table
-INSERT INTO app_rentals.purchase_order (quotation_id, company_id, order_date, tools_rented_qty, total_adjusted_price) VALUES
+INSERT INTO purchase_order (quotation_id, company_id, order_date, tools_rented_qty, total_adjusted_price) VALUES
     (1, 1, '2023-11-01', 5, 150.00),
     (2, 2, '2023-11-02', 8, 240.00),
     (3, 3, '2023-11-03', 10, 300.00),
@@ -205,7 +205,7 @@ INSERT INTO app_rentals.purchase_order (quotation_id, company_id, order_date, to
     (20, 20, '2023-11-20', 34, 1020.00);
 
 -- Sample data for purchase_order_line_item table
-INSERT INTO app_rentals.purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
+INSERT INTO purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
     (1, 1, NULL, 2, 30.00),
     (1, 2, NULL, 1, 40.00),
     (2, 3, NULL, 3, 30.00),
@@ -228,7 +228,7 @@ INSERT INTO app_rentals.purchase_order_line_item (purchase_order_id, tool_id, un
     (10, 20, NULL, 9, 40.00);
 
 -- Populate availability_status table with mock data
-INSERT INTO app_rentals.availability_status (availability_status_name)
+INSERT INTO availability_status (availability_status_name)
 VALUES
     ('available'),
     ('rented'),
@@ -236,7 +236,7 @@ VALUES
     ('out_of_commission');
 
 -- Sample data for unit_scheduler table
-INSERT INTO app_rentals.unit_scheduler (unit_id, unavailable_start_date, unavailable_end_date, availability_status_id, unit_recalibration_flag_id) VALUES
+INSERT INTO unit_scheduler (unit_id, unavailable_start_date, unavailable_end_date, availability_status_id, unit_recalibration_flag_id) VALUES
     (1, '2023-11-01', '2023-11-05', 3, NULL),
     (2, '2023-11-02', '2023-11-06', 2, NULL),
     (3, '2023-11-03', '2023-11-07', 4, NULL),
@@ -259,29 +259,29 @@ INSERT INTO app_rentals.unit_scheduler (unit_id, unavailable_start_date, unavail
     (20, '2023-11-20', '2023-11-24', 1, NULL);
 
 -- Update unit_scheduled_id in purchase_order_line_item table to reference unit_scheduler rows
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 1 WHERE purchase_order_id = 1;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 2 WHERE purchase_order_id = 2;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 3 WHERE purchase_order_id = 3;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 4 WHERE purchase_order_id = 4;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 5 WHERE purchase_order_id = 5;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 6 WHERE purchase_order_id = 6;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 7 WHERE purchase_order_id = 7;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 8 WHERE purchase_order_id = 8;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 9 WHERE purchase_order_id = 9;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 10 WHERE purchase_order_id = 10;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 11 WHERE purchase_order_id = 11;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 12 WHERE purchase_order_id = 12;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 13 WHERE purchase_order_id = 13;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 14 WHERE purchase_order_id = 14;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 15 WHERE purchase_order_id = 15;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 16 WHERE purchase_order_id = 16;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 17 WHERE purchase_order_id = 17;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 18 WHERE purchase_order_id = 18;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 19 WHERE purchase_order_id = 19;
-UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 20 WHERE purchase_order_id = 20;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 1 WHERE purchase_order_id = 1;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 2 WHERE purchase_order_id = 2;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 3 WHERE purchase_order_id = 3;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 4 WHERE purchase_order_id = 4;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 5 WHERE purchase_order_id = 5;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 6 WHERE purchase_order_id = 6;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 7 WHERE purchase_order_id = 7;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 8 WHERE purchase_order_id = 8;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 9 WHERE purchase_order_id = 9;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 10 WHERE purchase_order_id = 10;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 11 WHERE purchase_order_id = 11;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 12 WHERE purchase_order_id = 12;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 13 WHERE purchase_order_id = 13;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 14 WHERE purchase_order_id = 14;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 15 WHERE purchase_order_id = 15;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 16 WHERE purchase_order_id = 16;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 17 WHERE purchase_order_id = 17;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 18 WHERE purchase_order_id = 18;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 19 WHERE purchase_order_id = 19;
+UPDATE purchase_order_line_item SET unit_scheduled_id = 20 WHERE purchase_order_id = 20;
 
 -- Sample data for tool_restock_request table
-INSERT INTO app_rentals.tool_restock_request (tool_id, notice_date, restock_notice_author, qty_requested) VALUES
+INSERT INTO tool_restock_request (tool_id, notice_date, restock_notice_author, qty_requested) VALUES
     (1, '2023-11-01', 'Author1', 5),
     (2, '2023-11-02', 'Author2', 8),
     (3, '2023-11-03', 'Author3', 10),
@@ -304,14 +304,14 @@ INSERT INTO app_rentals.tool_restock_request (tool_id, notice_date, restock_noti
     (20, '2023-11-20', 'Author20', 34);
 
 -- Populate unit_recalibration_status table with mock data
-INSERT INTO app_rentals.unit_recalibration_status (recal_status)
+INSERT INTO unit_recalibration_status (recal_status)
 VALUES
     ('calibration_not_needed'),
     ('calibration_needed_soon'),
     ('calibration_needed_immediately');
 
 -- Sample data for unit_recalibration_flag table
-INSERT INTO app_rentals.unit_recalibration_flag (unit_id, unit_recalibration_status_id, flag_date, manual_flagger, flagger_name) VALUES
+INSERT INTO unit_recalibration_flag (unit_id, unit_recalibration_status_id, flag_date, manual_flagger, flagger_name) VALUES
     (1, 1, '2023-11-01', true, 'Flagger1'),
     (2, 2, '2023-11-02', false, 'Flagger2'),
     (3, 3, '2023-11-03', true, 'Flagger3'),
@@ -334,29 +334,29 @@ INSERT INTO app_rentals.unit_recalibration_flag (unit_id, unit_recalibration_sta
     (20, 2, '2023-11-20', false, 'Flagger20');
 
 -- Update unit_recalibration_flag_id in unit_scheduler table to reference unit_recalibration_flag rows
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 1 WHERE unit_id = 1;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 2 WHERE unit_id = 2;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 3 WHERE unit_id = 3;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 4 WHERE unit_id = 4;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 5 WHERE unit_id = 5;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 6 WHERE unit_id = 6;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 7 WHERE unit_id = 7;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 8 WHERE unit_id = 8;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 9 WHERE unit_id = 9;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 10 WHERE unit_id = 10;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 11 WHERE unit_id = 11;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 12 WHERE unit_id = 12;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 13 WHERE unit_id = 13;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 14 WHERE unit_id = 14;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 15 WHERE unit_id = 15;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 16 WHERE unit_id = 16;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 17 WHERE unit_id = 17;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 18 WHERE unit_id = 18;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 19 WHERE unit_id = 19;
-UPDATE app_rentals.unit_scheduler  SET unit_recalibration_flag_id = 20 WHERE unit_id = 20;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 1 WHERE unit_id = 1;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 2 WHERE unit_id = 2;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 3 WHERE unit_id = 3;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 4 WHERE unit_id = 4;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 5 WHERE unit_id = 5;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 6 WHERE unit_id = 6;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 7 WHERE unit_id = 7;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 8 WHERE unit_id = 8;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 9 WHERE unit_id = 9;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 10 WHERE unit_id = 10;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 11 WHERE unit_id = 11;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 12 WHERE unit_id = 12;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 13 WHERE unit_id = 13;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 14 WHERE unit_id = 14;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 15 WHERE unit_id = 15;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 16 WHERE unit_id = 16;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 17 WHERE unit_id = 17;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 18 WHERE unit_id = 18;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 19 WHERE unit_id = 19;
+UPDATE unit_scheduler SET unit_recalibration_flag_id = 20 WHERE unit_id = 20;
 
 -- Populate unit_recalibration_schedule_type table with mock data
-INSERT INTO app_rentals.unit_recalibration_schedule_type (recal_type_name)
+INSERT INTO unit_recalibration_schedule_type (recal_type_name)
 VALUES
     ('hours_of_usage'),
     ('cycles_of_usage'),
@@ -364,7 +364,7 @@ VALUES
     ('days_since_calibrated');
 
 -- Sample data for unit_recalibration_schedule table
-INSERT INTO app_rentals.unit_recalibration_schedule (unit_recalibration_flag_id, unit_id, unit_scheduled_id, last_calibration_certificate_id, unit_recalibration_schedule_type_id, recal_type_counter, recal_start_date, recal_end_date) VALUES
+INSERT INTO unit_recalibration_schedule (unit_recalibration_flag_id, unit_id, unit_scheduled_id, last_calibration_certificate_id, unit_recalibration_schedule_type_id, recal_type_counter, recal_start_date, recal_end_date) VALUES
     (1, 1, 1, NULL, 1, 12, '2023-11-01', '2023-11-05'),
     (2, 2, 2, NULL, 2, 13, '2023-11-02', '2023-11-06'),
     (3, 3, 3, NULL, 3, 14, '2023-11-03', '2023-11-07'),
@@ -387,7 +387,7 @@ INSERT INTO app_rentals.unit_recalibration_schedule (unit_recalibration_flag_id,
     (20, 20, 20, NULL, 4, 31, '2023-11-20', '2023-11-24');
 
 -- Sample data for unit_calibration_certificate table
-INSERT INTO app_rentals.unit_calibration_certificate (unit_id, certification_date, recalibration_advised_date, calibration_signature) VALUES
+INSERT INTO unit_calibration_certificate (unit_id, certification_date, recalibration_advised_date, calibration_signature) VALUES
     (1, '2023-11-01', '2023-11-02', 'Signature1'),
     (2, '2023-11-02', '2023-11-03', 'Signature2'),
     (3, '2023-11-03', '2023-11-04', 'Signature3'),
@@ -410,45 +410,45 @@ INSERT INTO app_rentals.unit_calibration_certificate (unit_id, certification_dat
     (20, '2023-11-20', '2023-11-21', 'Signature20');
 
 -- Update last_calibration_certificate_id in unit table to reference unit_calibration_certificate rows
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 1 WHERE unit_id = 1;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 2 WHERE unit_id = 2;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 3 WHERE unit_id = 3;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 4 WHERE unit_id = 4;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 5 WHERE unit_id = 5;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 6 WHERE unit_id = 6;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 7 WHERE unit_id = 7;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 8 WHERE unit_id = 8;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 9 WHERE unit_id = 9;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 10 WHERE unit_id = 10;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 11 WHERE unit_id = 11;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 12 WHERE unit_id = 12;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 13 WHERE unit_id = 13;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 14 WHERE unit_id = 14;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 15 WHERE unit_id = 15;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 16 WHERE unit_id = 16;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 17 WHERE unit_id = 17;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 18 WHERE unit_id = 18;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 19 WHERE unit_id = 19;
-UPDATE app_rentals.unit SET last_calibration_certificate_id = 20 WHERE unit_id = 20;
+UPDATE unit SET last_calibration_certificate_id = 1 WHERE unit_id = 1;
+UPDATE unit SET last_calibration_certificate_id = 2 WHERE unit_id = 2;
+UPDATE unit SET last_calibration_certificate_id = 3 WHERE unit_id = 3;
+UPDATE unit SET last_calibration_certificate_id = 4 WHERE unit_id = 4;
+UPDATE unit SET last_calibration_certificate_id = 5 WHERE unit_id = 5;
+UPDATE unit SET last_calibration_certificate_id = 6 WHERE unit_id = 6;
+UPDATE unit SET last_calibration_certificate_id = 7 WHERE unit_id = 7;
+UPDATE unit SET last_calibration_certificate_id = 8 WHERE unit_id = 8;
+UPDATE unit SET last_calibration_certificate_id = 9 WHERE unit_id = 9;
+UPDATE unit SET last_calibration_certificate_id = 10 WHERE unit_id = 10;
+UPDATE unit SET last_calibration_certificate_id = 11 WHERE unit_id = 11;
+UPDATE unit SET last_calibration_certificate_id = 12 WHERE unit_id = 12;
+UPDATE unit SET last_calibration_certificate_id = 13 WHERE unit_id = 13;
+UPDATE unit SET last_calibration_certificate_id = 14 WHERE unit_id = 14;
+UPDATE unit SET last_calibration_certificate_id = 15 WHERE unit_id = 15;
+UPDATE unit SET last_calibration_certificate_id = 16 WHERE unit_id = 16;
+UPDATE unit SET last_calibration_certificate_id = 17 WHERE unit_id = 17;
+UPDATE unit SET last_calibration_certificate_id = 18 WHERE unit_id = 18;
+UPDATE unit SET last_calibration_certificate_id = 19 WHERE unit_id = 19;
+UPDATE unit SET last_calibration_certificate_id = 20 WHERE unit_id = 20;
 
 -- Update last_calibration_certificate_id in unit_recalibration_schedule table to reference unit_calibration_certificate rows
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 1 WHERE unit_recalibration_schedule_id = 1;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 2 WHERE unit_recalibration_schedule_id = 2;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 3 WHERE unit_recalibration_schedule_id = 3;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 4 WHERE unit_recalibration_schedule_id = 4;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 5 WHERE unit_recalibration_schedule_id = 5;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 6 WHERE unit_recalibration_schedule_id = 6;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 7 WHERE unit_recalibration_schedule_id = 7;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 8 WHERE unit_recalibration_schedule_id = 8;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 9 WHERE unit_recalibration_schedule_id = 9;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 10 WHERE unit_recalibration_schedule_id = 10;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 11 WHERE unit_recalibration_schedule_id = 11;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 12 WHERE unit_recalibration_schedule_id = 12;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 13 WHERE unit_recalibration_schedule_id = 13;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 14 WHERE unit_recalibration_schedule_id = 14;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 15 WHERE unit_recalibration_schedule_id = 15;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 16 WHERE unit_recalibration_schedule_id = 16;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 17 WHERE unit_recalibration_schedule_id = 17;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 18 WHERE unit_recalibration_schedule_id = 18;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 19 WHERE unit_recalibration_schedule_id = 19;
-UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 20 WHERE unit_recalibration_schedule_id = 20;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 1 WHERE unit_recalibration_schedule_id = 1;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 2 WHERE unit_recalibration_schedule_id = 2;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 3 WHERE unit_recalibration_schedule_id = 3;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 4 WHERE unit_recalibration_schedule_id = 4;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 5 WHERE unit_recalibration_schedule_id = 5;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 6 WHERE unit_recalibration_schedule_id = 6;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 7 WHERE unit_recalibration_schedule_id = 7;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 8 WHERE unit_recalibration_schedule_id = 8;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 9 WHERE unit_recalibration_schedule_id = 9;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 10 WHERE unit_recalibration_schedule_id = 10;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 11 WHERE unit_recalibration_schedule_id = 11;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 12 WHERE unit_recalibration_schedule_id = 12;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 13 WHERE unit_recalibration_schedule_id = 13;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 14 WHERE unit_recalibration_schedule_id = 14;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 15 WHERE unit_recalibration_schedule_id = 15;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 16 WHERE unit_recalibration_schedule_id = 16;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 17 WHERE unit_recalibration_schedule_id = 17;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 18 WHERE unit_recalibration_schedule_id = 18;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 19 WHERE unit_recalibration_schedule_id = 19;
+UPDATE unit_recalibration_schedule SET last_calibration_certificate_id = 20 WHERE unit_recalibration_schedule_id = 20;

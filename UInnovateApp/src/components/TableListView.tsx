@@ -120,7 +120,7 @@ console.log(getTable[0])
 
   useEffect(() => {
     getScripts();
-  }, []);
+  });
 
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
