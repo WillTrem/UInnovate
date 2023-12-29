@@ -33,9 +33,11 @@ const buttonStyle = {
 };
 
 const inputStyle = {
-  padding: 8,
-  borderRadius: 4,
-  border: "1px solid #ccc",
+  display: "flex",
+  flexDirection: "column", // This will make the children (input elements) stack vertically
+  alignItems: "flex-start",
+  width: "65%",
+
 };
 
 const TableListView: React.FC<TableListViewProps> = ({
@@ -54,6 +56,14 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
+  const [showTable, setShowTable] = useState<boolean>(false);
+  const name = table.table_name + "T";
+  const Local = localStorage.getItem(name);
+  if (Local == null) {
+    const nulll = Local
+  }
+  const getTable = JSON.parse(Local!);
+
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -126,7 +136,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-  }, []);
+  });
 
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
@@ -291,6 +301,14 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsPopupVisible(true);
   };
 
+  useEffect(() => {
+    if (showTable) {
+      setTimeout(() => {
+        setShowTable(false);
+      }, 1000); // Adjust the delay as needed
+    }
+  }, [openPanel]);
+
   return (
     <div>
       <div
@@ -411,7 +429,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       <SlidingPanel
         type={"right"}
         isOpen={openPanel}
-        size={30}
+        size={50}
         panelContainerClassName="panel-container"
         backdropClicked={() => setOpenPanel(false)}
       >
@@ -448,9 +466,27 @@ const TableListView: React.FC<TableListViewProps> = ({
             >
               Save
             </Button>
+
           </div>
+
         </div>
-        <LookUpTableDetails table={table} />
+        {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none"? (
+          <div></div>
+        ) : showTable ? (
+          <div style={{ paddingBottom: '2em' }}>
+            <LookUpTableDetails table={table} />
+          </div>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginLeft: 15 }}
+            onClick={() => setShowTable(true)}
+          >
+            Show Look up Table
+          </Button>
+        )}
+
 
       </SlidingPanel>
 

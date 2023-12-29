@@ -37,7 +37,7 @@ export const ScriptingTab = () => {
 
   useEffect(() => {
     getScripts();
-  }, []);
+  });
 
   const handleAddScript = async () => {
     setShowModal(true);
