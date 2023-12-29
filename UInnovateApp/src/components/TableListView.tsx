@@ -29,11 +29,9 @@ const buttonStyle = {
 };
 
 const inputStyle = {
-  display: "flex",
-  flexDirection: "column", // This will make the children (input elements) stack vertically
-  alignItems: "flex-start",
-  width: "65%",
-
+  padding: 8,
+  borderRadius: 4,
+  border: "1px solid #ccc",
 };
 
 const TableListView: React.FC<TableListViewProps> = ({
@@ -46,15 +44,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const { config } = useConfig();
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
-  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(null);
-  const [showTable, setShowTable] = useState<boolean>(false);
-  const name = table.table_name + "T";
-  const Local = localStorage.getItem(name);
-  if (Local == null) {
-    return (<></>)
-  }
-  const getTable = JSON.parse(Local!);
-console.log(getTable[0])
+  const [currentPrimaryKey, setCurrentPrimaryKey] =  useState<string | null>(null);
 
 
   const getRows = async () => {
@@ -87,7 +77,7 @@ console.log(getTable[0])
   };
 
   useEffect(() => {
-
+    
     getRows();
   }, [table]);
 
@@ -127,17 +117,17 @@ console.log(getTable[0])
     const nonEditableColumn = table.columns.find(column => column.is_editable === false);
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
+      }
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
       [event.target.name]: event.target.value,
     }));
-
+    
   };
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-
+    
     event.preventDefault();
 
     const schema = vmd.getTableSchema(table.table_name);
@@ -147,7 +137,7 @@ console.log(getTable[0])
     }
 
     const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
-
+    
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -161,7 +151,7 @@ console.log(getTable[0])
   };
 
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
-
+  
   // }
 
 
@@ -171,8 +161,8 @@ console.log(getTable[0])
       if (!config) {
         return null;
       }
-
-
+  
+    
 
       const columnDisplayType = config.find(
         (element) =>
@@ -181,8 +171,8 @@ console.log(getTable[0])
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-
-
+     
+      
 
 
       if (
@@ -191,9 +181,9 @@ console.log(getTable[0])
         localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
 
       }
-      if (column.references_table != null) {
-        const string = column.column_name + "L"
-        localStorage.setItem(string, currentRow.row[column.column_name] as string);
+      if(column.references_table != null){
+       const string= column.column_name + "L"
+      localStorage.setItem(string, currentRow.row[column.column_name] as string);
       }
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
@@ -209,23 +199,23 @@ console.log(getTable[0])
       } else if (columnDisplayType.value == "number") {
         return (
           <NumericFormat
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          name={column.column_name}
+          type="text"
+          style={inputStyle}
+          onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "longtext") {
         return (
           <textarea
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          name={column.column_name}
+          type="text"
+          style={inputStyle}
+          onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "datetime") {
@@ -256,24 +246,16 @@ console.log(getTable[0])
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
-    if (!table.has_details_view) {
+    if (!table.has_details_view) { 
       return;
-    }
-    setOpenPanel(true);
+    }   
+    setOpenPanel(true); 
   };
 
   // Function to open the popup
   const handleAddRowClick = () => {
     setIsPopupVisible(true);
   };
-
-  useEffect(() => {
-    if (showTable) {
-      setTimeout(() => {
-        setShowTable(false);
-      }, 1000); // Adjust the delay as needed
-    }
-  }, [openPanel]);
 
   return (
     <div>
@@ -341,7 +323,7 @@ console.log(getTable[0])
       <SlidingPanel
         type={"right"}
         isOpen={openPanel}
-        size={50}
+        size={30}
         panelContainerClassName="panel-container"
         backdropClicked={() => setOpenPanel(false)}
       >
@@ -364,44 +346,26 @@ console.log(getTable[0])
             </div>
           </form>
           <div>
-            <Button
-              variant="contained"
-              style={buttonStyle}
-              onClick={() => setOpenPanel(false)}
-            >
-              close
-            </Button>
-            <Button
-              variant="contained"
-              style={{ marginTop: 20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10 }}
-              onClick={handleFormSubmit}
-            >
-              Save
-            </Button>
-
-          </div>
-
-        </div>
-        {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none"? (
-          <div></div>
-        ) : showTable ? (
-          <div style={{ paddingBottom: '2em' }}>
-            <LookUpTableDetails table={table} />
-          </div>
-        ) : (
           <Button
             variant="contained"
-            color="primary"
-            style={{ marginLeft: 15 }}
-            onClick={() => setShowTable(true)}
+            style={buttonStyle}
+            onClick={() => setOpenPanel(false)}
           >
-            Show Look up Table
+            close
           </Button>
-        )}
-
+          <Button
+          variant="contained"
+          style={{marginTop:20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10}}
+          onClick={handleFormSubmit}
+          >
+            Save
+          </Button>
+          </div>
+        </div>
+        <LookUpTableDetails table={table}/>
 
       </SlidingPanel>
-
+      
     </div>
   );
 };

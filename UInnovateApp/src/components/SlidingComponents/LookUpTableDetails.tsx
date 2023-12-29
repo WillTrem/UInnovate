@@ -12,7 +12,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
   const name = table.table_name + "T";
   const Local = localStorage.getItem(name);
   if (Local == null) {
-    return (<></>)
+    return (<>no</>)
   }
   else {
     const [Columns, setColumns] = useState<Column[][]>([]);
@@ -25,7 +25,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
       num = num - 1;
 
       if (getTable[num] == 'none') {
-        return (<></>);
+        return (<>nothing</>);
       }
       else {
         const tableName = getTable[num];
@@ -89,12 +89,13 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
        
         return (
           <div>
-            {tableName} look up table:
+            Here is the connectionID: {connectionID}
+
             <div>
               {/* Here is the table name: {toolsColumn} */}
             </div>
             {Columns[num + 1] && rows[num + 1] ? (
-              <TableComponent striped bordered hover style={{marginBottom:'2em'}}>
+              <TableComponent striped bordered hover>
                 <thead>
                   <tr>
                     {Columns[num + 1].map((column) => {

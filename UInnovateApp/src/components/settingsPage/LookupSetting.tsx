@@ -22,6 +22,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
 
 
+  // console.log(table.table_name +" " +table.lookup_tables[-1]+"        hhhhhhhhhhhhhhhiiiiiiiiiiiiiiiii");
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -39,12 +40,15 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     return (<></>)
   }
   else {
+    console.log(count + "        hhhhhhhhhhhhhhhiiiiiiiiiiiiiiiii");
 
     let defaultRow = new Row({});
     for (let i = -1; i < count - 1; i++) {
+      console.log(table.table_name + " I looped " + i + " times")
 
       defaultRow[i] = 'none';
     }
+    console.log(defaultRow[0] + "        bruh");
 
 
     const name = table.table_name + "T";
@@ -67,7 +71,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       return item ? JSON.parse(item) : null;
     }
 
-  
+    // useEffect(() => {
+    //   Object.entries(SelectInput).map(([key, value]) => {
+    //     console.log(`Key: ${key}, Value: ${value}`);
+    //   });
+    // } , [SelectInput]);
+
+    // console.log(SelectInput["customers"])
     const MyButtonComponent = ({ buttonIndex }: { buttonIndex: number }) => {
       return (
         <div >
@@ -110,7 +120,12 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       localStorage.setItem(name, JSON.stringify(SelectInput));
     }, [SelectInput]);
 
-    
+    console.log(SelectInput[0] + "        heyyyyyyyyyrrrbrhrhrhrhrhyyyyyyyyy")
+    // useEffect(() => {
+
+    //   console.log(table.lookup_tables[-1]+"        heyyyyyyyyyyyyyyyyyy");
+    // }, [SelectInput]);
+
 
 
     const HandleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
