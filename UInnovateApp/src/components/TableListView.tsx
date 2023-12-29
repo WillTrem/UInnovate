@@ -10,13 +10,17 @@ import { ConfigProperty } from "../virtualmodel/ConfigProperties";
 import { NumericFormat } from "react-number-format";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import RRow from 'react-bootstrap/Row';
+import CCol from 'react-bootstrap/Col';
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { Switch, Button, Typography, Select, MenuItem, FormControl, FormHelperText, SelectChangeEvent } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
+import Pagination from '@mui/material/Pagination';
 
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { current } from "@reduxjs/toolkit";
+import { Container } from "react-bootstrap";
 
 interface TableListViewProps {
   table: Table;
@@ -46,7 +50,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(null);
   const defaultOrderValue = table.columns.find(column => column.is_editable === false)?.column_name;
-  const [OrderValue, setOrderValue] = useState(defaultOrderValue || 'bruh');
+  const [OrderValue, setOrderValue] = useState(defaultOrderValue || '');
+  const [PaginationValue, setPaginationValue] = useState<number>(50);
+  const [PageNumber, setPageNumber] = useState<number>(1);
+  const [Plength, setLength] = useState<number>(0);
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -56,12 +63,19 @@ const TableListView: React.FC<TableListViewProps> = ({
       return;
     }
 
-    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
       schema.schema_name,
       table.table_name,
-      OrderValue
+      OrderValue,
+      PaginationValue,
+      PageNumber
     );
 
+    const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
+      schema.schema_name,
+      table.table_name
+    );
+    const count = await countAccessor.fetchRows();
     const lines = await data_accessor.fetchRows();
 
     // Filter the rows to only include the visible columns
@@ -73,7 +87,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
       return new Row(filteredRowData);
     });
-
+    setLength(count?.length || 0);
     setColumns(attributes);
     setRows(filteredRows);
   };
@@ -81,7 +95,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   useEffect(() => {
 
     getRows();
-  }, [table, OrderValue]);
+  }, [table, OrderValue, PageNumber, PaginationValue]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -114,11 +128,22 @@ const TableListView: React.FC<TableListViewProps> = ({
     getScripts();
   }, []);
 
+  //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
     setOrderValue(event.target.value as string);
-    // getRows();
-    
+
   }
+
+  //For when pagination limitm changes
+  const handlePaginationchange = (event: SelectChangeEvent) => {
+    setPaginationValue(event.target.value as number);
+
+  }
+
+  //For when page number changes
+  const handlePageChange = (event, value) => {
+    setPageNumber(value);
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nonEditableColumn = table.columns.find(column => column.is_editable === false);
@@ -347,6 +372,40 @@ const TableListView: React.FC<TableListViewProps> = ({
           })}
         </tbody>
       </TableComponent>
+      <div >
+        <Container>
+          <RRow  >
+            <CCol sm={5} className="mx-auto" style={{ textAlign: 'right' }}>
+              <Pagination
+                count={Math.ceil(Plength / PaginationValue)}
+                page={PageNumber}
+                onChange={handlePageChange}
+              />
+            </CCol>
+            <CCol sm={2} className="ml-auto" style={{ textAlign: 'right' }}>
+
+              <FormControl size="small">
+                <Select
+                  value={PaginationValue}
+                  displayEmpty
+                  onChange={handlePaginationchange}
+
+
+                >
+                  <MenuItem value={1}>1 per page</MenuItem>
+                  <MenuItem value={5}>5 per page</MenuItem>
+                  <MenuItem value={25}>25 per page</MenuItem>
+                  <MenuItem value={30}>30 per page</MenuItem>
+                  <MenuItem value={50}>50 per page</MenuItem>
+                </Select>
+              </FormControl>
+            </CCol>
+          </RRow>
+
+        </Container>
+
+      </div>
+
       <SlidingPanel
         type={"right"}
         isOpen={openPanel}

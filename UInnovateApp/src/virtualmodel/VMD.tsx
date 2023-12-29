@@ -262,11 +262,11 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to fetch rows from a table
   // return type : DataAccessor
-  getRowsDataAccessor(schema_name: string, table_name: string, order_by: string) {
+  getRowsDataAccessor(schema_name: string, table_name: string) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
     if (schema && table) {
-      return new DataAccessor(table.url+"?order="+order_by, {
+      return new DataAccessor(table.url, {
         "Accept-Profile": schema.schema_name,
       });
     } else {
@@ -274,6 +274,21 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
+  // return type : DataAccessor
+  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, Limit:number, Page:number) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    const limit = Limit.toString();
+    const page = ((Page-1)*Limit).toString();
+    if (schema && table) {
+      return new DataAccessor(table.url+"?order="+order_by+"&limit="+limit+"&offset="+page, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
   // Method to return a data accessor object to fetch rows from a table For Look up Table
   // return type : DataAccessor
   getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue:string) {
