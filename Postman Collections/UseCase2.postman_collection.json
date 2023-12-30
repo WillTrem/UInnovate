@@ -469,30 +469,6 @@
 						"url": "http://localhost:3000/rpc/assign_ticket"
 					},
 					"response": []
-				},
-				{
-					"name": "add_ticket_tag",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Profile",
-								"value": "app_service_support",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"p_ticket_id\":\"1\",\r\n    \"p_tag_name\":\"MyNewTag\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "http://localhost:3000/rpc/remove_ticket_tag"
-					},
-					"response": []
 				}
 			]
 		}
