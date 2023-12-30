@@ -604,7 +604,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           </Button>
         )}
 
-
+        <LookUpTableDetails table={table} />
       </SlidingPanel>
       
     </div>
