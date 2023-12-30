@@ -6,24 +6,24 @@ while [ $# -gt 0 ]; do
   case $1 in
     -r)
       r_flag=true
-      /bin/bash ../refresh_database.sh
+      /bin/bash ./refresh_database.sh
       ;;
     -c)
       if [ "$r_flag" != true ]; then
         echo "Error: -c must be used after -r."
         exit 1
       fi
-      /bin/bash ../import_config_from_json.sh -i $2
+      /bin/bash ./import_config_from_json.sh -i $2
       ;;
     -n | --newProject)
-      /bin/bash ../refresh_database.sh
-      /bin/bash ../export_config_to_json.sh -o $2
+      /bin/bash ./refresh_database.sh
+      /bin/bash ./export_config_to_json.sh -o $2
       ;;
     -i | --importConfigs)
-      /bin/bash ../import_config_from_json.sh -i $2
+      /bin/bash ./import_config_from_json.sh -i $2
       ;;
     -e | --exportConfigs)
-      /bin/bash ../export_config_to_json.sh -o $2
+      /bin/bash ./export_config_to_json.sh -o $2
       ;;
     \?)
       echo "Invalid option: -$2" >&2
