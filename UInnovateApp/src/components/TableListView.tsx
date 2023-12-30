@@ -29,22 +29,6 @@ import Pagination from "@mui/material/Pagination";
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { current } from "@reduxjs/toolkit";
 import { Container } from "react-bootstrap";
-import "../styles/TableListViewStyle.css";
-import {
-  LocalizationProvider,
-  StaticDateTimePicker,
-} from "@mui/x-date-pickers";
-import { CategoriesDisplayType } from "../virtualmodel/Config";
-import { MuiTelInput } from "mui-tel-input";
-import {
-  MenuButtonBold,
-  MenuButtonItalic,
-  MenuControlsContainer,
-  MenuDivider,
-  MenuSelectHeading,
-  RichTextEditor,
-  type RichTextEditorRef,
-} from "mui-tiptap";
 
 interface TableListViewProps {
   table: Table;
@@ -98,15 +82,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       return;
     }
 
-    const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
-      schema.schema_name,
-      table.table_name,
-      OrderValue,
-      PaginationValue,
-      PageNumber
-    );
-
-    const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
       schema.schema_name,
       table.table_name
     );
@@ -178,8 +154,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-    getConfigs();
-  }, [inputValues]);
+  }, []);
 
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
@@ -197,17 +172,12 @@ const TableListView: React.FC<TableListViewProps> = ({
     setPageNumber(value);
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    name: string,
-    isPhone: string
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
     );
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
     }
     let eventName: string | undefined = undefined;
     let eventValue: string | undefined = undefined;
@@ -238,8 +208,10 @@ const TableListView: React.FC<TableListViewProps> = ({
       console.error("Schema not found");
       return;
     }
-    const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
 
+    const storedPrimaryKeyValue = localStorage.getItem(
+      "currentPrimaryKeyValue"
+    );
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -262,7 +234,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       if (!appConfigValues) {
         return null;
       }
-      const columnDisplayType = appConfigValues.find(
+
+      const columnDisplayType = config.find(
         (element) =>
           element.column == column.column_name &&
           element.table == table.table_name &&
@@ -564,7 +537,10 @@ const TableListView: React.FC<TableListViewProps> = ({
             <Button
               variant="contained"
               style={buttonStyle}
-              onClick={() => setOpenPanel(false)}
+              onClick={() => {
+                setCurrentPhone("");
+                setOpenPanel(false);
+              }}
             >
               close
             </Button>
@@ -582,26 +558,9 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
-        {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none"? (
-          <div></div>
-        ) : showTable ? (
-          <div style={{ paddingBottom: '2em' }}>
-            <LookUpTableDetails table={table} />
-          </div>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginLeft: 15 }}
-            onClick={() => setShowTable(true)}
-          >
-            Show Look up Table
-          </Button>
-        )}
 
-
+        <LookUpTableDetails table={table} />
       </SlidingPanel>
-
     </div>
   );
 };
