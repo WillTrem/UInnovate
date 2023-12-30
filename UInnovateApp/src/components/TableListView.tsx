@@ -110,7 +110,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       schema.schema_name,
       table.table_name
     );
-    const count = await countAccessor.fetchRows();
+
     const lines = await data_accessor.fetchRows();
 
     // Filter the rows to only include the visible columns
@@ -121,14 +121,14 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
       return new Row(filteredRowData);
     });
-    setLength(count?.length || 0);
+
     setColumns(attributes);
     setRows(filteredRows);
   };
 
   useEffect(() => {
     getRows();
-  }, [table, OrderValue, PageNumber, PaginationValue]);
+  }, [table]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -248,8 +248,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
-    data_accessor.updateRow().then(() => getRows());
-    setInputValues({});
+    data_accessor.updateRow().then((res) => {
+      getRows();
+    });
     setOpenPanel(false);
   };
 
@@ -424,14 +425,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsPopupVisible(true);
   };
 
-  useEffect(() => {
-    if (showTable) {
-      setTimeout(() => {
-        setShowTable(false);
-      }, 1000); // Adjust the delay as needed
-    }
-  }, [openPanel]);
-
   return (
     <div>
       <div
@@ -543,7 +536,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       <SlidingPanel
         type={"right"}
         isOpen={openPanel}
-        size={50}
+        size={30}
         panelContainerClassName="panel-container"
         backdropClicked={() => {
           setOpenPanel(false);
@@ -589,8 +582,6 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
-
-        <LookUpTableDetails table={table} />
         {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none"? (
           <div></div>
         ) : showTable ? (
