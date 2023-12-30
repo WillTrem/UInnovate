@@ -12,7 +12,10 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  LocalizationProvider,
+  StaticDateTimePicker,
+} from "@mui/x-date-pickers";
 import {
   Switch,
   Button,
@@ -27,8 +30,18 @@ import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
 
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
-import { current } from "@reduxjs/toolkit";
 import { Container } from "react-bootstrap";
+import { MuiTelInput } from "mui-tel-input";
+import {
+  RichTextEditorRef,
+  RichTextEditor,
+  MenuControlsContainer,
+  MenuSelectHeading,
+  MenuDivider,
+  MenuButtonBold,
+  MenuButtonItalic,
+} from "mui-tiptap";
+import { CategoriesDisplayType } from "../virtualmodel/Config";
 
 interface TableListViewProps {
   table: Table;
@@ -82,11 +95,19 @@ const TableListView: React.FC<TableListViewProps> = ({
       return;
     }
 
-    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
+      schema.schema_name,
+      table.table_name,
+      OrderValue,
+      PaginationValue,
+      PageNumber
+    );
+
+    const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
       schema.schema_name,
       table.table_name
     );
-
+    const count = await countAccessor.fetchRows();
     const lines = await data_accessor.fetchRows();
 
     // Filter the rows to only include the visible columns
@@ -97,14 +118,14 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
       return new Row(filteredRowData);
     });
-
+    setLength(count?.length || 0);
     setColumns(attributes);
     setRows(filteredRows);
   };
 
   useEffect(() => {
     getRows();
-  }, [table]);
+  }, [table, OrderValue, PageNumber, PaginationValue]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -154,7 +175,8 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-  }, []);
+    getConfigs();
+  }, [inputValues]);
 
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
@@ -220,9 +242,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
-    data_accessor.updateRow().then((res) => {
-      getRows();
-    });
+    data_accessor.updateRow().then(() => getRows());
+    setInputValues({});
     setOpenPanel(false);
   };
 
@@ -235,7 +256,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         return null;
       }
 
-      const columnDisplayType = config.find(
+      const columnDisplayType = appConfigValues.find(
         (element) =>
           element.column == column.column_name &&
           element.table == table.table_name &&
@@ -398,6 +419,14 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsPopupVisible(true);
   };
 
+  useEffect(() => {
+    if (showTable) {
+      setTimeout(() => {
+        setShowTable(false);
+      }, 1000); // Adjust the delay as needed
+    }
+  }, [openPanel]);
+
   return (
     <div>
       <div
@@ -558,6 +587,23 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
+        {localStorage.getItem(table.table_name + "T") === null ||
+        getTable[-1] == "none" ? (
+          <div></div>
+        ) : showTable ? (
+          <div style={{ paddingBottom: "2em" }}>
+            <LookUpTableDetails table={table} />
+          </div>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginLeft: 15 }}
+            onClick={() => setShowTable(true)}
+          >
+            Show Look up Table
+          </Button>
+        )}
 
         <LookUpTableDetails table={table} />
       </SlidingPanel>
