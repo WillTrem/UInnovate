@@ -10,9 +10,17 @@ import { ConfigProperty } from "../virtualmodel/ConfigProperties";
 import { NumericFormat } from "react-number-format";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import RRow from 'react-bootstrap/Row';
+import CCol from 'react-bootstrap/Col';
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { Switch, Button, Typography } from "@mui/material";
+import { Switch, Button, Typography, Select, MenuItem, FormControl, FormHelperText, SelectChangeEvent } from "@mui/material";
+import AddRowPopup from "./AddRowPopup";
+import Pagination from '@mui/material/Pagination';
+
+import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
+import { current } from "@reduxjs/toolkit";
+import { Container } from "react-bootstrap";
 
 interface TableListViewProps {
   table: Table;
@@ -25,9 +33,11 @@ const buttonStyle = {
 };
 
 const inputStyle = {
-  padding: 8,
-  borderRadius: 4,
-  border: "1px solid #ccc",
+  display: "flex",
+  flexDirection: "column", // This will make the children (input elements) stack vertically
+  alignItems: "flex-start",
+  width: "65%",
+
 };
 
 const TableListView: React.FC<TableListViewProps> = ({
@@ -38,38 +48,64 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const { config } = useConfig();
+  const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+  const [inputValues, setInputValues] = useState<Row>({});
+  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(null);
+  const defaultOrderValue = table.columns.find(column => column.is_editable === false)?.column_name;
+  const [OrderValue, setOrderValue] = useState(defaultOrderValue || '');
+  const [PaginationValue, setPaginationValue] = useState<number>(50);
+  const [PageNumber, setPageNumber] = useState<number>(1);
+  const [Plength, setLength] = useState<number>(0);
+  const [showTable, setShowTable] = useState<boolean>(false);
+  const name = table.table_name + "T";
+  const Local = localStorage.getItem(name);
+  if (Local == null) {
+    const nulll = Local
+  }
+  const getTable = JSON.parse(Local!);
+
+
+  const getRows = async () => {
+    const attributes = table.getVisibleColumns();
+    const schema = vmd.getTableSchema(table.table_name);
+
+    if (!schema) {
+      return;
+    }
+
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
+      schema.schema_name,
+      table.table_name,
+      OrderValue,
+      PaginationValue,
+      PageNumber
+    );
+
+    const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
+      schema.schema_name,
+      table.table_name
+    );
+    const count = await countAccessor.fetchRows();
+    const lines = await data_accessor.fetchRows();
+
+    // Filter the rows to only include the visible columns
+    const filteredRows = lines?.map((row) => {
+      const filteredRowData: { [key: string]: string | number | boolean } =
+        {};
+      attributes.forEach((column) => {
+        filteredRowData[column.column_name] = row[column.column_name];
+      });
+      return new Row(filteredRowData);
+    });
+    setLength(count?.length || 0);
+    setColumns(attributes);
+    setRows(filteredRows);
+  };
 
   useEffect(() => {
-    const getRows = async () => {
-      const attributes = table.getVisibleColumns();
-      const schema = vmd.getTableSchema(table.table_name);
 
-      if (!schema) {
-        return;
-      }
-
-      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-        schema.schema_name,
-        table.table_name
-      );
-
-      const lines = await data_accessor.fetchRows();
-
-      // Filter the rows to only include the visible columns
-      const filteredRows = lines?.map((row) => {
-        const filteredRowData: { [key: string]: string | number | boolean } =
-          {};
-        attributes.forEach((column) => {
-          filteredRowData[column.column_name] = row[column.column_name];
-        });
-        return new Row(filteredRowData);
-      });
-
-      setColumns(attributes);
-      setRows(filteredRows);
-    };
     getRows();
-  }, [table]);
+  }, [table, OrderValue, PageNumber, PaginationValue]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -100,43 +136,132 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getScripts();
-  });
+  }, []);
+
+  //For when order changes
+  const handleOrderchange = (event: SelectChangeEvent) => {
+    setOrderValue(event.target.value as string);
+
+  }
+
+  //For when pagination limitm changes
+  const handlePaginationchange = (event: SelectChangeEvent) => {
+    setPaginationValue(event.target.value as number);
+    setPageNumber(1);
+
+
+  }
+
+  //For when page number changes
+  const handlePageChange = (event, value) => {
+    setPageNumber(value);
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const nonEditableColumn = table.columns.find(column => column.is_editable === false);
+    if (nonEditableColumn) {
+      setCurrentPrimaryKey(nonEditableColumn.column_name);
+    }
+
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [event.target.name]: event.target.value,
+    }));
+
+  };
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
+    event.preventDefault();
+
+    const schema = vmd.getTableSchema(table.table_name);
+    if (!schema) {
+      console.error("Schema not found");
+      return;
+    }
+
+    const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
+
+
+    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+      schema.schema_name,
+      table.table_name,
+      inputValues,
+      currentPrimaryKey as string,
+      storedPrimaryKeyValue as string
+    );
+    data_accessor.updateRow().then(() => getRows());
+    setInputValues({});
+    setOpenPanel(false);
+    
+  };
+
+  // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
+
+  // }
+
+
 
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!config) {
         return null;
       }
+
+
+
       const columnDisplayType = config.find(
         (element) =>
           element.column == column.column_name &&
           element.table == table.table_name &&
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
+
+
+
+
+
+      if (
+        column.is_editable == false) {
+
+        localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
+
+      }
+      if (column.references_table != null) {
+        const string = column.column_name + "L"
+        localStorage.setItem(string, currentRow.row[column.column_name] as string);
+      }
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
           <input
-            value={(currentRow.row[column.column_name] as string) || ""}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            name={column.column_name}
             type="text"
             style={inputStyle}
-            readOnly
+            onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "number") {
         return (
           <NumericFormat
-            value={(currentRow.row[column.column_name] as number) || ""}
-            allowLeadingZeros
-            thousandSeparator=","
-            readOnly
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            name={column.column_name}
+            type="text"
+            style={inputStyle}
+            onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "longtext") {
         return (
           <textarea
-            placeholder="Type anything…"
-            value={(currentRow.row[column.column_name] as string) || ""}
-            readOnly
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            name={column.column_name}
+            type="text"
+            style={inputStyle}
+            onChange={handleInputChange}
           />
         );
       } else if (columnDisplayType.value == "datetime") {
@@ -167,8 +292,24 @@ const TableListView: React.FC<TableListViewProps> = ({
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
+    if (!table.has_details_view) {
+      return;
+    }
     setOpenPanel(true);
   };
+
+  // Function to open the popup
+  const handleAddRowClick = () => {
+    setIsPopupVisible(true);
+  };
+
+  useEffect(() => {
+    if (showTable) {
+      setTimeout(() => {
+        setShowTable(false);
+      }, 1000); // Adjust the delay as needed
+    }
+  }, [openPanel]);
 
   return (
     <div>
@@ -180,9 +321,20 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          <Button style={buttonStyle} variant="contained">
-            Add Row
+          <Button
+            style={buttonStyle}
+            variant="contained"
+            onClick={() => handleAddRowClick()}
+          >
+            Add {table.table_name}
           </Button>
+          {isPopupVisible && (
+            <AddRowPopup
+              onClose={() => setIsPopupVisible(false)}
+              table={table}
+              columns={table.getColumns()}
+            />
+          )}
         </div>
         <div>
           {scripts?.map((script) => {
@@ -196,6 +348,26 @@ const TableListView: React.FC<TableListViewProps> = ({
               </Button>
             );
           })}
+
+        </div>
+        <div>
+          <FormControl size="small">
+            <h6 style={{ textAlign: 'left' }}>Ordering</h6>
+            <Select
+              value={OrderValue}
+              displayEmpty
+              onChange={handleOrderchange}
+
+            >
+              {table.columns.map((column, index) => (
+                <MenuItem value={column.column_name} key={index}>
+                  {column.column_name}
+                </MenuItem>
+              ))}
+
+            </Select>
+          </FormControl>
+
         </div>
       </div>
       <TableComponent striped bordered hover>
@@ -222,10 +394,44 @@ const TableListView: React.FC<TableListViewProps> = ({
           })}
         </tbody>
       </TableComponent>
+      <div >
+        <Container>
+          <RRow  >
+            <CCol sm={5} className="mx-auto" style={{ textAlign: 'right' }}>
+              <Pagination
+                count={Math.ceil(Plength / PaginationValue)}
+                page={PageNumber}
+                onChange={handlePageChange}
+              />
+            </CCol>
+            <CCol sm={2} className="ml-auto" style={{ textAlign: 'right' }}>
+
+              <FormControl size="small">
+                <Select
+                  value={PaginationValue}
+                  displayEmpty
+                  onChange={handlePaginationchange}
+
+
+                >
+                  <MenuItem value={1}>1 per page</MenuItem>
+                  <MenuItem value={5}>5 per page</MenuItem>
+                  <MenuItem value={25}>25 per page</MenuItem>
+                  <MenuItem value={30}>30 per page</MenuItem>
+                  <MenuItem value={50}>50 per page</MenuItem>
+                </Select>
+              </FormControl>
+            </CCol>
+          </RRow>
+
+        </Container>
+
+      </div>
+
       <SlidingPanel
         type={"right"}
         isOpen={openPanel}
-        size={30}
+        size={50}
         panelContainerClassName="panel-container"
         backdropClicked={() => setOpenPanel(false)}
       >
@@ -247,15 +453,45 @@ const TableListView: React.FC<TableListViewProps> = ({
               </label>
             </div>
           </form>
+          <div>
+            <Button
+              variant="contained"
+              style={buttonStyle}
+              onClick={() => setOpenPanel(false)}
+            >
+              close
+            </Button>
+            <Button
+              variant="contained"
+              style={{ marginTop: 20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10 }}
+              onClick={handleFormSubmit}
+            >
+              Save
+            </Button>
+
+          </div>
+
+        </div>
+        {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none"? (
+          <div></div>
+        ) : showTable ? (
+          <div style={{ paddingBottom: '2em' }}>
+            <LookUpTableDetails table={table} />
+          </div>
+        ) : (
           <Button
             variant="contained"
-            style={buttonStyle}
-            onClick={() => setOpenPanel(false)}
+            color="primary"
+            style={{ marginLeft: 15 }}
+            onClick={() => setShowTable(true)}
           >
-            close
+            Show Look up Table
           </Button>
-        </div>
+        )}
+
+
       </SlidingPanel>
+
     </div>
   );
 };

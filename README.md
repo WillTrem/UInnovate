@@ -187,13 +187,18 @@ Additionally, you can run the script `npx cypress open`
 ## Refresh Database Script
 
 The refresh_database.sh script allows for the application developer to
-refresh the schema, tables, and data within the database. To run the
+refresh the schema, tables, and data within the database fo each different use cases. To run the
 refresh script, follow the steps below:
 
 1. Open a terminal
 2. Change directories to the UInnovate folder where the refresh_database.sh is located
 3. From a terminal, run:
-   💡 .\refresh_database.sh
+
+   💡 *.\refresh_database.sh*  for the default use case 1 folder.
+
+   💡 *.\refresh_database.sh --folder '/useCase2'*  for instance to change to use case 2 folder.
+
+   💡 *.\refresh_database.sh -f '/useCase2'* will yield to the same result as *./refresh_database.sh --folder '/useCase2'*
 
 4. A log file will be generated to see everything that was done to the DB and any errors that occurred
 
@@ -245,4 +250,10 @@ You should be able to see the mkdocs website: http://localhost:8080/
 You can go also through docker to open it but don't use http://0.0.0.0:8000/
 
 If you want to add pages, they should go under documentation/docs.
+
+## PostGOAT Website Deployment
+
+Link to repo: https://github.com/MariaR001/PostGoat 
+<br>
+Link to website: https://uinnovate.netlify.app/ 
 

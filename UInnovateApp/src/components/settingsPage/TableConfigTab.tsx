@@ -10,6 +10,8 @@ import { ColumnConfig } from "./ColumnConfig";
 import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ConfigValueType } from "../../contexts/ConfigContext";
+import LookUpTable from "./LookupSetting";
+import { Menu } from "react-pro-sidebar";
 
 interface TableItemProps {
   table: Table;
@@ -17,6 +19,8 @@ interface TableItemProps {
 
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
+  
+
 
   if (!schema) {
     throw new Error("Schema not found for table: " + table.table_name);
@@ -42,11 +46,18 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     await updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
   };
 
+  const handleToggleDetails = async () => {
+    const isVisible = table.getHasDetailsView();
+    table.setHasDetailsView(!isVisible);
+    await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
+  };
+
   const handleDisplayTypeSelect = async (event: SelectChangeEvent<string>) => {
     const newDisplayType = event.target.value;
     table.setDisplayType(newDisplayType);
     await updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
   };
+
 
   return (
     <>
@@ -54,32 +65,49 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
       <Card>
         <Card.Body>
           <Card.Title>Table specific configuration </Card.Title>
-          <div className="config-pane">
-            <div className="d-flex flex-row align-items-center">
-              <span className="px-3">Visible</span>
-              <Switch
-                defaultChecked={table.getVisibility()}
-                onChange={handleToggle}
-                data-testid="visibility-switch"
-              />
-            </div>
-            <FormControl size="small">
-              <h6>Display Type</h6>
-              <Select
-                data-testid="display-type-table-config"
-                value={displayType}
-                onChange={handleDisplayTypeSelect}
-                displayEmpty
-              >
-                {/* Temporary fix for the tests, but these should be accessed with
+          <div className="overall-config-panel">
+
+            <div className="config-pane">
+              <div className="d-flex flex-row align-items-center">
+                <span className="px-5" style={{ width: '200px' }}>Visible</span>
+                <Switch
+                  defaultChecked={table.getVisibility()}
+                  onChange={handleToggle}
+                  data-testid="visibility-switch"
+                />
+              </div>
+              <FormControl size="small">
+                <h6>Display Type</h6>
+                <Select
+                  data-testid="display-type-table-config"
+                  value={displayType}
+                  onChange={handleDisplayTypeSelect}
+                  displayEmpty
+                >
+                  {/* Temporary fix for the tests, but these should be accessed with
                 TableDisplayType.listView */}
-                <MenuItem value={"list"}>List View</MenuItem>
-                <MenuItem value={"enum"}>Enum View</MenuItem>
-              </Select>
-              <FormHelperText>
-                To customize the default layout of the table
-              </FormHelperText>
-            </FormControl>
+                  <MenuItem value={"list"}>List View</MenuItem>
+                  <MenuItem value={"enum"}>Enum View</MenuItem>
+                </Select>
+                <FormHelperText>
+                  To customize the default layout of the table
+                </FormHelperText>
+              </FormControl>
+            </div>
+
+            <div className="details-views">
+            <span className="px-1" style={{ width: '180px' }}>Details View</span>
+            <Switch
+                  defaultChecked={table.getHasDetailsView()}
+                  onChange={handleToggleDetails}
+                  data-testid="detail-visibility-switch"
+                />
+
+                </div>  
+              <div className="details-view">
+                <LookUpTable table={table}/>
+            </div>
+            
           </div>
         </Card.Body>
       </Card>
