@@ -1,6 +1,7 @@
 # Use case 2 Documentation
 
-##  Database Functions
+## Database Functions
+
 ### create_service_ticket
 
 #### Parameters
@@ -11,6 +12,10 @@
 - **p_status_id (INT):** The ID of the ticket status.
 - **p_location_id (INT):** The ID of the issue location.
 - **p_description (TEXT):** The description of the service ticket.
+
+#### Returns
+
+- **VOID**
 
 #### Description
 
@@ -26,6 +31,10 @@ Creates a new service ticket in the `app_service_support.service_tickets` table.
 - **p_user_id (TEXT):** The ID of the user adding the comment.
 - **p_comment_text (TEXT):** The text of the comment.
 
+#### Returns
+
+- **TEXT:** A success message if the comment is added successfully, otherwise an error message.
+
 #### Description
 
 Adds a comment to a service ticket in the `app_service_support.ticket_comments` table.
@@ -38,6 +47,10 @@ Adds a comment to a service ticket in the `app_service_support.ticket_comments` 
 
 - **p_ticket_id (INT):** The ID of the service ticket.
 - **p_assigned_user_id (TEXT):** The ID of the user to whom the ticket is assigned.
+
+#### Returns
+
+- **TEXT:** A success message if the ticket is assigned successfully, otherwise an error message.
 
 #### Description
 
