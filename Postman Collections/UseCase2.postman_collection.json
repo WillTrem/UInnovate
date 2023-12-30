@@ -1,0 +1,500 @@
+{
+	"info": {
+		"_postman_id": "1657565b-0905-4aff-ae56-147e67f5e7e0",
+		"name": "UseCase2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "1764125"
+	},
+	"item": [
+		{
+			"name": "service_support",
+			"item": [
+				{
+					"name": "Locations",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json()",
+									"//Fetch all rentals and validate data structure",
+									"",
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Each rental should have the correct structure\", function() {",
+									"    const rentals = pm.response.json();",
+									"    rentals.forEach(rental => {",
+									"        pm.expect(rental).to.have.property('rentalid');",
+									"        pm.expect(rental).to.have.property('toolid');",
+									"        pm.expect(rental).to.have.property('customerid');",
+									"        pm.expect(rental).to.have.property('rentaldate');",
+									"        pm.expect(rental).to.have.property('duedate');",
+									"        pm.expect(rental).to.have.property('actualreturndate');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response should contain 5 rows\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    pm.expect(data.length).to.equal(5)",
+									"})",
+									"",
+									"pm.test(\"Rental with ID 4 should have rental date equal to 2023-09-18\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    var rentalIDFour = data.find((element) => element.rentalid == 4)",
+									"    pm.expect(rentalIDFour.rentaldate).to.equal(\"2023-09-18\")",
+									"",
+									"})",
+									"",
+									"",
+									"",
+									"// Error response scenario for non-existant record",
+									"",
+									"// pm.test(\"Status code is 404\", function() {",
+									"//     pm.response.to.have.status(404);",
+									"// });",
+									"",
+									"// pm.test(\"Error message is returned\", function() {",
+									"//     const responseBody = pm.response.json();",
+									"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+									"// });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"url": "localhost:3000/locations"
+					},
+					"response": []
+				},
+				{
+					"name": "service_tickets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json()",
+									"//Fetch all rentals and validate data structure",
+									"",
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Each rental should have the correct structure\", function() {",
+									"    const rentals = pm.response.json();",
+									"    rentals.forEach(rental => {",
+									"        pm.expect(rental).to.have.property('rentalid');",
+									"        pm.expect(rental).to.have.property('toolid');",
+									"        pm.expect(rental).to.have.property('customerid');",
+									"        pm.expect(rental).to.have.property('rentaldate');",
+									"        pm.expect(rental).to.have.property('duedate');",
+									"        pm.expect(rental).to.have.property('actualreturndate');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response should contain 5 rows\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    pm.expect(data.length).to.equal(5)",
+									"})",
+									"",
+									"pm.test(\"Rental with ID 4 should have rental date equal to 2023-09-18\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    var rentalIDFour = data.find((element) => element.rentalid == 4)",
+									"    pm.expect(rentalIDFour.rentaldate).to.equal(\"2023-09-18\")",
+									"",
+									"})",
+									"",
+									"",
+									"",
+									"// Error response scenario for non-existant record",
+									"",
+									"// pm.test(\"Status code is 404\", function() {",
+									"//     pm.response.to.have.status(404);",
+									"// });",
+									"",
+									"// pm.test(\"Error message is returned\", function() {",
+									"//     const responseBody = pm.response.json();",
+									"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+									"// });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"url": "localhost:3000/service_tickets"
+					},
+					"response": []
+				},
+				{
+					"name": "ticket_comments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json()",
+									"//Fetch all rentals and validate data structure",
+									"",
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Each rental should have the correct structure\", function() {",
+									"    const rentals = pm.response.json();",
+									"    rentals.forEach(rental => {",
+									"        pm.expect(rental).to.have.property('rentalid');",
+									"        pm.expect(rental).to.have.property('toolid');",
+									"        pm.expect(rental).to.have.property('customerid');",
+									"        pm.expect(rental).to.have.property('rentaldate');",
+									"        pm.expect(rental).to.have.property('duedate');",
+									"        pm.expect(rental).to.have.property('actualreturndate');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response should contain 5 rows\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    pm.expect(data.length).to.equal(5)",
+									"})",
+									"",
+									"pm.test(\"Rental with ID 4 should have rental date equal to 2023-09-18\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    var rentalIDFour = data.find((element) => element.rentalid == 4)",
+									"    pm.expect(rentalIDFour.rentaldate).to.equal(\"2023-09-18\")",
+									"",
+									"})",
+									"",
+									"",
+									"",
+									"// Error response scenario for non-existant record",
+									"",
+									"// pm.test(\"Status code is 404\", function() {",
+									"//     pm.response.to.have.status(404);",
+									"// });",
+									"",
+									"// pm.test(\"Error message is returned\", function() {",
+									"//     const responseBody = pm.response.json();",
+									"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+									"// });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"url": "localhost:3000/ticket_comments"
+					},
+					"response": []
+				},
+				{
+					"name": "ticket_assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json()",
+									"//Fetch all rentals and validate data structure",
+									"",
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Each rental should have the correct structure\", function() {",
+									"    const rentals = pm.response.json();",
+									"    rentals.forEach(rental => {",
+									"        pm.expect(rental).to.have.property('rentalid');",
+									"        pm.expect(rental).to.have.property('toolid');",
+									"        pm.expect(rental).to.have.property('customerid');",
+									"        pm.expect(rental).to.have.property('rentaldate');",
+									"        pm.expect(rental).to.have.property('duedate');",
+									"        pm.expect(rental).to.have.property('actualreturndate');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response should contain 5 rows\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    pm.expect(data.length).to.equal(5)",
+									"})",
+									"",
+									"pm.test(\"Rental with ID 4 should have rental date equal to 2023-09-18\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    var rentalIDFour = data.find((element) => element.rentalid == 4)",
+									"    pm.expect(rentalIDFour.rentaldate).to.equal(\"2023-09-18\")",
+									"",
+									"})",
+									"",
+									"",
+									"",
+									"// Error response scenario for non-existant record",
+									"",
+									"// pm.test(\"Status code is 404\", function() {",
+									"//     pm.response.to.have.status(404);",
+									"// });",
+									"",
+									"// pm.test(\"Error message is returned\", function() {",
+									"//     const responseBody = pm.response.json();",
+									"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+									"// });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"url": "localhost:3000/ticket_assignments"
+					},
+					"response": []
+				},
+				{
+					"name": "ticket_assignments",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json()",
+									"//Fetch all rentals and validate data structure",
+									"",
+									"pm.test(\"Status code is 200\", function() {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Each rental should have the correct structure\", function() {",
+									"    const rentals = pm.response.json();",
+									"    rentals.forEach(rental => {",
+									"        pm.expect(rental).to.have.property('rentalid');",
+									"        pm.expect(rental).to.have.property('toolid');",
+									"        pm.expect(rental).to.have.property('customerid');",
+									"        pm.expect(rental).to.have.property('rentaldate');",
+									"        pm.expect(rental).to.have.property('duedate');",
+									"        pm.expect(rental).to.have.property('actualreturndate');",
+									"    });",
+									"});",
+									"",
+									"",
+									"pm.test(\"Response should contain 5 rows\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    pm.expect(data.length).to.equal(5)",
+									"})",
+									"",
+									"pm.test(\"Rental with ID 4 should have rental date equal to 2023-09-18\", function() {",
+									"    pm.response.to.not.be.error;",
+									"    pm.response.to.have.jsonBody()",
+									"    var rentalIDFour = data.find((element) => element.rentalid == 4)",
+									"    pm.expect(rentalIDFour.rentaldate).to.equal(\"2023-09-18\")",
+									"",
+									"})",
+									"",
+									"",
+									"",
+									"// Error response scenario for non-existant record",
+									"",
+									"// pm.test(\"Status code is 404\", function() {",
+									"//     pm.response.to.have.status(404);",
+									"// });",
+									"",
+									"// pm.test(\"Error message is returned\", function() {",
+									"//     const responseBody = pm.response.json();",
+									"//     pm.expect(responseBody.message).to.eql(\"Record not found.\");",
+									"// });",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"url": "localhost:3000/ticket_assignments"
+					},
+					"response": []
+				},
+				{
+					"name": "get_assigned_tickets",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_assigned_user_id\":\"user2@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/get_assigned_tickets"
+					},
+					"response": []
+				},
+				{
+					"name": "get_ticket_comments",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_ticket_id\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/get_ticket_comments"
+					},
+					"response": []
+				},
+				{
+					"name": "assign_ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_ticket_id\": 4,\r\n    \"p_assigned_user_id\": \"user35@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/assign_ticket"
+					},
+					"response": []
+				},
+				{
+					"name": "add_ticket_comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_assigned_user_id\":\"user2@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/add_ticket_comment"
+					},
+					"response": []
+				},
+				{
+					"name": "add_ticket_tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_ticket_id\":\"1\",\r\n    \"p_tag_name\":\"MyNewTag\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/remove_ticket_tag"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
