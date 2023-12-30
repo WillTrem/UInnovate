@@ -5,19 +5,39 @@ import CheckIcon from "@mui/icons-material/Check";
 import TableComponent from "react-bootstrap/Table";
 import "../../styles/TableComponent.css";
 import "../../styles/UserManagementTab.css";
-import vmd from "../../virtualmodel/VMD";
-import React, { useState } from "react";
+import vmd, { UserData } from "../../virtualmodel/VMD";
+import React, { useEffect, useState } from "react";
 import AddUserModal from "./AddUserModal";
+import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 
 
 
 // Component containing the Users Management tab of the Settings page
 const UserManagementTab = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
+	const [users, setUsers] = useState<Row[]>([]);
+
+	const getUsers = async () => {
+		const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
+			"meta",
+			"user_info"
+		);
+
+		const rows = await data_accessor.fetchRows();
+		if (rows) {
+			setUsers(rows);
+		}
+	}
+
+	useEffect(() => {
+		getUsers();
+	}, [])
 
 	function handleOnClick() {
 		setModalOpen(true);
 	}
+
+
 
 	return (
 		<div>
@@ -32,9 +52,9 @@ const UserManagementTab = () => {
 						<TableComponent bordered>
 							<thead>
 								<tr>
+									<th>Email Address</th>
 									<th>First Name</th>
 									<th>Last Name</th>
-									<th>Email Address</th>
 									<th>Role</th>
 									<th>Active</th>
 									<th>Schema Access</th>
@@ -42,7 +62,20 @@ const UserManagementTab = () => {
 							</thead>
 							<tbody>
 								{/* TODO: Use values from database table */}
-								<UserTableRow firstName="John" lastName="Doe" emailAddress="john.doe@email.com" role="admin" active schemaAccess={[]} />
+								{users && users.map((user, idx) => {
+									if (user) {
+										return <UserTableRow key={idx}
+											firstName={user["first_name"] as string}
+											lastName={user["last_name"] as string}
+											emailAddress={user["email"] as string}
+											role={user["role"] as string}
+											active={user["is_active"] as boolean}
+											schemaAccess={[]} />
+									}
+									return <React.Fragment key={idx} />
+
+								})}
+								{/* <UserTableRow firstName="John" lastName="Doe" emailAddress="john.doe@email.com" role="admin" active schemaAccess={[]} /> */}
 							</tbody>
 						</TableComponent>
 					</div>
@@ -52,7 +85,7 @@ const UserManagementTab = () => {
 				</Tab>
 
 			</Tabs>
-			<AddUserModal open={isModalOpen} setOpen={setModalOpen} data-testid="add-user-modal" />
+			<AddUserModal open={isModalOpen} setOpen={setModalOpen} getUsers={getUsers} data-testid="add-user-modal" />
 		</div>
 	)
 
@@ -75,9 +108,9 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 	};
 
 	return <tr>
-		<td>{firstName}</td>
-		<td>{lastName}</td>
 		<td>{emailAddress}</td>
+		<td>{firstName || "-"}</td>
+		<td>{lastName || "-"}</td>
 		<td>{role}</td>
 		<td>
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
