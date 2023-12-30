@@ -33,29 +33,57 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 
 
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table") AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "is_editable") AS 
 (
-    SELECT c.table_schema, c.table_name, c.column_name,  rc.referenced_table
+     
+     SELECT 
+        c.table_schema, 
+        c.table_name, 
+        c.column_name,  
+        rc.referenced_table,
+        CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable
     FROM information_schema.columns AS c
     LEFT JOIN 
     (
-        SELECT cl.relname as referee_table,  att.attname as referee_column, cl2.relname as referenced_table, att2.attname as referenced_column FROM pg_catalog.pg_constraint as co
-		LEFT JOIN pg_catalog.pg_class as cl
-		ON co.conrelid = cl.oid
-		LEFT JOIN pg_catalog.pg_class as cl2
-		ON co.confrelid = cl2.oid
-		LEFT JOIN pg_catalog.pg_attribute as att
-		ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
-		LEFT JOIN pg_catalog.pg_attribute as att2
-		ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
-		WHERE contype = 'f'
+        SELECT 
+            cl.relname as referee_table,  
+            att.attname as referee_column, 
+            cl2.relname as referenced_table, 
+            att2.attname as referenced_column 
+        FROM pg_catalog.pg_constraint as co
+        LEFT JOIN pg_catalog.pg_class as cl
+        ON co.conrelid = cl.oid
+        LEFT JOIN pg_catalog.pg_class as cl2
+        ON co.confrelid = cl2.oid
+        LEFT JOIN pg_catalog.pg_attribute as att
+        ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
+        LEFT JOIN pg_catalog.pg_attribute as att2
+        ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
+        WHERE contype = 'f'
     ) AS rc
     ON c.column_name = rc.referee_column AND c.table_name != rc.referenced_table
+    -- New LEFT JOIN for primary key references
+    LEFT JOIN 
+    (
+        SELECT 
+            cl.relname as table_name,  
+            att.attname as table_pkey
+        FROM pg_catalog.pg_constraint as co
+        LEFT JOIN pg_catalog.pg_class as cl
+        ON co.conrelid = cl.oid
+        LEFT JOIN pg_catalog.pg_attribute as att
+        ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
+        WHERE contype = 'p'
+    ) AS pk
+    ON c.table_name = pk.table_name
+    
     WHERE c.table_name IN 
     (
         SELECT "table" FROM meta.tables
     )
     ORDER BY c.table_schema, c.table_name
+	
+	 
 ) ;
 
 -- Creates a VIEW that shows all the views of the database

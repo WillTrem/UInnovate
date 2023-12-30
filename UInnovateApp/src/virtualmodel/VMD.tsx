@@ -174,7 +174,7 @@ class VirtualModelDefinition {
         }
 
         // Add column to the table object
-        table.addColumn(new Column(data.column), data.references_table);
+        table.addColumn(new Column(data.column), data.references_table, data.is_editable);
       });
 
       // Fetching all the VIEWS 
@@ -304,6 +304,39 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
+  // return type : DataAccessor
+  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, Limit:number, Page:number) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    const limit = Limit.toString();
+    const page = ((Page-1)*Limit).toString();
+    if (schema && table) {
+      return new DataAccessor(table.url+"?order="+order_by+"&limit="+limit+"&offset="+page, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+  // Method to return a data accessor object to fetch rows from a table For Look up Table
+  // return type : DataAccessor
+  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue:string) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    
+    if (schema && table) {
+      return new DataAccessor(table.url+ "?"+SearchKey+"=eq."+SearchValue, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+
+
+
   // Method to return a data accessor object to add a row to a table
   // return type : DataAccessor
   getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {
@@ -348,6 +381,27 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to update a row in a table
+  // return type : DataAccessor
+  getUpdateRowDataAccessorView(schema_name: string, table_name: string, row: Row, primarykey:string, primarykeyvalue:string) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+
+    if (schema && table) {
+      return new DataAccessor(
+        `${table.url}?${primarykey}=eq.${primarykeyvalue}`, // PostgREST URL for updating a row from its id
+        {
+          Prefer: "return=representation",
+          "Content-Type": "application/json",
+          "Content-Profile": schema_name,
+        },
+        undefined,
+        row
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
   // Method to return a data accessor object to upsert a set of rows in a table
   // return type : DataAccessor
   getUpsertDataAccessor(
@@ -448,6 +502,7 @@ export class Table {
   has_details_view: boolean;
   columns: Column[];
   url: string;
+  lookup_tables: Row;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -456,11 +511,15 @@ export class Table {
     this.has_details_view = true;
     this.columns = [];
     this.url = API_BASE_URL + table_name;
+    this.lookup_tables = {"-1":"none"}   ;
+    
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column, references_table: string) {
+  addColumn(column: Column, references_table: string, is_editable: boolean) {
     column.setReferenceTable(references_table);
+    column.setEditability(is_editable);
+    
     this.columns.push(column);
   }
 
@@ -535,6 +594,31 @@ export class Table {
   setHasDetailsView(has_details_view: boolean) {
     this.has_details_view = has_details_view;
   }
+
+  // Method to get the table's url
+  // return type : string
+  getURL() {
+    return this.url;
+  }
+
+  // Method to set the table's url
+  // return type : void
+  setURL(url: string) {
+    this.url = url;
+  }
+
+  // Method to get the table's lookup tables
+  // return type : Row
+  getLookupTables() {
+    return this.lookup_tables;
+  }
+
+  // Method to set the table's lookup tables
+  // return type : void
+  setLookupTables(lookup_tables: Row) {
+    this.lookup_tables = lookup_tables;
+  }
+  
 }
 
 
@@ -544,6 +628,7 @@ export class Column {
   is_visible: boolean;
   reqOnCreate: boolean;
   references_table: string;
+  is_editable: boolean;
 
 
   constructor(column_name: string) {
@@ -552,6 +637,7 @@ export class Column {
     this.is_visible = true;
     this.reqOnCreate = false;
     this.references_table = "";
+    this.is_editable = false;
   }
 
   // Method to set the column type
@@ -577,6 +663,19 @@ export class Column {
   getReferenceTable() {
     return this.references_table;
   }
+
+
+  // Method to set the column's editability
+  // return type : void
+  setEditability(is_editable: boolean) {
+    this.is_editable = is_editable;
+  }
+
+  // Method to get the column's editability
+  // return type : boolean
+  getEditability() {
+    return this.is_editable;
+  }
 }
 
 export class View {
@@ -601,11 +700,13 @@ interface ColumnData {
   table: string;
   column: string;
   references_table: string;
+  is_editable: boolean;
 }
 // Defining ViewData interface for type checking when calling /views with the API
 interface ViewData {
   schema: string;
   view: string;
+
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
