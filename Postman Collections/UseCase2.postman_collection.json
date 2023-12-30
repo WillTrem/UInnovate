@@ -399,6 +399,30 @@
 					"response": []
 				},
 				{
+					"name": "add_ticket_comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_assigned_user_id\":\"user2@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/add_ticket_comment"
+					},
+					"response": []
+				},
+				{
 					"name": "get_ticket_comments",
 					"request": {
 						"method": "POST",
@@ -443,30 +467,6 @@
 							}
 						},
 						"url": "http://localhost:3000/rpc/assign_ticket"
-					},
-					"response": []
-				},
-				{
-					"name": "add_ticket_comment",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Profile",
-								"value": "app_service_support",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"p_assigned_user_id\":\"user2@test.com\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": "http://localhost:3000/rpc/add_ticket_comment"
 					},
 					"response": []
 				},
