@@ -96,7 +96,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 							{/*TODO:  Should create the  list of roles from a db table*/}
 							<MenuItem value={"user"}>User</MenuItem>
 							<MenuItem value={"configurator"}>Configurator</MenuItem>
-							<MenuItem value={"admin"}>Admin</MenuItem>
+							<MenuItem value={"administrator"}>Admin</MenuItem>
 						</Select>
 					</label>
 				</div>
