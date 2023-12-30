@@ -12,10 +12,10 @@ mandatory_flag=false
 while getopts "o:" opt; do
   case $opt in
     o)
-      OUTPUT_FILE="./database/$OPTARG/appconfig_values.json"
+      OUTPUT_FILE=".././database/$OPTARG/appconfig_values.json"
       mandatory_flag=true
-      mkdir -p ./database/$OPTARG
-      touch ./database/$OPTARG/appconfig_values.json
+      mkdir -p .././database/$OPTARG
+      touch .././database/$OPTARG/appconfig_values.json
       ;;
     :)
       echo "Option -$OPTARG requires an argument." >&2
