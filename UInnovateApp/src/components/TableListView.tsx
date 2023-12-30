@@ -371,22 +371,14 @@ const TableListView: React.FC<TableListViewProps> = ({
         );
       } else if (columnDisplayType.value == "currency") {
         return (
-          <div>
-            <input
-              type="number"
-              name={column.column_name}
-              className="input"
-              value={currentRow.row[column.column_name]}
-              onChange={handleInputChange}
-            />
-            <select value={"Hello"} onChange={onChangeCurrency}>
-              {currencyOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
+          <input
+            type="number"
+            name={column.column_name}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            style={inputStyle}
+            onChange={handleInputChange}
+          />
         );
       } else if (columnDisplayType.value == "multiline_wysiwyg") {
         return (
