@@ -278,6 +278,14 @@ const TableListView: React.FC<TableListViewProps> = ({
           currentRow.row[column.column_name]
         );
       }
+
+      if (column.references_table != null) {
+        const string = column.column_name + "L";
+        localStorage.setItem(
+          string,
+          currentRow.row[column.column_name] as string
+        );
+      }
       if (
         !columnDisplayType ||
         columnDisplayType.value == "text" ||
