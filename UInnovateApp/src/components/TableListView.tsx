@@ -238,8 +238,10 @@ const TableListView: React.FC<TableListViewProps> = ({
       console.error("Schema not found");
       return;
     }
-    const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
 
+    const storedPrimaryKeyValue = localStorage.getItem(
+      "currentPrimaryKeyValue"
+    );
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -262,7 +264,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       if (!appConfigValues) {
         return null;
       }
-      const columnDisplayType = appConfigValues.find(
+      const columnDisplayType = appConfigValues?.find(
         (element) =>
           element.column == column.column_name &&
           element.table == table.table_name &&
@@ -564,7 +566,10 @@ const TableListView: React.FC<TableListViewProps> = ({
             <Button
               variant="contained"
               style={buttonStyle}
-              onClick={() => setOpenPanel(false)}
+              onClick={() => {
+                setCurrentPhone("");
+                setOpenPanel(false);
+              }}
             >
               close
             </Button>
@@ -601,7 +606,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
 
       </SlidingPanel>
-
+      
     </div>
   );
 };
