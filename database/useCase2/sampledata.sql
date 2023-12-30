@@ -29,17 +29,17 @@ INSERT INTO  app_service_support.locations (location_name) VALUES
     ('Location3');
 
 -- service tickets
-INSERT INTO  app_service_support.service_tickets (user_id, category_id, priority_id, status_id, location_id, description, created_at, updated_at, resolved_at) VALUES
-    ('user@test.com', 1, 1, 1, 1, 'UI issue in the dashboard', '2023-01-01 12:00:00', NULL, '2023-01-01 13:00:00'),
-    ('user2@test.com', 3, 2, 1, 1, 'Backend server error', '2023-01-02 10:30:00', NULL, '2023-01-02 11:45:00'),
-    ('user3@test.com', 2, 3, 1, 2, 'Trouble with database connection', '2023-01-03 15:45:00', NULL, '2023-01-03 16:30:00'),
-    ('user4@test.com', 1, 1, 1, 3, 'Cannot access user settings', '2023-01-04 08:20:00', NULL, '2023-01-04 09:50:00'),
-    ('user5@test.com', 4, 3, 1, 4, 'Production server down', '2023-01-05 14:00:00', NULL, '2023-01-05 15:45:00'),
-    ('user@test.com', 2, 2, 1, 1, 'Frontend styling issue', '2023-01-06 11:00:00', NULL, '2023-01-06 11:30:00'),
-    ('user2@test.com', 4, 1, 1, 1, 'Database query optimization', '2023-01-07 13:30:00', NULL, '2023-01-07 13:45:00'),
-    ('user3@test.com', 3, 2, 1, 2, 'Server performance degradation', '2023-01-08 09:45:00', NULL, '2023-01-08 10:30:00'),
-    ('user4@test.com', 2, 3, 1, 3, 'UI responsiveness problem', '2023-01-09 16:15:00', NULL, '2023-01-09 17:00:00'),
-    ('user5@test.com', 1, 1, 1, 4, 'Error in production deployment', '2023-01-10 07:30:00', NULL, '2023-01-10 08:15:00');
+INSERT INTO  app_service_support.service_tickets (category_id, priority_id, status_id, location_id, description, created_at, updated_at, resolved_at) VALUES
+    ( 1, 1, 1, 1, 'UI issue in the dashboard', '2023-01-01 12:00:00', NULL, '2023-01-01 13:00:00'),
+    ( 3, 2, 1, 1, 'Backend server error', '2023-01-02 10:30:00', NULL, '2023-01-02 11:45:00'),
+    ( 2, 3, 1, 2, 'Trouble with database connection', '2023-01-03 15:45:00', NULL, '2023-01-03 16:30:00'),
+    ( 1, 1, 1, 3, 'Cannot access user settings', '2023-01-04 08:20:00', NULL, '2023-01-04 09:50:00'),
+    ( 4, 3, 1, 4, 'Production server down', '2023-01-05 14:00:00', NULL, '2023-01-05 15:45:00'),
+    ( 2, 2, 1, 1, 'Frontend styling issue', '2023-01-06 11:00:00', NULL, '2023-01-06 11:30:00'),
+    ( 4, 1, 1, 1, 'Database query optimization', '2023-01-07 13:30:00', NULL, '2023-01-07 13:45:00'),
+    ( 3, 2, 1, 2, 'Server performance degradation', '2023-01-08 09:45:00', NULL, '2023-01-08 10:30:00'),
+    ( 2, 3, 1, 3, 'UI responsiveness problem', '2023-01-09 16:15:00', NULL, '2023-01-09 17:00:00'),
+    ( 1, 1, 1, 4, 'Error in production deployment', '2023-01-10 07:30:00', NULL, '2023-01-10 08:15:00');
 
 
 -- ticket comments

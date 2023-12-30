@@ -24,28 +24,58 @@ CREATE OR REPLACE FUNCTION app_service_support.add_ticket_comment(
     p_user_id TEXT,
     p_comment_text TEXT
 )
-RETURNS VOID AS
+RETURNS TEXT AS
 $$
 BEGIN
-    INSERT INTO app_service_support.ticket_comments(ticket_id, user_id, comment_text)
-    VALUES (p_ticket_id, p_user_id, p_comment_text);
+    -- Check if the ticket exists
+    IF EXISTS (
+        SELECT 1
+        FROM app_service_support.service_tickets
+        WHERE ticket_id = p_ticket_id
+    ) THEN
+        -- If the ticket exists, insert the comment
+        INSERT INTO app_service_support.ticket_comments(ticket_id, user_id, comment_text)
+        VALUES (p_ticket_id, p_user_id, p_comment_text);
+
+        -- Return a success message
+        RETURN format('Comment added to ticket %s by user %s successfully.', p_ticket_id, p_user_id);
+    ELSE
+        -- If the ticket does not exist, raise an exception and return an error message
+        RAISE EXCEPTION 'Ticket % does not exist. Cannot add comment.', p_ticket_id;
+    END IF;
 END;
 $$
 LANGUAGE plpgsql;
+
 
 -- Function to assign a service ticket to a user
 CREATE OR REPLACE FUNCTION app_service_support.assign_ticket(
     p_ticket_id INT,
     p_assigned_user_id TEXT
 )
-RETURNS VOID AS
+RETURNS TEXT AS
 $$
 BEGIN
-    INSERT INTO app_service_support.ticket_assignments(ticket_id, assigned_user_id)
-    VALUES (p_ticket_id, p_assigned_user_id);
+    -- Check if the ticket has not been assigned before
+    IF NOT EXISTS (
+        SELECT 1
+        FROM app_service_support.ticket_assignments
+        WHERE ticket_id = p_ticket_id
+    ) THEN
+        -- Insert the assignment
+        INSERT INTO app_service_support.ticket_assignments(ticket_id, assigned_user_id)
+        VALUES (p_ticket_id, p_assigned_user_id);
+
+        -- Return a success message
+        RETURN format('Ticket %s assigned to user %s successfully.', p_ticket_id, p_assigned_user_id);
+    ELSE
+        -- Raise an exception and return an error message
+        RAISE EXCEPTION 'Ticket % is already assigned to another user.', p_ticket_id;
+    END IF;
 END;
 $$
 LANGUAGE plpgsql;
+
 
 -- Function to retrieve all comments for a specific service ticket
 CREATE OR REPLACE FUNCTION app_service_support.get_ticket_comments(
@@ -60,8 +90,8 @@ RETURNS TABLE (
 $$
 BEGIN
     RETURN QUERY
-    SELECT comment_id, user_id, comment_text, created_at
-    FROM app_service_support.ticket_comments
+    SELECT tc.comment_id, tc.user_id, tc.comment_text, tc.created_at
+    FROM app_service_support.ticket_comments tc
     WHERE ticket_id = p_ticket_id;
 END;
 $$
@@ -73,7 +103,6 @@ CREATE OR REPLACE FUNCTION app_service_support.get_assigned_tickets(
 )
 RETURNS TABLE (
     ticket_id INT,
-    user_id TEXT,
     category_id INT,
     priority_id INT,
     status_id INT,
@@ -86,11 +115,11 @@ RETURNS TABLE (
 $$
 BEGIN
     RETURN QUERY
-    SELECT *
-    FROM app_service_support.service_tickets
-    WHERE ticket_id IN (
-        SELECT ticket_id
-        FROM app_service_support.ticket_assignments
+    SELECT st.*
+    FROM app_service_support.service_tickets st
+    WHERE st.ticket_id IN (
+        SELECT ta.ticket_id
+        FROM app_service_support.ticket_assignments ta
         WHERE assigned_user_id = p_assigned_user_id
     );
 END;

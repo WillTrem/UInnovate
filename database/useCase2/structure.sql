@@ -37,7 +37,6 @@ CREATE TABLE  app_service_support.locations (
 -- service tickets
 CREATE TABLE  app_service_support.service_tickets (
     ticket_id SERIAL PRIMARY KEY,
-    user_id TEXT NOT NULL,
     category_id INT REFERENCES  app_service_support.ticket_categories(category_id) NOT NULL,
     priority_id INT REFERENCES  app_service_support.ticket_priorities(priority_id) NOT NULL,
     status_id INT REFERENCES  app_service_support.ticket_status(status_id) NOT NULL,
@@ -95,3 +94,6 @@ GRANT ALL ON  app_service_support.ticket_assignments TO web_anon;
 GRANT ALL ON  app_service_support.system_logs TO web_anon;
 GRANT ALL ON  app_service_support.ticket_tags TO web_anon;
 GRANT ALL ON  app_service_support.service_ticket_tags TO web_anon;
+-- Grant necessary permissions on the sequence to the user
+GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_assignments_assignment_id_seq TO web_anon;
+GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_comments_comment_id_seq TO web_anon;
