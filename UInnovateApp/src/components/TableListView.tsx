@@ -147,6 +147,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   //For when pagination limitm changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
     setPaginationValue(event.target.value as number);
+    setPageNumber(1);
+
 
   }
 
