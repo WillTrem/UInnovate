@@ -274,6 +274,24 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to fetch rows from a table For Look up Table
+  // return type : DataAccessor
+  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue:string) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    
+    if (schema && table) {
+      return new DataAccessor(table.url+ "?"+SearchKey+"=eq."+SearchValue, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+
+
+
   // Method to return a data accessor object to add a row to a table
   // return type : DataAccessor
   getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {
@@ -395,6 +413,7 @@ export class Table {
   has_details_view: boolean;
   columns: Column[];
   url: string;
+  lookup_tables: Row;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -403,6 +422,7 @@ export class Table {
     this.has_details_view = true;
     this.columns = [];
     this.url = "http://localhost:3000/" + table_name;
+    this.lookup_tables = {"-1":"none"}   ;
     
   }
 
@@ -497,6 +517,19 @@ export class Table {
   setURL(url: string) {
     this.url = url;
   }
+
+  // Method to get the table's lookup tables
+  // return type : Row
+  getLookupTables() {
+    return this.lookup_tables;
+  }
+
+  // Method to set the table's lookup tables
+  // return type : void
+  setLookupTables(lookup_tables: Row) {
+    this.lookup_tables = lookup_tables;
+  }
+  
 }
 
 
