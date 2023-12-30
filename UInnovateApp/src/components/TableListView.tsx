@@ -220,7 +220,11 @@ const TableListView: React.FC<TableListViewProps> = ({
           currentRow.row[column.column_name]
         );
       }
-      if (!columnDisplayType || columnDisplayType.value == "text") {
+      if (
+        !columnDisplayType ||
+        columnDisplayType.value == "text" ||
+        columnDisplayType.value == "email"
+      ) {
         return (
           <input
             readOnly={column.is_editable === false ? true : false}
