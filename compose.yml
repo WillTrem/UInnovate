@@ -17,6 +17,7 @@ services:
       - "127.0.0.1:5432:5432"
     volumes:
       - ./init.sh:/docker-entrypoint-initdb.d/init.sh # Create the schemas, the custom views and the web_anon role
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # Creates the postgrest schema
       - db_data:/data/postgres
     networks:
       - backend
