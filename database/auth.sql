@@ -15,6 +15,15 @@ CREATE TABLE IF NOT EXISTS meta.user_schema_access (
 	schema text -- Add trigger to verify if schema exists in schema view
 );
 
+-- Creates a VIEW that gives the users information (except the passwords)
+CREATE OR REPLACE VIEW meta.user_info AS (
+		SELECT email,
+			first_name,
+			last_name,
+			role,
+			is_active
+		FROM authentication.users
+	);
 -- TRIGGER to ensure the role from the authentication.users table is an actual database role
 CREATE OR REPLACE FUNCTION authentication.check_role_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
 		SELECT 1
@@ -83,7 +92,7 @@ CREATE extension IF NOT EXISTS pgjwt;
 
 CREATE TYPE authentication.jwt_token AS (token text);
 
--- Function to test the generation of jwt tokens
+-- FUNCTION to test the generation of jwt tokens
 CREATE OR REPLACE FUNCTION meta.jwt_test() RETURNS authentication.jwt_token AS $$
 SELECT sign(
 		row_to_json(r),
@@ -165,6 +174,7 @@ IF EXISTS (
 	'User %L has already been signed up.',
 	signup.email
 );
+ELSE
 UPDATE authentication.users
 SET PASSWORD = signup.password,
 	first_name = signup.first_name,
@@ -234,10 +244,14 @@ CREATE role administrator;
 GRANT configurator TO administrator;
 
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO administrator;
+GRANT SELECT ON TABLE meta.user_info TO administrator;
 
 -- ADD user management-related capabilities HERE
 GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
+-- TO BE REMOVED AT SOME POINT
+GRANT SELECT ON TABLE meta.user_info TO web_anon;
+GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO web_anon;
 
 GRANT "user" TO authenticator;
 GRANT configurator TO authenticator;

@@ -8,7 +8,10 @@ jwt_secret="$(< /dev/random tr -dc A-Za-z0-9 | head -c32)"
 if grep -q "JWT_SECRET=" .env; then	
 	sed -i "s/^JWT_SECRET=.*/JWT_SECRET=$jwt_secret/" ".env"
 else
+	echo "" >> .env
+	echo "# Authentication" >> .env
+	echo "# YOU NEED TO DELETE YOUR DB VOLUMES IF YOU MODIFY THE JWT_SECRET" >> .env
 	echo "JWT_SECRET=$jwt_secret" >> .env
 fi
 
-echo "New JWT secret generated. Please restart your docker containers."
+echo "New JWT secret generated. Please delete all db volumes and recreate your containers."
