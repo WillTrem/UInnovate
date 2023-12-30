@@ -1,5 +1,8 @@
 import axios from "axios";
 import { DataAccessor, Row } from "./DataAccessor";
+import { FunctionAccessor } from "./FunctionAccessor";
+
+const API_BASE_URL = "http://localhost:3000/"; // TO CHANGE TO ENV VAR WHEN WE DEPLOY
 
 // VMD Class
 class VirtualModelDefinition {
@@ -145,13 +148,14 @@ class VirtualModelDefinition {
     if (this.data_fetched) {
       return;
     }
-    const col_url = "http://localhost:3000/columns";
+    const col_url = API_BASE_URL + "columns";
+    const views_url = API_BASE_URL + "views";
 
     try {
-      const response = await axios.get(col_url, {
+      let response = await axios.get(col_url, {
         headers: { "Accept-Profile": "meta" },
       });
-      const data = response.data;
+      let data = response.data;
       data.forEach((data: ColumnData) => {
         // Check if the specified schema already exists within the vmd object
         let schema = this.getSchema(data.schema);
@@ -172,6 +176,32 @@ class VirtualModelDefinition {
         // Add column to the table object
         table.addColumn(new Column(data.column), data.references_table, data.is_editable);
       });
+
+      // Fetching all the VIEWS 
+      response = await axios.get(views_url, {
+        headers: { "Accept-Profile": "meta" },
+      });
+
+      data = response.data;
+
+      data.forEach((data: ViewData) => {
+        // Check if the specified schema already exists within the vmd object
+        let schema = this.getSchema(data.schema);
+        if (!schema) {
+          // If schema does not exist, make it and add it to the vmd object
+          schema = new Schema(data.schema);
+          this.addSchema(schema);
+        }
+
+        // Check if view already exists within the schema object
+        let view = schema.getView(data.view);
+        if (!view) {
+          // If view does not exist, make it and add it to the schema object
+          view = new View(data.view);
+          schema.addView(view);
+        }
+      });
+
       this.data_fetched = true;
     } catch (error) {
       console.error("Error:", error);
@@ -186,7 +216,7 @@ class VirtualModelDefinition {
     if (this.config_data_fetched) {
       return;
     }
-    const config_url = "http://localhost:3000/appconfig_values";
+    const config_url = API_BASE_URL + "appconfig_values";
 
     try {
       const response = await axios.get(config_url, {
@@ -273,6 +303,39 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
+
+  // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
+  // return type : DataAccessor
+  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, Limit:number, Page:number) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    const limit = Limit.toString();
+    const page = ((Page-1)*Limit).toString();
+    if (schema && table) {
+      return new DataAccessor(table.url+"?order="+order_by+"&limit="+limit+"&offset="+page, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+  // Method to return a data accessor object to fetch rows from a table For Look up Table
+  // return type : DataAccessor
+  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue:string) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    
+    if (schema && table) {
+      return new DataAccessor(table.url+ "?"+SearchKey+"=eq."+SearchValue, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+
+
 
   // Method to return a data accessor object to add a row to a table
   // return type : DataAccessor
@@ -365,16 +428,51 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
+
+  // Method to return a data accessor to get all the rows from a view of a given schema
+  // return type: DataAccessor
+  getViewRowsDataAccessor(
+    schema_name: string,
+    view_name: string,
+  ): DataAccessor {
+    const schema = this.getSchema(schema_name);
+    const view = schema?.getView(view_name)
+    if (schema && view) {
+      return new DataAccessor(view.url, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or view does not exist");
+    }
+  }
+  // Method to return a function accessor to call a database function (stored procedure)
+  // return type: FunctionAccessor
+  getFunctionAccessor(
+    schema_name: string,
+    function_name: string,
+  ): FunctionAccessor {
+    const schema = this.getSchema(schema_name);
+    if (schema) {
+      const function_url = API_BASE_URL + "rpc/" + function_name;
+      return new FunctionAccessor(function_url, {
+        "Content-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema does not exist");
+    }
+  }
 }
 
 // Schema, Table, and Column classes
 export class Schema {
   schema_name: string;
   tables: Table[];
+  views: View[];
 
   constructor(schema_name: string) {
     this.schema_name = schema_name;
     this.tables = [];
+    this.views = [];
   }
 
   // Method to add a new table to the schema object
@@ -386,6 +484,15 @@ export class Schema {
   getTable(table_name: string) {
     return this.tables.find((table) => table.table_name === table_name);
   }
+  // Method to add a new view to the schema object
+  addView(view: View) {
+    this.views.push(view);
+  }
+
+  // Method to get a view object from the schema object
+  getView(view_name: string) {
+    return this.views.find((view) => view.view_name === view_name);
+  }
 }
 
 export class Table {
@@ -395,6 +502,7 @@ export class Table {
   has_details_view: boolean;
   columns: Column[];
   url: string;
+  lookup_tables: Row;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -402,7 +510,8 @@ export class Table {
     this.is_visible = true;
     this.has_details_view = true;
     this.columns = [];
-    this.url = "http://localhost:3000/" + table_name;
+    this.url = API_BASE_URL + table_name;
+    this.lookup_tables = {"-1":"none"}   ;
     
   }
 
@@ -497,6 +606,19 @@ export class Table {
   setURL(url: string) {
     this.url = url;
   }
+
+  // Method to get the table's lookup tables
+  // return type : Row
+  getLookupTables() {
+    return this.lookup_tables;
+  }
+
+  // Method to set the table's lookup tables
+  // return type : void
+  setLookupTables(lookup_tables: Row) {
+    this.lookup_tables = lookup_tables;
+  }
+  
 }
 
 
@@ -556,6 +678,17 @@ export class Column {
   }
 }
 
+export class View {
+  view_name: string;
+  url: string;
+
+  constructor(view_name: string) {
+    this.view_name = view_name;
+    this.url = API_BASE_URL + view_name;
+  }
+}
+
+
 export enum TableDisplayType {
   listView = "list",
   enumView = "enum",
@@ -569,6 +702,12 @@ interface ColumnData {
   references_table: string;
   is_editable: boolean;
 }
+// Defining ViewData interface for type checking when calling /views with the API
+interface ViewData {
+  schema: string;
+  view: string;
+
+}
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
 interface ConfigData {
@@ -578,6 +717,15 @@ interface ConfigData {
   property: string;
   value: string | boolean;
 }
+// Defining UserData interface for type checking when calling /user_info with the API
+export interface UserData {
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  role: string;
+  is_active: boolean;
+}
+
 
 // Creating a VMD object and exporting it
 const vmd = new VirtualModelDefinition();

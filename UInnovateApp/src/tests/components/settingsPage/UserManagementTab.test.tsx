@@ -37,4 +37,23 @@ describe("UserManagementTab component", () => {
 				expect(modalElement).not.toBeInTheDocument();
 			});
 		})
+		it("sends the request upon clicking the add user button", async () => {
+			render(<UserManagementTab />);
+			const button = screen.getByText("Add User");
+			fireEvent.click(button);
+
+			await waitFor(() => {
+				const modalElement = screen.getByTestId('add-user-modal');
+				expect(modalElement).toBeInTheDocument();
+			});
+
+			const createUserButton = screen.getByText("Add");
+
+			fireEvent.click(createUserButton);
+			// Expects to close the modal
+			await waitFor(() => {
+				const modalElement = screen.queryByTestId('add-user-modal');
+				expect(modalElement).not.toBeInTheDocument();
+			});
+		})
 })
