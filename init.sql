@@ -1,6 +1,6 @@
 -- CREATE ROLE authenticator LOGIN NOINHERIT NOCREATEDB NOCREATEROLE NOSUPERUSER;
 -- Creating role web_anon
-CREATE ROLE web_anon nologin;
+-- CREATE ROLE web_anon nologin;
 
 -- GRANT USAGE ON SCHEMA application TO web_anon;
 -- GRANT USAGE ON SCHEMA meta TO web_anon;
