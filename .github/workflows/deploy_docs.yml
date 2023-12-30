@@ -27,7 +27,7 @@ jobs:
 
     - name: Copy .md files from usecase to root documentation
       run: |
-        cp database/useCaseOne/*.md documentation/
+        cp database/useCase1/*.md documentation/
 
     - name: Check copied files
       run: |
