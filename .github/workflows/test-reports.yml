@@ -1,10 +1,9 @@
-name: Deploy MkDocs Documentation
+name: Deploy Tests Reports
 
 on:
   push:
-    path: './documentation/**'
     branches:
-      - main
+      - 144-tests-reports
 
 jobs:
   deploy_docs:
@@ -21,30 +20,17 @@ jobs:
     - name: Checkout UInnovate repository
       uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: |
-        pip install mkdocs
-
-    - name: Copy .md files from usecase to root documentation
-      run: |
-        cp database/useCase1/*.md documentation/
-
-    - name: Check copied files
+    - name: Check files
       run: |
         echo "Contents of documentation directory:"
-        ls -l documentation
-
-    - name: Build MkDocs documentation
-      working-directory: ./documentation
-      run: |
-        mkdocs build -d documentation
+        ls -l ./UInnovateApp/coverage/
 
     - name: Copy files to another repository
       uses: nkoppel/push-files-to-another-repository@v1.1.2      
       env:
         API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       with:
-        source-files: 'documentation' 'UInnovateApp/coverage/'
+        source-files: 'UInnovateApp/coverage/'
         destination-username: 'MariaR001'
         destination-repository: 'PostGOAT'
         destination-branch: 'main'
