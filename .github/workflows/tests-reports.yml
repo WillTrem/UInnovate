@@ -3,7 +3,7 @@ name: Deploy Tests Reports
 on:
   push:
     branches:
-      - 144-tests-reports
+      - 144-test-reports-deployment
 
 jobs:
   deploy_tests_reports:
