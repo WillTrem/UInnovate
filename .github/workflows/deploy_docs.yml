@@ -44,7 +44,7 @@ jobs:
       env:
         API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
       with:
-        source-files: 'documentation', "UInnovateApp/coverage/"
+        source-files: 'documentation' 'UInnovateApp/coverage/'
         destination-username: 'MariaR001'
         destination-repository: 'PostGOAT'
         destination-branch: 'main'
