@@ -9,13 +9,6 @@ GRANT USAGE ON SCHEMA  app_service_support TO web_anon;
 NOTIFY pgrst, 'reload config';
 NOTIFY pgrst, 'reload schema';
 
---  user information
-CREATE TABLE  app_service_support.users (
-    user_id SERIAL PRIMARY KEY,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(100) NOT NULL,
-    role VARCHAR(20) NOT NULL
-);
 
 --  ticket categories
 CREATE TABLE  app_service_support.ticket_categories (
@@ -44,7 +37,6 @@ CREATE TABLE  app_service_support.locations (
 -- service tickets
 CREATE TABLE  app_service_support.service_tickets (
     ticket_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES  app_service_support.users(user_id) NOT NULL,
     category_id INT REFERENCES  app_service_support.ticket_categories(category_id) NOT NULL,
     priority_id INT REFERENCES  app_service_support.ticket_priorities(priority_id) NOT NULL,
     status_id INT REFERENCES  app_service_support.ticket_status(status_id) NOT NULL,
@@ -58,8 +50,8 @@ CREATE TABLE  app_service_support.service_tickets (
 CREATE TABLE  app_service_support.ticket_comments (
     comment_id SERIAL PRIMARY KEY,
     ticket_id INT REFERENCES  app_service_support.service_tickets(ticket_id) NOT NULL,
-    user_id INT REFERENCES  app_service_support.users(user_id) NOT NULL,
-    comment_text TEXT NOT NULL,
+    user_id TEXT NOT NULL,
+    comment_TEXT TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
@@ -67,14 +59,14 @@ CREATE TABLE  app_service_support.ticket_comments (
 CREATE TABLE  app_service_support.ticket_assignments (
     assignment_id SERIAL PRIMARY KEY,
     ticket_id INT REFERENCES  app_service_support.service_tickets(ticket_id) NOT NULL,
-    assigned_user_id INT REFERENCES  app_service_support.users(user_id) NOT NULL,
+    assigned_user_id TEXT NOT NULL,
     assigned_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 
 --  system logs
 CREATE TABLE  app_service_support.system_logs (
     log_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES  app_service_support.users(user_id),
+    user_id TEXT,
     action_performed VARCHAR(100) NOT NULL,
     timestamp TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -92,7 +84,6 @@ CREATE TABLE  app_service_support.service_ticket_tags (
     PRIMARY KEY (ticket_id, tag_id)
 );
 
-GRANT ALL ON  app_service_support.users TO web_anon;
 GRANT ALL ON  app_service_support.ticket_categories TO web_anon;
 GRANT ALL ON  app_service_support.ticket_priorities TO web_anon;
 GRANT ALL ON  app_service_support.ticket_status TO web_anon;
@@ -103,3 +94,6 @@ GRANT ALL ON  app_service_support.ticket_assignments TO web_anon;
 GRANT ALL ON  app_service_support.system_logs TO web_anon;
 GRANT ALL ON  app_service_support.ticket_tags TO web_anon;
 GRANT ALL ON  app_service_support.service_ticket_tags TO web_anon;
+-- Grant necessary permissions on the sequence to the user
+GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_assignments_assignment_id_seq TO web_anon;
+GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_comments_comment_id_seq TO web_anon;
