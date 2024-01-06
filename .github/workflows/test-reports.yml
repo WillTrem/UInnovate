@@ -6,7 +6,7 @@ on:
       - 144-tests-reports
 
 jobs:
-  deploy_docs:
+  deploy tests reports:
     runs-on: ubuntu-latest
     env:
       working-directory: ./
