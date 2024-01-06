@@ -24,7 +24,7 @@ jobs:
       working-directory: ./UInnovateApp
       run: |
         echo "Contents of coverage directory:"
-        ls -l coverage/
+        ls -l coverage
 
     - name: Copy files to another repository
       uses: nkoppel/push-files-to-another-repository@v1.1.2      
