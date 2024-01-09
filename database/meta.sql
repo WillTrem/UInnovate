@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
 -- Creating the languages table
 CREATE TABLE IF NOT EXISTS meta.i18n_languages (
     id SERIAL PRIMARY KEY,
-    language_code VARCHAR(2) UNIQUE NOT NULL,
+    language_code VARCHAR(10) UNIQUE NOT NULL,
     language_name VARCHAR(100) NOT NULL
 );
 
@@ -255,5 +255,12 @@ GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
 GRANT ALL on meta.scripts TO web_anon;
+
+-- Granting necessary permissions for meta.i18n schema tables
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.i18n_languages TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.i18n_keys TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.i18n_values TO web_anon;
+GRANT SELECT ON meta.i18n_translation TO web_anon;
 
 NOTIFY pgrst, 'reload schema'
