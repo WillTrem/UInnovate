@@ -1,7 +1,7 @@
 import { Box, Button, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, Typography } from "@mui/material"
 import React, { ReactNode, useState } from "react"
 
-import "../../styles/AddUserModal.css"
+import "../../styles/Modals.css"
 import "../../styles/UserManagementTab.css"
 import vmd from "../../virtualmodel/VMD"
 import { Row } from "../../virtualmodel/DataAccessor"
@@ -72,51 +72,53 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 	// All the props from AddUserModal are directly passed down to the Modal component
 	return <Modal onClose={handleClose} {...props}>
 		<Box className='modal-container'>
-			<Typography variant="h5">Add new user</Typography>
-			<div className="form">
-				<div style={{ marginBottom: 10 }}>
-					<label>
-						Email
-						<input
-							type="text"
-							name="email"
-							onChange={handleInputChange}
-						/>
-					</label>
+			<div className="modal-content">
+				<Typography variant="h5">Add new user</Typography>
+				<div className="form">
+					<div style={{ marginBottom: 10 }}>
+						<label>
+							Email
+							<input
+								type="text"
+								name="email"
+								onChange={handleInputChange}
+							/>
+						</label>
+					</div>
+					<div style={{ marginBottom: 10 }}>
+						<label>
+							Role
+							<Select
+								name="role"
+								value={role}
+								onChange={(event) => handleRoleChange(event)}
+								displayEmpty
+							>
+								{/*TODO:  Should create the  list of roles from a db table*/}
+								<MenuItem value={"user"}>User</MenuItem>
+								<MenuItem value={"configurator"}>Configurator</MenuItem>
+								<MenuItem value={"administrator"}>Admin</MenuItem>
+							</Select>
+						</label>
+					</div>
+					<div style={{ marginBottom: 10 }}>
+						<label>
+							Schema Access
+							<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} />
+						</label>
+					</div>
 				</div>
-				<div style={{ marginBottom: 10 }}>
-					<label>
-						Role
-						<Select
-							name="role"
-							value={role}
-							onChange={(event) => handleRoleChange(event)}
-							displayEmpty
-						>
-							{/*TODO:  Should create the  list of roles from a db table*/}
-							<MenuItem value={"user"}>User</MenuItem>
-							<MenuItem value={"configurator"}>Configurator</MenuItem>
-							<MenuItem value={"administrator"}>Admin</MenuItem>
-						</Select>
-					</label>
+				<div className="button-container">
+					<Button
+						variant="contained"
+						onClick={handleFormSubmit}
+						sx={{ backgroundColor: "#404040" }}>
+						Add
+					</Button>
+					<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>
+						Cancel
+					</Button>
 				</div>
-				<div style={{ marginBottom: 10 }}>
-					<label>
-						Schema Access
-						<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} />
-					</label>
-				</div>
-			</div>
-			<div className="button-container">
-				<Button
-					variant="contained"
-					onClick={handleFormSubmit}
-					sx={{ backgroundColor: "#404040" }}>
-					Add
-				</Button>
-				<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>
-					Cancel
-				</Button>
 			</div>
 		</Box>
 	</Modal>

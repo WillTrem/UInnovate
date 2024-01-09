@@ -5,11 +5,18 @@ import Navbar from "react-bootstrap/Navbar";
 import { BsFillWrenchAdjustableCircleFill } from "react-icons/bs";
 import SchemaSelector from "./Schema/SchemaSelector";
 import DisplayType from "./Schema/DisplayType";
+import { useState } from 'react';
+import SignUpModal from './settingsPage/SignUpModal';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
+  const [showSignupModal, setShowSignupModal] = useState(true);
+
+  const handleClose = () => setShowSignupModal(false);
+  const handleShow = () => setShowSignupModal(true);
+
   return (
     <Navbar
       bg="dark"
@@ -44,6 +51,10 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }}>
               Settings
             </Nav.Link>
+            <Nav.Link onClick={handleShow} style={{ fontSize: "25px" }}>
+              Sign Up
+            </Nav.Link>
+            <SignUpModal open={showSignupModal} onClose={handleClose}/>
           </Nav>
         </Navbar.Collapse>
       </Container>
