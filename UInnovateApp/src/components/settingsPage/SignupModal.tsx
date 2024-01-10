@@ -29,7 +29,7 @@ const USER_NEVER_SIGNED_UP_CODE = "01000";
  * Modal for either signing up or logging in the system in an interactive manner.
  * @param props Same props as the MUI's Modal, ommiting the children.
  */
-const SignUpModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
+const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const [inputValues, setInputValues] = useState<Row>({})
 	const [currentState, setCurrentState] = useState<SignupState>(SignupState.INITIAL);
 
@@ -174,4 +174,4 @@ const SignUpModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	</Modal>
 }
 
-export default SignUpModal;
+export default SignupModal;
