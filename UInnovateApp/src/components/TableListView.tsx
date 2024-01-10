@@ -295,6 +295,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
+    if(table.stand_alone_details_view){
+      console.log("No Stand Alone Details View "+ table.table_name)
+    }
     setOpenPanel(true);
   };
 

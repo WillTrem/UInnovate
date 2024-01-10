@@ -36,12 +36,12 @@ export const ColumnConfig: React.FC<ColumnConfigProps> = ({
       </thead>
       <tbody>
         {attributes &&
-          attributes.map((attribute) => {
+          attributes.map((attribute, index) => {
             return (
               <ColumnConfigRow
                 column={attribute}
                 table={table}
-                key={attribute.column_name}
+                key={attribute.column_name+index}
               />
             );
           })}
