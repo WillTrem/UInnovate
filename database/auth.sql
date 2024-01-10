@@ -152,7 +152,7 @@ FROM public;
 -- FUNCTION for users to SIGNUP given an administrator previously created a user in the database for them
 CREATE OR REPLACE FUNCTION meta.signup(
 		email text,
-		PASSWORD text,
+		"password" text,
 		first_name text,
 		last_name text
 	) RETURNS setof integer AS $$ BEGIN -- 	Verify if the user has been created by an administrator prior
@@ -184,6 +184,34 @@ END IF;
 END IF;
 RETURN;
 END $$ language plpgsql SECURITY DEFINER;
+
+-- FUNCTION to verify whether a user already signed up or not
+CREATE OR REPLACE FUNCTION meta.verify_signup(email TEXT)
+RETURNS TEXT AS $$ BEGIN
+	-- If the user hasn't been created yet, raise an exception with code 42704 
+	IF NOT EXISTS (
+		SELECT * 
+		FROM authentication.users
+		WHERE users.email = verify_signup.email
+	)
+	THEN raise exception 'User not found'
+		USING ERRCODE = '42704',
+		DETAIL = format('User %L could not be found in the system.', verify_signup.email);
+
+	-- If the user has been created but never signed up, raise an exception with code 01000
+	ELSIF NOT EXISTS (
+	SELECT *
+	FROM authentication.users
+	WHERE users.email = verify_signup.email AND 
+	users.password IS NOT NULL
+	) THEN raise exception 'User did not sign up.'
+		USING ERRCODE = '01000',
+		DETAIL = format('User %L never signed up.', verify_signup.email);
+		
+	-- If the user exists and already signed up, return its address email.
+	ELSE RETURN verify_signup.email;
+	END IF;
+	END $$ language plpgsql SECURITY DEFINER;
 
 -- ROLES
 -- TODO: Move the role definitions in a separate sql file
@@ -249,6 +277,7 @@ GRANT SELECT ON TABLE meta.user_info TO administrator;
 -- ADD user management-related capabilities HERE
 GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
+GRANT EXECUTE ON FUNCTION meta.verify_signup(text) to web_anon; 
 -- TO BE REMOVED AT SOME POINT
 GRANT SELECT ON TABLE meta.user_info TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO web_anon;
