@@ -112,11 +112,11 @@ $$ language SQL SECURITY DEFINER;
 DROP TYPE IF EXISTS authentication.jwt_token CASCADE;
 CREATE TYPE authentication.jwt_token AS (token text);
 
-CREATE OR REPLACE FUNCTION meta.login(email text, PASSWORD text) RETURNS authentication.jwt_token AS $$
+CREATE OR REPLACE FUNCTION meta.login(email text, password text) RETURNS authentication.jwt_token AS $$
 DECLARE _role name;
 result authentication.jwt_token;
 BEGIN -- check email & password
-SELECT authentication.user_role(email, PASSWORD) INTO _role;
+SELECT authentication.user_role(email, password) INTO _role;
 IF _role IS NULL THEN raise invalid_password USING message = 'invalid email or password';
 END IF;
 -- signs the jwt token

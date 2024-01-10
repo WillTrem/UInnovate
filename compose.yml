@@ -48,6 +48,7 @@ services:
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
       PGRST_DB_PRE_CONFIG: postgrest.pre_config
+      PGRST_SERVER_CORS_ALLOWED_ORIGINS: ${PLATFORM_DOMAIN}
     depends_on:
       - db
     networks:

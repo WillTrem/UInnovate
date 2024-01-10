@@ -4,7 +4,11 @@ import "../../styles/Modals.css"
 import { Row } from "../../virtualmodel/DataAccessor";
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor";
 import vmd from "../../virtualmodel/VMD";
+import Cookies from "js-cookie";
+import axios from "axios";
 
+import { useDispatch, useSelector } from "react-redux";
+import { logIn } from "../../redux/AuthSlice";
 
 // interface SignUpModalProps extends Omit<ModalProps,'children'>{
 // 	closeModal: () => void
@@ -29,8 +33,7 @@ const SignUpModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const [inputValues, setInputValues] = useState<Row>({})
 	const [currentState, setCurrentState] = useState<SignupState>(SignupState.INITIAL);
 
-
-	
+	const dispatch = useDispatch();
 
 	// Function accessors
 	const verifySignUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "verify_signup");
@@ -65,12 +68,11 @@ const SignUpModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 		verifySignUpFunctionAccessor.setBody({ email: inputValues["email"] })
 		verifySignUpFunctionAccessor.executeFunction({
 			validateStatus: function (status: number) {
-			  // Return `true` to resolve the promise if the status code is equal to 400
-			  return status === 400;
+			  // Return `true` to resolve the promise if the status code is equal to 400 or a regular valid status code
+			  return (status >= 200 && status < 300) || status === 400;
 			}
 		  })
 			.then((response) => {
-				console.log(response);
 				if(response.status === 400){
 					const code = response.data.code;
 					switch(code){
@@ -91,7 +93,26 @@ const SignUpModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const handleBack = () => setCurrentState(SignupState.INITIAL);
 
 	const handleFormSubmit = () => {
+		if(currentState === SignupState.LOGIN){
+			loginFunctionAccessor.setBody(inputValues);
+			loginFunctionAccessor.executeFunction()
+			// Logs in the user
+			.then(async (response) => {
+				const token = response.data.token;
+				dispatch(logIn({email: inputValues["email"], token: token}));
 
+				// Closes the form
+				const dummyEvent = document.createEvent('MouseEvents');
+				// dummyEvent.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+				handleCancel(dummyEvent as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
+			})
+			.catch((error) => {
+				//TODO
+			});
+		}
+		else{
+			//TODO
+		}
 	}
 
 	return <Modal {...props}>
