@@ -54,6 +54,20 @@ services:
       - backend
     restart: always
 
+  postgoat:
+    container_name: postgoatfront
+    build:
+      context: .
+      dockerfile: Dockerfile.goat
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./data:/UInnovateApp/data
+    depends_on:
+      - db
+    networks:
+      - backend
+
 volumes:
   db_data:
     name: db-data

@@ -1,0 +1,23 @@
+# Base image for postgoat 
+FROM node:alpine3.19
+
+# Set working directory of app inside container; not sure what name is (UInnovate?)
+WORKDIR /UInnovateApp
+
+# Install dependencies
+RUN npm install
+
+# Build the frontend application
+RUN npm run build
+
+# Copy the built frontend from the previous stage
+COPY ./app /UInnovateApp/public
+
+# Copy the scripting folder
+COPY ./scripting /UInnovateApp/scripting
+
+# Expose a volume for flexible use in different scenarios
+VOLUME /UInnovateApp/data
+
+# Define the command to run your app (adjust as necessary)
+CMD ["node", "server.js"]
