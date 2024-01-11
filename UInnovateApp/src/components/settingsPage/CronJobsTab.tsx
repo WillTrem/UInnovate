@@ -3,6 +3,7 @@ import {Button} from "@mui/material"
 import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
+import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams } from '../../virtualmodel/PlatformFunctions';
 
 interface ExecutionLogEntry {
     id: any; 
@@ -42,14 +43,16 @@ export const CronJobsTab = () => {
     ];
 
     const scheduleCronJob = () => {
-        const sql = `SELECT cron.schedule('${selectedProc}', '${cronSchedule}', 'CALL ${selectedProc}()');`;
-
-         // To be implemented
+        const params: ProcedureSchedulingParams = {
+            functionName: "schedule_job_by_name",
+            storedProcedureName: selectedProc,
+            schedule: cronSchedule,
+        };
+        scheduleProcedure(params);
     };
 
-    const cancelCronJob = () => {
-        const sql = `SELECT cron.unschedule('${selectedProc}');`;
-        // To be implemented
+    const unscheduleCronJob = () => {
+        
     };
 
     const formatDuration = (ms: number | 'N/A') => {
@@ -174,7 +177,7 @@ export const CronJobsTab = () => {
                                 />
                                 <div style={containerStyle}>
                                     <Button variant="contained" style={buttonStyle} onClick={scheduleCronJob}>Set Schedule</Button>
-                                    <Button variant="contained" style={buttonStyle} onClick={cancelCronJob}>Deactivate</Button>
+                                    <Button variant="contained" style={buttonStyle} onClick={unscheduleCronJob}>Deactivate</Button>
                                 </div>
 
                             </Form.Group>
