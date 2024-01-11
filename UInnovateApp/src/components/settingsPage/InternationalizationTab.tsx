@@ -15,14 +15,11 @@ const buttonStyle = {
 
 
 const InternationalizationTab = () => {
-    // const schema = vmd.getSchema("meta");
-    // const script_view = vmd.getTable("meta", "i18n_translation");
-    // const columns = script_view?.getColumns();
-
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [newScript, setNewScript] = useState<Row>({});
 
     const [translations, setTranslations] = useState<Row[]>([]);
+
+    const [inputValues, setInputValues] = useState<Row>(new Row({}));
 	
     const getTranslations = async () => {
         const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -49,14 +46,22 @@ const InternationalizationTab = () => {
         setShowModal(false);
     };
 
-    const handleSave = async () => {
-        const data_accessor = vmd.getAddRowDataAccessor(
-            "meta",
-            "scripts",
-            newScript
-        );
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValues({
+            ...inputValues,
+            row: { ...inputValues.row, [e.target.name]: e.target.value },
+        });
+    };
 
-        await data_accessor?.addRow();
+    // Handle the save button to save a new language to the i18n_languages table
+    const handleSave = async () => {
+        const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
+            "meta",
+            "i18n_languages",
+            inputValues
+        );
+        data_accessor.addRow();        
+
 
         setShowModal(false);
     };
@@ -70,18 +75,17 @@ const InternationalizationTab = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        Pick a language from the dropdown of possible languages
-                        <Form.Select>
-                            <option>English</option>
-                            <option>French</option>
-                            <option>Spanish</option>
-                            <option>German</option>
-                            <option>Chinese</option>
-                        </Form.Select>
-                        Associated language code
+                        Add the language name 
+                        <Form.Control
+                            type="text"
+                            placeholder="English"
+                            onChange={handleInputChange}
+                        />
+                        Add the associated language code
                         <Form.Control
                             type="text"
                             placeholder="ENG"    
+                            onChange={handleInputChange}
                         />
 
                     </Form>
