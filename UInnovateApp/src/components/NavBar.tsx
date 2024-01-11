@@ -18,7 +18,7 @@ interface NavBarProps {
   showSchemaFilter?: boolean;
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
-  const [showSignupModal, setShowSignupModal] = useState(true);
+  const [showSignupModal, setShowSignupModal] = useState(false);
   const loggedInUser: string | null = useSelector((state: RootState) => state.auth.user);
   const dispatch = useDispatch();
 
@@ -66,7 +66,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <Nav.Link onClick={handleLogout} style={{ fontSize: "25px" }}>
               Log out
             </Nav.Link>: 
-            <Nav.Link onClick={handleShow} style={{ fontSize: "25px" }}>
+            <Nav.Link onClick={handleShow} style={{ fontSize: "25px" }} >
               Sign Up
             </Nav.Link>}
             {loggedInUser && 

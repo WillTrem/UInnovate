@@ -89,6 +89,22 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 			
 	}
 
+	// Switches to the next state when Enter key is pressed in email textbox
+	const handleEmailKeyDown = (event: React.KeyboardEvent) => {
+		if(event.key === 'Enter'){
+			handleNext();
+			event.preventDefault();
+		}
+	}
+
+	// Attempts to login / signup when Enter key is pressed in password textbox
+	const handlePasswordKeyDown = (event: React.KeyboardEvent) => {
+		if(event.key === 'Enter' && currentState === SignupState.LOGIN ){
+			handleFormSubmit();
+			event.preventDefault();
+		}
+	}
+
 	// Resets the state back to INITIAL
 	const handleBack = () => setCurrentState(SignupState.INITIAL);
 
@@ -99,7 +115,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 			// Logs in the user
 			.then(async (response) => {
 				const token = response.data.token;
-				dispatch(logIn({email: inputValues["email"], token: token}));
+				dispatch(logIn(token));
 
 				// Closes the form
 				const dummyEvent = document.createEvent('MouseEvents');
@@ -120,7 +136,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 			<div className="modal-content-center">
 				<Typography variant="h5">Sign up (or Log in)</Typography>
 				<div className="form">
-					<TextField id="email-field" label="Email" variant="outlined" onChange={handleInputChange} name="email" />
+					<TextField id="email-field" label="Email" variant="outlined" onChange={handleInputChange} onKeyDown={handleEmailKeyDown} name="email" />
 					
 					{/* Shows First Name and Last Name fields on signup */}
 					{currentState === SignupState.SIGNUP &&
@@ -132,7 +148,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 
 					{/* Shows Password field on both login and signup */}
 					{currentState !== SignupState.INITIAL && 
-						<TextField id="password-field" label="Password" type="password" variant="outlined" onChange={handleInputChange} name="password" />}
+						<TextField id="password-field" label="Password" type="password" variant="outlined" onChange={handleInputChange} onKeyDown={handlePasswordKeyDown} name="password" autoFocus = {currentState === SignupState.LOGIN}/>}
 
 					{/* Shows Confirm Password field on signup */}
 					{currentState === SignupState.SIGNUP &&
