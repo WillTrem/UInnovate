@@ -9,17 +9,19 @@ import { useState } from 'react';
 import SignupModal from './settingsPage/SignupModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import { logOut } from '../redux/AuthSlice';
+import { AuthState, Role, logOut } from '../redux/AuthSlice';
 import {Tooltip, Zoom} from '@mui/material'
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LoginIcon from '@mui/icons-material/Login';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
-  const loggedInUser: string | null = useSelector((state: RootState) => state.auth.user);
+  const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch();
 
   const handleClose = () => setShowSignupModal(false);
@@ -58,26 +60,31 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
               ObjectMenu
             </Nav.Link>
-            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }}>
+            {/* Hides the Settings page link for user role */}
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER /* || role === null*/}>
               Settings
             </Nav.Link>
             
-            {loggedInUser ? 
-            <Nav.Link onClick={handleLogout} style={{ fontSize: "25px" }}>
-              Log out
-            </Nav.Link>: 
-            <Nav.Link onClick={handleShow} style={{ fontSize: "25px" }} >
-              Sign Up
-            </Nav.Link>}
             {loggedInUser && 
-            <Tooltip 
-            title={`Welcome, ${loggedInUser}`}
-            arrow
-            placement='bottom'
-            TransitionComponent={Zoom}>
-              <AccountCircleIcon sx={{ fontSize: 50 }}/>
-            </Tooltip>
+            <Nav.Link>
+              <Tooltip
+              title={`Welcome, ${loggedInUser}`}
+              arrow
+              placement='bottom'
+              TransitionComponent={Zoom}>
+                <AccountCircleIcon sx={{ fontSize: 40 }}/>
+              </Tooltip>
+            </Nav.Link>
             }
+            {loggedInUser ? 
+            <Nav.Link onClick={handleLogout} style={{ fontSize: "25px", display: "flex", alignItems:"center" }}>
+              {/* Log out */}
+              <LogoutIcon fontSize='large'/>
+            </Nav.Link>: 
+            <Nav.Link onClick={handleShow} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} >
+              {/* Sign Up */}
+              <LoginIcon fontSize='large'/>
+            </Nav.Link>}
             <SignupModal open={showSignupModal} onClose={handleClose}/>
           </Nav>
         </Navbar.Collapse>

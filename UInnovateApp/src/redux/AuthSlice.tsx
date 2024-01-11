@@ -2,7 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from 'jwt-decode'
 import axios from "axios";
 
-interface AuthState{
+export interface AuthState{
 	user: string | null, 
 	token: string | null,
 	role: string | null
@@ -12,6 +12,12 @@ interface DecodedToken{
 	role: string,
 	email: string,
 	exp: string
+}
+
+export enum Role{
+	ADMIN = "administrator",
+	CONFIG = "configurator",
+	USER = "user"
 }
 
 const authSlice = createSlice({

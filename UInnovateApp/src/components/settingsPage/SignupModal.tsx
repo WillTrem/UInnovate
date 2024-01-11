@@ -9,6 +9,7 @@ import axios from "axios";
 
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../redux/AuthSlice";
+import { useNavigate } from "react-router-dom";
 
 // interface SignUpModalProps extends Omit<ModalProps,'children'>{
 // 	closeModal: () => void
@@ -32,7 +33,7 @@ const USER_NEVER_SIGNED_UP_CODE = "01000";
 const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const [inputValues, setInputValues] = useState<Row>({})
 	const [currentState, setCurrentState] = useState<SignupState>(SignupState.INITIAL);
-
+	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	// Function accessors
@@ -116,11 +117,11 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 			.then(async (response) => {
 				const token = response.data.token;
 				dispatch(logIn(token));
-
 				// Closes the form
 				const dummyEvent = document.createEvent('MouseEvents');
 				// dummyEvent.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 				handleCancel(dummyEvent as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
+				navigate('/');
 			})
 			.catch((error) => {
 				//TODO

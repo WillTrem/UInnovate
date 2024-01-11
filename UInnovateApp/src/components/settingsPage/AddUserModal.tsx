@@ -7,6 +7,7 @@ import vmd from "../../virtualmodel/VMD"
 import { Row } from "../../virtualmodel/DataAccessor"
 import { MultiSelect } from "./UserMangementTab"
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
+import { Role } from "../../redux/AuthSlice"
 
 
 interface AddUserModalProps extends Omit<ModalProps, 'children'> {
@@ -94,10 +95,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 								onChange={(event) => handleRoleChange(event)}
 								displayEmpty
 							>
-								{/*TODO:  Should create the  list of roles from a db table*/}
-								<MenuItem value={"user"}>User</MenuItem>
-								<MenuItem value={"configurator"}>Configurator</MenuItem>
-								<MenuItem value={"administrator"}>Admin</MenuItem>
+								<MenuItem value={Role.USER}>User</MenuItem>
+								<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
+								<MenuItem value={Role.ADMIN}>Admin</MenuItem>
 							</Select>
 						</label>
 					</div>

@@ -9,6 +9,10 @@ import vmd, { UserData } from "../../virtualmodel/VMD";
 import React, { useEffect, useState } from "react";
 import AddUserModal from "./AddUserModal";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { Role } from "../../redux/AuthSlice";
+import UnauthorizedScreen from "../UnauthorizedScreen";
 
 
 
@@ -16,6 +20,13 @@ import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 const UserManagementTab = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [users, setUsers] = useState<Row[]>([]);
+
+	const role = useSelector((state: RootState) => state.auth.role);
+
+	// Hides the menu for non-admin roles (except for anonymous)
+	if(!(role === Role.ADMIN || role === null)){
+		return <UnauthorizedScreen/>
+	}
 
 	const getUsers = async () => {
 		const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -36,7 +47,6 @@ const UserManagementTab = () => {
 	function handleOnClick() {
 		setModalOpen(true);
 	}
-
 
 
 	return (
