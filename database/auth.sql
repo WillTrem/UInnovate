@@ -244,6 +244,7 @@ END LOOP;
 END $$ LANGUAGE plpgsql;
 
 GRANT USAGE ON SCHEMA meta TO "user";
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
 GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
 GRANT SELECT ON TABLE meta.appconfig_values TO "user";
 GRANT SELECT ON TABLE meta.scripts TO "user";
@@ -258,6 +259,7 @@ CREATE role configurator;
 GRANT "user" TO configurator;
 
 GRANT ALL ON SCHEMA meta TO configurator;
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
 GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
 GRANT ALL ON TABLE meta.appconfig_values TO configurator;
 GRANT ALL ON TABLE meta.scripts TO configurator;
