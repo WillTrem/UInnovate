@@ -30,7 +30,7 @@ SCHEMA_FILE=".././database$USECASE_FOLDER/structure.sql"
 DATA_FILE=".././database$USECASE_FOLDER/sampledata.sql"
 META_DATA_FILE=".././database/meta_data.sql"
 LOG_FILE=".././database/refresh_log.txt"
-CRON_FILE="./database/cron.sql"
+CRON_FILE=".././database/cron.sql"
 APPCONFIG_PROPERTIES_FILE=".././dataFiles/appconfig_properties.csv"
 AUTH_FILE=".././database/auth.sql"
 
