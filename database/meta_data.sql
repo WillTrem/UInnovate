@@ -31,4 +31,21 @@ INSERT INTO meta.scripts (name, description, content, table_name)
 VALUES
     ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts');
 
+-- Insert the tables names, columns names, schema tables into the i18n_keys table
+-- Insert unique column names into i18n_keys
+INSERT INTO meta.i18n_keys (key_code)
+SELECT DISTINCT column
+FROM meta.columns;
+
+-- Insert unique table names into i18n_keys
+INSERT INTO meta.i18n_keys (key_code)
+SELECT DISTINCT "table"
+FROM meta.tables;
+
+-- Insert unique schema names into i18n_keys
+INSERT INTO meta.i18n_keys (key_code)
+SELECT DISTINCT "schema"
+FROM meta.schemas;
+
+
 NOTIFY pgrst, 'reload schema'

@@ -159,19 +159,33 @@ CREATE TABLE IF NOT EXISTS meta.i18n_values (
     CONSTRAINT unique_translation UNIQUE (language_id, key_id)
 );
 
--- Creating the translation view
-CREATE OR REPLACE VIEW meta.i18n_translation AS
+-- Creating the translation view (combines the languages, keys and values tables)
+CREATE OR REPLACE VIEW meta.i18n_translations AS
 SELECT
-    v.id AS translation_id,
+    k.id AS translation_id,
     l.language_code,
     k.key_code,
-    v.value
+    COALESCE(v.value, '') AS value
 FROM
-    meta.i18n_values v
-JOIN
-    meta.i18n_languages l ON v.language_id = l.id
-JOIN
-    meta.i18n_keys k ON v.key_id = k.id;
+    meta.i18n_languages l
+CROSS JOIN
+    meta.i18n_keys k
+LEFT JOIN
+    meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
+UNION
+SELECT
+    k.id AS translation_id,
+    NULL AS language_code,
+    k.key_code,
+    '' AS value
+FROM
+    meta.i18n_keys k
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM meta.i18n_languages l
+        JOIN meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
+    );
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
@@ -261,6 +275,6 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.i18n_languages TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.i18n_keys TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.i18n_values TO web_anon;
-GRANT SELECT ON meta.i18n_translation TO web_anon;
+GRANT ALL ON meta.i18n_translations TO web_anon;
 
 NOTIFY pgrst, 'reload schema'

@@ -1,7 +1,7 @@
 import { Row as Line, Tab } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
-import vmd, { Schema } from "../../virtualmodel/VMD";
+import vmd from "../../virtualmodel/VMD";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
@@ -21,34 +21,24 @@ const InternationalizationTab = () => {
 
     const [showModal, setShowModal] = useState<boolean>(false);
     const [newScript, setNewScript] = useState<Row>({});
+
     const [translations, setTranslations] = useState<Row[]>([]);
-    const [schemas, setSchemas] = useState<Schema[]>([]);
-    const [tables, setTables] = useState<string[]>([]);
-    const [storedProcedures, setStoredProcedures] = useState<string[]>([]);
-
-	const getTranslations = async () => {
-		const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
-			"meta",
-			"i18n_translation"
-		);
-
-		const rows = await data_accessor.fetchRows();
-		if (rows) {
-			setTranslations(rows);
-		}
-	}
-
-    const fetchSchemasAndTables = async () => {
-        const schemaObjects = vmd.getSchemas();
-        const tableNames = vmd.getAllTables().map((table) => table.table_name);
+	
+    const getTranslations = async () => {
+        const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
+            "meta",
+            "i18n_translations" 
+        );
     
-        setSchemas(schemaObjects);
-        setTables(tableNames);
-    };
+        const rows = await data_accessor.fetchRows();
+        console.log("Fetched translations:", rows); // Add this line
+        if (rows) {
+            setTranslations(rows);
+        }
+    }
 
 	useEffect(() => {
 		getTranslations();
-        fetchSchemasAndTables();
 	}, [])
 
     const handleAddLanguage = async () => {
@@ -145,26 +135,15 @@ const InternationalizationTab = () => {
             {translations && translations.map((translation, idx) => {
                 if (translation) {
                     return (
-                    <TranslationTableRow
-                        key={idx}
-                        keyCode={translation["key_code"] as string}
-                        value={translation["value"] as string}
-                    />
-                );
-            }
-                return <React.Fragment key={idx} />;
+                        <TranslationTableRow
+                            key={idx}
+                            keyCode={translation["key_code"] as string}
+                            value={translation["value"] as string}
+                        />
+                        );
+                    }
+                    return <React.Fragment key={idx} />;
             })}
-          {/* Display schema names and table names in the key_code column */}
-            {schemas.map((schema, idx) => (
-                <TranslationTableRow
-                key={idx}
-                keyCode={schema.schema_name}
-                //   value={`Schema: ${schema.schema_name}`}
-                />
-            ))}
-            {tables.map((table, idx) => (
-                <TranslationTableRow key={idx} keyCode={table}  />
-            ))}
         </tbody>
         </TableComponent>
             </Tab.Content>
@@ -179,9 +158,6 @@ interface TranslationTableRowProps {
 	value?: string
 }
 const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ keyCode, value }) => {
-	// const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
-
-
 	return <tr>
 		<td>{keyCode}</td>
 		<td>{value}</td>
