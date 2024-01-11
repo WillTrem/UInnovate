@@ -30,7 +30,6 @@ SCHEMA_FILE="./database$USECASE_FOLDER/structure.sql"
 DATA_FILE="./database$USECASE_FOLDER/sampledata.sql"
 META_DATA_FILE="./database/meta_data.sql"
 LOG_FILE="./database/refresh_log.txt"
-APPCONFIG_PROPERTIES_FILE="./dataFiles/appconfig_properties.csv"
 AUTH_FILE="./database/auth.sql"
 
 # method to check existence of files
@@ -57,3 +56,5 @@ done
 
 # Log completion time
 echo "Database refresh completed at $(date)" | tee -a $LOG_FILE
+
+$SHELL
