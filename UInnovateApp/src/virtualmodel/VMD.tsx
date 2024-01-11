@@ -174,10 +174,14 @@ class VirtualModelDefinition {
         }
 
         // Add column to the table object
-        table.addColumn(new Column(data.column), data.references_table, data.is_editable);
+        table.addColumn(
+          new Column(data.column),
+          data.references_table,
+          data.is_editable
+        );
       });
 
-      // Fetching all the VIEWS 
+      // Fetching all the VIEWS
       response = await axios.get(views_url, {
         headers: { "Accept-Profile": "meta" },
       });
@@ -267,7 +271,7 @@ class VirtualModelDefinition {
             break;
           case "details_view":
             table.has_details_view = config.value === "true";
-            break; 
+            break;
         }
       });
       this.config_data_fetched = true;
@@ -306,36 +310,56 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
   // return type : DataAccessor
-  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, Limit:number, Page:number) {
+  getRowsDataAccessorForOrder(
+    schema_name: string,
+    table_name: string,
+    order_by: string,
+    Limit: number,
+    Page: number
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
     const limit = Limit.toString();
-    const page = ((Page-1)*Limit).toString();
+    const page = ((Page - 1) * Limit).toString();
     if (schema && table) {
-      return new DataAccessor(table.url+"?order="+order_by+"&limit="+limit+"&offset="+page, {
-        "Accept-Profile": schema.schema_name,
-      });
+      return new DataAccessor(
+        table.url +
+          "?order=" +
+          order_by +
+          "&limit=" +
+          limit +
+          "&offset=" +
+          page,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
     } else {
       throw new Error("Schema or table does not exist");
     }
   }
   // Method to return a data accessor object to fetch rows from a table For Look up Table
   // return type : DataAccessor
-  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue:string) {
+  getRowsDataAccessorForLookUpTable(
+    schema_name: string,
+    table_name: string,
+    SearchKey: string,
+    SearchValue: string
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
-    
+
     if (schema && table) {
-      return new DataAccessor(table.url+ "?"+SearchKey+"=eq."+SearchValue, {
-        "Accept-Profile": schema.schema_name,
-      });
+      return new DataAccessor(
+        table.url + "?" + SearchKey + "=eq." + SearchValue,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
     } else {
       throw new Error("Schema or table does not exist");
     }
   }
-
-
-
 
   // Method to return a data accessor object to add a row to a table
   // return type : DataAccessor
@@ -383,7 +407,13 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to update a row in a table
   // return type : DataAccessor
-  getUpdateRowDataAccessorView(schema_name: string, table_name: string, row: Row, primarykey:string, primarykeyvalue:string) {
+  getUpdateRowDataAccessorView(
+    schema_name: string,
+    table_name: string,
+    row: Row,
+    primarykey: string,
+    primarykeyvalue: string
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -433,10 +463,10 @@ class VirtualModelDefinition {
   // return type: DataAccessor
   getViewRowsDataAccessor(
     schema_name: string,
-    view_name: string,
+    view_name: string
   ): DataAccessor {
     const schema = this.getSchema(schema_name);
-    const view = schema?.getView(view_name)
+    const view = schema?.getView(view_name);
     if (schema && view) {
       return new DataAccessor(view.url, {
         "Accept-Profile": schema.schema_name,
@@ -449,7 +479,7 @@ class VirtualModelDefinition {
   // return type: FunctionAccessor
   getFunctionAccessor(
     schema_name: string,
-    function_name: string,
+    function_name: string
   ): FunctionAccessor {
     const schema = this.getSchema(schema_name);
     if (schema) {
@@ -511,15 +541,14 @@ export class Table {
     this.has_details_view = true;
     this.columns = [];
     this.url = API_BASE_URL + table_name;
-    this.lookup_tables = {"-1":"none"}   ;
-    
+    this.lookup_tables = { "-1": "none" };
   }
 
   // Method to add a new column to the table object
   addColumn(column: Column, references_table: string, is_editable: boolean) {
     column.setReferenceTable(references_table);
     column.setEditability(is_editable);
-    
+
     this.columns.push(column);
   }
 
@@ -618,9 +647,7 @@ export class Table {
   setLookupTables(lookup_tables: Row) {
     this.lookup_tables = lookup_tables;
   }
-  
 }
-
 
 export class Column {
   column_name: string;
@@ -629,7 +656,6 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
-
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -664,7 +690,6 @@ export class Column {
     return this.references_table;
   }
 
-
   // Method to set the column's editability
   // return type : void
   setEditability(is_editable: boolean) {
@@ -688,7 +713,6 @@ export class View {
   }
 }
 
-
 export enum TableDisplayType {
   listView = "list",
   enumView = "enum",
@@ -706,7 +730,6 @@ interface ColumnData {
 interface ViewData {
   schema: string;
   view: string;
-
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
@@ -725,7 +748,6 @@ export interface UserData {
   role: string;
   is_active: boolean;
 }
-
 
 // Creating a VMD object and exporting it
 const vmd = new VirtualModelDefinition();

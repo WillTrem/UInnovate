@@ -23,7 +23,6 @@ import {
   Select,
   MenuItem,
   FormControl,
-  FormHelperText,
   SelectChangeEvent,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
@@ -135,6 +134,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
   const [currentPhone, setCurrentPhone] = useState<string>("");
+  const [currentCategory, setCurrentCategory] = useState<string>("");
+  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
   const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
     () => <></>
   );
@@ -201,9 +202,10 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
-    name: string,
-    isPhone: string
+    columnName: string | undefined,
+    type: string | undefined
   ) => {
+    // console.log(event + " " + columnName + " " + type);
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
     );
@@ -213,18 +215,22 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
     let eventName: string | undefined = undefined;
     let eventValue: string | undefined = undefined;
-    if (event.target !== undefined) {
+    if (event?.target?.name !== undefined && event?.target?.name !== "") {
       eventName = event.target.name;
       eventValue = event.target.value;
     } else {
-      if (isPhone !== undefined) {
-        eventName = name;
+      if (type !== undefined) {
+        eventName = columnName;
         eventValue = event;
-      } else {
-        eventName = name;
+      } else if (type == "phone" || type == "date") {
+        eventName = columnName;
         eventValue = event.format();
+      } else {
+        eventName = columnName;
+        eventValue = event.target.value;
       }
     }
+    console.log(eventValue);
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
@@ -339,7 +345,9 @@ const TableListView: React.FC<TableListViewProps> = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <StaticDatePicker
               value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) => handleInputChange(date, column.column_name)}
+              onChange={(date) =>
+                handleInputChange(date, column.column_name, "date")
+              }
               name={column.column_name}
               className="date-time-picker"
               readOnly={column.is_editable === false ? true : false}
@@ -351,7 +359,9 @@ const TableListView: React.FC<TableListViewProps> = ({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <StaticDateTimePicker
               value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) => handleInputChange(date, column.column_name)}
+              onChange={(date) =>
+                handleInputChange(date, column.column_name, "date")
+              }
               name={column.column_name}
               className="date-time-picker"
               readOnly={column.is_editable === false ? true : false}
@@ -361,14 +371,23 @@ const TableListView: React.FC<TableListViewProps> = ({
       } else if (columnDisplayType.value == "categories") {
         return (
           <Select
-            value={"category1"}
-            onChange={handleInputChange}
-            className="popUp"
+            value={
+              currentCategory
+                ? currentCategory
+                : currentRow.row[column.column_name]
+            }
+            name={column.column_name}
+            onChange={(event) => {
+              handleInputChange(event, column.column_name, undefined);
+              setCurrentCategory(event.target.value);
+            }}
+            native
+            className="width"
           >
             {Object.keys(CategoriesDisplayType).map((value) => (
-              <MenuItem key={value} value={value}>
+              <option key={value} value={value}>
                 {value}
-              </MenuItem>
+              </option>
             ))}
           </Select>
         );
@@ -376,7 +395,9 @@ const TableListView: React.FC<TableListViewProps> = ({
         return (
           <MuiTelInput
             value={
-              currentPhone ? currentPhone : currentRow.row[column.column_name]
+              currentPhone !== "" || currentPhone
+                ? currentPhone
+                : currentRow.row[column.column_name]
             }
             onChange={(phone) => {
               handleInputChange(phone, column.column_name, "phone");
@@ -400,8 +421,16 @@ const TableListView: React.FC<TableListViewProps> = ({
         return (
           <RichTextEditor
             name={column.column_name}
-            content={currentRow.row[column.column_name]}
-            onChange={handleInputChange}
+            content={
+              currentWYSIWYG
+                ? currentWYSIWYG
+                : currentRow.row[column.column_name]
+            }
+            onChange={(event) => {
+              handleInputChange(event, column.column_name, undefined);
+              rteRef.current?.editor.setContent(event);
+              console.log(event);
+            }}
             ref={rteRef}
             extensions={[StarterKit]} // Or any Tiptap extensions you wish!
             // Optionally include `renderControls` for a menu-bar atop the editor:
@@ -419,12 +448,25 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
     };
     setInputField(() => newInputField as (column: Column) => JSX.Element);
-  }, [currentRow, columns, table, appConfigValues, currentPhone]);
+  }, [
+    currentRow,
+    columns,
+    table,
+    appConfigValues,
+    currentPhone,
+    rows,
+    currentCategory,
+    inputValues,
+    currentWYSIWYG,
+  ]);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
+    console.log(inputValues);
     setCurrentRow(row);
     setCurrentPhone("");
+    setCurrentCategory("");
+    setCurrentWYSIWYG("");
     if (!table.has_details_view) {
       return;
     }
@@ -502,8 +544,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       <TableComponent striped bordered hover>
         <thead>
           <tr>
-            {columns.map((column) => {
-              return <th key={column.column_name}>{column.column_name}</th>;
+            {columns.map((column, index) => {
+              return <th key={index}>{column.column_name}</th>;
             })}
           </tr>
         </thead>
@@ -558,7 +600,11 @@ const TableListView: React.FC<TableListViewProps> = ({
         size={30}
         panelContainerClassName="panel-container"
         backdropClicked={() => {
+          setCurrentPhone("");
+          setCurrentCategory("");
+          setCurrentWYSIWYG("");
           setOpenPanel(false);
+          setInputValues({});
         }}
       >
         <div className="form-panel-container">
@@ -568,7 +614,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               <label>
                 {columns.map((column, colIdx) => {
                   return (
-                    <div key={column.column_name} className="row-details">
+                    <div key={colIdx} className="row-details">
                       <label key={column.column_name + colIdx}>
                         {column.column_name}
                       </label>
@@ -585,6 +631,9 @@ const TableListView: React.FC<TableListViewProps> = ({
               style={buttonStyle}
               onClick={() => {
                 setCurrentPhone("");
+                setCurrentCategory("");
+                setCurrentWYSIWYG("");
+                setInputValues({});
                 setOpenPanel(false);
               }}
             >

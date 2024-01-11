@@ -1,8 +1,8 @@
 -- SCHEMA: app_rentals
 
-DROP SCHEMA IF EXISTS app_rentals CASCADE ;
+DROP SCHEMA IF EXISTS app_rentals CASCADE;
 
-CREATE SCHEMA IF NOT EXISTS app_rentals ;
+CREATE SCHEMA IF NOT EXISTS app_rentals;
 
 GRANT USAGE ON SCHEMA app_rentals TO web_anon;
 
