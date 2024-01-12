@@ -2,8 +2,9 @@ name: Deploy Tests Reports
 
 on:
   push:
+    path: './UInnovateApp/coverage/**'
     branches:
-      - 144-test-reports-deployment
+      - main
 
 jobs:
   deploy_tests_reports:
