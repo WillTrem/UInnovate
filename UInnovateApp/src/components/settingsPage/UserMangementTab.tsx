@@ -61,7 +61,6 @@ const UserManagementTab = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{/* TODO: Use values from database table */}
 								{users && users.map((user, idx) => {
 									if (user) {
 										return <UserTableRow key={idx}
