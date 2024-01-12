@@ -4,6 +4,8 @@ import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
 import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams } from '../../virtualmodel/PlatformFunctions';
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface ExecutionLogEntry {
     id: any; 
@@ -21,8 +23,7 @@ interface QueuedJob {
 
 const containerStyle = {
     display: 'flex',
-    gap: '10px', // Adjust the gap size as needed
-    marginTop: '20px', // Adjust the top margin as needed
+    gap: '10px', 
   };
 const buttonStyle = {
     marginTop: 20,
@@ -162,7 +163,13 @@ export const CronJobsTab = () => {
         
         setQueuedLogs(newQueuedJobs);
     };
-
+    useEffect(() => {
+        if (procedures.length > 0 && selectedProc === '') {
+            const initialProc = procedures[0];
+            setSelectedProc(initialProc);
+            fetchExecutionLogsForProc(initialProc);
+        }
+    }, []);
     useEffect(() => {
         if (selectedProc) {
             fetchExecutionLogsForProc(selectedProc);
@@ -197,20 +204,27 @@ export const CronJobsTab = () => {
                     <ListGroup variant='flush'>
                         {/* set cron schedule for the selected procedure */}
                         <ListGroup.Item>
-                            <Form.Group controlId="cronSchedule">
-                                <Form.Label>Cron Schedule for {selectedProc}</Form.Label>
+                        <Form.Group controlId="cronSchedule">
+                            <Form.Label>
+                                Cron Schedule for {selectedProc}
+                            </Form.Label>
+                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
                                 <Form.Control
                                     type="text"
-                                    placeholder=""
+                                    placeholder="* * * * *"
                                     value={cronSchedule}
                                     onChange={e => setCronSchedule(e.target.value)}
+                                    style={{ flexGrow: 1, marginRight: '5px' }} // Ensure the input field takes up available space
                                 />
-                                <div style={containerStyle}>
+                                <Tooltip title="Use cron syntax: '* * * * *', Format: 'Minute Hour Day Month Weekday'. Each field can be a number or '*', which means every. Example: '0 5 * * *' runs daily at 5 AM. For detailed syntax, check https://crontab.guru/">
+                                    <InfoIcon />
+                                </Tooltip>
+                            </div>
+                            <div style={containerStyle}>
                                 <Button variant="contained" style={buttonStyle} onClick={() => scheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Schedule Job</Button>                                    
                                 <Button variant="contained" style={buttonStyle} onClick={() => unscheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Unschedule Job</Button>
-                                </div>
-
-                            </Form.Group>
+                            </div>
+                        </Form.Group>
                         </ListGroup.Item>
 
                         <ListGroup.Item>
