@@ -19,8 +19,6 @@ const InternationalizationTab = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
 
     const [translations, setTranslations] = useState<Row[]>([]);
-
-    const [inputValues, setInputValues] = useState<Row>(new Row({}));
 	
     const getTranslations = async () => {
         const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -29,7 +27,6 @@ const InternationalizationTab = () => {
         );
     
         const rows = await data_accessor.fetchRows();
-        console.log("Fetched translations:", rows); // Add this line
         if (rows) {
             setTranslations(rows);
         }
@@ -46,26 +43,11 @@ const InternationalizationTab = () => {
     const handleClose = () => {
         setShowModal(false);
     };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInputValues({
-            ...inputValues,
-            row: { ...inputValues.row, [e.target.name]: e.target.value },
-        });
-    };
-
-    // Handle the save button to save a new language to the i18n_languages table
+    
     const handleSave = async () => {
-        const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
-            "meta",
-            "i18n_languages",
-            inputValues
-        );
-        data_accessor.addRow();        
-
-
         setShowModal(false);
     };
+
     return (
     <div>
     <Tab.Container>
@@ -76,17 +58,17 @@ const InternationalizationTab = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        Add the language name 
+                        Language Name
                         <Form.Control
                             type="text"
-                            placeholder="English"
-                            onChange={handleInputChange}
+                            placeholder="Language Name (e.g. English)"
+                            name="languageName"
                         />
-                        Add the associated language code
+                        Associated Language Code
                         <Form.Control
                             type="text"
-                            placeholder="ENG"    
-                            onChange={handleInputChange}
+                            placeholder="Language Code (e.g. ENG)"
+                            name="languageCode" 
                         />
 
                     </Form>
@@ -168,5 +150,4 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ keyCode, valu
 		<td>{value}</td>
 	</tr >
 }
-
 export default InternationalizationTab;
