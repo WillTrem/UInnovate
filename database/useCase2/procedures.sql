@@ -89,6 +89,7 @@ RETURNS TABLE (
     status_id INT,
     location_id INT,
     description TEXT,
+    created_by TEXT,
     created_at TIMESTAMPTZ,
     updated_at TIMESTAMPTZ,
     resolved_at TIMESTAMPTZ

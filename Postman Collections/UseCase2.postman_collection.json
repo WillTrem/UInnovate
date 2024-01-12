@@ -411,7 +411,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"p_assigned_user_id\":\"user2@test.com\"\r\n}",
+							"raw": "{\r\n    \"p_ticket_id\":1,\r\n    \"p_user_id\":\"user2@test.com\",\r\n    \"p_comment_text\": \"This is a test comment\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -435,7 +435,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"p_ticket_id\": 2\r\n}",
+							"raw": "{\r\n    \"p_ticket_id\": 1\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -467,6 +467,134 @@
 							}
 						},
 						"url": "http://localhost:3000/rpc/assign_ticket"
+					},
+					"response": []
+				},
+				{
+					"name": "add_ticket_tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_ticket_id\": 4,\r\n    \"p_assigned_user_id\": \"user35@test.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/assign_ticket"
+					},
+					"response": []
+				},
+				{
+					"name": "remove_ticket_tag",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"p_ticket_id\": 1,\r\n    \"p_tag_name\": \"MyNewTagName\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:3000/rpc/remove_ticket_tag"
+					},
+					"response": []
+				},
+				{
+					"name": "test_comment_update_logging",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"comment_text\": \"hello world\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/ticket_comments?comment_id=eq.5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"ticket_comments"
+							],
+							"query": [
+								{
+									"key": "comment_id",
+									"value": "eq.5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "test_ticket_update_logging",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Profile",
+								"value": "app_service_support",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"created_by\": \"test.xyz\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/service_tickets?ticket_id=eq.2\n",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"service_tickets"
+							],
+							"query": [
+								{
+									"key": "ticket_id",
+									"value": "eq.2\n"
+								}
+							]
+						}
 					},
 					"response": []
 				}
