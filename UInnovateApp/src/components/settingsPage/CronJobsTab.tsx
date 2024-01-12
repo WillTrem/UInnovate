@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {Button} from "@mui/material"
+import {Button, skeletonClasses} from "@mui/material"
 import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
@@ -48,15 +48,41 @@ export const CronJobsTab = () => {
             stored_procedure: selectedProc,
             cron_schedule: cronSchedule,
         };
-        scheduleProcedure(params);
-    };
+    
+        return new Promise((resolve, reject) => {
+            scheduleProcedure(params)
+                .then(response => {
+                    // Handle success here
+                    console.log("Cron job scheduled successfully");
+                    resolve(response);
+                })
+                .catch(error => {
+                    // Handle error here
+                    console.error("Error scheduling cron job", error);
+                    reject(error);
+                });
+        });
+    };    
 
     const unscheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
             functionName: "unschedule_job_by_name",
             stored_procedure: selectedProc
         };
-        unscheduleProcedure(params);
+
+        return new Promise((resolve, reject) => {
+            unscheduleProcedure(params)
+                .then(response => {
+                    // Handle success here
+                    console.log("Cron job unscheduled successfully");
+                    resolve(response);
+                })
+                .catch(error => {
+                    // Handle error here
+                    console.error("Error unscheduling cron job", error);
+                    reject(error);
+                });
+        });
     };
 
     const formatDuration = (ms: number | 'N/A') => {
@@ -180,8 +206,8 @@ export const CronJobsTab = () => {
                                     onChange={e => setCronSchedule(e.target.value)}
                                 />
                                 <div style={containerStyle}>
-                                    <Button variant="contained" style={buttonStyle} onClick={scheduleCronJob}>Set Schedule</Button>
-                                    <Button variant="contained" style={buttonStyle} onClick={unscheduleCronJob}>Deactivate</Button>
+                                <Button variant="contained" style={buttonStyle} onClick={() => scheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Schedule Job</Button>                                    
+                                <Button variant="contained" style={buttonStyle} onClick={() => unscheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Unschedule Job</Button>
                                 </div>
 
                             </Form.Group>
