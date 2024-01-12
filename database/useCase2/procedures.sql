@@ -251,6 +251,8 @@ BEGIN
     -- Update the updated_at field to the current timestamp
     NEW.updated_at := CURRENT_TIMESTAMP;
 
+    -- Place here function to email user
+    
     RETURN NEW;
 END;
 $$
@@ -285,6 +287,8 @@ BEGIN
     -- Insert log entry into system_logs table
     INSERT INTO app_service_support.system_logs(user_id, action_performed, action_timestamp)
     VALUES (CURRENT_USER, log_message, CURRENT_TIMESTAMP);
+
+    -- Place here function to email user
 
     RETURN NULL;
 END;

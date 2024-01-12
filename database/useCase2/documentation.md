@@ -1,27 +1,6 @@
-# Use case 2 Documentation
+# Use Case 2 Documentation
 
 ## Database Functions
-
-### create_service_ticket
-
-#### Parameters
-
-- **p_user_id (TEXT):** The ID of the user creating the service ticket.
-- **p_category_id (INT):** The ID of the ticket category.
-- **p_priority_id (INT):** The ID of the ticket priority.
-- **p_status_id (INT):** The ID of the ticket status.
-- **p_location_id (INT):** The ID of the issue location.
-- **p_description (TEXT):** The description of the service ticket.
-
-#### Returns
-
-- **VOID**
-
-#### Description
-
-Creates a new service ticket in the `app_service_support.service_tickets` table.
-
----
 
 ### add_ticket_comment
 
@@ -99,6 +78,56 @@ Retrieves all comments for a specific service ticket.
 #### Description
 
 Retrieves all service tickets assigned to a specific user.
+
+---
+
+### add_ticket_tag
+
+#### Parameters
+
+- **p_ticket_id (INT):** The ID of the service ticket.
+- **p_tag_name (VARCHAR(50)):** The name of the tag.
+
+#### Returns
+
+- **TEXT:** A success message if the tag is added successfully, otherwise a message indicating existing association.
+
+#### Description
+
+Adds a new record to the `app_service_support.ticket_tags` table, associating a tag with a service ticket.
+
+---
+
+### remove_ticket_tag
+
+#### Parameters
+
+- **p_ticket_id (INT):** The ID of the service ticket.
+- **p_tag_name (VARCHAR(50)):** The name of the tag.
+
+#### Returns
+
+- **TEXT:** A success message if the tag is removed successfully, deleted successfully, or not associated. 
+
+#### Description
+
+Removes a tag from a service ticket and deletes it if not associated with any other ticket.
+
+---
+
+## Triggers
+
+### notify_ticket_change
+
+#### Description
+
+A trigger function that logs changes to the `app_service_support.service_tickets` table. It logs when a new ticket is added or an existing ticket is updated.
+
+### notify_comment_change
+
+#### Description
+
+A trigger function that logs changes to the `app_service_support.ticket_comments` table. It logs when a comment is added, updated, or deleted.
 
 ---
 
