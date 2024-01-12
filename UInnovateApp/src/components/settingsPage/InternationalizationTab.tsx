@@ -5,6 +5,7 @@ import vmd from "../../virtualmodel/VMD";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
+import { IoLockClosed } from "react-icons/io5";
 
 
 const buttonStyle = {
@@ -163,7 +164,7 @@ interface TranslationTableRowProps {
 }
 const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ keyCode, value }) => {
 	return <tr>
-		<td>{keyCode}</td>
+		<td>{keyCode} <IoLockClosed /></td>
 		<td>{value}</td>
 	</tr >
 }
