@@ -52,7 +52,11 @@ export const CronJobsTab = () => {
     };
 
     const unscheduleCronJob = () => {
-        
+        const params: ProcedureSchedulingParams = {
+            functionName: "unschedule_job_by_name",
+            stored_procedure: selectedProc
+        };
+        unscheduleProcedure(params);
     };
 
     const formatDuration = (ms: number | 'N/A') => {
