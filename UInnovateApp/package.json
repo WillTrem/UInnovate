@@ -18,8 +18,8 @@
   },
   "dependencies": {
     "@mui/x-date-pickers": "^6.18.1",
-    "@testing-library/user-event": "^14.5.1",
     "@reduxjs/toolkit": "^1.9.7",
+    "@testing-library/user-event": "^14.5.1",
     "ace-builds": "^1.31.2",
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
@@ -38,11 +38,11 @@
   "devDependencies": {
     "@cypress/code-coverage": "^3.12.3",
     "@cypress/react18": "^2.0.0",
-    "@emotion/react": "^11.11.1",
+    "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@mui/icons-material": "^5.14.16",
-    "@mui/material": "^5.14.17",
+    "@mui/material": "^5.15.4",
     "@testing-library/jest-dom": "^6.1.4",
     "@testing-library/react": "^14.1.0",
     "@types/react": "^18.2.15",
