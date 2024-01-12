@@ -63,3 +63,12 @@ input{
     justify-content: space-between;
     width: 100%;
 }
+
+.textField {
+    max-width: 229px;
+  }
+  
+  .textField .MuiInputBase-input {
+    width: 100%;
+    overflow-wrap: break-word;
+  }
