@@ -1,5 +1,8 @@
 FROM postgres:16
 RUN apt-get update && apt-get install -y curl
+RUN apt-get -y install postgresql-16-cron
+RUN echo "shared_preload_libraries='pg_cron'" >> /usr/share/postgresql/postgresql.conf.sample
+RUN echo "cron.database_name = 'uinnovate_test_db'" >> /usr/share/postgresql/postgresql.conf.sample
 ARG JWT_SECRET
 
 RUN apt-get -y install make git postgresql-server-dev-16 postgresql-16-pgtap
@@ -10,4 +13,4 @@ RUN git clone https://github.com/michelp/pgjwt.git && \
     make install
     
 # Sets the value of the config parameter 'custom.jwt_secret' to the value of the environment variable JWT_SECRET in .env
-RUN echo "custom.jwt_secret = '${JWT_SECRET}'" >> /usr/share/postgresql/postgresql.conf.sample 
+RUN echo "custom.jwt_secret = '${JWT_SECRET}'" >> /usr/share/postgresql/postgresql.conf.sample

@@ -86,6 +86,17 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
 	 
 ) ;
 
+-- Creates a VIEW that shows all the views of the database
+CREATE OR REPLACE VIEW meta.views AS (
+        SELECT pg_views.schemaname AS "schema",
+            pg_views.viewname AS "view"
+        FROM pg_catalog.pg_views
+        WHERE pg_views.schemaname IN (
+                SELECT *
+                FROM meta.schemas
+            )
+    );
+GRANT SELECT ON TABLE meta.views TO web_anon;
 
 
 -- TABLES
@@ -170,8 +181,71 @@ JOIN
 JOIN
     meta.i18n_keys k ON v.key_id = k.id;
 
+-- EXPORT FUNCTIONALITY
+CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
+RETURNS json  -- Specify the return type here
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    result json;
+    av_json json;
+    ap_json json;
+BEGIN
+    SELECT COALESCE(json_agg(row_to_json(av)), '[]')
+    INTO av_json
+    FROM (
+        SELECT id, "table", "column", property, value
+        FROM meta.appconfig_values
+    ) av;
+
+    SELECT COALESCE(json_agg(row_to_json(ap)), '[]')
+    INTO ap_json
+    FROM (
+        SELECT name, description, value_type, default_value
+        FROM meta.appconfig_properties
+    ) ap;
+
+    -- Combine av_json and ap_json into a single JSON object
+    result = json_build_object(
+        'appconfig_values', av_json,
+        'appconfig_properties', ap_json
+    );
+
+    RETURN result;
+END;
+$BODY$;
+
+-- IMPORT FUNCTIONALITY
+CREATE OR REPLACE FUNCTION meta.import_appconfig_from_json(json)
+RETURNS void
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    av_data json;
+    ap_data json;
+    import_data json;
+BEGIN
+    -- Extract data for appconfig_values and insert into meta.appconfig_values
+    import_data = $1;
+    av_data = import_data->'appconfig_values';
+    ap_data = import_data->'appconfig_properties';
+    DELETE FROM meta.appconfig_properties;
+    INSERT INTO meta.appconfig_properties (name, description, value_type, default_value)
+    SELECT ap_row->>'name', ap_row->>'description', ap_row->>'value_type', ap_row->>'default_value'
+    FROM json_array_elements(ap_data) AS ap_row;
+    DELETE FROM meta.appconfig_values;
+    INSERT INTO meta.appconfig_values (id, "table", "column", property, value)
+    SELECT (av_row->>'id')::int, av_row->>'table', av_row->>'column', av_row->>'property', av_row->>'value'
+    FROM json_array_elements(av_data) AS av_row;
+
+    -- Extract data for appconfig_properties and insert into meta.appconfig_properties
+
+END;
+$BODY$;
 
 -- USAGE 
+GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO web_anon;
+GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO web_anon;
 GRANT USAGE ON SCHEMA information_schema TO web_anon;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO web_anon;
 GRANT SELECT ON information_schema.referential_constraints TO web_anon;
@@ -195,3 +269,5 @@ GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
 GRANT ALL on meta.scripts TO web_anon;
 GRANT ALL on meta.env_vars TO web_anon;
+
+NOTIFY pgrst, 'reload schema'

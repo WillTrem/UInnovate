@@ -5,6 +5,8 @@ const appconfig_valuesURL = "http://localhost:3000/appconfig_values";
 const tools_url = "http://localhost:3000/tools";
 const customers_url = "http://localhost:3000/customers";
 const rentals_url = "http://localhost:3000/rentals";
+const user_info_url = "http://localhost:3000/user_info";
+const create_user_url = "http://localhost:3000/rpc/create_user";
 
 const noMockErrorMessage = "API call to this URL hasn't been mocked.";
 
@@ -64,6 +66,13 @@ const mock_config_values = [
     value: "Value6",
   },
 ];
+
+const mock_user_info_values = [
+  {email: "email1@test.com", firstname: "firstname1", lastname: "lastname1", role: "user", is_active: true},
+  {email: "email2@test.com", firstname: "firstname2", lastname: "lastname2", role: "user", is_active: true},
+  {email: "email3@test.com", firstname: "firstname3", lastname: "lastname3", role: "user", is_active: true},
+  {email: "email4@test.com", firstname: "firstname4", lastname: "lastname4", role: "user", is_active: true},
+]
 export default {
   get: vi.fn().mockImplementation((url, { headers }) => {
     if (headers["Accept-Profile"] === "meta") {
@@ -74,6 +83,8 @@ export default {
           return Promise.resolve({ data: mock_table_attr });
         case appconfig_valuesURL:
           return Promise.resolve({ data: mock_config_values });
+        case user_info_url:
+          return Promise.resolve({ data: mock_user_info_values });
         default:
           return Promise.reject(new Error(noMockErrorMessage));
       }
@@ -83,6 +94,8 @@ export default {
     if (headers["Content-Profile"] === "meta") {
       switch (url) {
         case appconfig_valuesURL:
+          return Promise.resolve();
+        case create_user_url:
           return Promise.resolve();
         default:
           return Promise.reject(new Error(noMockErrorMessage));

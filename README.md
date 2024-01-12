@@ -14,13 +14,14 @@
 
    > 💡 Note that you don't have to create any account or credentials prior to this setup. It will be done automatically when you first run the containers.
 
-5. Open a terminal window in the root directory of the repository (UInnovate).
-6. Run `docker compose --profile tool up` to start the containers.  
+5. Run the `generate_jwt_secret.sh` script. This should add a JWT_SECRET to your .env file. Leave it as is.
+6. Open a terminal window in the root directory of the repository (UInnovate).
+7. Run `docker compose --profile tool up` to start the containers.  
    You can stop them at any time by running `docker compose --profile tool stop`.
 
    > 💡 Note that the pgadmin container will only be targeted by a docker compose command if you specify `--profile tool` as shown above. Otherwise, only the PostgreSQL and the PostgREST containers will be affected. Leaving it out can become handy if you try to reset the database, but you don't want to lose your server connection on pgadmin!
 
-7. Run `.\refresh_database.sh` in your terminal to populate the db. (Note: \ on Windows, / on Linux)
+8. Run `.\refresh_database.sh` in your terminal to populate the db. (Note: \ on Windows, / on Linux)
    > 💡 Note: To run bash commands on windows you need to:
       - Enable WSL on window
       - A linux distro installed from the windows store
