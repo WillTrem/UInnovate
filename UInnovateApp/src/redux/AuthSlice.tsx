@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from 'jwt-decode'
 import axios from "axios";
+import vmd from "../virtualmodel/VMD";
 
 export interface AuthState{
 	user: string | null, 
@@ -31,16 +32,18 @@ const authSlice = createSlice({
 			const decodedToken = jwtDecode(token) as DecodedToken;
 			state.role = decodedToken.role;
 			state.user = decodedToken.email;
-			console.log(`Role: ${decodedToken.role}`);
 
 			axios.defaults.headers["Authorization"] = `bearer ${token}`;
-		},
+					},
 		logOut: (state: AuthState, action: PayloadAction) => {
 			state.user = null;
 			state.token = null;
 			state.role = null;
 
 			axios.defaults.headers.common["Authorization"] = undefined;
+
+			const logoutFuncAccessor = vmd.getFunctionAccessor('meta', 'logout');
+			logoutFuncAccessor.executeFunction({withCredentials: true});
 		}
 	}
 })

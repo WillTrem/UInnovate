@@ -5,9 +5,9 @@ CREATE TABLE IF NOT EXISTS authentication.users (
 	email text PRIMARY KEY CHECK (email ~* '^.+@.+\..+$'),
 	first_name text,
 	last_name text,
-role name NOT NULL CHECK (length(role) < 512),
-PASSWORD text CHECK (length(PASSWORD) < 512),
-is_active bool NOT NULL
+	role name NOT NULL CHECK (length(role) < 512),
+	PASSWORD text CHECK (length(PASSWORD) < 512),
+	is_active bool NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS meta.user_schema_access (
@@ -112,14 +112,15 @@ $$ language SQL SECURITY DEFINER;
 DROP TYPE IF EXISTS authentication.jwt_token CASCADE;
 CREATE TYPE authentication.jwt_token AS (token text);
 
-CREATE OR REPLACE FUNCTION meta.login(email text, password text) RETURNS authentication.jwt_token AS $$
+CREATE OR REPLACE FUNCTION meta.login(email text, PASSWORD text) RETURNS authentication.jwt_token AS $$
 DECLARE _role name;
 result authentication.jwt_token;
+refresh_token authentication.jwt_token;
 BEGIN -- check email & password
-SELECT authentication.user_role(email, password) INTO _role;
+SELECT authentication.user_role(email, PASSWORD) INTO _role;
 IF _role IS NULL THEN raise invalid_password USING message = 'invalid email or password';
 END IF;
--- signs the jwt token
+-- signs the jwt access token
 SELECT sign(
 		row_to_json(r),
 		current_setting('custom.jwt_secret')
@@ -130,8 +131,25 @@ FROM (
 			extract(
 				epoch
 				FROM NOW()
-			)::integer + 60 * 60 AS exp
+			)::integer + 60 * 60 AS exp -- 1 hr
 	) AS r INTO result;
+SELECT sign(
+		row_to_json(rt),
+		current_setting('custom.jwt_secret')
+	) AS token
+FROM (
+		SELECT _role AS role,
+			login.email AS email,
+			extract(
+				epoch
+				FROM NOW()
+			)::integer + 60 * 60 * 8 AS exp -- 8 hrs 
+	) AS rt INTO refresh_token;
+PERFORM set_config(
+	'response.headers',
+	format(
+		'[{"Set-Cookie": "token=%s; SameSite=None; HttpOnly; Secure; Max-Age=28800;"}]', refresh_token.token),TRUE
+);
 RETURN result;
 END;
 $$ language plpgsql SECURITY DEFINER;
@@ -186,34 +204,87 @@ RETURN;
 END $$ language plpgsql SECURITY DEFINER;
 
 -- FUNCTION to verify whether a user already signed up or not
-CREATE OR REPLACE FUNCTION meta.verify_signup(email TEXT)
-RETURNS TEXT AS $$ BEGIN
-	-- If the user hasn't been created yet, raise an exception with code 42704 
+CREATE OR REPLACE FUNCTION meta.verify_signup(email TEXT) RETURNS TEXT AS $$ BEGIN -- If the user hasn't been created yet, raise an exception with code 42704 
 	IF NOT EXISTS (
-		SELECT * 
+		SELECT *
 		FROM authentication.users
 		WHERE users.email = verify_signup.email
-	)
-	THEN raise exception 'User not found'
-		USING ERRCODE = '42704',
-		DETAIL = format('User %L could not be found in the system.', verify_signup.email);
+	) THEN raise exception 'User not found' USING ERRCODE = '42704',
+	DETAIL = format(
+		'User %L could not be found in the system.',
+		verify_signup.email
+	);
 
 	-- If the user has been created but never signed up, raise an exception with code 01000
-	ELSIF NOT EXISTS (
+ELSIF NOT EXISTS (
 	SELECT *
 	FROM authentication.users
-	WHERE users.email = verify_signup.email AND 
-	users.password IS NOT NULL
-	) THEN raise exception 'User did not sign up.'
-		USING ERRCODE = '01000',
-		DETAIL = format('User %L never signed up.', verify_signup.email);
-		
-	-- If the user exists and already signed up, return its address email.
-	ELSE RETURN verify_signup.email;
-	END IF;
-	END $$ language plpgsql SECURITY DEFINER;
+	WHERE users.email = verify_signup.email
+		AND users.password IS NOT NULL
+) THEN raise exception 'User did not sign up.' USING ERRCODE = '01000',
+DETAIL = format('User %L never signed up.', verify_signup.email);
+-- If the user exists and already signed up, return its address email.
+ELSE RETURN verify_signup.email;
+END IF;
+END $$ language plpgsql SECURITY DEFINER;
 
--- ROLES
+-- FUNCTION to refresh the access token using the refresh token from cookies
+CREATE OR REPLACE FUNCTION meta.token_refresh() RETURNS authentication.jwt_token AS $$
+DECLARE token_cookie text;
+header json;
+payload json;
+valid boolean;
+token_email text;
+_role name;
+result authentication.jwt_token;
+BEGIN -- if the token cookie exists, take its value and set the authorization header with the token
+SELECT current_setting('request.cookies', TRUE)::JSON->>'token' INTO token_cookie;
+IF token_cookie <> '' THEN
+SELECT * INTO header,
+	payload,
+	valid
+FROM verify(
+		token_cookie,
+		current_setting('custom.jwt_secret')
+	);
+IF payload IS NULL THEN RAISE EXCEPTION 'Invalid refresh token';
+ELSE token_email := payload->>'email';
+-- 	Obtains the user's role
+SELECT role
+FROM authentication.users
+WHERE users.email = token_email INTO _role;
+-- 	Signs and returns the new access token
+SELECT sign(
+		row_to_json(r),
+		current_setting('custom.jwt_secret')
+	) AS token
+FROM (
+		SELECT _role AS role,
+			token_email AS email,
+			extract(
+				epoch
+				FROM NOW()
+			)::integer + 60 * 60 AS exp
+	) AS r INTO result;
+RETURN result;
+END IF;
+END IF;
+RAISE NOTICE 'No refresh token found';
+END;
+$$ language plpgsql SECURITY DEFINER;
+
+
+-- FUNCTION logout to clear cookies containing refresh tokens
+CREATE OR REPLACE FUNCTION meta.logout() 
+RETURNS VOID AS
+$$ BEGIN
+  -- Set the "Set-Cookie" header to clear the cookie
+  PERFORM set_config('response.headers', '[{"Set-Cookie": "token=; Max-Age=0;"}]', true);
+  END;
+$$language plpgsql SECURITY DEFINER;
+
+
+-- ROLES -----------------------------------------------------------------
 -- TODO: Move the role definitions in a separate sql file
 DROP ROLE IF EXISTS administrator;
 DROP ROLE IF EXISTS configurator;
@@ -233,7 +304,7 @@ BEGIN FOR schema_name IN (
 FOR table_record IN (
 	SELECT "table"
 	FROM meta.tables
-WHERE meta.tables.schema = schema_name -- replace with your schema name
+	WHERE meta.tables.schema = schema_name -- replace with your schema name
 ) LOOP EXECUTE format(
 	'GRANT ALL ON TABLE %I.%I TO "user";',
 	schema_name,
@@ -253,6 +324,7 @@ GRANT SELECT ON TABLE meta.tables TO "user";
 GRANT SELECT ON TABLE meta.columns TO "user";
 GRANT SELECT ON TABLE meta.constraints TO "user";
 GRANT SELECT ON TABLE meta.user_schema_access TO "user";
+GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 
 
 CREATE role configurator;
@@ -279,7 +351,8 @@ GRANT SELECT ON TABLE meta.user_info TO administrator;
 -- ADD user management-related capabilities HERE
 GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
-GRANT EXECUTE ON FUNCTION meta.verify_signup(text) to web_anon; 
+GRANT EXECUTE ON FUNCTION meta.verify_signup(text) TO web_anon;
+GRANT EXECUTE ON FUNCTION meta.token_refresh() TO web_anon;
 -- TO BE REMOVED AT SOME POINT
 GRANT SELECT ON TABLE meta.user_info TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO web_anon;

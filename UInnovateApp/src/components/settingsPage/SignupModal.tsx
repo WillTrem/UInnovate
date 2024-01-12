@@ -132,7 +132,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 
 		if (currentState === SignupState.LOGIN) {
 			loginFunctionAccessor.setBody(inputValues);
-			loginFunctionAccessor.executeFunction()
+			loginFunctionAccessor.executeFunction({withCredentials: true})
 				// Logs in the user
 				.then(async (response) => {
 					const token = response.data.token;
