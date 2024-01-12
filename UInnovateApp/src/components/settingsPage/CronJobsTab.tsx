@@ -45,8 +45,8 @@ export const CronJobsTab = () => {
     const scheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
             functionName: "schedule_job_by_name",
-            storedProcedureName: selectedProc,
-            schedule: cronSchedule,
+            stored_procedure: selectedProc,
+            cron_schedule: cronSchedule,
         };
         scheduleProcedure(params);
     };

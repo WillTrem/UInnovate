@@ -3,8 +3,8 @@ import { Row } from "./DataAccessor";
 
 export interface ProcedureSchedulingParams {
     functionName: string;
-    storedProcedureName: string;
-    schedule?: string;
+    stored_procedure: string;
+    cron_schedule?: string;
 }
 
 
@@ -17,8 +17,8 @@ export async function scheduleProcedure(params: ProcedureSchedulingParams): Prom
     // 3. Get function accessor for schedule job by name
     const func = await vmd.getFunctionAccessor(schema?.schema_name || '', params.functionName);
     const input = new Row();
-    input.storedProcedureName = params.storedProcedureName;
-    input.schedule = params.schedule;
+    input.stored_procedure = params.stored_procedure;
+    input.cron_schedule = params.cron_schedule;
     func.setBody(input);
     await func.executeFunction();
 
@@ -33,7 +33,7 @@ export async function unscheduleProcedure(params: ProcedureSchedulingParams): Pr
     // 3. Get function accessor for unschedule job by name
     const func = await vmd.getFunctionAccessor(schema?.schema_name || '', params.functionName);
     const input = new Row();
-    input.storedProcedureName = params.storedProcedureName;
+    input.stored_procedure = params.stored_procedure;
 
     func.setBody(input);
     await func.executeFunction();
