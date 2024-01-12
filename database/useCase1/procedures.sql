@@ -1,5 +1,5 @@
 -- Stored Procedure: CreateQuotationRevision
-CREATE OR REPLACE FUNCTION CreateQuotationRevision(
+CREATE OR REPLACE FUNCTION app_rentals.CreateQuotationRevision(
     old_quotation_id INT,
     new_quotation_date TIMESTAMP
 )
@@ -36,7 +36,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: CreatePurchaseOrderFromQuotation
-CREATE OR REPLACE FUNCTION CreatePurchaseOrderFromQuotation(
+CREATE OR REPLACE FUNCTION app_rentals.CreatePurchaseOrderFromQuotation(
     quotation_id_param INT,
     order_date_param TIMESTAMP
 )
@@ -76,7 +76,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: ScheduleToolIntoUnitScheduler
-CREATE OR REPLACE FUNCTION ScheduleToolIntoUnitScheduler(
+CREATE OR REPLACE FUNCTION app_rentals.ScheduleToolIntoUnitScheduler(
     tool_id_param INT,
     rent_start_date TIMESTAMP,
     rent_end_date TIMESTAMP
@@ -115,7 +115,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: CreateRestockRequestForTool
-CREATE OR REPLACE FUNCTION CreateRestockRequestForTool(
+CREATE OR REPLACE FUNCTION app_rentals.CreateRestockRequestForTool(
     tool_id_param INT,
     restock_notice_author_param TEXT,
     qty_requested_param INT
@@ -140,7 +140,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: AddToolToQuotation
-CREATE OR REPLACE FUNCTION AddToolToQuotation(
+CREATE OR REPLACE FUNCTION app_rentals.AddToolToQuotation(
     quotation_id_param INT,
     tool_id_param INT,
     tool_quoted_qty_param INT,
@@ -166,7 +166,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: CheckRecalibrationStatus
-CREATE OR REPLACE FUNCTION CheckRecalibrationStatus()
+CREATE OR REPLACE FUNCTION app_rentals.CheckRecalibrationStatus()
 RETURNS VOID AS $$
 DECLARE
     current_date TIMESTAMP := CURRENT_TIMESTAMP;
@@ -217,7 +217,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: GetCalibrateSoonUnits
-CREATE OR REPLACE FUNCTION GetCalibrateSoonUnits()
+CREATE OR REPLACE FUNCTION app_rentals.GetCalibrateSoonUnits()
 RETURNS TABLE (
     unit_id INT,
     unit_serial_number TEXT,
@@ -244,7 +244,7 @@ $$ LANGUAGE plpgsql;
 
 
 -- Stored Procedure: GetCalibrateImmediatelyUnits
-CREATE OR REPLACE FUNCTION GetCalibrateImmediatelyUnits()
+CREATE OR REPLACE FUNCTION app_rentals.GetCalibrateImmediatelyUnits()
 RETURNS TABLE (
     unit_id INT,
     unit_serial_number TEXT,
