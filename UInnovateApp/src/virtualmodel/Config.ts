@@ -18,6 +18,7 @@ export enum ColumnDisplayTypes {
   number = "number",
   datetime = "datetime",
   longtext = "longtext",
+  file = "file",
 }
 
 // This function will update the appconfig_values table in the database by inserting new values and updating exisiting ones
@@ -32,7 +33,6 @@ export function updateAppConfigValues(config: ConfigType) {
     config as unknown as Row
   );
 
-  
   data_accessor
     .upsert()
     .then(() => {
