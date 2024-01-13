@@ -67,6 +67,7 @@ export function Settings() {
                   </Tab.Pane>
                 <Tab.Pane eventKey="scripting">
                   <ScriptingTab />
+                  <EnvVarCreator
                 </Tab.Pane>
                 {(role === Role.ADMIN || role === null) && 
                 <Tab.Pane eventKey="users">
