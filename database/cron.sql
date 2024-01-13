@@ -55,6 +55,8 @@ BEGIN
                 (cron_row->>'active')::boolean, 
                 cron_row->>'jobname');
     END LOOP;
+END;
+$BODY$;
 
 CREATE OR REPLACE FUNCTION cron.schedule_job_by_name(stored_procedure varchar, cron_schedule varchar)
 RETURNS varchar
