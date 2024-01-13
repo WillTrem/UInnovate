@@ -80,6 +80,10 @@ export class DataAccessor {
       console.error("Could not update or insert row:", error);
     }
   }
+
+  toggleAuthentication(value: boolean){
+    axios.defaults.withCredentials = value;
+  }
 }
 
 export class Row {

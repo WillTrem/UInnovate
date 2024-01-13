@@ -25,18 +25,50 @@ input{
     border-radius: 2rem;
     box-shadow: 24px;
     padding: 2rem;
+    
+}
+.modal-content{
+    display:flex;
+    flex-direction: column;
+    margin: 8px 4px;
+    align-items: start;
+    gap: 24px;
+}
+.modal-content-center{
+    display:flex;
+    flex-direction: column;
+    margin: 8px 0px;
+    align-items: center;
+    gap: 24px;
 }
 
 .form{
 	display: flex;
   	flex-direction: column;
-  	padding-top: 20px;
+  	/* padding-top: 20px; */
   	/* background-color: #f1f1f1; */
+    gap: 16px;
 }
 
 .button-container{
     display:flex;
     flex-direction: row;
     gap: 10px;
-    margin-top: 10px;
+    margin-top: 20px;
 }
+
+.button-container-wide{
+    display:flex;
+    flex-direction:row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.textField {
+    max-width: 229px;
+  }
+  
+  .textField .MuiInputBase-input {
+    width: 100%;
+    overflow-wrap: break-word;
+  }

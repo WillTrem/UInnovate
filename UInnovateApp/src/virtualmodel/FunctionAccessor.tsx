@@ -21,10 +21,11 @@ export class FunctionAccessor {
 
 	// Method to execute a database function
 	// return type: AxiosResponse
-	async executeFunction() {
+	async executeFunction(config?: {}) {
 		try {
 			const response = await axios.post(this.function_url, this.values, {
 				headers: this.headers,
+				...config
 			});
 
 			return response;

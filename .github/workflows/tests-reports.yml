@@ -1,0 +1,39 @@
+name: Deploy Tests Reports
+
+on:
+  push:
+    path: './UInnovateApp/coverage/**'
+    branches:
+      - main
+
+jobs:
+  deploy_tests_reports:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./
+
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+
+    steps:
+    - name: Checkout UInnovate repository
+      uses: actions/checkout@v2
+
+    - name: Check files
+      working-directory: ./UInnovateApp
+      run: |
+        echo "Contents of coverage directory:"
+        ls -l coverage
+
+    - name: Copy files to another repository
+      uses: nkoppel/push-files-to-another-repository@v1.1.2      
+      env:
+        API_TOKEN_GITHUB: ${{ secrets.POSTGOAT_WEBSITE_REPOSITORY_DEPLOYMENT_SECRET }}
+      with:
+        source-files: 'UInnovateApp/coverage/'
+        destination-username: 'MariaR001'
+        destination-repository: 'PostGOAT'
+        destination-branch: 'main'
+        commit-email: 'ma_iv@live.concordia.ca'
