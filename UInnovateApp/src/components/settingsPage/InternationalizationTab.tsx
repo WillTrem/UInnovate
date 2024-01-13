@@ -23,6 +23,8 @@ const InternationalizationTab = () => {
     const [newLanguageCode, setNewLanguageCode] = useState('');
     const [newLanguageName, setNewLanguageName] = useState('');
 
+    const [languages, setLanguages] = useState<string[]>([]);
+
 	
     const getTranslations = async () => {
         const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -49,9 +51,9 @@ const InternationalizationTab = () => {
     };
     
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.name === 'languageCode') {
+        if (e.target.name === 'language_code') {
             setNewLanguageCode(e.target.value);
-        } else if (e.target.name === 'languageName') {
+        } else if (e.target.name === 'language_name') {
             setNewLanguageName(e.target.value);
         }
     }
@@ -68,18 +70,20 @@ const InternationalizationTab = () => {
                     "meta",
                     "i18n_languages",
                     {
-                        languageCode: newLanguageCode,
-                        languageName: newLanguageName,
+                        language_code: newLanguageCode,
+                        language_name: newLanguageName,
                     }
                 );
+
+                // Add the new language to the languages state
+                setLanguages(prevLanguages => [...prevLanguages, newLanguageCode]);
     
                 console.log("Adding language with data:", {
-                    languageCode: newLanguageCode,
-                    languageName: newLanguageName,
+                    language_code: newLanguageCode,
+                    language_name: newLanguageName,
                 });
     
-                const response = await data_accessor?.addRow();
-                console.log("Add language response:", response);
+                await data_accessor?.addRow();
     
             } catch (error) {
                 console.error('Error adding language:', error);
@@ -106,7 +110,7 @@ const InternationalizationTab = () => {
                             <Form.Control
                                 type="text"
                                 placeholder="Language Name (e.g. English)"
-                                name="languageName"
+                                name="language_name"
                                 value={newLanguageName}
                                 onChange={handleInputChange}
 
@@ -115,7 +119,7 @@ const InternationalizationTab = () => {
                             <Form.Control
                                 type="text"
                                 placeholder="Language Code (e.g. ENG)"
-                                name="languageCode"
+                                name="language_code"
                                 value={newLanguageCode}
                                 onChange={handleInputChange}  
                             />
@@ -164,7 +168,9 @@ const InternationalizationTab = () => {
                         <thead>
                             <tr>
                                 <th>Label</th>
-                                <th>Translation</th>
+                                {languages.map(language => (
+                                    <th key={language}>{`LANG:${language}`}</th>
+                                ))}
                             </tr>
                         </thead>
                         <tbody>
