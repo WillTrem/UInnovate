@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
-import {Button} from "@mui/material"
+import {Button, skeletonClasses} from "@mui/material"
 import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
+import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams } from '../../virtualmodel/PlatformFunctions';
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
 
 interface ExecutionLogEntry {
     id: any; 
@@ -20,8 +23,7 @@ interface QueuedJob {
 
 const containerStyle = {
     display: 'flex',
-    gap: '10px', // Adjust the gap size as needed
-    marginTop: '20px', // Adjust the top margin as needed
+    gap: '10px', 
   };
 const buttonStyle = {
     marginTop: 20,
@@ -42,14 +44,46 @@ export const CronJobsTab = () => {
     ];
 
     const scheduleCronJob = () => {
-        const sql = `SELECT cron.schedule('${selectedProc}', '${cronSchedule}', 'CALL ${selectedProc}()');`;
+        const params: ProcedureSchedulingParams = {
+            functionName: "schedule_job_by_name",
+            stored_procedure: selectedProc,
+            cron_schedule: cronSchedule,
+        };
+    
+        return new Promise((resolve, reject) => {
+            scheduleProcedure(params)
+                .then(response => {
+                    // Handle success here
+                    console.log("Cron job scheduled successfully");
+                    resolve(response);
+                })
+                .catch(error => {
+                    // Handle error here
+                    console.error("Error scheduling cron job", error);
+                    reject(error);
+                });
+        });
+    };    
 
-         // To be implemented
-    };
+    const unscheduleCronJob = () => {
+        const params: ProcedureSchedulingParams = {
+            functionName: "unschedule_job_by_name",
+            stored_procedure: selectedProc
+        };
 
-    const cancelCronJob = () => {
-        const sql = `SELECT cron.unschedule('${selectedProc}');`;
-        // To be implemented
+        return new Promise((resolve, reject) => {
+            unscheduleProcedure(params)
+                .then(response => {
+                    // Handle success here
+                    console.log("Cron job unscheduled successfully");
+                    resolve(response);
+                })
+                .catch(error => {
+                    // Handle error here
+                    console.error("Error unscheduling cron job", error);
+                    reject(error);
+                });
+        });
     };
 
     const formatDuration = (ms: number | 'N/A') => {
@@ -129,7 +163,13 @@ export const CronJobsTab = () => {
         
         setQueuedLogs(newQueuedJobs);
     };
-
+    useEffect(() => {
+        if (procedures.length > 0 && selectedProc === '') {
+            const initialProc = procedures[0];
+            setSelectedProc(initialProc);
+            fetchExecutionLogsForProc(initialProc);
+        }
+    }, []);
     useEffect(() => {
         if (selectedProc) {
             fetchExecutionLogsForProc(selectedProc);
@@ -164,20 +204,27 @@ export const CronJobsTab = () => {
                     <ListGroup variant='flush'>
                         {/* set cron schedule for the selected procedure */}
                         <ListGroup.Item>
-                            <Form.Group controlId="cronSchedule">
-                                <Form.Label>Cron Schedule for {selectedProc}</Form.Label>
+                        <Form.Group controlId="cronSchedule">
+                            <Form.Label>
+                                Cron Schedule for {selectedProc}
+                            </Form.Label>
+                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
                                 <Form.Control
                                     type="text"
-                                    placeholder=""
+                                    placeholder="* * * * *"
                                     value={cronSchedule}
                                     onChange={e => setCronSchedule(e.target.value)}
+                                    style={{ flexGrow: 1, marginRight: '5px' }} // Ensure the input field takes up available space
                                 />
-                                <div style={containerStyle}>
-                                    <Button variant="contained" style={buttonStyle} onClick={scheduleCronJob}>Set Schedule</Button>
-                                    <Button variant="contained" style={buttonStyle} onClick={cancelCronJob}>Deactivate</Button>
-                                </div>
-
-                            </Form.Group>
+                                <Tooltip title="Use cron syntax: '* * * * *', Format: 'Minute Hour Day Month Weekday'. Each field can be a number or '*', which means every. Example: '0 5 * * *' runs daily at 5 AM. For detailed syntax, check https://crontab.guru/">
+                                    <InfoIcon />
+                                </Tooltip>
+                            </div>
+                            <div style={containerStyle}>
+                                <Button variant="contained" style={buttonStyle} onClick={() => scheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Schedule Job</Button>                                    
+                                <Button variant="contained" style={buttonStyle} onClick={() => unscheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Unschedule Job</Button>
+                            </div>
+                        </Form.Group>
                         </ListGroup.Item>
 
                         <ListGroup.Item>
