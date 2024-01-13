@@ -30,7 +30,8 @@ CREATE TABLE app_rentals.tool (
     tool_name text,
     tool_price money,
     tool_description text,
-    tool_qty_available int
+    tool_qty_available int,
+    attachments int REFERENCES app_filemanager.app_filestorage(id)
 );
 COMMENT ON TABLE app_rentals.tool IS '{"displayField": "tool_name"}';
 COMMENT ON COLUMN app_rentals.tool.tool_type IS '{"reqOnCreate": true, "refTable": "app_rentals.tool_type"}';

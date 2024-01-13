@@ -22,27 +22,27 @@ INSERT INTO app_rentals.tool_type (type_name, type_category) VALUES
     ('Table Saw', 'Power Tools');
 
 -- Sample data for tool table
-INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description, tool_qty_available) VALUES
-    (1, 'Cordless Drill', 99.99, 'Powerful cordless drill for various applications', 15),
-    (2, 'Claw Hammer', 12.99, 'Sturdy hammer for carpentry work', 20),
-    (3, 'Circular Saw', 149.99, 'High-performance circular saw with laser guide', 10),
-    (4, 'Adjustable Wrench', 8.99, 'Versatile adjustable wrench for various tasks', 18),
-    (5, 'Phillips Screwdriver', 4.99, 'Durable Phillips screwdriver for screwing tasks', 25),
-    (6, 'Power Washer', 199.99, 'Heavy-duty power washer for cleaning tasks', 12),
-    (7, 'Pliers', 6.99, 'Multi-functional pliers for gripping and cutting', 22),
-    (8, 'Chisel', 5.99, 'Sharp chisel for woodworking', 15),
-    (9, 'Jigsaw', 129.99, 'Precision jigsaw for intricate cutting', 8),
-    (10, 'Tape Measure', 7.99, 'Retractable tape measure for accurate measurements', 30),
-    (11, 'Angle Grinder', 79.99, 'Versatile angle grinder for cutting and grinding', 10),
-    (12, 'Screw Gun', 49.99, 'Automatic screw gun for efficient screwing', 18),
-    (13, 'Ratchet', 14.99, 'Handheld ratchet for tightening and loosening bolts', 20),
-    (14, 'Impact Driver', 89.99, 'High-torque impact driver for heavy-duty tasks', 12),
-    (15, 'Utility Knife', 3.99, 'Compact utility knife for cutting various materials', 25),
-    (16, 'Reciprocating Saw', 119.99, 'Reciprocating saw for cutting through tough materials', 10),
-    (17, 'Hand Saw', 9.99, 'Traditional hand saw for woodworking', 15),
-    (18, 'Bolt Cutter', 17.99, 'Heavy-duty bolt cutter for cutting bolts and chains', 8),
-    (19, 'Table Saw', 199.99, 'Large table saw for precise woodworking', 5),
-    (20, 'Sledgehammer', 24.99, 'Powerful sledgehammer for heavy demolition work', 7);
+INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description, tool_qty_available, attachments) VALUES
+    (1, 'Cordless Drill', 99.99, 'Powerful cordless drill for various applications', 15, null),
+    (2, 'Claw Hammer', 12.99, 'Sturdy hammer for carpentry work', 20, null),
+    (3, 'Circular Saw', 149.99, 'High-performance circular saw with laser guide', 10, null),
+    (4, 'Adjustable Wrench', 8.99, 'Versatile adjustable wrench for various tasks', 18, null),
+    (5, 'Phillips Screwdriver', 4.99, 'Durable Phillips screwdriver for screwing tasks', 25, null),
+    (6, 'Power Washer', 199.99, 'Heavy-duty power washer for cleaning tasks', 12, null),
+    (7, 'Pliers', 6.99, 'Multi-functional pliers for gripping and cutting', 22, null),
+    (8, 'Chisel', 5.99, 'Sharp chisel for woodworking', 15, null),
+    (9, 'Jigsaw', 129.99, 'Precision jigsaw for intricate cutting', 8, null),
+    (10, 'Tape Measure', 7.99, 'Retractable tape measure for accurate measurements', 30, null),
+    (11, 'Angle Grinder', 79.99, 'Versatile angle grinder for cutting and grinding', 10, null),
+    (12, 'Screw Gun', 49.99, 'Automatic screw gun for efficient screwing', 18, null),
+    (13, 'Ratchet', 14.99, 'Handheld ratchet for tightening and loosening bolts', 20, null),
+    (14, 'Impact Driver', 89.99, 'High-torque impact driver for heavy-duty tasks', 12, null),
+    (15, 'Utility Knife', 3.99, 'Compact utility knife for cutting various materials', 25, null),
+    (16, 'Reciprocating Saw', 119.99, 'Reciprocating saw for cutting through tough materials', 10, null),
+    (17, 'Hand Saw', 9.99, 'Traditional hand saw for woodworking', 15, null),
+    (18, 'Bolt Cutter', 17.99, 'Heavy-duty bolt cutter for cutting bolts and chains', 8, null),
+    (19, 'Table Saw', 199.99, 'Large table saw for precise woodworking', 5, null),
+    (20, 'Sledgehammer', 24.99, 'Powerful sledgehammer for heavy demolition work', 7, null);
 
 -- Sample data for unit table
 INSERT INTO app_rentals.unit (tool_id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES

@@ -44,6 +44,8 @@ import {
   type RichTextEditorRef,
 } from "mui-tiptap";
 import ScriptLoadPopup from "./ScriptLoadPopup";
+import Dropzone from "./Dropzone";
+import "../styles/TableListView.css";
 
 interface TableListViewProps {
   table: Table;
@@ -67,7 +69,6 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
-
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -80,8 +81,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
-  if(defaultOrderValue == undefined){
-    defaultOrderValue = table.columns[0].column_name
+  if (defaultOrderValue == undefined) {
+    defaultOrderValue = table.columns[0].column_name;
   }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
@@ -143,14 +144,23 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
     () => <></>
   );
+  const [item, setItem] = useState(null);
+  const [itemImage, setItemImage] = useState(null);
+  const [itemName, setItemName] = useState(null);
+  const [currentFileColumn, setCurrentFileColumn] = useState<string>(null);
+  const [currentFile, setCurrentFile] = useState(null);
+
   const schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
+  const fileSchema = vmd.getSchema("app_filemanager");
+  const fileTable = vmd.getTable("app_filemanager", "app_filestorage");
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [scriptDescription, setScriptDescription] = useState<string | null>("");
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
+  const [files, setFiles] = useState<Row[] | undefined>([]);
 
   const getScripts = async () => {
     if (!schema || !script_table) {
@@ -203,9 +213,24 @@ const TableListView: React.FC<TableListViewProps> = ({
     setAppConfigValues(config_rows);
   };
 
+  const getFiles = async () => {
+    if (!fileSchema || !fileTable) {
+      throw new Error("Schema or table not found");
+    }
+    const file_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+      fileSchema?.schema_name,
+      fileTable?.table_name
+    );
+
+    const file_rows = await file_data_accessor?.fetchRows();
+
+    setFiles(file_rows);
+  };
+
   useEffect(() => {
     getScripts();
     getConfigs();
+    getFiles();
   }, [inputValues]);
 
   const inputStyle = {
@@ -231,6 +256,24 @@ const TableListView: React.FC<TableListViewProps> = ({
   //For when page number changes
   const handlePageChange = (event, value) => {
     setPageNumber(value);
+  };
+
+  const onItemAdded = (item, itemImage, itemName, currentColumn) => {
+    const nonEditableColumn = table.columns.find(
+      (column) => column.is_editable === false
+    );
+    if (nonEditableColumn) {
+      setCurrentPrimaryKey(nonEditableColumn.column_name);
+    }
+    setItem(item);
+    setItemImage(itemImage);
+    setItemName(itemName);
+    setCurrentFileColumn(currentColumn);
+
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [currentColumn]: item,
+    }));
   };
 
   const handleInputChange = (
@@ -270,7 +313,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }));
   };
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const schema = vmd.getTableSchema(table.table_name);
@@ -282,22 +325,42 @@ const TableListView: React.FC<TableListViewProps> = ({
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
     );
-
+    let file_accessor = null;
+    let response = null;
+    let tempInput = null;
+    if (item !== null) {
+      file_accessor = vmd.getAddRowDataAccessor(
+        fileSchema?.schema_name,
+        fileTable?.table_name,
+        { file_name: itemName, extension: ".pdf", blob: item }
+      );
+      response = await file_accessor.addRow();
+    }
+    tempInput = inputValues;
+    if (response !== null) {
+      tempInput = { ...tempInput, [currentFileColumn]: response.data[0]["id"] };
+    }
+    console.log(tempInput);
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
       table.table_name,
-      inputValues,
+      tempInput,
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
-    data_accessor.updateRow().then(() => getRows());
+    data_accessor.updateRow().then((res) => {
+      getRows();
+      console.log(res);
+    });
     setInputValues({});
+    setCurrentFileColumn("");
     setOpenPanel(false);
   };
 
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
 
   // }
+
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!appConfigValues) {
@@ -477,6 +540,46 @@ const TableListView: React.FC<TableListViewProps> = ({
             )}
           />
         );
+      } else if (columnDisplayType.value == "file") {
+        let response;
+        files?.forEach((file) => {
+          if (file["id"] == currentRow.row[column.column_name]) {
+            response = file;
+          }
+        });
+        response = response ? response : null;
+        console.log(response);
+        return (
+          <div className="centerize">
+            <Dropzone
+              onItemAdded={onItemAdded}
+              items={response ? response["blob"] : null}
+              itemsImage={response ? true : false}
+              itemsName={response ? response["file_name"] : null}
+              currentColumn={column.column_name}
+            />
+          </div>
+        );
+      } else if (columnDisplayType.value == "file") {
+        let response;
+        files?.forEach((file) => {
+          if (file["id"] == currentRow.row[column.column_name]) {
+            response = file;
+          }
+        });
+        response = response ? response : null;
+        console.log(response);
+        return (
+          <div className="centerize">
+            <Dropzone
+              onItemAdded={onItemAdded}
+              items={response ? response["blob"] : null}
+              itemsImage={response ? true : false}
+              itemsName={response ? response["file_name"] : null}
+              currentColumn={column.column_name}
+            />
+          </div>
+        );
       }
     };
     setInputField(() => newInputField as (column: Column) => JSX.Element);
@@ -490,6 +593,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentCategory,
     inputValues,
     currentWYSIWYG,
+    files,
   ]);
 
   // Function to save the current row
@@ -502,7 +606,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-   
+
     setOpenPanel(true);
   };
 
