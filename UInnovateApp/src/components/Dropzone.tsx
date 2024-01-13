@@ -28,8 +28,9 @@ function Dropzone({
     setItem(evt.target.files[0]);
     if (onItemAdded) {
       onItemAdded(
-        evt.target.files[0],
+        evt,
         URL.createObjectURL(evt.target.files[0]),
+        true,
         name,
         currentColumn
       );
@@ -97,7 +98,7 @@ function Dropzone({
           <div className="flex justify-end p-0">
             <button
               className="flex p-0 justify-end"
-              onClick={() => onItemAdded(null, null, null, currentColumn)}
+              onClick={(e) => onItemAdded(e, null, null, null, currentColumn)}
             >
               {" "}
               <CloseIcon color="error"></CloseIcon>
@@ -107,7 +108,7 @@ function Dropzone({
             <img
               alt="Item"
               id="image-stop"
-              src={itemImage}
+              src={itemImage ? "pdf-icon.png" : null}
               className="image-size"
             />
             <label htmlFor="image-stop" className="image-size">

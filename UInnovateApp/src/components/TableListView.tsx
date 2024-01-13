@@ -147,7 +147,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [item, setItem] = useState(null);
   const [itemImage, setItemImage] = useState(null);
   const [itemName, setItemName] = useState(null);
-  const [currentFileColumn, setCurrentFileColumn] = useState<string>(null);
   const [currentFile, setCurrentFile] = useState(null);
 
   const schema = vmd.getSchema("meta");
@@ -161,6 +160,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [files, setFiles] = useState<Row[] | undefined>([]);
+  const [columnsAndFile, setColumnsAndFile] = useState([]);
 
   const getScripts = async () => {
     if (!schema || !script_table) {
@@ -258,7 +258,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     setPageNumber(value);
   };
 
-  const onItemAdded = (item, itemImage, itemName, currentColumn) => {
+  const onItemAdded = (e, item, itemImage, itemName, currentColumn) => {
+    e.preventDefault();
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
     );
@@ -268,12 +269,17 @@ const TableListView: React.FC<TableListViewProps> = ({
     setItem(item);
     setItemImage(itemImage);
     setItemName(itemName);
-    setCurrentFileColumn(currentColumn);
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
       [currentColumn]: item,
     }));
+    let temp = columnsAndFile;
+    temp = [...temp, [currentColumn, item]];
+    setColumnsAndFile([...columnsAndFile, [currentColumn, item]]);
+    let tempRow = currentRow;
+    tempRow.row = { ...tempRow.row, [currentColumn]: item };
+    setCurrentRow(tempRow);
   };
 
   const handleInputChange = (
@@ -327,20 +333,27 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
     let file_accessor = null;
     let response = null;
-    let tempInput = null;
-    if (item !== null) {
-      file_accessor = vmd.getAddRowDataAccessor(
-        fileSchema?.schema_name,
-        fileTable?.table_name,
-        { file_name: itemName, extension: ".pdf", blob: item }
-      );
-      response = await file_accessor.addRow();
+    let tempInput = inputValues;
+    if (columnsAndFile && columnsAndFile.length !== 0) {
+      columnsAndFile.forEach(async (columnAndFile) => {
+        if (columnAndFile[1] != null) {
+          file_accessor = vmd.getAddRowDataAccessor(
+            fileSchema?.schema_name,
+            fileTable?.table_name,
+            { file_name: itemName, extension: ".pdf", blob: columnAndFile[1] }
+          );
+          response = await file_accessor.addRow();
+          tempInput = {
+            ...tempInput,
+            [columnAndFile[0]]: response.data[0]["id"],
+          };
+        }
+      });
     }
-    tempInput = inputValues;
-    if (response !== null) {
-      tempInput = { ...tempInput, [currentFileColumn]: response.data[0]["id"] };
-    }
-    console.log(tempInput);
+    await new Promise((r) => setTimeout(r, 500));
+
+    getFiles();
+
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
       table.table_name,
@@ -353,7 +366,6 @@ const TableListView: React.FC<TableListViewProps> = ({
       console.log(res);
     });
     setInputValues({});
-    setCurrentFileColumn("");
     setOpenPanel(false);
   };
 
@@ -561,14 +573,14 @@ const TableListView: React.FC<TableListViewProps> = ({
           </div>
         );
       } else if (columnDisplayType.value == "file") {
-        let response;
+        let currentFile;
         files?.forEach((file) => {
-          if (file["id"] == currentRow.row[column.column_name]) {
-            response = file;
+          if (file["id"] == currentRow?.row[column.column_name]) {
+            currentFile = file;
           }
         });
-        response = response ? response : null;
-        console.log(response);
+        const response = currentFile;
+        console.log(currentRow);
         return (
           <div className="centerize">
             <Dropzone
