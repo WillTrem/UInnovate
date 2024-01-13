@@ -6,5 +6,6 @@ export enum ConfigProperty {
   DISPLAY_COLUMN_AS_CURRENCY = "display_column_as_currency",
   COLUMN_DISPLAY_TYPE = "column_display_type",
   METADATA_VIEW = "metadata_view",
-  DETAILS_VIEW = "details_view"
+  DETAILS_VIEW = "details_view",
+  STAND_ALONE_DETAILS_VIEW = "stand_alone_details_view"
 }
