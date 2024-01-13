@@ -51,7 +51,6 @@ export const EnvVarCreator = () => {
 
 	//EDIT ENV VAR FEATURE:
 	const [editMode, setEditMode] = useState(false);
-	// const [editedEnvVars, setEditedEnvVars] = useState(envVar);
 	const handleEditClick = () => {
 		setEditMode(!editMode);
 	};
@@ -100,10 +99,6 @@ export const EnvVarCreator = () => {
 
 		const env_var_rows = await data_accessor?.fetchRows();
 		setEnvVar(env_var_rows);
-		//alternative:
-		// env_var_rows?.forEach((envVar) => {
-		// 	env_var_rows.push(envVar);
-		// });
 	};
 
 	return (
