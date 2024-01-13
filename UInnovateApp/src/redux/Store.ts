@@ -1,10 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import schemaReducer from "./SchemaSlice";
+import authReducer from './AuthSlice'
 
 // App state store
 const Store = configureStore({
   reducer: {
     schema: schemaReducer,
+    auth: authReducer,
   },
 });
 

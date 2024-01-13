@@ -6,6 +6,7 @@ import { Settings } from "./pages/Settings";
 import { ConfigProvider } from "./contexts/ConfigContext";
 import vmd from "./virtualmodel/VMD";
 import { useEffect } from "react";
+import PersistLogin from "./components/PersistLogin";
 function App() {
   useEffect(() => {
     // Printing the schemas to the console
@@ -14,6 +15,7 @@ function App() {
   return (
     //Wrapping routes so that we can use the context in all the pages (eventually?)
     <ConfigProvider>
+      <PersistLogin/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/check" element={<NavBar />} />
