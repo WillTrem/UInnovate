@@ -16,8 +16,8 @@ COPY ./app /UInnovateApp/public
 # Copy the scripting folder
 COPY ./scripting /UInnovateApp/scripting
 
-# Expose a volume for flexible use in different scenarios
+# Expose a volume for flexible use in different scenarios/use cases
 VOLUME /UInnovateApp/data
 
-# Define the command to run your app (adjust as necessary)
+# Define command to run app (needs to be adjusted...)
 CMD ["node", "server.js"]
