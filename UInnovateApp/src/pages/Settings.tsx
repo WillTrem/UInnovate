@@ -1,5 +1,6 @@
 import { NavBar } from "../components/NavBar";
 import { GeneralTab } from "../components/settingsPage/GeneralTab";
+import { CronJobsTab } from "../components/settingsPage/CronJobsTab";
 import DisplayTab from "../components/settingsPage/DisplayTab";
 import { ScriptingTab } from "../components/settingsPage/ScriptingTab";
 import Tab from "react-bootstrap/Tab";
@@ -10,11 +11,19 @@ import "../styles/settings.css";
 import UserManagementTab from "../components/settingsPage/UserMangementTab";
 import ButtonConfigurationSaver from "../components/settingsPage/ButtonConfigurationSaver";
 import InternationalizationTab from "../components/settingsPage/InternationalizationTab";
+import UnauthorizedScreen from "../components/UnauthorizedScreen";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/Store";
+import { Role } from "../redux/AuthSlice";
 
 export function Settings() {
+  const role = useSelector((state:RootState) => state.auth.role)
   return (
     <>
       <NavBar />
+      {role === Role.USER ?
+      <UnauthorizedScreen/> 
+      :
       <div className="page-container">
         <div className="save-config-container">
           <h1 className="title">Settings</h1>
@@ -31,11 +40,14 @@ export function Settings() {
                   <Nav.Link eventKey="display">Display</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
+                  <Nav.Link eventKey="schedule">Scheduled Activities</Nav.Link>
                   <Nav.Link eventKey="scripting">Scripting</Nav.Link>
                 </Nav.Item>
+                {(role === Role.ADMIN || role === null) && 
                 <Nav.Item>
                   <Nav.Link eventKey="users">Users</Nav.Link>
                 </Nav.Item>
+                }
                 <Nav.Item>
                   <Nav.Link eventKey="internationalization">Internationalization</Nav.Link>
                 </Nav.Item>
@@ -49,12 +61,17 @@ export function Settings() {
                 <Tab.Pane eventKey="display">
                   <DisplayTab />
                 </Tab.Pane>
+                <Tab.Pane eventKey="schedule">
+                  <CronJobsTab />
+                  </Tab.Pane>
                 <Tab.Pane eventKey="scripting">
                   <ScriptingTab />
                 </Tab.Pane>
+                {(role === Role.ADMIN || role === null) && 
                 <Tab.Pane eventKey="users">
                   <UserManagementTab />
                 </Tab.Pane>
+                }
                 <Tab.Pane eventKey="internationalization">
                   <InternationalizationTab />
                 </Tab.Pane>
@@ -63,6 +80,7 @@ export function Settings() {
           </Row>
         </Tab.Container>
       </div>
+      }
     </>
   );
-}
+  }

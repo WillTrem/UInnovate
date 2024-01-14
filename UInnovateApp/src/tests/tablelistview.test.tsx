@@ -51,7 +51,7 @@ describe("TableListView component", () => {
       fireEvent.click(openButton[1]);
 
       // Check if the sliding panel is now open
-      expect(screen.getByText("LookUpTableDetails")).toBeInTheDocument();
+      expect(screen.getByText("Details")).toBeInTheDocument();
 
 
     });

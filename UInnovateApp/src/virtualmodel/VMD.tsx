@@ -272,6 +272,9 @@ class VirtualModelDefinition {
           case "details_view":
             table.has_details_view = config.value === "true";
             break;
+          case "stand_alone_details_view":
+            table.stand_alone_details_view = config.value === "true";
+            break;
         }
       });
       this.config_data_fetched = true;
@@ -310,52 +313,29 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
   // return type : DataAccessor
-  getRowsDataAccessorForOrder(
-    schema_name: string,
-    table_name: string,
-    order_by: string,
-    Limit: number,
-    Page: number
-  ) {
+  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, Limit: number, Page: number) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
     const limit = Limit.toString();
     const page = ((Page - 1) * Limit).toString();
     if (schema && table) {
-      return new DataAccessor(
-        table.url +
-          "?order=" +
-          order_by +
-          "&limit=" +
-          limit +
-          "&offset=" +
-          page,
-        {
-          "Accept-Profile": schema.schema_name,
-        }
-      );
+      return new DataAccessor(table.url + "?order=" + order_by + "&limit=" + limit + "&offset=" + page, {
+        "Accept-Profile": schema.schema_name,
+      });
     } else {
       throw new Error("Schema or table does not exist");
     }
   }
   // Method to return a data accessor object to fetch rows from a table For Look up Table
   // return type : DataAccessor
-  getRowsDataAccessorForLookUpTable(
-    schema_name: string,
-    table_name: string,
-    SearchKey: string,
-    SearchValue: string
-  ) {
+  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue: string) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
-      return new DataAccessor(
-        table.url + "?" + SearchKey + "=eq." + SearchValue,
-        {
-          "Accept-Profile": schema.schema_name,
-        }
-      );
+      return new DataAccessor(table.url + "?" + SearchKey + "=eq." + SearchValue, {
+        "Accept-Profile": schema.schema_name,
+      });
     } else {
       throw new Error("Schema or table does not exist");
     }
@@ -407,13 +387,7 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to update a row in a table
   // return type : DataAccessor
-  getUpdateRowDataAccessorView(
-    schema_name: string,
-    table_name: string,
-    row: Row,
-    primarykey: string,
-    primarykeyvalue: string
-  ) {
+  getUpdateRowDataAccessorView(schema_name: string, table_name: string, row: Row, primarykey: string, primarykeyvalue: string) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -533,6 +507,7 @@ export class Table {
   columns: Column[];
   url: string;
   lookup_tables: Row;
+  stand_alone_details_view: boolean;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -542,6 +517,7 @@ export class Table {
     this.columns = [];
     this.url = API_BASE_URL + table_name;
     this.lookup_tables = { "-1": "none" };
+    this.stand_alone_details_view = false;
   }
 
   // Method to add a new column to the table object
@@ -646,6 +622,18 @@ export class Table {
   // return type : void
   setLookupTables(lookup_tables: Row) {
     this.lookup_tables = lookup_tables;
+  }
+
+  // Method to get the table's stand alone details view
+  // return type : boolean
+  getStandAloneDetailsView() {
+    return this.stand_alone_details_view;
+  }
+
+  // Method to set the table's stand alone details view
+  // return type : void
+  setStandAloneDetailsView(stand_alone_details_view: boolean) {
+    this.stand_alone_details_view = stand_alone_details_view;
   }
 }
 

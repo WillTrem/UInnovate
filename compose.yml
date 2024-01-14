@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB_NAME} # Default database's name
+      POSTGRES_DB: ${POSTGRES_DB_NAME}
       PGDATA: /data/postgres
       PGUSER: web_anon
       JWT_SECRET: ${JWT_SECRET}
@@ -22,7 +22,6 @@ services:
     networks:
       - backend
     restart: always
-
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -44,10 +43,12 @@ services:
       - "3000:3000"
     environment:
       PGRST_DB_URI: postgres://authenticator:${JWT_SECRET}@db:5432/${POSTGRES_DB_NAME} #The authenticator roles has the JWT_SECRET as password (set in init.sh)
+      PGRST_DB_SCHEMAS: application, meta, cron
       PGRST_OPENAPI_SERVER_PROXY_URI: http://127.0.0.1:3000
       PGRST_DB_ANON_ROLE: web_anon
       PGRST_JWT_SECRET: ${JWT_SECRET}
       PGRST_DB_PRE_CONFIG: postgrest.pre_config
+      PGRST_SERVER_CORS_ALLOWED_ORIGINS: ${PLATFORM_DOMAIN}
     depends_on:
       - db
     networks:

@@ -180,6 +180,15 @@ const TableListView: React.FC<TableListViewProps> = ({
     getConfigs();
   }, [inputValues]);
 
+
+  const inputStyle = {
+    display: "flex",
+    flexDirection: "column", 
+    alignItems: "flex-start",
+    width: table.stand_alone_details_view ? '80%' : "120%",
+  
+  };
+  const tableStyle = table.stand_alone_details_view ? 'form-group-stand-alone' : 'form-group';
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
     setOrderValue(event.target.value as string);
@@ -465,6 +474,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
+    if (table.stand_alone_details_view) {
+      console.log("No Stand Alone Details View " + table.table_name)
+    }
     setOpenPanel(true);
   };
 
@@ -477,7 +489,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (showTable) {
       setTimeout(() => {
         setShowTable(false);
-      }, 1000); // Adjust the delay as needed
+      }, 1000);
     }
   }, [openPanel]);
 
@@ -592,7 +604,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       <SlidingPanel
         type={"right"}
         isOpen={openPanel}
-        size={30}
+        size={table.stand_alone_details_view ? 100 : 50}
         panelContainerClassName="panel-container"
         backdropClicked={() => {
           setCurrentPhone("");
@@ -605,8 +617,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         <div className="form-panel-container">
           <Typography variant="h5">Details</Typography>
           <form>
-            <div className="form-group">
-              <label>
+            <div className={tableStyle}>
                 {columns.map((column, colIdx) => {
                   return (
                     <div key={colIdx} className="row-details">
@@ -617,7 +628,6 @@ const TableListView: React.FC<TableListViewProps> = ({
                     </div>
                   );
                 })}
-              </label>
             </div>
           </form>
           <div>
@@ -648,25 +658,26 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
-        {localStorage.getItem(table.table_name + "T") === null ||
-        getTable[-1] == "none" ? (
-          <div></div>
-        ) : showTable ? (
-          <div style={{ paddingBottom: "2em" }}>
-            <LookUpTableDetails table={table} />
-          </div>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginLeft: 15 }}
-            onClick={() => setShowTable(true)}
-          >
-            Show Look up Table
-          </Button>
-        )}
+        <div style={{ paddingBottom: '2em' }}>
+          {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none" ? (
+            <div></div>
 
-        <LookUpTableDetails table={table} />
+          ) : showTable ? (
+            <div style={{ paddingBottom: '2em' }}>
+              <LookUpTableDetails table={table} />
+            </div>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginLeft: 15 }}
+              onClick={() => setShowTable(true)}
+
+            >
+              Show Look up Table
+            </Button>
+          )}
+        </div>
       </SlidingPanel>
     </div>
   );
