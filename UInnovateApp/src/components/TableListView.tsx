@@ -212,7 +212,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
     }
-    }
     let eventName: string | undefined = undefined;
     let eventValue: string | undefined = undefined;
     if (event?.target?.name !== undefined && event?.target?.name !== "") {
@@ -673,7 +672,6 @@ const TableListView: React.FC<TableListViewProps> = ({
 
         <LookUpTableDetails table={table} />
       </SlidingPanel>
-      
     </div>
   );
 };
