@@ -13,10 +13,6 @@ import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import {
-  LocalizationProvider,
-  StaticDateTimePicker,
-} from "@mui/x-date-pickers";
-import {
   Switch,
   Button,
   Typography,
