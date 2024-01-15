@@ -1,6 +1,7 @@
 import "../styles/TableComponent.css";
 import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
+import scriptHandler from "../virtualmodel/ScriptHandler";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect } from "react";
 import SlidingPanel from "react-sliding-side-panel";
@@ -10,13 +11,22 @@ import { ConfigProperty } from "../virtualmodel/ConfigProperties";
 import { NumericFormat } from "react-number-format";
 import { DateField } from "@mui/x-date-pickers/DateField";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import RRow from 'react-bootstrap/Row';
-import CCol from 'react-bootstrap/Col';
+import RRow from "react-bootstrap/Row";
+import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
-import { Switch, Button, Typography, Select, MenuItem, FormControl, FormHelperText, SelectChangeEvent } from "@mui/material";
+import {
+  Switch,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  FormHelperText,
+  SelectChangeEvent,
+} from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
-import Pagination from '@mui/material/Pagination';
+import Pagination from "@mui/material/Pagination";
 
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { current } from "@reduxjs/toolkit";
@@ -37,7 +47,6 @@ const inputStyle = {
   flexDirection: "column", // This will make the children (input elements) stack vertically
   alignItems: "flex-start",
   width: "65%",
-
 };
 
 const TableListView: React.FC<TableListViewProps> = ({
@@ -50,9 +59,13 @@ const TableListView: React.FC<TableListViewProps> = ({
   const { config } = useConfig();
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
-  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(null);
-  const defaultOrderValue = table.columns.find(column => column.is_editable === false)?.column_name;
-  const [OrderValue, setOrderValue] = useState(defaultOrderValue || '');
+  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
+    null
+  );
+  const defaultOrderValue = table.columns.find(
+    (column) => column.is_editable === false
+  )?.column_name;
+  const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
@@ -60,10 +73,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const name = table.table_name + "T";
   const Local = localStorage.getItem(name);
   if (Local == null) {
-    const nulll = Local
+    const nulll = Local;
   }
   const getTable = JSON.parse(Local!);
-
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -90,8 +102,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     // Filter the rows to only include the visible columns
     const filteredRows = lines?.map((row) => {
-      const filteredRowData: { [key: string]: string | number | boolean } =
-        {};
+      const filteredRowData: { [key: string]: string | number | boolean } = {};
       attributes.forEach((column) => {
         filteredRowData[column.column_name] = row[column.column_name];
       });
@@ -103,7 +114,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   useEffect(() => {
-
     getRows();
   }, [table, OrderValue, PageNumber, PaginationValue]);
 
@@ -113,6 +123,11 @@ const TableListView: React.FC<TableListViewProps> = ({
     () => <></>
   );
 
+  /* This section is for the scripts
+  We first fetch the scripts that are associated with the table selected and then we display them as buttons
+  We make sure that the script is associated with the table by filtering the scripts by table name
+  We then use the handleScriptLogic function to execute the script with the ScriptHandler singleton object
+  */
   const schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
@@ -138,19 +153,21 @@ const TableListView: React.FC<TableListViewProps> = ({
     getScripts();
   }, []);
 
+  const handleScriptLogic = (script: string) => {
+    scriptHandler.runScript(script);
+  };
+  // --------- End of Script Logic
+
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
     setOrderValue(event.target.value as string);
-
-  }
+  };
 
   //For when pagination limitm changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
     setPaginationValue(event.target.value as number);
     setPageNumber(1);
-
-
-  }
+  };
 
   //For when page number changes
   const handlePageChange = (event, value) => {
@@ -158,7 +175,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const nonEditableColumn = table.columns.find(column => column.is_editable === false);
+    const nonEditableColumn = table.columns.find(
+      (column) => column.is_editable === false
+    );
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
     }
@@ -167,11 +186,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       ...prevInputValues,
       [event.target.name]: event.target.value,
     }));
-
   };
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-
     event.preventDefault();
 
     const schema = vmd.getTableSchema(table.table_name);
@@ -180,8 +197,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       return;
     }
 
-    const storedPrimaryKeyValue = localStorage.getItem('currentPrimaryKeyValue');
-
+    const storedPrimaryKeyValue = localStorage.getItem(
+      "currentPrimaryKeyValue"
+    );
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -193,22 +211,17 @@ const TableListView: React.FC<TableListViewProps> = ({
     data_accessor.updateRow().then(() => getRows());
     setInputValues({});
     setOpenPanel(false);
-    
   };
 
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
 
   // }
 
-
-
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!config) {
         return null;
       }
-
-
 
       const columnDisplayType = config.find(
         (element) =>
@@ -217,19 +230,18 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-
-
-
-
-      if (
-        column.is_editable == false) {
-
-        localStorage.setItem("currentPrimaryKeyValue", currentRow.row[column.column_name]);
-
+      if (column.is_editable == false) {
+        localStorage.setItem(
+          "currentPrimaryKeyValue",
+          currentRow.row[column.column_name]
+        );
       }
       if (column.references_table != null) {
-        const string = column.column_name + "L"
-        localStorage.setItem(string, currentRow.row[column.column_name] as string);
+        const string = column.column_name + "L";
+        localStorage.setItem(
+          string,
+          currentRow.row[column.column_name] as string
+        );
       }
       if (!columnDisplayType || columnDisplayType.value == "text") {
         return (
@@ -343,31 +355,30 @@ const TableListView: React.FC<TableListViewProps> = ({
                 key={script["id"]}
                 style={buttonStyle}
                 variant="contained"
+                onClick={() => {
+                  handleScriptLogic(script["content"]);
+                }}
               >
                 {script["btn_name"]}
               </Button>
             );
           })}
-
         </div>
         <div>
           <FormControl size="small">
-            <h6 style={{ textAlign: 'left' }}>Ordering</h6>
+            <h6 style={{ textAlign: "left" }}>Ordering</h6>
             <Select
               value={OrderValue}
               displayEmpty
               onChange={handleOrderchange}
-
             >
               {table.columns.map((column, index) => (
                 <MenuItem value={column.column_name} key={index}>
                   {column.column_name}
                 </MenuItem>
               ))}
-
             </Select>
           </FormControl>
-
         </div>
       </div>
       <TableComponent striped bordered hover>
@@ -394,25 +405,22 @@ const TableListView: React.FC<TableListViewProps> = ({
           })}
         </tbody>
       </TableComponent>
-      <div >
+      <div>
         <Container>
-          <RRow  >
-            <CCol sm={5} className="mx-auto" style={{ textAlign: 'right' }}>
+          <RRow>
+            <CCol sm={5} className="mx-auto" style={{ textAlign: "right" }}>
               <Pagination
                 count={Math.ceil(Plength / PaginationValue)}
                 page={PageNumber}
                 onChange={handlePageChange}
               />
             </CCol>
-            <CCol sm={2} className="ml-auto" style={{ textAlign: 'right' }}>
-
+            <CCol sm={2} className="ml-auto" style={{ textAlign: "right" }}>
               <FormControl size="small">
                 <Select
                   value={PaginationValue}
                   displayEmpty
                   onChange={handlePaginationchange}
-
-
                 >
                   <MenuItem value={1}>1 per page</MenuItem>
                   <MenuItem value={5}>5 per page</MenuItem>
@@ -423,9 +431,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               </FormControl>
             </CCol>
           </RRow>
-
         </Container>
-
       </div>
 
       <SlidingPanel
@@ -463,19 +469,23 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
             <Button
               variant="contained"
-              style={{ marginTop: 20, backgroundColor: "#403eb5", width: "fit-content", marginLeft: 10 }}
+              style={{
+                marginTop: 20,
+                backgroundColor: "#403eb5",
+                width: "fit-content",
+                marginLeft: 10,
+              }}
               onClick={handleFormSubmit}
             >
               Save
             </Button>
-
           </div>
-
         </div>
-        {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none"? (
+        {localStorage.getItem(table.table_name + "T") === null ||
+        getTable[-1] == "none" ? (
           <div></div>
         ) : showTable ? (
-          <div style={{ paddingBottom: '2em' }}>
+          <div style={{ paddingBottom: "2em" }}>
             <LookUpTableDetails table={table} />
           </div>
         ) : (
@@ -488,10 +498,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             Show Look up Table
           </Button>
         )}
-
-
       </SlidingPanel>
-
     </div>
   );
 };
