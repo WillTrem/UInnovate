@@ -201,7 +201,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 						name="email"
 						helperText={emailError}
 						error={emailError === "" ? false : true}
-						className="textField" />
+						className="textField" 
+						disabled={currentState!==SignupState.INITIAL}/>
 
 					{/* Shows First Name and Last Name fields on signup */}
 					{currentState === SignupState.SIGNUP &&
