@@ -9,7 +9,7 @@ import { useState } from 'react';
 import SignupModal from './settingsPage/SignupModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import { AuthState, Role, logOut } from '../redux/AuthSlice';
+import { AuthState, LOGIN_BYPASS, Role, logOut } from '../redux/AuthSlice';
 import {Tooltip, Zoom} from '@mui/material'
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -61,7 +61,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
               ObjectMenu
             </Nav.Link>
             {/* Hides the Settings page link for user role */}
-            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER /* || role === null*/}>
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER || ( role === null && !LOGIN_BYPASS)}>
               Settings
             </Nav.Link>
             

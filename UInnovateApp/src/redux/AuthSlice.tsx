@@ -3,6 +3,8 @@ import { jwtDecode } from 'jwt-decode'
 import axios from "axios";
 import vmd from "../virtualmodel/VMD";
 
+export const LOGIN_BYPASS = import.meta.env.VITE_LOGIN_BYPASS === "true";
+
 export interface AuthState{
 	user: string | null, 
 	token: string | null,
