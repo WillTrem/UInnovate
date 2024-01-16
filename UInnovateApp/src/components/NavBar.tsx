@@ -45,6 +45,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">
+          {( LOGIN_BYPASS || loggedInUser ) &&
           <Nav
             className={
               showSchemaFilter
@@ -55,16 +56,17 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <SchemaSelector
               displayType={DisplayType.Nav} //DisplayType = NavDropdown | NavPills | Nav
             ></SchemaSelector>
-          </Nav>
+          </Nav>}
           <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
+            {( LOGIN_BYPASS || loggedInUser ) &&
+            <><Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
               ObjectMenu
             </Nav.Link>
             {/* Hides the Settings page link for user role */}
-            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER || ( role === null && !LOGIN_BYPASS)}>
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}>
               Settings
-            </Nav.Link>
-            
+            </Nav.Link></>
+            }
             {loggedInUser && 
             <Nav.Link>
               <Tooltip
@@ -85,10 +87,10 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
               {/* Sign Up */}
               <LoginIcon fontSize='large'/>
             </Nav.Link>}
-            <SignupModal open={showSignupModal} onClose={handleClose}/>
           </Nav>
         </Navbar.Collapse>
       </Container>
+      <SignupModal open={showSignupModal} onClose={handleClose}/>
     </Navbar>
   );
 }
