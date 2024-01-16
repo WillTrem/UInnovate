@@ -269,7 +269,7 @@ FROM (
 RETURN result;
 END IF;
 END IF;
-RAISE NOTICE 'No refresh token found';
+RAISE EXCEPTION 'No refresh token found';
 END;
 $$ language plpgsql SECURITY DEFINER;
 

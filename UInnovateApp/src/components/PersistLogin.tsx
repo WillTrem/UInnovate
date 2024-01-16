@@ -16,7 +16,7 @@ const PersistLogin:React.FC = () => {
 				const token = response.data.token;
 				dispatch(logIn(token)); 
 			})
-			.catch(() => {});
+			.catch((error) => {console.log(error.response.data.message)});
 		}
 	},[])
 	return <></>
