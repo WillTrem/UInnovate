@@ -174,10 +174,14 @@ class VirtualModelDefinition {
         }
 
         // Add column to the table object
-        table.addColumn(new Column(data.column), data.references_table, data.is_editable);
+        table.addColumn(
+          new Column(data.column),
+          data.references_table,
+          data.is_editable
+        );
       });
 
-      // Fetching all the VIEWS 
+      // Fetching all the VIEWS
       response = await axios.get(views_url, {
         headers: { "Accept-Profile": "meta" },
       });
@@ -337,9 +341,6 @@ class VirtualModelDefinition {
     }
   }
 
-
-
-
   // Method to return a data accessor object to add a row to a table
   // return type : DataAccessor
   getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {
@@ -436,10 +437,10 @@ class VirtualModelDefinition {
   // return type: DataAccessor
   getViewRowsDataAccessor(
     schema_name: string,
-    view_name: string,
+    view_name: string
   ): DataAccessor {
     const schema = this.getSchema(schema_name);
-    const view = schema?.getView(view_name)
+    const view = schema?.getView(view_name);
     if (schema && view) {
       return new DataAccessor(view.url, {
         "Accept-Profile": schema.schema_name,
@@ -452,7 +453,7 @@ class VirtualModelDefinition {
   // return type: FunctionAccessor
   getFunctionAccessor(
     schema_name: string,
-    function_name: string,
+    function_name: string
   ): FunctionAccessor {
     const schema = this.getSchema(schema_name);
     if (schema) {
@@ -517,7 +518,6 @@ export class Table {
     this.url = API_BASE_URL + table_name;
     this.lookup_tables = { "-1": "none" };
     this.stand_alone_details_view = false;
-
   }
 
   // Method to add a new column to the table object
@@ -635,10 +635,7 @@ export class Table {
   setStandAloneDetailsView(stand_alone_details_view: boolean) {
     this.stand_alone_details_view = stand_alone_details_view;
   }
-
-
 }
-
 
 export class Column {
   column_name: string;
@@ -647,7 +644,6 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
-
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -682,7 +678,6 @@ export class Column {
     return this.references_table;
   }
 
-
   // Method to set the column's editability
   // return type : void
   setEditability(is_editable: boolean) {
@@ -706,7 +701,6 @@ export class View {
   }
 }
 
-
 export enum TableDisplayType {
   listView = "list",
   enumView = "enum",
@@ -724,7 +718,6 @@ interface ColumnData {
 interface ViewData {
   schema: string;
   view: string;
-
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
@@ -743,7 +736,6 @@ export interface UserData {
   role: string;
   is_active: boolean;
 }
-
 
 // Creating a VMD object and exporting it
 const vmd = new VirtualModelDefinition();

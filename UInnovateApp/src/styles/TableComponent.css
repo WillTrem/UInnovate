@@ -23,6 +23,7 @@ td {
   background-color: #f1f1f1;
   padding-top: 20px;
   padding-left: 20px;
+  z-index: 0;
 }
 
 .row-details {
@@ -44,6 +45,7 @@ td {
   flex-direction: column;
   justify-content: flex-start;
   padding: 1em;
+  z-index: -1;
 }
 
 .form-group-stand-alone {
