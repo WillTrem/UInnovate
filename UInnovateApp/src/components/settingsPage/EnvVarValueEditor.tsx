@@ -3,12 +3,17 @@ import { Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import { Row } from "../../virtualmodel/DataAccessor";
 
-export const EnvVarValueEditor = (row: Row) => {
-	const [currentEnvVar] = useState<Row>(row);
-	const [envVarValue, setEnvVarValue] = useState<string>(row.value);
+export interface UpdateFunction {
+	handleSubmit: (id: string, value: string) => void;
+}
 
+export const EnvVarValueEditor = (row: Row, update: UpdateFunction) => {
+	const [currentEnvVar] = useState<Row>(row);
+	const id = `${currentEnvVar.row?.id}`;
 	const name = `${currentEnvVar.row?.name}`;
 	const value = `${currentEnvVar.row?.value}`;
+
+	const [envVarValue, setEnvVarValue] = useState<string>(value);
 
 	return (
 		<>
@@ -21,7 +26,7 @@ export const EnvVarValueEditor = (row: Row) => {
 			<Button
 				onClick={() => {
 					console.log(envVarValue);
-					//update(envVar.id, envVarValue);
+					update.handleSubmit(id, envVarValue);
 				}}>
 				Save
 			</Button>

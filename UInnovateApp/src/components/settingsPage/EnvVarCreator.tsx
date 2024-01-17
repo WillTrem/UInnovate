@@ -7,7 +7,7 @@ import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
 import { IoLockClosed, IoLockOpen } from "react-icons/io5";
 import { insertNewEnvVar, editEnvVar } from "../../virtualmodel/EnvVarAccessor";
-import { EnvVarValueEditor } from "./EnvVarValueEditor";
+import { EnvVarValueEditor, UpdateFunction } from "./EnvVarValueEditor";
 import { edit } from "ace-builds";
 
 export const EnvVarCreator = () => {
@@ -41,10 +41,7 @@ export const EnvVarCreator = () => {
 		setEditMode(!editMode);
 	};
 
-	const updateEnvVarInDatabase: UpdateFunction = async (
-		id: number | string,
-		value: string
-	) => {
+	const updateEnvVarInDatabase = (id: number | string, value: string) => {
 		console.log("Updating env var in database");
 		editEnvVar(`${id}`, value);
 		getEnvVars();
@@ -168,7 +165,10 @@ export const EnvVarCreator = () => {
 									<Nav.Item key={envVarItem.id}>
 										<Nav.Link eventKey={envVarItem.name}>
 											{editMode ? (
-												<EnvVarValueEditor row={envVarItem} />
+												<EnvVarValueEditor
+													row={envVarItem}
+													update={{ handleSubmit: updateEnvVarInDatabase }}
+												/>
 											) : (
 												`${envVarItem.name}, ${envVarItem.value}`
 											)}
