@@ -1,11 +1,14 @@
-import { Nav, Tab, Row as Separator, Col } from "react-bootstrap";
+import { Tab, Row as Separator, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
-import { Modal, Form } from "react-bootstrap";
+import { Nav, Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
 import { IoLockClosed, IoLockOpen } from "react-icons/io5";
+import { insertNewEnvVar, editEnvVar } from "../../virtualmodel/EnvVarAccessor";
+import { EnvVarValueEditor } from "./EnvVarValueEditor";
+import { edit } from "ace-builds";
 
 export const EnvVarCreator = () => {
 	const schema = vmd.getSchema("meta");
@@ -26,27 +29,10 @@ export const EnvVarCreator = () => {
 		setShowModal(false);
 	};
 	const handleSave = async () => {
-		try {
-			const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
-				"meta", // schema name
-				"env_vars", // table name
-				//new row data:
-				{
-					name: newEnvVar.name,
-					value: newEnvVar.value,
-				}
-			);
-
-			// Use data accessor to add the new row woop woop
-			await data_accessor.addRow();
-			getEnvVars();
-			setNewEnvVar({}); // Reset form
-			setShowModal(false);
-			alert("Environment variable saved successfully."); // Let user know it worked yay
-		} catch (error) {
-			console.error("Error in upserting environment variable:", error);
-			alert("Failed to save environment variable."); // User sad :(
-		}
+		insertNewEnvVar(newEnvVar.name, newEnvVar.value);
+		getEnvVars();
+		setNewEnvVar({}); // Reset form
+		setShowModal(false);
 	};
 
 	//EDIT ENV VAR FEATURE:
@@ -55,36 +41,13 @@ export const EnvVarCreator = () => {
 		setEditMode(!editMode);
 	};
 
-	const updateEnvVar = (name: string, value: string) => {
-		setEnvVar((prevEnvVars) =>
-			prevEnvVars?.map((envVar) =>
-				envVar.name === name ? { ...envVar, value: value } : envVar
-			)
-		);
-	};
-	const updateEnvVarInDatabase = async (updatedEnvVar: Row) => {
-		try {
-			const data_accessor: DataAccessor = vmd.getUpsertDataAccessor(
-				"meta", // schema name
-				"env_vars", // table name
-				//params new row data: needs changing
-				{
-					columns: "id, name, value, created-at",
-					on_conflict: "id, name, value, created-at",
-					// value: updatedEnvVar.value,
-				},
-				//updated row data:
-				updatedEnvVar
-			);
-
-			// Use data accessor to add the new row woop woop
-			await data_accessor.upsert();
-			getEnvVars();
-			alert("Environment variable updated successfully."); // Let user know it worked yay
-		} catch (error) {
-			console.error("Error in upserting environment variable:", error);
-			alert("Failed to update environment variable."); // User sad :(
-		}
+	const updateEnvVarInDatabase: UpdateFunction = async (
+		id: number | string,
+		value: string
+	) => {
+		console.log("Updating env var in database");
+		editEnvVar(`${id}`, value);
+		getEnvVars();
 	};
 
 	const getEnvVars = async () => {
@@ -205,29 +168,7 @@ export const EnvVarCreator = () => {
 									<Nav.Item key={envVarItem.id}>
 										<Nav.Link eventKey={envVarItem.name}>
 											{editMode ? (
-												<>
-													<Form.Control
-														type='text'
-														value={envVarItem.name}
-														readOnly
-													/>
-													<Form.Control
-														type='text'
-														defaultValue={envVarItem.value}
-														onBlur={(e) =>
-															updateEnvVar(envVarItem.name, e.target.value)
-														}
-													/>
-													<Button
-														onClick={() =>
-															updateEnvVarInDatabase({
-																...envVarItem,
-																value: envVarItem.value,
-															})
-														}>
-														Save
-													</Button>
-												</>
+												<EnvVarValueEditor row={envVarItem} />
 											) : (
 												`${envVarItem.name}, ${envVarItem.value}`
 											)}

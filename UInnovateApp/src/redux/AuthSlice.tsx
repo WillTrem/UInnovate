@@ -1,30 +1,30 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { jwtDecode } from 'jwt-decode'
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import vmd from "../virtualmodel/VMD";
 
-export interface AuthState{
-	user: string | null, 
-	token: string | null,
-	role: string | null
+export interface AuthState {
+	user: string | null;
+	token: string | null;
+	role: string | null;
 }
 
-interface DecodedToken{
-	role: string,
-	email: string,
-	exp: string
+interface DecodedToken {
+	role: string;
+	email: string;
+	exp: string;
 }
 
-export enum Role{
+export enum Role {
 	ADMIN = "administrator",
 	CONFIG = "configurator",
-	USER = "user"
+	USER = "user",
 }
 
 const authSlice = createSlice({
-	name: 'auth',
-	initialState: {user: null, token: null, role: null},
-	reducers:{
+	name: "auth",
+	initialState: { user: null, token: null, role: null },
+	reducers: {
 		logIn: (state: AuthState, action: PayloadAction<string>) => {
 			const token = action.payload;
 			state.token = token;
@@ -34,7 +34,7 @@ const authSlice = createSlice({
 			state.user = decodedToken.email;
 
 			axios.defaults.headers["Authorization"] = `bearer ${token}`;
-					},
+		},
 		logOut: (state: AuthState, action: PayloadAction) => {
 			state.user = null;
 			state.token = null;
@@ -42,12 +42,12 @@ const authSlice = createSlice({
 
 			axios.defaults.headers.common["Authorization"] = undefined;
 
-			const logoutFuncAccessor = vmd.getFunctionAccessor('meta', 'logout');
-			logoutFuncAccessor.executeFunction({withCredentials: true});
-		}
-	}
-})
+			const logoutFuncAccessor = vmd.getFunctionAccessor("meta", "logout");
+			logoutFuncAccessor.executeFunction({ withCredentials: true });
+		},
+	},
+});
 
-export const {logIn, logOut} = authSlice.actions;
+export const { logIn, logOut } = authSlice.actions;
 
 export default authSlice.reducer;
