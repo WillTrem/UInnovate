@@ -15,7 +15,6 @@ export function ObjectMenu() {
     (state: RootState) => state.schema.value
   );
 
-
   const [activeTable, setActiveTable] = useState<Table | null>(null);
 
   // Get the visible tables from the VMD for the selected schema

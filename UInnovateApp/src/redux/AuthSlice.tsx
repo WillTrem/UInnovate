@@ -35,6 +35,7 @@ const authSlice = createSlice({
 			state.role = decodedToken.role;
 			state.user = decodedToken.email;
 
+			
 			axios.defaults.headers["Authorization"] = `bearer ${token}`;
 					},
 		logOut: (state: AuthState, action: PayloadAction) => {

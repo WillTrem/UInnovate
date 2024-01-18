@@ -7,7 +7,11 @@ import { ConfigProvider } from "./contexts/ConfigContext";
 import vmd from "./virtualmodel/VMD";
 import { useEffect } from "react";
 import PersistLogin from "./components/PersistLogin";
+import { useSelector } from "react-redux";
+import { RootState } from "./redux/Store";
 function App() {
+  useSelector((state: RootState) => state.loading.loading); // Just there to re-render the app when loading state changes
+
   useEffect(() => {
     // Printing the schemas to the console
     vmd.printVMD();

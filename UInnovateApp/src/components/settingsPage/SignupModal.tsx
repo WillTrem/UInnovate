@@ -49,11 +49,6 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	// Function accessors
-	const verifySignUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "verify_signup");
-	const signUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "signup");
-	const loginFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "login");
-
 	// Reset the state's values
 	const resetValues = () => {
 		setInputValues({});
@@ -79,9 +74,11 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	 * Changes the state of the signup depending on the result from the verify_signup db function execution
 	 */
 	const handleNext = () => {
+		
 		if(!validateUserInput()){
 			return;
 		}
+		const verifySignUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "verify_signup");
 		verifySignUpFunctionAccessor.setBody({ email: inputValues["email"] })
 		verifySignUpFunctionAccessor.executeFunction({
 			validateStatus: function (status: number) {
@@ -129,6 +126,9 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 		if(!validateUserInput()){
 			return;
 		}
+		
+		const loginFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "login");
+		const signUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "signup");
 
 		if (currentState === SignupState.LOGIN) {
 			loginFunctionAccessor.setBody(inputValues);
@@ -137,9 +137,9 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 				.then(async (response) => {
 					const token = response.data.token;
 					dispatch(logIn(token));
+					await vmd.refetchSchemas();
 					// Closes the form
 					const dummyEvent = document.createEvent('MouseEvents');
-					// dummyEvent.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 					handleCancel(dummyEvent as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
 					navigate('/');
 				})
