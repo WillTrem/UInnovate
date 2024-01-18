@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -22,11 +22,15 @@ interface NavBarProps {
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleClose = () => setShowSignupModal(false);
   const handleShow = () => setShowSignupModal(true);
-  const handleLogout = () => dispatch(logOut());
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate('/');
+  }
 
 
   return (

@@ -30,7 +30,6 @@ export class FunctionAccessor {
 
 			return response;
 		} catch (error) {
-			// console.error("Error while executing function at " + this.function_url + " :", error.response.database);
 			throw error;
 		}
 	}

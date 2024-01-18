@@ -140,7 +140,7 @@ class VirtualModelDefinition {
     console.log(this.schemas);
   }
 
-  // Method to fetch schemas, tables, and columns from the API
+  // Method to fetch schemas, tables, columns and views from the API
   // return type : void
   async fetchSchemas() {
     // Check if data has already been fetched; if it has, do not fetch again
@@ -229,8 +229,8 @@ class VirtualModelDefinition {
       const data: ConfigData[] = response.data;
 
       data.forEach((config) => {
-        // Find the table's schema
-        const schema = this.getTableSchema(config.table);
+                // Find the table's schema
+                const schema = this.getTableSchema(config.table);
 
         if (!schema) {
           // If the schema doesn't exist, skip this config
@@ -721,7 +721,7 @@ interface ViewData {
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
-interface ConfigData {
+export interface ConfigData {
   id: number;
   table: string;
   column: string | null;
