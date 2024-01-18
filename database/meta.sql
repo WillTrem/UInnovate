@@ -96,7 +96,6 @@ CREATE OR REPLACE VIEW meta.views AS (
                 FROM meta.schemas
             )
     );
-GRANT SELECT ON TABLE meta.views TO web_anon;
 
 
 -- TABLES
@@ -249,32 +248,45 @@ BEGIN
 END;
 $BODY$;
 
--- USAGE 
-GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO web_anon;
-GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO web_anon;
-GRANT USAGE ON SCHEMA information_schema TO web_anon;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO web_anon;
-GRANT SELECT ON information_schema.referential_constraints TO web_anon;
-GRANT SELECT ON information_schema.constraint_column_usage TO web_anon;
+-- GRANT ROLE PERMISSIONS --
 
+-- Schemas
+GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
+GRANT USAGE ON SCHEMA information_schema TO "user";
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
+GRANT SELECT ON information_schema.referential_constraints TO "user";
+GRANT SELECT ON information_schema.constraint_column_usage TO "user";
+
+GRANT USAGE ON SCHEMA meta TO "user";
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
+
+-- Tables
+GRANT SELECT ON meta.appconfig_properties TO "user";
+GRANT SELECT ON meta.appconfig_values TO "user";
+GRANT SELECT ON meta.scripts TO "user";
+GRANT SELECT ON meta.i18n_languages TO "user";
+GRANT SELECT ON meta.i18n_keys TO "user";
+GRANT SELECT ON meta.i18n_values TO "user";
+GRANT ALL ON meta.appconfig_properties TO configurator;
+GRANT ALL ON meta.appconfig_values TO configurator;
+GRANT ALL ON meta.scripts TO configurator;
+GRANT ALL ON meta.i18n_languages TO configurator;
+GRANT ALL ON meta.i18n_keys TO configurator;
+GRANT ALL ON meta.i18n_values TO configurator;
+
+-- Views (Only SELECT necessary)
+GRANT SELECT ON meta.schemas TO "user"; 
+GRANT SELECT ON meta.tables TO "user";
+GRANT SELECT ON meta.columns TO "user";
+GRANT SELECT ON meta.constraints TO "user";
+GRANT SELECT ON meta.views TO "user";
+GRANT SELECT ON meta.i18n_translations TO "user";
+
+-- -- web_anon related (necessary on vmd load)
 GRANT USAGE ON SCHEMA meta TO web_anon;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.constraints TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
-GRANT ALL ON meta.appconfig_properties TO web_anon;
-GRANT ALL ON meta.appconfig_values TO web_anon;
-GRANT ALL on meta.scripts TO web_anon;
-
--- Granting necessary permissions for meta.i18n schema tables
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.i18n_languages TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.i18n_keys TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.i18n_values TO web_anon;
-GRANT ALL ON meta.i18n_translations TO web_anon;
+GRANT SELECT ON meta.appconfig_values TO web_anon;
+GRANT SELECT ON meta.columns TO web_anon;
+GRANT SELECT ON meta.views TO web_anon;
 
 NOTIFY pgrst, 'reload schema'
