@@ -13,8 +13,6 @@ const ScriptLoadPopup = ({
     // TODO: Load script
   };
 
-  onClose();
-
   const style = {
     position: "absolute",
     margin: "auto",
@@ -30,12 +28,6 @@ const ScriptLoadPopup = ({
     p: 4,
   };
 
-  //   const labelStyle = {
-  //     display: "block",
-  //     marginBottom: 5,
-  //     color: "#000000",
-  //   };
-
   const buttonStyle = {
     marginRight: 10,
     backgroundColor: "#404040",
@@ -50,10 +42,14 @@ const ScriptLoadPopup = ({
     >
       <Box sx={style}>
         <Typography variant="h5" component="h2">
-          Load Script
+          Confirm Script Execution
         </Typography>
+        <Typography variant="subtitle1" component="h6" mb={2}>
+          Are you sure you want to execute the script "{script?.["name"]}"?
+        </Typography>
+        <Typography variant="subtitle1">Description:</Typography>
         <Typography variant="body2" component="p">
-          Are you sure you want to load the script {script["name"]}?
+          {script?.["description"]}
         </Typography>
         <div className="button-container">
           <Button

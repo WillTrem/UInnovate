@@ -178,6 +178,12 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsScriptPopupVisible(true);
   };
 
+  useEffect(() => {
+    if (selectedScript) {
+      handleConfirmForm();
+    }
+  }, [selectedScript]);
+
   const getConfigs = async () => {
     if (!schema || !config_table) {
       throw new Error("Schema or table not found");
@@ -550,7 +556,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   style={buttonStyle}
                   variant="contained"
                   onClick={() => {
-                    handleConfirmForm();
+                    // handleConfirmForm();
                     setSelectedScript(script);
                   }}
                   onMouseEnter={() => handleScriptHover(script["description"])}
