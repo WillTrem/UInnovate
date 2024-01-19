@@ -9,7 +9,7 @@ export interface LoadingState{
  */
 const loadingSlice = createSlice({
 	name: 'loading',
-	initialState: {loading: false},
+	initialState: {loading: true}, // Initially set to true so the app doesn't render until authentication has been verified
 	reducers:{
 		setLoading: (state: LoadingState, action:PayloadAction<boolean>) => {
 			state.loading = action.payload;

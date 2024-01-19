@@ -22,7 +22,7 @@ const UserManagementTab = () => {
 	const [users, setUsers] = useState<Row[]>([]);
 
 	const role = useSelector((state: RootState) => state.auth.role);
-
+	
 	// Hides the menu for non-admin roles (except for anonymous)
 	if(!(role === Role.ADMIN || role === null)){
 		return <UnauthorizedScreen/>

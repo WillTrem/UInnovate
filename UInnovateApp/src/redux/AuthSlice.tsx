@@ -30,11 +30,11 @@ const authSlice = createSlice({
 		logIn: (state: AuthState, action: PayloadAction<string>) => {
 			const token = action.payload;
 			state.token = token;
+			
 			// Obtains the role & email from the "role" and "email" claims of the JWT token
 			const decodedToken = jwtDecode(token) as DecodedToken;
 			state.role = decodedToken.role;
 			state.user = decodedToken.email;
-
 
 			axiosCustom.defaults.headers.common["Authorization"] = `bearer ${token}`;
 		},

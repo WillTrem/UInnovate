@@ -12,7 +12,7 @@ axiosCustom.interceptors.response.use(
   async (error) => {
     const prevRequest = error?.config;
 
-	// If the JWT access token expired
+	// If the JWT access token expired, refreshes it
     if (
       error?.response?.status === 401 
 	&& error?.response?.data?.message === "JWT expired"

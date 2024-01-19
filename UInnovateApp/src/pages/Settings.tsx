@@ -17,7 +17,7 @@ import { RootState } from "../redux/Store";
 import { LOGIN_BYPASS, Role } from "../redux/AuthSlice";
 
 export function Settings() {
-  const role = useSelector((state:RootState) => state.auth.role)
+  const role = useSelector((state:RootState) => state.auth.role);
   return (
     <>
       <NavBar />
