@@ -1,4 +1,7 @@
-import ivm from "isolated-vm";
+// You *must* import the extension in nodejs first.
+// import "../../node_modules/isolated-vm/out/isolated_vm.node";
+
+import * as ivm from "isolated-vm";
 
 class ScriptHandler {
   private isolate: ivm.Isolate;
@@ -26,6 +29,7 @@ class ScriptHandler {
   }
 }
 
+// Making a singleton instance of ScriptHandler
 const scriptHandler = new ScriptHandler();
 scriptHandler.initialize();
 
