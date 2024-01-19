@@ -43,6 +43,7 @@ import {
   RichTextEditor,
   type RichTextEditorRef,
 } from "mui-tiptap";
+import ScriptLoadPopup from "./ScriptLoadPopup";
 
 interface TableListViewProps {
   table: Table;
@@ -69,6 +70,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+  const [isScriptPopupVisible, setIsScriptPopupVisible] =
+    useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
@@ -170,7 +173,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     setScriptDescription(null);
   };
 
-  const handleScriptConfirmation = async (script: Row) => {};
+  const handleConfirmForm = () => {
+    setIsScriptPopupVisible(true);
+  };
 
   const getConfigs = async () => {
     if (!schema || !config_table) {
@@ -534,22 +539,32 @@ const TableListView: React.FC<TableListViewProps> = ({
           {(scripts || []).length > 0 && <h6>Scripts</h6>}
           {scripts?.map((script) => {
             return (
-              <Tooltip
-                title={script["description"]}
-                open={scriptDescription === script["description"]}
-                placement="right"
-              >
-                <Button
-                  key={script["id"]}
-                  style={buttonStyle}
-                  variant="contained"
-                  onClick={() => handleScriptConfirmation(script)}
-                  onMouseEnter={() => handleScriptHover(script["description"])}
-                  onMouseLeave={handleScriptHoverExit}
+              <div>
+                <Tooltip
+                  title={script["description"]}
+                  open={scriptDescription === script["description"]}
+                  placement="right"
                 >
-                  {script["btn_name"]}
-                </Button>
-              </Tooltip>
+                  <Button
+                    key={script["id"]}
+                    style={buttonStyle}
+                    variant="contained"
+                    onClick={() => handleConfirmForm()}
+                    onMouseEnter={() =>
+                      handleScriptHover(script["description"])
+                    }
+                    onMouseLeave={handleScriptHoverExit}
+                  >
+                    {script["btn_name"]}
+                  </Button>
+                </Tooltip>
+                {isScriptPopupVisible && (
+                  <ScriptLoadPopup
+                    onClose={() => setIsScriptPopupVisible(false)}
+                    script={script}
+                  />
+                )}{" "}
+              </div>
             );
           })}
         </div>
