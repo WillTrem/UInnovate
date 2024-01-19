@@ -125,7 +125,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
 		</td>
 		<td>
-			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} />
+			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} size="small" />
 		</td>
 	</tr >
 }
@@ -133,22 +133,22 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 interface MultiSelectProps {
 	selectedList: string[],
 	setSelectedList: React.Dispatch<React.SetStateAction<string[]>>,
-	choiceList: string[]
+	choiceList: string[],
+	size?: "small" | "medium"
 }
 
 // Component obtained from https://codesandbox.io/s/mui-multi-select-kptq04?from-embed=&file=%2Fsrc%2FApp.js%3A238-291
-export const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelectedList, choiceList }) => {
+export const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelectedList, choiceList, size }) => {
 
 	return (
-		<FormControl sx={{
-			width: '25vw'
-		}}>
 			<Select
+				size={size}
 				multiple
 				value={selectedList}
 				onChange={(e) => setSelectedList((e.target.value as string[]).sort((a, b) => a.localeCompare(b)))}
 				inputProps={{ 'aria-label': 'Without label' }}
-				sx={({ padding: 0, '& .MuiSelect-select': { padding: 1 } })}
+				sx={({ 
+					 '& .MuiSelect-select': { }, width:'25vw', maxWidth: '25vw' })}
 				renderValue={(selected) => (
 					<Stack gap={1} direction="row" flexWrap="wrap">
 						{selected.map((value) => (
@@ -177,7 +177,6 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelec
 					</MenuItem>
 				))}
 			</Select>
-		</FormControl>
 	);
 }
 
