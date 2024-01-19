@@ -14,11 +14,9 @@ const PersistLogin:React.FC = () => {
 			dispatch(setLoading(true));
 			const refreshTokenFuncAccessor = vmd.getFunctionAccessor('meta', 'token_refresh');
 			refreshTokenFuncAccessor.executeFunction({withCredentials: true}).then(async (response) => {
-				console.log(response);
 				const token = response.data.token;
 				dispatch(logIn(token)); 
 				await vmd.refetchSchemas();
-				
 			})
 			.catch((error) => {console.log(error.response.data.message)})
 			.finally(() => dispatch(setLoading(false)));

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosCustom from "../api/AxiosCustom";
 import { DataAccessor, Row } from "./DataAccessor";
 import { FunctionAccessor } from "./FunctionAccessor";
 
@@ -152,7 +152,7 @@ class VirtualModelDefinition {
     const views_url = API_BASE_URL + "views";
 
     try {
-      let response = await axios.get(col_url, {
+      let response = await axiosCustom.get(col_url, {
         headers: { "Accept-Profile": "meta" },
       });
       let data = response.data;
@@ -182,7 +182,7 @@ class VirtualModelDefinition {
       });
 
       // Fetching all the VIEWS
-      response = await axios.get(views_url, {
+      response = await axiosCustom.get(views_url, {
         headers: { "Accept-Profile": "meta" },
       });
 
@@ -223,7 +223,7 @@ class VirtualModelDefinition {
     const config_url = API_BASE_URL + "appconfig_values";
 
     try {
-      const response = await axios.get(config_url, {
+      const response = await axiosCustom.get(config_url, {
         headers: { "Accept-Profile": "meta" },
       });
       const data: ConfigData[] = response.data;

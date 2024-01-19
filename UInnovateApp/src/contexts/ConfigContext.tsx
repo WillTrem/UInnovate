@@ -38,8 +38,8 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("CONFIG");
-    console.log(config);
+  console.log("CONFIG");
+  console.log(config);
   }, [config]);
 
   return (
