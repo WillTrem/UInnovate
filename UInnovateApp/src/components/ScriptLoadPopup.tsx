@@ -7,7 +7,7 @@ const ScriptLoadPopup = ({
   script,
 }: {
   onClose: () => void;
-  script: Row;
+  script: Row | null;
 }) => {
   const handleConfirm = () => {
     // TODO: Load script

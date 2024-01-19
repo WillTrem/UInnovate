@@ -144,6 +144,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const config_table = vmd.getTable("meta", "appconfig_values");
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [scriptDescription, setScriptDescription] = useState<string | null>("");
+  const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
 
@@ -539,34 +540,36 @@ const TableListView: React.FC<TableListViewProps> = ({
           {(scripts || []).length > 0 && <h6>Scripts</h6>}
           {scripts?.map((script) => {
             return (
-              <div>
-                <Tooltip
-                  title={script["description"]}
-                  open={scriptDescription === script["description"]}
-                  placement="right"
+              <Tooltip
+                title={script["description"]}
+                open={scriptDescription === script["description"]}
+                placement="right"
+              >
+                <Button
+                  key={script["id"]}
+                  style={buttonStyle}
+                  variant="contained"
+                  onClick={() => {
+                    handleConfirmForm();
+                    setSelectedScript(script);
+                  }}
+                  onMouseEnter={() => handleScriptHover(script["description"])}
+                  onMouseLeave={handleScriptHoverExit}
                 >
-                  <Button
-                    key={script["id"]}
-                    style={buttonStyle}
-                    variant="contained"
-                    onClick={() => handleConfirmForm()}
-                    onMouseEnter={() =>
-                      handleScriptHover(script["description"])
-                    }
-                    onMouseLeave={handleScriptHoverExit}
-                  >
-                    {script["btn_name"]}
-                  </Button>
-                </Tooltip>
-                {isScriptPopupVisible && (
-                  <ScriptLoadPopup
-                    onClose={() => setIsScriptPopupVisible(false)}
-                    script={script}
-                  />
-                )}{" "}
-              </div>
+                  {script["btn_name"]}
+                </Button>
+              </Tooltip>
             );
           })}
+          {isScriptPopupVisible && selectedScript && (
+            <ScriptLoadPopup
+              onClose={() => {
+                setIsScriptPopupVisible(false);
+                setSelectedScript(null);
+              }}
+              script={selectedScript}
+            />
+          )}
         </div>
         <div>
           <FormControl size="small">
