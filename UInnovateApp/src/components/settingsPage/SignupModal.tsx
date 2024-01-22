@@ -9,9 +9,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
 
-// interface SignUpModalProps extends Omit<ModalProps,'children'>{
-// 	closeModal: () => void
-// }
+const UPPERCASE_REGEX = new RegExp(/.*[A-Z]/);
+const NUMBER_REGEX = new RegExp(/.*\d/);
+const LENGTH_REGEX = new RegExp(/.{8,}$/);
+const SPECIAL_CHARS_REGEX = new RegExp(/.*[-'/`~!#*$@_%+=.,^&(){}[\]|;:"<>?\\]/);
+const PASSWORD_VALID_REGEX = new RegExp(
+	`^(?=${[
+		LENGTH_REGEX.source,
+	 	UPPERCASE_REGEX.source, 
+		NUMBER_REGEX.source,
+		 SPECIAL_CHARS_REGEX.source
+		].join(")(?=")}).*$`);
 
 
 /**
@@ -24,7 +32,7 @@ enum ErrMsg {
 	INVALID_EMAIL = "Invalid email address",
 	EMAIL_NOT_FOUND = "Couldn't find your email address in the system",
 	WRONG_PASSWORD = "Incorrect password for the given email address",
-	INSECURE_PASSWORD = "This password is not strong enough. It should contain at least 8 characters, a number and a special character",
+	INSECURE_PASSWORD = "This password is not strong enough: It should contain \n at least 8 characters, an uppercase character, a number and a special character",
 	NO_MATCH_CONFIRM_PASSWORD = "Passwords didn't match",
 	MISSING_FIELD = "Missing field"
 }
@@ -160,7 +168,9 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 		setLastNameError("");
 		setConfirmPasswordError("");
 
-		//Validate Email
+		
+
+		//Validate Credentials based on the current state of the signup
 		switch (currentState) {
 			case SignupState.INITIAL:
 				if (!inputValues.email || inputValues.email.trim() === '') {
@@ -183,7 +193,36 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 					return true;
 				}
 			case SignupState.SIGNUP:
-				//TODO: Implement input validation for signup
+				// Missing field validation
+				if (!inputValues['first_name'] || inputValues['first_name'].trim() === '') {
+					setFirstNameError(ErrMsg.MISSING_FIELD);
+					return false;
+				}
+				else if (!inputValues['last_name'] || inputValues['last_name'].trim() === '') {
+					setLastNameError(ErrMsg.MISSING_FIELD);
+					return false;
+				}
+				else if (!inputValues['password'] || inputValues['password'].trim() === '') {
+					setPasswordError(ErrMsg.MISSING_FIELD);
+					return false;
+				}
+				else if (!inputValues['confirm_password'] || inputValues['confirm_password'].trim() === '') {
+					setConfirmPasswordError(ErrMsg.MISSING_FIELD);
+					return false;
+				}
+
+				// Password strength requirements validation
+				if(!PASSWORD_VALID_REGEX.test(inputValues['password'])){
+					setPasswordError(ErrMsg.INSECURE_PASSWORD);
+					return false;
+				}
+				
+				// Confirmation password matches the password
+				if(inputValues['password'] !== inputValues['confirm_password']){
+					setConfirmPasswordError(ErrMsg.NO_MATCH_CONFIRM_PASSWORD);
+					return false;
+				};
+				
 				return true;
 		}
 	};
@@ -214,7 +253,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 								name="first_name"
 								helperText={firstNameError}
 								error={firstNameError === "" ? false : true}
-								className="textField" />
+								className="textField" 
+								required/>
 
 							<TextField id="last-name-field"
 								label="Last Name"
@@ -223,7 +263,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 								name="last_name"
 								helperText={lastNameError}
 								error={lastNameError === "" ? false : true}
-								className="textField" />
+								className="textField"
+								required />
 						</>
 					}
 
@@ -239,7 +280,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 							autoFocus={currentState === SignupState.LOGIN}
 							helperText={passwordError}
 							error={passwordError === "" ? false: true}
-							className="textField" />}
+							className="textField"
+							required={currentState === SignupState.SIGNUP} />}
 
 					{/* Shows Confirm Password field on signup */}
 					{currentState === SignupState.SIGNUP &&
@@ -251,7 +293,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 							name="confirm_password"
 							helperText={confirmPasswordError} 
 							error={confirmPasswordError === "" ? false: true}
-							className="textField"/>
+							className="textField"
+							required/>
 					}
 				</div>
 				<div className="button-container-wide">
