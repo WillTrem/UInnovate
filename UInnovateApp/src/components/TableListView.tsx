@@ -44,6 +44,8 @@ import {
   type RichTextEditorRef,
 } from "mui-tiptap";
 import ScriptLoadPopup from "./ScriptLoadPopup";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 interface TableListViewProps {
   table: Table;
@@ -86,6 +88,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [showTable, setShowTable] = useState<boolean>(false);
   const name = table.table_name + "T";
   const Local = localStorage.getItem(name);
+  const navigate = useNavigate();
+
   if (Local == null) {
     const nulll = Local;
   }
@@ -501,6 +505,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
+    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]);
+
     setOpenPanel(true);
   };
 
