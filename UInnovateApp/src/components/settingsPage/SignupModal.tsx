@@ -1,4 +1,4 @@
-import { Modal, Box, Button, ModalProps, Typography, TextField } from "@mui/material";
+import { Modal, Box, Button, ModalProps, Typography, TextField, TextFieldProps, InputLabel, FormControl, OutlinedInput, IconButton, InputAdornment, FormHelperText } from "@mui/material";
 import React, { useState } from "react";
 import "../../styles/Modals.css"
 import { Row } from "../../virtualmodel/DataAccessor";
@@ -8,19 +8,27 @@ import validator from 'validator';
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff, Check, Close } from '@mui/icons-material';
+import { green, grey } from '@mui/material/colors';
 
+const LENGTH_REGEX = new RegExp(/.{8,}$/);
 const UPPERCASE_REGEX = new RegExp(/.*[A-Z]/);
 const NUMBER_REGEX = new RegExp(/.*\d/);
-const LENGTH_REGEX = new RegExp(/.{8,}$/);
 const SPECIAL_CHARS_REGEX = new RegExp(/.*[-'/`~!#*$@_%+=.,^&(){}[\]|;:"<>?\\]/);
 const PASSWORD_VALID_REGEX = new RegExp(
 	`^(?=${[
 		LENGTH_REGEX.source,
-	 	UPPERCASE_REGEX.source, 
+		UPPERCASE_REGEX.source,
 		NUMBER_REGEX.source,
-		 SPECIAL_CHARS_REGEX.source
-		].join(")(?=")}).*$`);
+		SPECIAL_CHARS_REGEX.source
+	].join(")(?=")}).*$`);
 
+const REGEX_LIST = [
+	{ label: "min. 8 characters ", regexp: LENGTH_REGEX },
+	{ label: "1 uppercase character", regexp: UPPERCASE_REGEX },
+	{ label: "1 number", regexp: NUMBER_REGEX },
+	{ label: "1 special character", regexp: SPECIAL_CHARS_REGEX }
+]
 
 /**
  * Used to describe the current state of the signup menu.
@@ -32,8 +40,8 @@ enum ErrMsg {
 	INVALID_EMAIL = "Invalid email address",
 	EMAIL_NOT_FOUND = "Couldn't find your email address in the system",
 	WRONG_PASSWORD = "Incorrect password for the given email address",
-	INSECURE_PASSWORD = "This password is not strong enough: It should contain \n at least 8 characters, an uppercase character, a number and a special character",
-	NO_MATCH_CONFIRM_PASSWORD = "Passwords didn't match",
+	INSECURE_PASSWORD = "Password doesn't meet the requirements",
+	NO_MATCH_CONFIRM_PASSWORD = "Passwords don't match",
 	MISSING_FIELD = "Missing field"
 }
 
@@ -82,8 +90,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	 * Changes the state of the signup depending on the result from the verify_signup db function execution
 	 */
 	const handleNext = () => {
-		
-		if(!validateUserInput()){
+
+		if (!validateUserInput()) {
 			return;
 		}
 		const verifySignUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "verify_signup");
@@ -131,16 +139,16 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const handleBack = () => setCurrentState(SignupState.INITIAL);
 
 	const handleFormSubmit = () => {
-		if(!validateUserInput()){
+		if (!validateUserInput()) {
 			return;
 		}
-		
+
 		const loginFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "login");
 		const signUpFunctionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "signup");
 
 		if (currentState === SignupState.LOGIN) {
 			loginFunctionAccessor.setBody(inputValues);
-			loginFunctionAccessor.executeFunction({withCredentials: true})
+			loginFunctionAccessor.executeFunction({ withCredentials: true })
 				// Logs in the user
 				.then(async (response) => {
 					const token = response.data.token;
@@ -168,7 +176,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 		setLastNameError("");
 		setConfirmPasswordError("");
 
-		
+
 
 		//Validate Credentials based on the current state of the signup
 		switch (currentState) {
@@ -212,17 +220,19 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 				}
 
 				// Password strength requirements validation
-				if(!PASSWORD_VALID_REGEX.test(inputValues['password'])){
+				if (!PASSWORD_VALID_REGEX.test(inputValues['password'])) {
 					setPasswordError(ErrMsg.INSECURE_PASSWORD);
+					// Reset the confirm password field
+					setInputValues({ ...inputValues, confirm_password: "" });
 					return false;
 				}
-				
+
 				// Confirmation password matches the password
-				if(inputValues['password'] !== inputValues['confirm_password']){
+				if (inputValues['password'] !== inputValues['confirm_password']) {
 					setConfirmPasswordError(ErrMsg.NO_MATCH_CONFIRM_PASSWORD);
 					return false;
 				};
-				
+
 				return true;
 		}
 	};
@@ -240,8 +250,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 						name="email"
 						helperText={emailError}
 						error={emailError === "" ? false : true}
-						className="textField" 
-						disabled={currentState!==SignupState.INITIAL}/>
+						className="textField"
+						disabled={currentState !== SignupState.INITIAL} />
 
 					{/* Shows First Name and Last Name fields on signup */}
 					{currentState === SignupState.SIGNUP &&
@@ -251,10 +261,11 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 								variant="outlined"
 								onChange={handleInputChange}
 								name="first_name"
+								autoFocus
 								helperText={firstNameError}
 								error={firstNameError === "" ? false : true}
-								className="textField" 
-								required/>
+								className="textField"
+								required />
 
 							<TextField id="last-name-field"
 								label="Last Name"
@@ -270,31 +281,31 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 
 					{/* Shows Password field on both login and signup */}
 					{currentState !== SignupState.INITIAL &&
-						<TextField id="password-field"
+						<PasswordField id="password-field"
 							label="Password"
 							type="password"
-							variant="outlined"
 							onChange={handleInputChange}
 							onKeyDown={handlePasswordKeyDown}
 							name="password"
 							autoFocus={currentState === SignupState.LOGIN}
 							helperText={passwordError}
-							error={passwordError === "" ? false: true}
+							error={passwordError === "" ? false : true}
 							className="textField"
-							required={currentState === SignupState.SIGNUP} />}
+							required={currentState === SignupState.SIGNUP}
+							validateStrength />}
 
 					{/* Shows Confirm Password field on signup */}
 					{currentState === SignupState.SIGNUP &&
-						<TextField id="confirm-password-field"
+						<PasswordField id="confirm-password-field"
 							label="Confirm Password"
 							type="password"
-							variant="outlined"
 							onChange={handleInputChange}
 							name="confirm_password"
-							helperText={confirmPasswordError} 
-							error={confirmPasswordError === "" ? false: true}
+							helperText={confirmPasswordError}
+							error={confirmPasswordError === "" ? false : true}
 							className="textField"
-							required/>
+							value={inputValues["confirm_password"]}
+							required />
 					}
 				</div>
 				<div className="button-container-wide">
@@ -328,8 +339,83 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 						</Button>)}
 				</div>
 			</div>
+			{/* <PasswordField className="textField"></PasswordField> */}
 		</Box>
 	</Modal>
+}
+
+interface PasswordFieldProps extends Omit<TextFieldProps, 'variant'> {
+	validateStrength?: boolean
+}
+/**
+ * Custom password text field component
+ */
+const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false, ...props }) => {
+	const [showPassword, setShowPassword] = useState(false);
+	const [isSelected, setSelected] = useState(false);
+	const [value, setValue] = useState("");
+	const isPasswordValid = PASSWORD_VALID_REGEX.test(value);
+	console.log(value);
+	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+		props.onChange && props.onChange(e);
+		setValue(e.target.value);
+
+	}
+	return <FormControl variant="outlined"
+		className={props.className}
+		error={props.error && !isPasswordValid}
+		id={props.id}
+		required={props.required}
+		sx={props.sx}
+
+	>
+		<InputLabel>{props.label}</InputLabel>
+		<OutlinedInput
+			type={showPassword ? 'text' : 'password'}
+			onChange={handleChange}
+			name={props.name}
+			value={props.value}
+			autoFocus={props.autoFocus}
+			onFocus={() => setSelected(true)}
+			onBlur={() => setSelected(false)}
+
+			endAdornment={
+				<InputAdornment position="end">
+					<IconButton
+						onMouseDown={() => setShowPassword(true)}
+						onMouseUp={() => setShowPassword(false)}
+						edge="end">
+						{showPassword ? <VisibilityOff /> : <Visibility />}
+					</IconButton>
+				</InputAdornment>
+			}
+			label={props.label}
+		/>
+		{validateStrength
+			?
+			<>{(isSelected || (props.error && !isPasswordValid) )
+				&&
+
+				REGEX_LIST.map(({ label, regexp }) => {
+					const patternMatched = regexp.test(value);
+					console.log(`${label}: ${patternMatched}`)
+					return <Box display='flex' flex-direction='row' justifyContent='space-between'>
+						<FormHelperText
+							error={props.error && !patternMatched}
+							sx={{ color: patternMatched ? green[800] : grey[400] }} >
+							{label}
+						</FormHelperText>
+						{patternMatched && <Check sx={{ color: green[800] }} />}
+						{!patternMatched && props.error && <Close color="error" />}
+					</Box>
+				})}
+			</>
+			:
+			<FormHelperText>{props.helperText}</FormHelperText>
+
+		}
+
+	</FormControl>
 }
 
 export default SignupModal;
