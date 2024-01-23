@@ -7,11 +7,13 @@ export interface UpdateFunction {
 	handleSubmit: (id: string, value: string) => void;
 }
 
-export const EnvVarValueEditor = (row: Row, update: UpdateFunction) => {
-	const [currentEnvVar] = useState<Row>(row);
-	const id = `${currentEnvVar.row?.id}`;
-	const name = `${currentEnvVar.row?.name}`;
-	const value = `${currentEnvVar.row?.value}`;
+export const EnvVarValueEditor = (props: {
+	row: Row;
+	update: UpdateFunction;
+}) => {
+	const id = `${props.row.id}`;
+	const name = `${props.row.name}`;
+	const value = `${props.row.value}`;
 
 	const [envVarValue, setEnvVarValue] = useState<string>(value);
 
@@ -26,7 +28,7 @@ export const EnvVarValueEditor = (row: Row, update: UpdateFunction) => {
 			<Button
 				onClick={() => {
 					console.log(envVarValue);
-					update.handleSubmit(id, envVarValue);
+					props.update.handleSubmit(id, envVarValue);
 				}}>
 				Save
 			</Button>
