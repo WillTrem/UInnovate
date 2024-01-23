@@ -67,6 +67,8 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
+
+  console.log(table.getColumns())
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -125,6 +127,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     setLength(count?.length || 0);
     setColumns(attributes);
     setRows(filteredRows);
+    console.log(attributes)
   };
 
   useEffect(() => {
