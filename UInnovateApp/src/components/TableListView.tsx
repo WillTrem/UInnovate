@@ -68,7 +68,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   table: Table;
 }) => {
 
-  console.log(table.getColumns())
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -78,9 +77,12 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
   );
-  const defaultOrderValue = table.columns.find(
+  let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
+  if(defaultOrderValue == undefined){
+    defaultOrderValue = table.columns[0].column_name
+  }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -127,7 +129,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     setLength(count?.length || 0);
     setColumns(attributes);
     setRows(filteredRows);
-    console.log(attributes)
   };
 
   useEffect(() => {
@@ -501,9 +502,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-    if (table.stand_alone_details_view) {
-      console.log("No Stand Alone Details View " + table.table_name);
-    }
+   
     setOpenPanel(true);
   };
 
