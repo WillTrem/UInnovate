@@ -73,7 +73,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 
 	// All the props from AddUserModal are directly passed down to the Modal component
 	return <Modal onClose={handleClose} {...props}>
-		<Box className='modal-container'>
+		<Box className='modal-container-center'>
 			<div className="modal-content">
 				<Typography variant="h5">Add new user</Typography>
 				<div className="form">
