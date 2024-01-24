@@ -275,6 +275,9 @@ class VirtualModelDefinition {
           case "stand_alone_details_view":
             table.stand_alone_details_view = config.value === "true";
             break;
+          case "lookup_tables":
+            table.lookup_tables = config.value as string;
+            break;
         }
       });
       this.config_data_fetched = true;
@@ -506,7 +509,7 @@ export class Table {
   has_details_view: boolean;
   columns: Column[];
   url: string;
-  lookup_tables: Row;
+  lookup_tables: string;
   stand_alone_details_view: boolean;
 
   constructor(table_name: string) {
@@ -516,7 +519,7 @@ export class Table {
     this.has_details_view = true;
     this.columns = [];
     this.url = API_BASE_URL + table_name;
-    this.lookup_tables = { "-1": "none" };
+    this.lookup_tables = "null";
     this.stand_alone_details_view = false;
   }
 
@@ -620,7 +623,7 @@ export class Table {
 
   // Method to set the table's lookup tables
   // return type : void
-  setLookupTables(lookup_tables: Row) {
+  setLookupTables(lookup_tables: string) {
     this.lookup_tables = lookup_tables;
   }
 

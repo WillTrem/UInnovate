@@ -7,5 +7,6 @@ export enum ConfigProperty {
   COLUMN_DISPLAY_TYPE = "column_display_type",
   METADATA_VIEW = "metadata_view",
   DETAILS_VIEW = "details_view",
-  STAND_ALONE_DETAILS_VIEW = "stand_alone_details_view"
+  STAND_ALONE_DETAILS_VIEW = "stand_alone_details_view",
+  LOOKUP_TABLES="lookup_tables"
 }

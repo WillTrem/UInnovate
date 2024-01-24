@@ -8,7 +8,8 @@ VALUES
     ('column_display_type', 'How to display a column', 'string', 'text'),
     ('metadata_view', 'Default view when showing the metadata information of a table/column', 'boolean', 'false' ),
     ('details_view', 'Visibility state of the details view for a table', 'boolean', 'true'),
-    ('stand_alone_details_view', 'Visibility state of the stand alone details view for a table', 'boolean', 'false');
+    ('stand_alone_details_view', 'Visibility state of the stand alone details view for a table', 'boolean', 'false'),
+    ('lookup_tables', 'List of tables that are used as lookup tables', 'string', 'null');
     -- ADD ANY NEW CONFIG PROPERTIES HERE
 
 -- Insert the default column display typess for each  app_service_support column
@@ -16,7 +17,7 @@ INSERT INTO meta.appconfig_values (property, value, "table", "column")
 SELECT
     CFP.name, default_value, C.table, C.column
 FROM meta.columns as C, meta.appconfig_properties as CFP
-WHERE schema = ' app_service_support' AND (CFP.name != 'table_view' AND CFP.name != 'details_view' AND CFP.name != 'stand_alone_details_view');
+WHERE schema = ' app_service_support' AND (CFP.name != 'table_view' AND CFP.name != 'details_view' AND CFP.name != 'stand_alone_details_view' AND CFP.name != 'lookup_tables');
 
 
 -- Insert the default column display typess for each  app_service_support table

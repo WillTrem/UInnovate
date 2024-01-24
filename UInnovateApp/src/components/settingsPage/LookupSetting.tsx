@@ -8,6 +8,8 @@ import "../../styles/TableItem.css";
 import { Table } from "../../virtualmodel/VMD";
 import buttonStyle from '../TableEnumView'
 import { Row } from '../../virtualmodel/DataAccessor';
+import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
+import { ConfigValueType, useConfig } from '../../contexts/ConfigContext';
 
 
 type LookUpTableProps = {
@@ -19,8 +21,16 @@ type DefaultRow = {
 
 const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
 
+  const { updateConfig } = useConfig();
 
-
+  const updateTableConfig = (property: ConfigProperty, value: string) => {
+    const newConfigValue: ConfigValueType = {
+      property,
+      table: table.table_name,
+      value,
+    };
+    updateConfig(newConfigValue);
+  };
 
   const attributes = table.getColumns();
   let count = 0;
@@ -36,7 +46,21 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     }
   });
   if (count == 0) {
-    return (<></>)
+    const handlechecktest: React.MouseEventHandler<HTMLButtonElement> | undefined = async () => {
+      console.log(table.lookup_tables)
+      table.setLookupTables("check1");
+      await updateTableConfig(ConfigProperty.LOOKUP_TABLES, ("check1").toString());
+
+      console.log(table.lookup_tables)
+      
+    } 
+
+    return (<div>
+    <button onClick={handlechecktest}>
+
+    </button>
+    {table.lookup_tables}
+    </div>)
   }
   else {
 
@@ -113,11 +137,12 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     
 
 
-    const HandleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
+    const HandleChange =  (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
       setSelectInput((prevSelectInput) => ({
         ...prevSelectInput,
         [index]: event.target.value,
       }));
+      
 
 
     };
