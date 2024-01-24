@@ -108,15 +108,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 						</label>
 					</div>
 				</div>
-				<div className="button-container">
+				<div className="button-container-wide">
+					<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>
+						Cancel
+					</Button>
 					<Button
 						variant="contained"
 						onClick={handleFormSubmit}
 						sx={{ backgroundColor: "#404040" }}>
 						Add
-					</Button>
-					<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>
-						Cancel
 					</Button>
 				</div>
 			</div>

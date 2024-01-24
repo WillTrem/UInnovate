@@ -8,7 +8,7 @@ import validator from 'validator';
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
-import { Visibility, VisibilityOff, Check, Close, Login } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Check, Close, NavigateNext, NavigateBefore } from '@mui/icons-material';
 import { green, grey } from '@mui/material/colors';
 
 const LENGTH_REGEX = new RegExp(/.{8,}$/);
@@ -352,10 +352,17 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 				Log in
 			</Button>
 		</>
+
 	return <Modal {...props} onClose={handleCancel} >
 		<Box className='modal-container' component="form" >
 			<div className="modal-content-center">
-				<Typography variant="h5">Sign up (or Log in)</Typography>
+				<Typography variant="h5">
+					{currentState === SignupState.INITIAL 
+					? "Sign up (or Log in)"
+					: currentState === SignupState.LOGIN
+					? "Log in"
+				: "Sign up"}
+				</Typography>
 				<div className="form">
 					{currentState === SignupState.INITIAL 
 					? initialFormContent
@@ -375,12 +382,12 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 					{/* If in Login or Signup state, display login/signup button. Otherwise, display the 'next' button. */}
 					{currentState === SignupState.LOGIN || currentState === SignupState.SIGNUP
 						?
-						(<>
+						(<Box display="flex" justifyContent="end" gap={"16px"}>
 							<Button
 								variant="contained"
 								onClick={handleBack}
 								sx={{ backgroundColor: "#404040" }}>
-								Back
+								<NavigateBefore />
 							</Button>
 							<Button
 								variant="contained"
@@ -388,18 +395,17 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 								sx={{ backgroundColor: "#404040" }}>
 								{currentState === SignupState.LOGIN ? "Log in" : "Sign up"}
 							</Button>
-						</>)
+						</Box>)
 						: currentState === SignupState.INITIAL &&
 						(<Button
 							variant="contained"
 							onClick={handleNext}
 							sx={{ backgroundColor: "#404040" }}>
-							Next
+							<NavigateNext />
 						</Button>)
 					}
 				</div>
 			</div>
-			{/* <PasswordField className="textField"></PasswordField> */}
 		</Box>
 	</Modal>
 }

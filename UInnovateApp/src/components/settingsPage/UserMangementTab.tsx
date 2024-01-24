@@ -148,7 +148,7 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelec
 				onChange={(e) => setSelectedList((e.target.value as string[]).sort((a, b) => a.localeCompare(b)))}
 				inputProps={{ 'aria-label': 'Without label' }}
 				sx={({ 
-					 '& .MuiSelect-select': { }, width:'25vw', maxWidth: '25vw' })}
+					 '& .MuiSelect-select': { }, minWidth:'20vw', maxWidth: '25vw' })}
 				renderValue={(selected) => (
 					<Stack gap={1} direction="row" flexWrap="wrap">
 						{selected.map((value) => (
