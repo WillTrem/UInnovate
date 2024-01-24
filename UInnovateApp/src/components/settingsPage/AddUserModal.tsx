@@ -5,7 +5,7 @@ import "../../styles/Modals.css"
 import "../../styles/UserManagementTab.css"
 import vmd from "../../virtualmodel/VMD"
 import { Row } from "../../virtualmodel/DataAccessor"
-import { MultiSelect } from "./UserMangementTab"
+import MultiSelect from "./MultiSelect"
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
 import { Role } from "../../redux/AuthSlice"
 
