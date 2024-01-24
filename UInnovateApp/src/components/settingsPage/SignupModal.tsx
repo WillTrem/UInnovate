@@ -1,4 +1,4 @@
-import { Modal, Box, Button, ModalProps, Typography, TextField, TextFieldProps, InputLabel, FormControl, OutlinedInput, IconButton, InputAdornment, FormHelperText } from "@mui/material";
+import { Modal, Box, Button, ModalProps, Typography, TextField, TextFieldProps, InputLabel, FormControl, OutlinedInput, IconButton, InputAdornment, FormHelperText, breadcrumbsClasses } from "@mui/material";
 import React, { useState } from "react";
 import "../../styles/Modals.css"
 import { Row } from "../../virtualmodel/DataAccessor";
@@ -8,7 +8,7 @@ import validator from 'validator';
 import { useDispatch, useSelector } from "react-redux";
 import { logIn } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
-import { Visibility, VisibilityOff, Check, Close } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Check, Close, Login } from '@mui/icons-material';
 import { green, grey } from '@mui/material/colors';
 
 const LENGTH_REGEX = new RegExp(/.{8,}$/);
@@ -34,7 +34,7 @@ const REGEX_LIST = [
  * Used to describe the current state of the signup menu.
  */
 enum SignupState {
-	INITIAL, LOGIN, SIGNUP
+	INITIAL, LOGIN, SIGNUP, SIGNUP_SUCCESSFUL
 };
 enum ErrMsg {
 	INVALID_EMAIL = "Invalid email address",
@@ -65,15 +65,13 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
-	// Reset the state's values
-	const resetValues = () => {
-		setInputValues({});
-		setCurrentState(SignupState.INITIAL);
-	}
-
+	// Reset the inputValues state's values
+	const resetValues = () => setInputValues({});
+		
 	// Cancels and closes the form
 	const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
 		props.onClose && props.onClose(event, "escapeKeyDown");
+		setCurrentState(SignupState.INITIAL);
 		resetValues();
 	}
 
@@ -163,8 +161,15 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 					setPasswordError(ErrMsg.WRONG_PASSWORD);
 				});
 		}
-		else {
-			//TODO
+		else if (currentState === SignupState.SIGNUP) {
+			// Removing confirm password value from the sent input fields
+			const {confirm_password, ...signupInputValues} = inputValues;
+			signUpFunctionAccessor.setBody(signupInputValues);
+			signUpFunctionAccessor.executeFunction({ withCredentials: true })
+				.then(() => {
+					setCurrentState(SignupState.SIGNUP_SUCCESSFUL);
+					resetValues();
+				});
 		}
 	}
 
@@ -231,91 +236,145 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 				if (inputValues['password'] !== inputValues['confirm_password']) {
 					setConfirmPasswordError(ErrMsg.NO_MATCH_CONFIRM_PASSWORD);
 					return false;
-				};
-
-				return true;
+				}
+				else {
+					return true;
+				}
+			default: 
+				return true
 		}
 	};
 
-	return <Modal {...props}>
+	const initialFormContent =
+		<>
+			<TextField id="email-field"
+				label="Email"
+				variant="outlined"
+				onChange={handleInputChange}
+				onKeyDown={handleEmailKeyDown}
+				name="email"
+				helperText={emailError}
+				error={emailError === "" ? false : true}
+				className="textField" />
+		</>
+
+	const signupFormContent =
+		<>
+			<TextField id="email-field"
+				label="Email"
+				variant="outlined"
+				onChange={handleInputChange}
+				onKeyDown={handleEmailKeyDown}
+				name="email"
+				helperText={emailError}
+				error={emailError === "" ? false : true}
+				className="textField"
+				disabled />
+
+			{/* Shows First Name and Last Name fields on signup */}
+			<TextField id="first-name-field"
+				label="First Name"
+				variant="outlined"
+				onChange={handleInputChange}
+				name="first_name"
+				autoFocus
+				helperText={firstNameError}
+				error={firstNameError === "" ? false : true}
+				className="textField"
+				required />
+			<TextField id="last-name-field"
+				label="Last Name"
+				variant="outlined"
+				onChange={handleInputChange}
+				name="last_name"
+				helperText={lastNameError}
+				error={lastNameError === "" ? false : true}
+				className="textField"
+				required />
+			{/* Shows Password field on both login and signup */}
+			<PasswordField id="password-field"
+				label="Password"
+				type="password"
+				onChange={handleInputChange}
+				onKeyDown={handlePasswordKeyDown}
+				name="password"
+				helperText={passwordError}
+				error={passwordError === "" ? false : true}
+				className="textField"
+				required={currentState === SignupState.SIGNUP}
+				validateStrength />
+
+			{/* Shows Confirm Password field on signup */}
+			<PasswordField id="confirm-password-field"
+				label="Confirm Password"
+				type="password"
+				onChange={handleInputChange}
+				name="confirm_password"
+				helperText={confirmPasswordError}
+				error={confirmPasswordError === "" ? false : true}
+				className="textField"
+				value={inputValues["confirm_password"]}
+				required />
+		</>
+
+	const loginFormContent =
+		<>
+			<TextField id="email-field"
+				label="Email"
+				variant="outlined"
+				onChange={handleInputChange}
+				onKeyDown={handleEmailKeyDown}
+				name="email"
+				helperText={emailError}
+				error={emailError === "" ? false : true}
+				className="textField"
+				disabled />
+
+			<PasswordField id="password-field"
+				label="Password"
+				type="password"
+				onChange={handleInputChange}
+				onKeyDown={handlePasswordKeyDown}
+				name="password"
+				autoFocus
+				helperText={passwordError}
+				error={passwordError === "" ? false : true}
+				className="textField" />
+		</>
+
+	const signupSuccessfulFormContent =
+		<>
+			<Typography variant='body1' align="center">Sign up has been done successfully.</Typography>
+			<Typography variant='body1' align="center">You can now log in using your credentials.</Typography>
+			<Button variant="contained"
+				onClick={handleBack}
+				sx={{ backgroundColor: "#404040" }}>
+				Log in
+			</Button>
+		</>
+	return <Modal {...props} onClose={handleCancel} >
 		<Box className='modal-container' component="form" >
 			<div className="modal-content-center">
 				<Typography variant="h5">Sign up (or Log in)</Typography>
 				<div className="form">
-					<TextField id="email-field"
-						label="Email"
-						variant="outlined"
-						onChange={handleInputChange}
-						onKeyDown={handleEmailKeyDown}
-						name="email"
-						helperText={emailError}
-						error={emailError === "" ? false : true}
-						className="textField"
-						disabled={currentState !== SignupState.INITIAL} />
-
-					{/* Shows First Name and Last Name fields on signup */}
-					{currentState === SignupState.SIGNUP &&
-						<>
-							<TextField id="first-name-field"
-								label="First Name"
-								variant="outlined"
-								onChange={handleInputChange}
-								name="first_name"
-								autoFocus
-								helperText={firstNameError}
-								error={firstNameError === "" ? false : true}
-								className="textField"
-								required />
-
-							<TextField id="last-name-field"
-								label="Last Name"
-								variant="outlined"
-								onChange={handleInputChange}
-								name="last_name"
-								helperText={lastNameError}
-								error={lastNameError === "" ? false : true}
-								className="textField"
-								required />
-						</>
-					}
-
-					{/* Shows Password field on both login and signup */}
-					{currentState !== SignupState.INITIAL &&
-						<PasswordField id="password-field"
-							label="Password"
-							type="password"
-							onChange={handleInputChange}
-							onKeyDown={handlePasswordKeyDown}
-							name="password"
-							autoFocus={currentState === SignupState.LOGIN}
-							helperText={passwordError}
-							error={passwordError === "" ? false : true}
-							className="textField"
-							required={currentState === SignupState.SIGNUP}
-							validateStrength />}
-
-					{/* Shows Confirm Password field on signup */}
-					{currentState === SignupState.SIGNUP &&
-						<PasswordField id="confirm-password-field"
-							label="Confirm Password"
-							type="password"
-							onChange={handleInputChange}
-							name="confirm_password"
-							helperText={confirmPasswordError}
-							error={confirmPasswordError === "" ? false : true}
-							className="textField"
-							value={inputValues["confirm_password"]}
-							required />
-					}
+					{currentState === SignupState.INITIAL 
+					? initialFormContent
+					: currentState === SignupState.LOGIN
+					? loginFormContent
+					: currentState === SignupState.SIGNUP
+					? signupFormContent
+					: signupSuccessfulFormContent }
 				</div>
 				<div className="button-container-wide">
-					<Button variant="contained"
-						onClick={handleCancel}
-						sx={{ backgroundColor: "#404040" }}>
-						Cancel
-					</Button>
+					{currentState !== SignupState.SIGNUP_SUCCESSFUL &&
+						<Button variant="contained"
+							onClick={handleCancel}
+							sx={{ backgroundColor: "#404040" }}>
+							Cancel
+						</Button>}
 					{/* If in Login or Signup state, display login/signup button. Otherwise, display the 'next' button. */}
-					{currentState !== SignupState.INITIAL ?
+					{currentState === SignupState.LOGIN || currentState === SignupState.SIGNUP
+						?
 						(<>
 							<Button
 								variant="contained"
@@ -330,13 +389,14 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 								{currentState === SignupState.LOGIN ? "Log in" : "Sign up"}
 							</Button>
 						</>)
-						:
+						: currentState === SignupState.INITIAL &&
 						(<Button
 							variant="contained"
 							onClick={handleNext}
 							sx={{ backgroundColor: "#404040" }}>
 							Next
-						</Button>)}
+						</Button>)
+					}
 				</div>
 			</div>
 			{/* <PasswordField className="textField"></PasswordField> */}
@@ -355,7 +415,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 	const [isSelected, setSelected] = useState(false);
 	const [value, setValue] = useState("");
 	const isPasswordValid = PASSWORD_VALID_REGEX.test(value);
-	console.log(value);
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
 		props.onChange && props.onChange(e);
 		setValue(e.target.value);
@@ -367,6 +426,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 		id={props.id}
 		required={props.required}
 		sx={props.sx}
+		onKeyDown={props.onKeyDown}
 
 	>
 		<InputLabel>{props.label}</InputLabel>
@@ -378,13 +438,15 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 			autoFocus={props.autoFocus}
 			onFocus={() => setSelected(true)}
 			onBlur={() => setSelected(false)}
+			
 
 			endAdornment={
-				<InputAdornment position="end">
+				<InputAdornment position="end" >
 					<IconButton
 						onMouseDown={() => setShowPassword(true)}
 						onMouseUp={() => setShowPassword(false)}
-						edge="end">
+						edge="end"
+						tabIndex={-1}>
 						{showPassword ? <VisibilityOff /> : <Visibility />}
 					</IconButton>
 				</InputAdornment>
@@ -393,13 +455,12 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 		/>
 		{validateStrength
 			?
-			<>{(isSelected || (props.error && !isPasswordValid) )
+			// If the Password field is selected or there is an error with the password, show the strength validation 
+			<>{(isSelected || (props.error && !isPasswordValid))
 				&&
-
 				REGEX_LIST.map(({ label, regexp }) => {
 					const patternMatched = regexp.test(value);
-					console.log(`${label}: ${patternMatched}`)
-					return <Box display='flex' flex-direction='row' justifyContent='space-between'>
+					return <Box key={label} display='flex' flex-direction='row' justifyContent='space-between'>
 						<FormHelperText
 							error={props.error && !patternMatched}
 							sx={{ color: patternMatched ? green[800] : grey[400] }} >
