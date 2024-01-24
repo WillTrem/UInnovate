@@ -20,6 +20,7 @@ import {
   MenuItem,
   FormControl,
   SelectChangeEvent,
+  Tooltip,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -42,6 +43,7 @@ import {
   RichTextEditor,
   type RichTextEditorRef,
 } from "mui-tiptap";
+import ScriptLoadPopup from "./ScriptLoadPopup";
 
 interface TableListViewProps {
   table: Table;
@@ -65,16 +67,22 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
+
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+  const [isScriptPopupVisible, setIsScriptPopupVisible] =
+    useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
   );
-  const defaultOrderValue = table.columns.find(
+  let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
+  if(defaultOrderValue == undefined){
+    defaultOrderValue = table.columns[0].column_name
+  }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -139,6 +147,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
+  const [scriptDescription, setScriptDescription] = useState<string | null>("");
+  const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
 
@@ -160,6 +170,24 @@ const TableListView: React.FC<TableListViewProps> = ({
     setScripts(filteredScripts);
   };
 
+  const handleScriptHover = async (description: string) => {
+    setScriptDescription(description);
+  };
+
+  const handleScriptHoverExit = () => {
+    setScriptDescription(null);
+  };
+
+  const handleConfirmForm = () => {
+    setIsScriptPopupVisible(true);
+  };
+
+  useEffect(() => {
+    if (selectedScript) {
+      handleConfirmForm();
+    }
+  }, [selectedScript]);
+
   const getConfigs = async () => {
     if (!schema || !config_table) {
       throw new Error("Schema or table not found");
@@ -180,15 +208,15 @@ const TableListView: React.FC<TableListViewProps> = ({
     getConfigs();
   }, [inputValues]);
 
-
   const inputStyle = {
     display: "flex",
-    flexDirection: "column", 
+    flexDirection: "column",
     alignItems: "flex-start",
-    width: table.stand_alone_details_view ? '80%' : "120%",
-  
+    width: table.stand_alone_details_view ? "80%" : "120%",
   };
-  const tableStyle = table.stand_alone_details_view ? 'form-group-stand-alone' : 'form-group';
+  const tableStyle = table.stand_alone_details_view
+    ? "form-group-stand-alone"
+    : "form-group";
   //For when order changes
   const handleOrderchange = (event: SelectChangeEvent) => {
     setOrderValue(event.target.value as string);
@@ -474,9 +502,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-    if (table.stand_alone_details_view) {
-      console.log("No Stand Alone Details View " + table.table_name)
-    }
+   
     setOpenPanel(true);
   };
 
@@ -518,18 +544,40 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-        <div>
+        <div className="d-flex flex-column">
+          {(scripts || []).length > 0 && <h6>Scripts</h6>}
           {scripts?.map((script) => {
             return (
-              <Button
-                key={script["id"]}
-                style={buttonStyle}
-                variant="contained"
+              <Tooltip
+                title={script["description"]}
+                open={scriptDescription === script["description"]}
+                placement="right"
               >
-                {script["btn_name"]}
-              </Button>
+                <Button
+                  key={script["id"]}
+                  style={buttonStyle}
+                  variant="contained"
+                  onClick={() => {
+                    // handleConfirmForm();
+                    setSelectedScript(script);
+                  }}
+                  onMouseEnter={() => handleScriptHover(script["description"])}
+                  onMouseLeave={handleScriptHoverExit}
+                >
+                  {script["btn_name"]}
+                </Button>
+              </Tooltip>
             );
           })}
+          {isScriptPopupVisible && selectedScript && (
+            <ScriptLoadPopup
+              onClose={() => {
+                setIsScriptPopupVisible(false);
+                setSelectedScript(null);
+              }}
+              script={selectedScript}
+            />
+          )}
         </div>
         <div>
           <FormControl size="small">
@@ -618,16 +666,16 @@ const TableListView: React.FC<TableListViewProps> = ({
           <Typography variant="h5">Details</Typography>
           <form>
             <div className={tableStyle}>
-                {columns.map((column, colIdx) => {
-                  return (
-                    <div key={colIdx} className="row-details">
-                      <label key={column.column_name + colIdx}>
-                        {column.column_name}
-                      </label>
-                      {inputField(column)}
-                    </div>
-                  );
-                })}
+              {columns.map((column, colIdx) => {
+                return (
+                  <div key={colIdx} className="row-details">
+                    <label key={column.column_name + colIdx}>
+                      {column.column_name}
+                    </label>
+                    {inputField(column)}
+                  </div>
+                );
+              })}
             </div>
           </form>
           <div>
@@ -658,12 +706,12 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
-        <div style={{ paddingBottom: '2em' }}>
-          {localStorage.getItem(table.table_name + "T") === null || getTable[-1] == "none" ? (
+        <div style={{ paddingBottom: "2em" }}>
+          {localStorage.getItem(table.table_name + "T") === null ||
+          getTable[-1] == "none" ? (
             <div></div>
-
           ) : showTable ? (
-            <div style={{ paddingBottom: '2em' }}>
+            <div style={{ paddingBottom: "2em" }}>
               <LookUpTableDetails table={table} />
             </div>
           ) : (
@@ -672,7 +720,6 @@ const TableListView: React.FC<TableListViewProps> = ({
               color="primary"
               style={{ marginLeft: 15 }}
               onClick={() => setShowTable(true)}
-
             >
               Show Look up Table
             </Button>

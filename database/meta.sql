@@ -35,8 +35,7 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 -- Creating the columns view
 CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "is_editable") AS 
 (
-     
-     SELECT 
+    SELECT DISTINCT ON (c.table_schema, c.table_name, c.column_name)
         c.table_schema, 
         c.table_name, 
         c.column_name,  
@@ -45,7 +44,7 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     FROM information_schema.columns AS c
     LEFT JOIN 
     (
-        SELECT 
+        SELECT DISTINCT ON (cl.relname, att.attname)
             cl.relname as referee_table,  
             att.attname as referee_column, 
             cl2.relname as referenced_table, 
@@ -81,10 +80,9 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     (
         SELECT "table" FROM meta.tables
     )
-    ORDER BY c.table_schema, c.table_name
-	
-	 
-) ;
+    ORDER BY c.table_schema, c.table_name, c.column_name
+);
+
 
 -- Creates a VIEW that shows all the views of the database
 CREATE OR REPLACE VIEW meta.views AS (
