@@ -24,6 +24,7 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
+import Pagination from "@mui/material/Pagination";
 
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
@@ -256,6 +257,30 @@ const TableListView: React.FC<TableListViewProps> = ({
   //For when page number changes
   const handlePageChange = (event, value) => {
     setPageNumber(value);
+  };
+
+  const onItemAdded = (e, item, itemImage, itemName, currentColumn) => {
+    e.preventDefault();
+    const nonEditableColumn = table.columns.find(
+      (column) => column.is_editable === false
+    );
+    if (nonEditableColumn) {
+      setCurrentPrimaryKey(nonEditableColumn.column_name);
+    }
+    setItem(item);
+    setItemImage(itemImage);
+    setItemName(itemName);
+
+    setInputValues((prevInputValues) => ({
+      ...prevInputValues,
+      [currentColumn]: item,
+    }));
+    let temp = columnsAndFile;
+    temp = [...temp, [currentColumn, item]];
+    setColumnsAndFile([...columnsAndFile, [currentColumn, item]]);
+    let tempRow = currentRow;
+    tempRow.row = { ...tempRow.row, [currentColumn]: item };
+    setCurrentRow(tempRow);
   };
 
   const onItemAdded = (e, item, itemImage, itemName, currentColumn) => {
@@ -592,6 +617,46 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           </div>
         );
+      } else if (columnDisplayType.value == "file") {
+        let currentFile;
+        files?.forEach((file) => {
+          if (file["id"] == currentRow?.row[column.column_name]) {
+            currentFile = file;
+          }
+        });
+        const response = currentFile;
+        console.log(currentRow);
+        return (
+          <div className="centerize">
+            <Dropzone
+              onItemAdded={onItemAdded}
+              items={response ? response["blob"] : null}
+              itemsImage={response ? true : false}
+              itemsName={response ? response["file_name"] : null}
+              currentColumn={column.column_name}
+            />
+          </div>
+        );
+      } else if (columnDisplayType.value == "file") {
+        let currentFile;
+        files?.forEach((file) => {
+          if (file["id"] == currentRow?.row[column.column_name]) {
+            currentFile = file;
+          }
+        });
+        const response = currentFile;
+        console.log(currentRow);
+        return (
+          <div className="centerize">
+            <Dropzone
+              onItemAdded={onItemAdded}
+              items={response ? response["blob"] : null}
+              itemsImage={response ? true : false}
+              itemsName={response ? response["file_name"] : null}
+              currentColumn={column.column_name}
+            />
+          </div>
+        );
       }
     };
     setInputField(() => newInputField as (column: Column) => JSX.Element);
@@ -685,15 +750,6 @@ const TableListView: React.FC<TableListViewProps> = ({
               </Tooltip>
             );
           })}
-          {isScriptPopupVisible && selectedScript && (
-            <ScriptLoadPopup
-              onClose={() => {
-                setIsScriptPopupVisible(false);
-                setSelectedScript(null);
-              }}
-              script={selectedScript}
-            />
-          )}
         </div>
         <div>
           <FormControl size="small">
@@ -822,25 +878,23 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
-        <div style={{ paddingBottom: "2em" }}>
-          {localStorage.getItem(table.table_name + "T") === null ||
-          getTable[-1] == "none" ? (
-            <div></div>
-          ) : showTable ? (
-            <div style={{ paddingBottom: "2em" }}>
-              <LookUpTableDetails table={table} />
-            </div>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginLeft: 15 }}
-              onClick={() => setShowTable(true)}
-            >
-              Show Look up Table
-            </Button>
-          )}
-        </div>
+        {localStorage.getItem(table.table_name + "T") === null ||
+        getTable[-1] == "none" ? (
+          <div></div>
+        ) : showTable ? (
+          <div style={{ paddingBottom: "2em" }}>
+            <LookUpTableDetails table={table} />
+          </div>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            style={{ marginLeft: 15 }}
+            onClick={() => setShowTable(true)}
+          >
+            Show Look up Table
+          </Button>
+        )}
       </SlidingPanel>
     </div>
   );
