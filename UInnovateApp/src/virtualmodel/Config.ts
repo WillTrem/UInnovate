@@ -2,15 +2,6 @@ import { ConfigType } from "../contexts/ConfigContext";
 import { DataAccessor, Row } from "./DataAccessor";
 import vmd, { ConfigData } from "./VMD";
 
-// Base appconfig_value type
-// export interface ConfigValue {
-//   id: number;
-//   property: string;
-//   value: string;
-//   table: string;
-//   column: string;
-// }
-
 //All display types as enum
 export enum ColumnDisplayTypes {
   text = "text",
