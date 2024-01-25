@@ -64,7 +64,7 @@ for SQL_FILE in $INIT_SQL $ROLES_FILE $META_FILE $SCHEMA_FILE $DATA_FILE $PROCED
     docker exec -i db psql -U $DB_USER -d $DB_NAME -a -f - < $SQL_FILE 2>&1 | tee -a $LOG_FILE
 done
 
-if [[ "${VITE_LOGIN_BYPASS,,}" = "true" ]]; then
+if [[ "$(echo $VITE_LOGIN_BYPASS | tr '[A-Z]' '[a-z]')" = "true" ]]; then
     echo "LOGIN_BYPASS set to true, executing $LOGIN_BYPASS_FILE..." | tee -a $LOG_FILE
     docker exec -i db psql -U $DB_USER -d $DB_NAME -a -f - < $LOGIN_BYPASS_FILE 2>&1 | tee -a $LOG_FILE
 fi
