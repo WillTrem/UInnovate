@@ -32,13 +32,13 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
             toolsColumn = attribute.column_name;
           }
           else {
-            return (<>nothing</>);
+            return (<>no</>);
           }
         });
-        const temp = toolsColumn + "L";
+        const temp = toolsColumn;
         const connectionID = localStorage.getItem(temp);
         if (connectionID == undefined) {
-          return (<>nothing</>);
+          return (<>Missing ConnectionID</>);
         }
 
 

@@ -33,18 +33,19 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 
 
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "is_editable") AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable") AS 
 (
     SELECT DISTINCT ON (c.table_schema, c.table_name, c.column_name)
         c.table_schema, 
         c.table_name, 
         c.column_name,  
         rc.referenced_table,
+        rc.referee_column AS references_by, -- Modified this line
         CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable
     FROM information_schema.columns AS c
     LEFT JOIN 
     (
-        SELECT DISTINCT ON (cl.relname, att.attname)
+        SELECT DISTINCT ON (cl.relname, att.attname, cl2.relname)
             cl.relname as referee_table,  
             att.attname as referee_column, 
             cl2.relname as referenced_table, 
@@ -60,7 +61,7 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
         ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
         WHERE contype = 'f'
     ) AS rc
-    ON c.column_name = rc.referee_column AND c.table_name != rc.referenced_table
+    ON c.table_name = rc.referenced_table AND c.column_name = rc.referenced_column
     -- New LEFT JOIN for primary key references
     LEFT JOIN 
     (
@@ -82,6 +83,7 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     )
     ORDER BY c.table_schema, c.table_name, c.column_name
 );
+
 
 
 -- Creates a VIEW that shows all the views of the database
