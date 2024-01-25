@@ -9,16 +9,11 @@ interface TableListViewProps {
 }
 
 const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListViewProps) => {
-  const name = table.table_name + "T";
-  const Local = localStorage.getItem(name);
-  if (Local == null) {
-    return (<></>)
-  }
-  else {
+
     const [Columns, setColumns] = useState<Column[][]>([]);
     const [rows, setRows] = useState<Row[][] | undefined>([]);
-    const getTable = JSON.parse(Local!);
-    var count = Object.keys(getTable).length - 1;
+    const getTable = JSON.parse(table.lookup_tables);
+    const count = Object.keys(getTable).length - 1;
 
 
     const LookUpTables = (num: number) => {
@@ -140,7 +135,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
 
 
 
-  }
+  
 }
 
 export default LookUpTableDetails;

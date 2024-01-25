@@ -707,10 +707,10 @@ const TableListView: React.FC<TableListViewProps> = ({
           </div>
         </div>
         <div style={{ paddingBottom: "2em" }}>
-          {localStorage.getItem(table.table_name + "T") === null ||
-          getTable[-1] == "none" ? (
+          {table.lookup_tables=="null" ? (
             <div></div>
-          ) : showTable ? (
+          ) : JSON.parse(table.lookup_tables)[-1] =="none" ? (
+          <div></div>) : showTable ? (
             <div style={{ paddingBottom: "2em" }}>
               <LookUpTableDetails table={table} />
             </div>
@@ -721,7 +721,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               style={{ marginLeft: 15 }}
               onClick={() => setShowTable(true)}
             >
-              Show Look up Table
+              Show Look Up Table
             </Button>
           )}
         </div>

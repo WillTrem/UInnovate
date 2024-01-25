@@ -31,7 +31,9 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     };
     updateConfig(newConfigValue);
   };
-
+ 
+  
+  
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -46,50 +48,50 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     }
   });
   if (count == 0) {
-    const handlechecktest: React.MouseEventHandler<HTMLButtonElement> | undefined = async () => {
-      console.log(table.lookup_tables)
-      table.setLookupTables("check1");
-      await updateTableConfig(ConfigProperty.LOOKUP_TABLES, ("check1").toString());
-
-      console.log(table.lookup_tables)
-      
-    } 
+   
 
     return (<div>
-    <button onClick={handlechecktest}>
-
-    </button>
-    {table.lookup_tables}
+  
     </div>)
   }
   else {
 
-    let defaultRow = new Row({});
+    const defaultRow = new Row({});
     for (let i = -1; i < count - 1; i++) {
 
       defaultRow[i] = 'none';
     }
 
 
-    const name = table.table_name + "T";
     const [SelectInput, setSelectInput] = useState<Row>(() => {
-      const savedLookUp = localStorage.getItem(name);
-      if (savedLookUp && savedLookUp !== '{}' && savedLookUp !== '""') {
-
-        return JSON.parse(savedLookUp);
-      } else {
+      if(table.lookup_tables=="null"){
         return (defaultRow);
       }
-    })
+      else {
+         const obj = JSON.parse(table.lookup_tables);
+        return (obj);
+      }
+        
+      }
+    )
 
+    // const [SelectInput, setSelectInput] = useState<Row>(() => {
+    //   const savedLookUp = localStorage.getItem(name);
+    //   if (savedLookUp && savedLookUp !== '{}' && savedLookUp !== '""') {
 
-    Storage.prototype.setObj = function (key: string, obj: string) {
-      return this.setItem(key, JSON.stringify(obj))
-    }
-    Storage.prototype.getObj = function (key: string) {
-      const item = this.getItem(key);
-      return item ? JSON.parse(item) : null;
-    }
+    //     return JSON.parse(savedLookUp);
+    //   } else {
+    //     return (defaultRow);
+    //   }
+    // })
+
+    // Storage.prototype.setObj = function (key: string, obj: string) {
+    //   return this.setItem(key, JSON.stringify(obj))
+    // }
+    // Storage.prototype.getObj = function (key: string) {
+    //   const item = this.getItem(key);
+    //   return item ? JSON.parse(item) : null;
+    // }
 
   
     const MyButtonComponent = ({ buttonIndex }: { buttonIndex: number }) => {
@@ -131,10 +133,17 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     }, [counter]);
 
     useEffect(() => {
-      localStorage.setItem(name, JSON.stringify(SelectInput));
+      
+      setSelectInputConfig();
     }, [SelectInput]);
 
-    
+    const setSelectInputConfig = async () => {
+      const objstring = JSON.stringify(SelectInput);
+      table.setLookupTables(objstring);
+      await updateTableConfig(ConfigProperty.LOOKUP_TABLES, objstring);
+
+    };
+  
 
 
     const HandleChange =  (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -213,6 +222,8 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
           ))}
         </div>
+        {table.lookup_tables} 
+        {JSON.stringify(defaultRow)}
       </div>
     );
   }
