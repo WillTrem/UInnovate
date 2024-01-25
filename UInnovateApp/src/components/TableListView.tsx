@@ -88,12 +88,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const name = table.table_name + "T";
-  const Local = localStorage.getItem(name);
-  if (Local == null) {
-    const nulll = Local;
-  }
-  const getTable = JSON.parse(Local!);
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -318,7 +312,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
 
       if (column.references_table != null) {
-        const string = column.column_name + "L";
+        const string = column.column_name;
         localStorage.setItem(
           string,
           currentRow.row[column.column_name] as string

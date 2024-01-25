@@ -75,23 +75,6 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       }
     )
 
-    // const [SelectInput, setSelectInput] = useState<Row>(() => {
-    //   const savedLookUp = localStorage.getItem(name);
-    //   if (savedLookUp && savedLookUp !== '{}' && savedLookUp !== '""') {
-
-    //     return JSON.parse(savedLookUp);
-    //   } else {
-    //     return (defaultRow);
-    //   }
-    // })
-
-    // Storage.prototype.setObj = function (key: string, obj: string) {
-    //   return this.setItem(key, JSON.stringify(obj))
-    // }
-    // Storage.prototype.getObj = function (key: string) {
-    //   const item = this.getItem(key);
-    //   return item ? JSON.parse(item) : null;
-    // }
 
   
     const MyButtonComponent = ({ buttonIndex }: { buttonIndex: number }) => {
@@ -118,19 +101,22 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
 
     const [counter, setCounter] = useState(() => {
-      // Retrieve the counter value from local storage when initializing state
-      const savedCounter = localStorage.getItem(table.table_name);
-      return savedCounter !== null ? Number(savedCounter) : 0;
+      return parseInt(table.lookup_counter, 10);
     });
 
 
 
     useEffect(() => {
-      // Store the counter value in local storage whenever it changes
-      localStorage.setItem(table.table_name, counter.toString());
-      if (counter > 0 && Object.keys(SelectInput).length == 1) {
-      }
+      setCounterConfig();
+     
     }, [counter]);
+    const setCounterConfig = async () => {
+      table.setLookupCounter(counter.toString())
+      await updateTableConfig(ConfigProperty.LOOKUP_COUNTER, counter.toString());
+
+    };
+  
+
 
     useEffect(() => {
       
@@ -157,12 +143,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     };
 
 
-    const handleButtonClick = () => {
+    const handleButtonClick = async () => {
       if (count - 1 == counter || count == 0) {
         alert("You can't add more lookup tables")
       }
-      else
+      else{
         setCounter((Counter) => Counter + 1);
+      }
     };
 
     const handleButtonClickDelete = () => {
@@ -222,8 +209,6 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
           ))}
         </div>
-        {table.lookup_tables} 
-        {JSON.stringify(defaultRow)}
       </div>
     );
   }

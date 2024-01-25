@@ -278,6 +278,9 @@ class VirtualModelDefinition {
           case "lookup_tables":
             table.lookup_tables = config.value as string;
             break;
+          case "lookup_counter":
+            table.lookup_counter = config.value as string;
+            break;
         }
       });
       this.config_data_fetched = true;
@@ -511,6 +514,7 @@ export class Table {
   url: string;
   lookup_tables: string;
   stand_alone_details_view: boolean;
+  lookup_counter: string;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -521,6 +525,7 @@ export class Table {
     this.url = API_BASE_URL + table_name;
     this.lookup_tables = "null";
     this.stand_alone_details_view = false;
+    this.lookup_counter = "0";
   }
 
   // Method to add a new column to the table object
@@ -638,6 +643,19 @@ export class Table {
   setStandAloneDetailsView(stand_alone_details_view: boolean) {
     this.stand_alone_details_view = stand_alone_details_view;
   }
+
+  // Method to get the table's lookup counter
+  // return type : number
+  getLookupCounter() {
+    return this.lookup_counter;
+  }
+
+  // Method to set the table's lookup counter
+  // return type : void
+  setLookupCounter(lookup_counter: string) {
+    this.lookup_counter = lookup_counter;
+  }
+
 }
 
 export class Column {

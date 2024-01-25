@@ -8,5 +8,6 @@ export enum ConfigProperty {
   METADATA_VIEW = "metadata_view",
   DETAILS_VIEW = "details_view",
   STAND_ALONE_DETAILS_VIEW = "stand_alone_details_view",
-  LOOKUP_TABLES="lookup_tables"
+  LOOKUP_TABLES="lookup_tables",
+  LOOKUP_COUNTER="lookup_counter"
 }
