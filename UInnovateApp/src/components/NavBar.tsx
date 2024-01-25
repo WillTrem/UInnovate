@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -9,7 +9,7 @@ import { useState } from 'react';
 import SignupModal from './settingsPage/SignupModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/Store';
-import { AuthState, Role, logOut } from '../redux/AuthSlice';
+import { AuthState, LOGIN_BYPASS, Role, logOut } from '../redux/AuthSlice';
 import {Tooltip, Zoom} from '@mui/material'
 
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -22,11 +22,15 @@ interface NavBarProps {
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
   const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleClose = () => setShowSignupModal(false);
   const handleShow = () => setShowSignupModal(true);
-  const handleLogout = () => dispatch(logOut());
+  const handleLogout = () => {
+    dispatch(logOut());
+    navigate('/');
+  }
 
 
   return (
@@ -45,6 +49,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">
+          {( LOGIN_BYPASS || loggedInUser ) &&
           <Nav
             className={
               showSchemaFilter
@@ -55,16 +60,17 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <SchemaSelector
               displayType={DisplayType.Nav} //DisplayType = NavDropdown | NavPills | Nav
             ></SchemaSelector>
-          </Nav>
+          </Nav>}
           <Nav className="justify-content-end flex-grow-1 pe-3">
-            <Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
+            {( LOGIN_BYPASS || loggedInUser ) &&
+            <><Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
               ObjectMenu
             </Nav.Link>
             {/* Hides the Settings page link for user role */}
-            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER /* || role === null*/}>
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}>
               Settings
-            </Nav.Link>
-            
+            </Nav.Link></>
+            }
             {loggedInUser && 
             <Nav.Link>
               <Tooltip
@@ -85,10 +91,10 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
               {/* Sign Up */}
               <LoginIcon fontSize='large'/>
             </Nav.Link>}
-            <SignupModal open={showSignupModal} onClose={handleClose}/>
           </Nav>
         </Navbar.Collapse>
       </Container>
+      <SignupModal open={showSignupModal} onClose={handleClose}/>
     </Navbar>
   );
 }

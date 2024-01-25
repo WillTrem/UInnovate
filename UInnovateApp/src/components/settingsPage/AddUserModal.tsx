@@ -1,4 +1,4 @@
-import { Box, Button, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, Typography } from "@mui/material"
+import { Box, Button, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
 import React, { ReactNode, useState } from "react"
 
 import "../../styles/Modals.css"
@@ -27,21 +27,21 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 	const [schemaAccessList, setSchemaAccessList] = useState<string[]>([]);
 	const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
 
-	// Function accessor
-	const functionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "create_user");
+
 
 	// Handles change in input field
-	function handleInputChange(e: React.ChangeEvent<HTMLInputElement> | SelectChangeEvent<string>) {
+	function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
 		const newInput = {
 			...inputValues,
 			[e.target.name]: e.target.value,
 		}
+		console.log(newInput);
 		setInputValues(newInput);
 	};
 
 	function handleRoleChange(e: SelectChangeEvent<string>) {
 		setRole(e.target.value);
-		handleInputChange(e);
+		handleInputChange(e as React.ChangeEvent<HTMLInputElement>);
 	}
 
 	function resetModal() {
@@ -57,7 +57,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 
 	// Handles adding a user 
 	function handleFormSubmit() {
-		// TODO: Implement function
+		// Function accessor
+		const functionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "create_user");
 		functionAccessor.setBody(inputValues);
 		functionAccessor.executeFunction()
 			.then((response) => {
@@ -79,8 +80,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 					<div style={{ marginBottom: 10 }}>
 						<label>
 							Email
-							<input
-								type="text"
+							<TextField
 								name="email"
 								onChange={handleInputChange}
 							/>

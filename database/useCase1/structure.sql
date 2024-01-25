@@ -4,7 +4,7 @@ DROP SCHEMA IF EXISTS app_rentals CASCADE;
 
 CREATE SCHEMA IF NOT EXISTS app_rentals;
 
-GRANT USAGE ON SCHEMA app_rentals TO web_anon;
+GRANT USAGE ON SCHEMA app_rentals TO "user";
 
 NOTIFY pgrst, 'reload config';
 NOTIFY pgrst, 'reload schema';
@@ -287,20 +287,20 @@ ALTER TABLE app_rentals.unit ADD CONSTRAINT fk_unit_cal_cert
 ALTER TABLE app_rentals.unit_recalibration_schedule ADD CONSTRAINT fk_unit_cal_cert_schedule
     FOREIGN KEY (last_calibration_certificate_id) REFERENCES app_rentals.unit_calibration_certificate(unit_calibration_certificate_id);
 
-GRANT ALL ON app_rentals.tool_type TO web_anon;
-GRANT ALL ON app_rentals.tool TO web_anon;
-GRANT ALL ON app_rentals.unit TO web_anon;
-GRANT ALL ON app_rentals.company TO web_anon;
-GRANT ALL ON app_rentals.contact TO web_anon;
-GRANT ALL ON app_rentals.quotation TO web_anon;
-GRANT ALL ON app_rentals.quotation_line_item TO web_anon;
-GRANT ALL ON app_rentals.purchase_order TO web_anon;
-GRANT ALL ON app_rentals.purchase_order_line_item TO web_anon;
-GRANT ALL ON app_rentals.availability_status TO web_anon;
-GRANT ALL ON app_rentals.unit_scheduler TO web_anon;
-GRANT ALL ON app_rentals.tool_restock_request TO web_anon;
-GRANT ALL ON app_rentals.unit_recalibration_status TO web_anon;
-GRANT ALL ON app_rentals.unit_recalibration_flag TO web_anon;
-GRANT ALL ON app_rentals.unit_recalibration_schedule_type TO web_anon;
-GRANT ALL ON app_rentals.unit_recalibration_schedule TO web_anon;
-GRANT ALL ON app_rentals.unit_calibration_certificate TO web_anon;
+GRANT ALL ON app_rentals.tool_type TO "user";
+GRANT ALL ON app_rentals.tool TO "user";
+GRANT ALL ON app_rentals.unit TO "user";
+GRANT ALL ON app_rentals.company TO "user";
+GRANT ALL ON app_rentals.contact TO "user";
+GRANT ALL ON app_rentals.quotation TO "user";
+GRANT ALL ON app_rentals.quotation_line_item TO "user";
+GRANT ALL ON app_rentals.purchase_order TO "user";
+GRANT ALL ON app_rentals.purchase_order_line_item TO "user";
+GRANT ALL ON app_rentals.availability_status TO "user";
+GRANT ALL ON app_rentals.unit_scheduler TO "user";
+GRANT ALL ON app_rentals.tool_restock_request TO "user";
+GRANT ALL ON app_rentals.unit_recalibration_status TO "user";
+GRANT ALL ON app_rentals.unit_recalibration_flag TO "user";
+GRANT ALL ON app_rentals.unit_recalibration_schedule_type TO "user";
+GRANT ALL ON app_rentals.unit_recalibration_schedule TO "user";
+GRANT ALL ON app_rentals.unit_calibration_certificate TO "user";

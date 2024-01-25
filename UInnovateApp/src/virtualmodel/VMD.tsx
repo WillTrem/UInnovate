@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosCustom from "../api/AxiosCustom";
 import { DataAccessor, Row } from "./DataAccessor";
 import { FunctionAccessor } from "./FunctionAccessor";
 
@@ -140,7 +140,7 @@ class VirtualModelDefinition {
     console.log(this.schemas);
   }
 
-  // Method to fetch schemas, tables, and columns from the API
+  // Method to fetch schemas, tables, columns and views from the API
   // return type : void
   async fetchSchemas() {
     // Check if data has already been fetched; if it has, do not fetch again
@@ -152,7 +152,7 @@ class VirtualModelDefinition {
     const views_url = API_BASE_URL + "views";
 
     try {
-      let response = await axios.get(col_url, {
+      let response = await axiosCustom.get(col_url, {
         headers: { "Accept-Profile": "meta" },
       });
       let data = response.data;
@@ -182,7 +182,7 @@ class VirtualModelDefinition {
       });
 
       // Fetching all the VIEWS
-      response = await axios.get(views_url, {
+      response = await axiosCustom.get(views_url, {
         headers: { "Accept-Profile": "meta" },
       });
 
@@ -223,14 +223,14 @@ class VirtualModelDefinition {
     const config_url = API_BASE_URL + "appconfig_values";
 
     try {
-      const response = await axios.get(config_url, {
+      const response = await axiosCustom.get(config_url, {
         headers: { "Accept-Profile": "meta" },
       });
       const data: ConfigData[] = response.data;
 
       data.forEach((config) => {
-        // Find the table's schema
-        const schema = this.getTableSchema(config.table);
+                // Find the table's schema
+                const schema = this.getTableSchema(config.table);
 
         if (!schema) {
           // If the schema doesn't exist, skip this config
@@ -721,7 +721,7 @@ interface ViewData {
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
-interface ConfigData {
+export interface ConfigData {
   id: number;
   table: string;
   column: string | null;
