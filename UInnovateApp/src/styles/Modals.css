@@ -15,11 +15,10 @@ input{
 .modal-container{
 	position: absolute;
     margin: auto;
-    padding: 3px;
-    top: 50%;
+    top: 15%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
+    transform: translate(-50%, 0);
+    width: 420px;
     background-color: white;
     border: 2px solid #000;
     border-radius: 2rem;
@@ -27,6 +26,22 @@ input{
     padding: 2rem;
     
 }
+
+.modal-container-center{
+	position: absolute;
+    margin: auto;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    background-color: white;
+    border: 2px solid #000;
+    border-radius: 2rem;
+    box-shadow: 24px;
+    padding: 2rem;
+    
+}
+
 .modal-content{
     display:flex;
     flex-direction: column;
@@ -39,7 +54,7 @@ input{
     flex-direction: column;
     margin: 8px 0px;
     align-items: center;
-    gap: 24px;
+    gap: 48px;
 }
 
 .form{
@@ -47,7 +62,8 @@ input{
   	flex-direction: column;
   	/* padding-top: 20px; */
   	/* background-color: #f1f1f1; */
-    gap: 16px;
+    gap: 24px;
+    width:100%;
 }
 
 .button-container{
@@ -65,7 +81,7 @@ input{
 }
 
 .textField {
-    max-width: 229px;
+    /* max-width: 229px; */
   }
   
   .textField .MuiInputBase-input {

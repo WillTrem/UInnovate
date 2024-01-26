@@ -92,14 +92,6 @@ const TableListView= () => {
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const name = table.table_name + "T";
-  const Local = localStorage.getItem(name);
-  const navigate = useNavigate();
-
-  if (Local == null) {
-    const nulll = Local;
-  }
-  const getTable = JSON.parse(Local!);
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -324,7 +316,7 @@ const TableListView= () => {
       }
 
       if (column.references_table != null) {
-        const string = column.column_name + "L";
+        const string = column.column_name;
         localStorage.setItem(
           string,
           currentRow.row[column.column_name] as string
@@ -717,10 +709,10 @@ const TableListView= () => {
           </div>
         </div>
         <div style={{ paddingBottom: "2em" }}>
-          {localStorage.getItem(table.table_name + "T") === null ||
-          getTable[-1] == "none" ? (
+          {table.lookup_tables=="null" ? (
             <div></div>
-          ) : showTable ? (
+          ) : JSON.parse(table.lookup_tables)[-1] =="none" ? (
+          <div></div>) : showTable ? (
             <div style={{ paddingBottom: "2em" }}>
               <LookUpTableDetails table={table} />
             </div>
@@ -731,7 +723,7 @@ const TableListView= () => {
               style={{ marginLeft: 15 }}
               onClick={() => setShowTable(true)}
             >
-              Show Look up Table
+              Show Look Up Table
             </Button>
           )}
         </div>

@@ -269,7 +269,7 @@ FROM (
 RETURN result;
 END IF;
 END IF;
-RAISE NOTICE 'No refresh token found';
+RAISE EXCEPTION 'No refresh token found';
 END;
 $$ language plpgsql SECURITY DEFINER;
 
@@ -284,14 +284,9 @@ $$ BEGIN
 $$language plpgsql SECURITY DEFINER;
 
 
--- ROLES -----------------------------------------------------------------
--- TODO: Move the role definitions in a separate sql file
-DROP ROLE IF EXISTS administrator;
-DROP ROLE IF EXISTS configurator;
-DROP ROLE IF EXISTS "user";
+-- ROLES ----------------------------------------------------------------
 
-CREATE role "user" noinherit;
-
+-- User role
 -- Granting all on application schemas and tables to user role
 DO $$
 DECLARE schema_name text;
@@ -326,9 +321,7 @@ GRANT SELECT ON TABLE meta.constraints TO "user";
 GRANT SELECT ON TABLE meta.user_schema_access TO "user";
 GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 
-
-CREATE role configurator;
-GRANT "user" TO configurator;
+-- Configurator role
 
 GRANT ALL ON SCHEMA meta TO configurator;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
@@ -341,26 +334,15 @@ GRANT ALL ON TABLE meta.columns TO configurator;
 GRANT ALL ON TABLE meta.constraints TO configurator;
 GRANT ALL ON TABLE meta.user_schema_access TO configurator;
 
-
-CREATE role administrator;
-GRANT configurator TO administrator;
+-- Administrator role
 
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO administrator;
 GRANT SELECT ON TABLE meta.user_info TO administrator;
 
--- ADD user management-related capabilities HERE
 GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.verify_signup(text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.token_refresh() TO web_anon;
--- TO BE REMOVED AT SOME POINT
-GRANT SELECT ON TABLE meta.user_info TO web_anon;
-GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO web_anon;
-
-GRANT "user" TO authenticator;
-GRANT configurator TO authenticator;
-GRANT administrator TO authenticator;
-GRANT web_anon TO authenticator;
 
 
 -- TO REMOVE AT SOME POINT - Creates test users with all 3 roles for dev purposes

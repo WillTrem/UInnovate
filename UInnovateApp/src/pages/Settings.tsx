@@ -14,14 +14,14 @@ import InternationalizationTab from "../components/settingsPage/Internationaliza
 import UnauthorizedScreen from "../components/UnauthorizedScreen";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
-import { Role } from "../redux/AuthSlice";
+import { LOGIN_BYPASS, Role } from "../redux/AuthSlice";
 
 export function Settings() {
-  const role = useSelector((state:RootState) => state.auth.role)
+  const role = useSelector((state:RootState) => state.auth.role);
   return (
     <>
       <NavBar />
-      {role === Role.USER ?
+      {(role === Role.USER || role === null && !LOGIN_BYPASS) ?
       <UnauthorizedScreen/> 
       :
       <div className="page-container">
@@ -43,7 +43,7 @@ export function Settings() {
                   <Nav.Link eventKey="schedule">Scheduled Activities</Nav.Link>
                   <Nav.Link eventKey="scripting">Scripting</Nav.Link>
                 </Nav.Item>
-                {(role === Role.ADMIN || role === null) && 
+                {(role === Role.ADMIN || LOGIN_BYPASS ) &&
                 <Nav.Item>
                   <Nav.Link eventKey="users">Users</Nav.Link>
                 </Nav.Item>
