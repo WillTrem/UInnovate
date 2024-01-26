@@ -32,7 +32,7 @@ const AddRowPopup = ({
     const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
       schema?.schema_name,
       table.table_name,
-      inputValues
+      inputValues.row as Row
     );
 
     data_accessor.addRow();
