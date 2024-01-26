@@ -27,9 +27,11 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
         const search = table.getColumns()
 
         let toolsColumn: string = "";
+        let toolsColumnName: string = "";
         search?.map((attribute) => {
           if (attribute.references_table == tableName) {
             toolsColumn = attribute.column_name;
+            toolsColumnName = attribute.references_by;
           }
           else {
             return (<>no</>);
@@ -58,7 +60,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
             const data_accessor: DataAccessor = vmd.getRowsDataAccessorForLookUpTable(
               schemaObj.schema_name,
               tableName,
-              toolsColumn,
+              toolsColumnName,
               connectionID
             );
             console.log(data_accessor);
@@ -84,7 +86,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
        
         return (
           <div>
-            {tableName} look up table:
+            {tableName} look up table: 
             <div>
               {/* Here is the table name: {toolsColumn} */}
             </div>

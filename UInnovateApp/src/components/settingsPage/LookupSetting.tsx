@@ -92,7 +92,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
               ))}
             </Select>
             <FormHelperText>
-              To customize the default layout of the table
+            To customize the table which will be looked up 
             </FormHelperText>
           </FormControl>
         </div>
@@ -185,7 +185,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
               ))}
             </Select>
             <FormHelperText>
-              To customize the default layout of the table
+              To customize the table which will be looked up
             </FormHelperText>
           </FormControl>
 

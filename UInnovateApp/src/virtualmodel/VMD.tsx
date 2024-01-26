@@ -177,7 +177,8 @@ class VirtualModelDefinition {
         table.addColumn(
           new Column(data.column),
           data.references_table,
-          data.is_editable
+          data.is_editable,
+          data.references_by
         );
       });
 
@@ -529,9 +530,10 @@ export class Table {
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column, references_table: string, is_editable: boolean) {
+  addColumn(column: Column, references_table: string, is_editable: boolean, references_by: string) {
     column.setReferenceTable(references_table);
     column.setEditability(is_editable);
+    column.setReferencesBy(references_by);
 
     this.columns.push(column);
   }
@@ -665,6 +667,7 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
+  references_by: string;
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -673,6 +676,7 @@ export class Column {
     this.reqOnCreate = false;
     this.references_table = "";
     this.is_editable = false;
+    this.references_by = "";
   }
 
   // Method to set the column type
@@ -710,6 +714,18 @@ export class Column {
   getEditability() {
     return this.is_editable;
   }
+
+  // Method to set the column's references by
+  // return type : void
+  setReferencesBy(references_by: string) {
+    this.references_by = references_by;
+  }
+
+  // Method to get the column's references by
+  // return type : string
+  getReferencesBy() {
+    return this.references_by;
+  }
 }
 
 export class View {
@@ -734,6 +750,7 @@ interface ColumnData {
   column: string;
   references_table: string;
   is_editable: boolean;
+  references_by: string;
 }
 // Defining ViewData interface for type checking when calling /views with the API
 interface ViewData {
