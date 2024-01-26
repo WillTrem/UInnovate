@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import axios from 'axios';
 const tableURL = "http://localhost:3000/tables";
 const attrURL = "http://localhost:3000/columns";
 const appconfig_valuesURL = "http://localhost:3000/appconfig_values";
@@ -7,6 +8,11 @@ const customers_url = "http://localhost:3000/customers";
 const rentals_url = "http://localhost:3000/rentals";
 const user_info_url = "http://localhost:3000/user_info";
 const create_user_url = "http://localhost:3000/rpc/create_user";
+const login_url = "http://localhost:3000/rpc/login";
+const logout_url = "http://localhost:3000/rpc/logout";
+const refresh_token_url = "http://localhost:3000/rpc/token_refresh";
+const verify_signup_url = "http://localhost:3000/rpc/verify_signup";
+
 
 const noMockErrorMessage = "API call to this URL hasn't been mocked.";
 
@@ -74,6 +80,7 @@ const mock_user_info_values = [
   {email: "email4@test.com", firstname: "firstname4", lastname: "lastname4", role: "user", is_active: true},
 ]
 export default {
+  ...axios,
   get: vi.fn().mockImplementation((url, { headers }) => {
     if (headers["Accept-Profile"] === "meta") {
       switch (url) {
@@ -85,6 +92,14 @@ export default {
           return Promise.resolve({ data: mock_config_values });
         case user_info_url:
           return Promise.resolve({ data: mock_user_info_values });
+        case login_url:
+          return Promise.resolve();
+        case logout_url:
+          return Promise.resolve();
+        case refresh_token_url:
+          return Promise.resolve();
+        case verify_signup_url:
+          return Promise.resolve();
         default:
           return Promise.reject(new Error(noMockErrorMessage));
       }

@@ -1,7 +1,5 @@
 import { Tab, Tabs } from "react-bootstrap";
 import { Button, FormControl, Select, Switch, MenuItem, Chip, Stack } from "@mui/material"
-import CancelIcon from "@mui/icons-material/Cancel";
-import CheckIcon from "@mui/icons-material/Check";
 import TableComponent from "react-bootstrap/Table";
 import "../../styles/TableComponent.css";
 import "../../styles/UserManagementTab.css";
@@ -9,6 +7,11 @@ import vmd, { UserData } from "../../virtualmodel/VMD";
 import React, { useEffect, useState } from "react";
 import AddUserModal from "./AddUserModal";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { Role } from "../../redux/AuthSlice";
+import UnauthorizedScreen from "../UnauthorizedScreen";
+import MultiSelect from "./MultiSelect";
 
 
 
@@ -16,6 +19,13 @@ import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 const UserManagementTab = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [users, setUsers] = useState<Row[]>([]);
+
+	const role = useSelector((state: RootState) => state.auth.role);
+	
+	// Hides the menu for non-admin roles (except for anonymous)
+	if(!(role === Role.ADMIN || role === null)){
+		return <UnauthorizedScreen/>
+	}
 
 	const getUsers = async () => {
 		const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -36,7 +46,6 @@ const UserManagementTab = () => {
 	function handleOnClick() {
 		setModalOpen(true);
 	}
-
 
 
 	return (
@@ -61,7 +70,6 @@ const UserManagementTab = () => {
 								</tr>
 							</thead>
 							<tbody>
-								{/* TODO: Use values from database table */}
 								{users && users.map((user, idx) => {
 									if (user) {
 										return <UserTableRow key={idx}
@@ -116,61 +124,12 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
 		</td>
 		<td>
-			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} />
+			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} size="small" />
 		</td>
 	</tr >
 }
 
-interface MultiSelectProps {
-	selectedList: string[],
-	setSelectedList: React.Dispatch<React.SetStateAction<string[]>>,
-	choiceList: string[]
-}
 
-// Component obtained from https://codesandbox.io/s/mui-multi-select-kptq04?from-embed=&file=%2Fsrc%2FApp.js%3A238-291
-export const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelectedList, choiceList }) => {
-
-	return (
-		<FormControl sx={{
-			width: '25vw'
-		}}>
-			<Select
-				multiple
-				value={selectedList}
-				onChange={(e) => setSelectedList((e.target.value as string[]).sort((a, b) => a.localeCompare(b)))}
-				inputProps={{ 'aria-label': 'Without label' }}
-				sx={({ padding: 0, '& .MuiSelect-select': { padding: 1 } })}
-				renderValue={(selected) => (
-					<Stack gap={1} direction="row" flexWrap="wrap">
-						{selected.map((value) => (
-							<Chip
-								key={value}
-								label={value}
-								onDelete={() =>
-									setSelectedList(
-										selectedList.filter((item) => item !== value)
-									)
-								}
-								deleteIcon={
-									<CancelIcon
-										onMouseDown={(event) => event.stopPropagation()}
-									/>
-								}
-							/>
-						))}
-					</Stack>
-				)}
-			>
-				{choiceList.map((choice) => (
-					<MenuItem key={choice} value={choice} sx={{ justifyContent: "space-between" }}>
-						{choice}
-						{selectedList.includes(choice) ? <CheckIcon color="info" /> : null}
-					</MenuItem>
-				))}
-			</Select>
-		</FormControl>
-	);
-}
 
 
 export default UserManagementTab;

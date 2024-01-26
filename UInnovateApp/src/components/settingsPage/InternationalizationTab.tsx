@@ -1,11 +1,12 @@
-import { Col, Row as Line, Tab, Nav } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import { Row as Line, Tab } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
-import { ScriptEditor } from "./ScriptEditor";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
+import { IoLockClosed } from "react-icons/io5";
+
 
 const buttonStyle = {
     marginRight: 10,
@@ -15,33 +16,31 @@ const buttonStyle = {
 
 
 const InternationalizationTab = () => {
-    const schema = vmd.getSchema("meta");
-    const script_view = vmd.getTable("meta", "i18n_translation");
-    const columns = script_view?.getColumns();
-
-    const [scripts, setScripts] = useState<Row[] | undefined>([]);
     const [showModal, setShowModal] = useState<boolean>(false);
-    const [newScript, setNewScript] = useState<Row>({});
 
-    // TODO: Properly fetch the view from the data accessor. Currently, the view is hardcoded.
-    const getScripts = async () => {
-    if (!schema || !script_view) {
-        return;
+    const [translations, setTranslations] = useState<Row[]>([]);
+
+    const [newLanguageCode, setNewLanguageCode] = useState('');
+    const [newLanguageName, setNewLanguageName] = useState('');
+
+    const [languages, setLanguages] = useState<string[]>([]);
+
+	
+    const getTranslations = async () => {
+        const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
+            "meta",
+            "i18n_translations" 
+        );
+    
+        const rows = await data_accessor.fetchRows();
+        if (rows) {
+            setTranslations(rows);
+        }
     }
 
-    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-        schema?.schema_name,
-        script_view?.table_name
-        
-    );
-
-    const scripts_rows = await data_accessor?.fetchRows();
-    setScripts(scripts_rows);
-    };
-
-    useEffect(() => {
-        getScripts();
-    });
+	useEffect(() => {
+		getTranslations();
+	}, [])
 
     const handleAddLanguage = async () => {
         setShowModal(true);
@@ -50,122 +49,161 @@ const InternationalizationTab = () => {
     const handleClose = () => {
         setShowModal(false);
     };
-
+    
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.name === 'language_code') {
+            setNewLanguageCode(e.target.value);
+        } else if (e.target.name === 'language_name') {
+            setNewLanguageName(e.target.value);
+        }
+    }
     const handleSave = async () => {
-        const data_accessor = vmd.getAddRowDataAccessor(
-            "meta",
-            "scripts",
-            newScript
-        );
+        if (newLanguageCode && newLanguageName) {
+            try {
+                const schema = vmd.getTableSchema("i18n_languages");
+                if (!schema) {
+                    console.error("Could not find schema for table ", "i18n_languages");
+                    return;
+                }
+    
+                const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
+                    "meta",
+                    "i18n_languages",
+                    {
+                        language_code: newLanguageCode,
+                        language_name: newLanguageName,
+                    }
+                );
 
-        await data_accessor?.addRow();
-        getScripts();
+                // Add the new language to the languages state
+                setLanguages(prevLanguages => [...prevLanguages, newLanguageCode]);
+    
+                console.log("Adding language with data:", {
+                    language_code: newLanguageCode,
+                    language_name: newLanguageName,
+                });
+    
+                await data_accessor?.addRow();
+    
+            } catch (error) {
+                console.error('Error adding language:', error);
+            }
+        } else {
+            console.error('Please provide valid language code and name.');
+        }
+    
         setShowModal(false);
     };
+
+
     return (
     <div>
-    <Tab.Container>
-        <Line>
-            <Modal show={showModal} onHide={handleClose}>
-                <Modal.Header>
-                    <Modal.Title>Add New Language</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        Pick a language from the dropdown of possible languages
-                        <Form.Select>
-                            <option>English</option>
-                            <option>French</option>
-                            <option>Spanish</option>
-                            <option>German</option>
-                            <option>Chinese</option>
-                        </Form.Select>
-                        Associated language code
-                        <Form.Control
-                            type="text"
-                            placeholder="ENG"    
-                        />
+        <Tab.Container>
+            <Line>
+                <Modal show={showModal} onHide={handleClose}>
+                    <Modal.Header>
+                        <Modal.Title>Add New Language</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            Language Name
+                            <Form.Control
+                                type="text"
+                                placeholder="Language Name (e.g. English)"
+                                name="language_name"
+                                value={newLanguageName}
+                                onChange={handleInputChange}
 
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <div>
+                            />
+                            Associated Language Code
+                            <Form.Control
+                                type="text"
+                                placeholder="Language Code (e.g. ENG)"
+                                name="language_code"
+                                value={newLanguageCode}
+                                onChange={handleInputChange}  
+                            />
+
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <div>
+                            <Button
+                                onClick={handleClose}
+                                style={buttonStyle}
+                                variant="contained"
+                            >
+                                Close
+                            </Button>
+                            <Button
+                                onClick={handleSave}
+                                style={buttonStyle}
+                                variant="contained"
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </Modal.Footer>
+                </Modal>
+                
+                <Tab.Content>
+                    <h4>Internationalization</h4>
+
+                    <div className="flex-column">
                         <Button
-                            onClick={handleClose}
-                            style={buttonStyle}
-                            variant="contained"
+                        onClick={handleAddLanguage}
+                        style={buttonStyle}
+                        variant="contained"
                         >
-                            Close
+                            Add Language
                         </Button>
                         <Button
-                            onClick={handleSave}
-                            style={buttonStyle}
-                            variant="contained"
+                        style={buttonStyle}
+                        variant="contained"
                         >
-                            Save
+                            Refresh
                         </Button>
                     </div>
-                </Modal.Footer>
-            </Modal>
-   
-        
-            <Tab.Content>
-            <h4>Internationalization</h4>
-
-            <div className="flex-column">
-                <Button
-                onClick={handleAddLanguage}
-                style={buttonStyle}
-                variant="contained"
-                >
-                    Add Language
-                </Button>
-                <Button
-                style={buttonStyle}
-                variant="contained"
-                >
-                    Refresh
-                </Button>
-            </div>
-                <TableComponent bordered>
-                    <thead>
-                        <tr>
-                            <th>Label</th>
-                            <th>Lang:ENG</th>
-                            <th>Lang:FR</th>
-                        </tr>
-                        <tr>
-                            <th>label 1</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <th>label 2</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <th>label 3</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-                        <tr>
-                            <th>label 4</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
-
-                    </thead>
-                    <tbody>
-                    </tbody>
-				</TableComponent>
-                
-            </Tab.Content>
-        
-        </Line>
-    </Tab.Container>
+                    <TableComponent bordered>
+                        <thead>
+                            <tr>
+                                <th>Label</th>
+                                {languages.map(language => (
+                                    <th key={language}>{`LANG:${language}`}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {translations && translations.map((translation, idx) => {
+                                if (translation) {
+                                    return (
+                                        <TranslationTableRow
+                                            key={idx}
+                                            keyCode={translation["key_code"] as string}
+                                            value={translation["value"] as string}
+                                        />
+                                        );
+                                    }
+                                    return <React.Fragment key={idx} />;
+                            })}
+                        </tbody>
+                    </TableComponent>
+                </Tab.Content>
+            </Line>
+        </Tab.Container>
     </div>
 );
 };
 
+interface TranslationTableRowProps {
+	keyCode?: string,
+	value?: string
+}
+
+const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ keyCode, value }) => {
+	return <tr>
+		<td>{keyCode} <IoLockClosed /></td>
+		<td>{value}</td>
+	</tr >
+}
 export default InternationalizationTab;

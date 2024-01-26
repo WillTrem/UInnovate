@@ -1,3 +1,5 @@
 .env
+.env.development
 database/refresh_log.txt
+
 .vs/*

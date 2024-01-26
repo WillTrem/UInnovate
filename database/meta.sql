@@ -33,58 +33,59 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 
 
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "is_editable") AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable") AS 
 (
-     
-     SELECT 
-        c.table_schema, 
-        c.table_name, 
-        c.column_name,  
-        rc.referenced_table,
-        CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable
-    FROM information_schema.columns AS c
-    LEFT JOIN 
-    (
-        SELECT 
-            cl.relname as referee_table,  
-            att.attname as referee_column, 
-            cl2.relname as referenced_table, 
-            att2.attname as referenced_column 
-        FROM pg_catalog.pg_constraint as co
-        LEFT JOIN pg_catalog.pg_class as cl
-        ON co.conrelid = cl.oid
-        LEFT JOIN pg_catalog.pg_class as cl2
-        ON co.confrelid = cl2.oid
-        LEFT JOIN pg_catalog.pg_attribute as att
-        ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
-        LEFT JOIN pg_catalog.pg_attribute as att2
-        ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
-        WHERE contype = 'f'
-    ) AS rc
-    ON c.column_name = rc.referee_column AND c.table_name != rc.referenced_table
-    -- New LEFT JOIN for primary key references
-    LEFT JOIN 
-    (
-        SELECT 
-            cl.relname as table_name,  
-            att.attname as table_pkey
-        FROM pg_catalog.pg_constraint as co
-        LEFT JOIN pg_catalog.pg_class as cl
-        ON co.conrelid = cl.oid
-        LEFT JOIN pg_catalog.pg_attribute as att
-        ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
-        WHERE contype = 'p'
-    ) AS pk
-    ON c.table_name = pk.table_name
-    
-    WHERE c.table_name IN 
-    (
-        SELECT "table" FROM meta.tables
-    )
-    ORDER BY c.table_schema, c.table_name
-	
-	 
-) ;
+   SELECT DISTINCT ON (c.table_schema, c.table_name, c.column_name)
+    c.table_schema, 
+    c.table_name, 
+    c.column_name,  
+    rc.referenced_table,
+    rc.referenced_column AS references_by, -- Added this line
+    CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable
+FROM information_schema.columns AS c
+LEFT JOIN 
+(
+    SELECT DISTINCT ON (cl.relname, att.attname)
+        cl.relname as referee_table,  
+        att.attname as referee_column, 
+        cl2.relname as referenced_table, 
+        att2.attname as referenced_column 
+    FROM pg_catalog.pg_constraint as co
+    LEFT JOIN pg_catalog.pg_class as cl
+    ON co.conrelid = cl.oid
+    LEFT JOIN pg_catalog.pg_class as cl2
+    ON co.confrelid = cl2.oid
+    LEFT JOIN pg_catalog.pg_attribute as att
+    ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
+    LEFT JOIN pg_catalog.pg_attribute as att2
+    ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
+    WHERE contype = 'f'
+) AS rc
+ON c.column_name = rc.referee_column AND c.table_name != rc.referenced_table
+-- New LEFT JOIN for primary key references
+LEFT JOIN 
+(
+    SELECT 
+        cl.relname as table_name,  
+        att.attname as table_pkey
+    FROM pg_catalog.pg_constraint as co
+    LEFT JOIN pg_catalog.pg_class as cl
+    ON co.conrelid = cl.oid
+    LEFT JOIN pg_catalog.pg_attribute as att
+    ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
+    WHERE contype = 'p'
+) AS pk
+ON c.table_name = pk.table_name
+
+WHERE c.table_name IN 
+(
+    SELECT "table" FROM meta.tables
+)
+ORDER BY c.table_schema, c.table_name, c.column_name
+);
+
+
+
 
 -- Creates a VIEW that shows all the views of the database
 CREATE OR REPLACE VIEW meta.views AS (
@@ -96,7 +97,6 @@ CREATE OR REPLACE VIEW meta.views AS (
                 FROM meta.schemas
             )
     );
-GRANT SELECT ON TABLE meta.views TO web_anon;
 
 
 -- TABLES
@@ -137,10 +137,18 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating the envronment variables table
+CREATE TABLE IF NOT EXISTS meta.env_vars (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    value TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Creating the languages table
 CREATE TABLE IF NOT EXISTS meta.i18n_languages (
     id SERIAL PRIMARY KEY,
-    language_code VARCHAR(2) UNIQUE NOT NULL,
+    language_code VARCHAR(10) UNIQUE NOT NULL,
     language_name VARCHAR(100) NOT NULL
 );
 
@@ -159,19 +167,41 @@ CREATE TABLE IF NOT EXISTS meta.i18n_values (
     CONSTRAINT unique_translation UNIQUE (language_id, key_id)
 );
 
--- Creating the translation view
-CREATE OR REPLACE VIEW meta.i18n_translation AS
+-- Creating the translation view (combines the languages, keys and values tables)
+CREATE OR REPLACE VIEW meta.i18n_translations AS
 SELECT
-    v.id AS translation_id,
+    k.id AS translation_id,
     l.language_code,
     k.key_code,
-    v.value
+    COALESCE(v.value, '') AS value
 FROM
-    meta.i18n_values v
-JOIN
-    meta.i18n_languages l ON v.language_id = l.id
-JOIN
-    meta.i18n_keys k ON v.key_id = k.id;
+    meta.i18n_languages l
+CROSS JOIN
+    meta.i18n_keys k
+LEFT JOIN
+    meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
+UNION
+SELECT
+    k.id AS translation_id,
+    NULL AS language_code,
+    k.key_code,
+    '' AS value
+FROM
+    meta.i18n_keys k
+WHERE
+    NOT EXISTS (
+        SELECT 1
+        FROM meta.i18n_languages l
+        JOIN meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
+    );
+
+-- Creating the envronment variables table
+CREATE TABLE IF NOT EXISTS meta.env_vars (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    value TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
@@ -235,25 +265,67 @@ BEGIN
 END;
 $BODY$;
 
--- USAGE 
-GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO web_anon;
-GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO web_anon;
-GRANT USAGE ON SCHEMA information_schema TO web_anon;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO web_anon;
-GRANT SELECT ON information_schema.referential_constraints TO web_anon;
-GRANT SELECT ON information_schema.constraint_column_usage TO web_anon;
+-- GRANT ROLE PERMISSIONS --
 
+-- Schemas
+GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
+GRANT USAGE ON SCHEMA information_schema TO "user";
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
+GRANT SELECT ON information_schema.referential_constraints TO "user";
+GRANT SELECT ON information_schema.constraint_column_usage TO "user";
+
+GRANT USAGE ON SCHEMA meta TO "user";
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
+
+-- Tables
+GRANT SELECT ON meta.appconfig_properties TO "user";
+GRANT SELECT ON meta.appconfig_values TO "user";
+GRANT SELECT ON meta.scripts TO "user";
+GRANT SELECT ON meta.i18n_languages TO "user";
+GRANT SELECT ON meta.i18n_keys TO "user";
+GRANT SELECT ON meta.i18n_values TO "user";
+GRANT ALL ON meta.appconfig_properties TO configurator;
+GRANT ALL ON meta.appconfig_values TO configurator;
+GRANT ALL ON meta.scripts TO configurator;
+GRANT ALL ON meta.i18n_languages TO configurator;
+GRANT ALL ON meta.i18n_keys TO configurator;
+GRANT ALL ON meta.i18n_values TO configurator;
+
+-- Views (Only SELECT necessary)
+GRANT SELECT ON meta.schemas TO "user"; 
+GRANT SELECT ON meta.tables TO "user";
+GRANT SELECT ON meta.columns TO "user";
+GRANT SELECT ON meta.constraints TO "user";
+GRANT SELECT ON meta.views TO "user";
+GRANT SELECT ON meta.i18n_translations TO "user";
+
+-- -- web_anon related (necessary on vmd load)
 GRANT USAGE ON SCHEMA meta TO web_anon;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
+GRANT SELECT ON meta.appconfig_values TO web_anon;
+GRANT SELECT ON meta.columns TO web_anon;
+GRANT SELECT ON meta.views TO web_anon;
+
+NOTIFY pgrst, 'reload schema'
 GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
-GRANT SELECT, UPDATE, INSERT ON meta.constraints TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.env_vars TO web_anon;
+
+GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
 GRANT ALL on meta.scripts TO web_anon;
+GRANT ALL on meta.env_vars TO web_anon;
+
+-- Granting necessary permissions for meta.i18n schema tables
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.i18n_languages TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.i18n_keys TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.i18n_values TO web_anon;
+GRANT ALL ON meta.i18n_translations TO web_anon;
 
 NOTIFY pgrst, 'reload schema'

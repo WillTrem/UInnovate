@@ -10,7 +10,7 @@
 1. Open the repository in the code editor of your liking.
 2. Make a copy of the file `.env.template`.
 3. Rename the copy to `.env`.
-4. Replace all the fields within '<>' by actual values (not keeping the <>). They can be any of your choosing.
+4. Replace all the fields within '<>' by actual values (not keeping the <>). They can be any of your choosing, except for the PLATFORM_DOMAIN, which has to correspond to the domain of the application.
 
    > 💡 Note that you don't have to create any account or credentials prior to this setup. It will be done automatically when you first run the containers.
 

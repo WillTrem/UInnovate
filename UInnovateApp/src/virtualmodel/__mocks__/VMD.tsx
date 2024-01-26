@@ -7,10 +7,12 @@ export { Table, Schema, Column };
 
 export default {
   ...VMD,
-  getRowsDataAccessor: vi.fn().mockImplementation(() => {
-    console.log("getRowsDataAccessor in VMD mock was called");
-    return new DataAccessorMock();
-  }),
+  getRowsDataAccessor: vi
+    .fn()
+    .mockImplementation((schema_name?, table_name?) => {
+      console.log("getRowsDataAccessor in VMD mock was called");
+      return new DataAccessorMock(schema_name, table_name);
+    }),
   getRowsDataAccessorForOrder: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessorForOrder in VMD mock was called");
     return new DataAccessorMock();
@@ -45,7 +47,7 @@ export default {
     console.log("getFunctionAccessor in VMD mock was called");
     return new FunctionAccessorMock();
   }),
-  getViewRowsDataAccessor: vi.fn().mockImplementation(() => {   
+  getViewRowsDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getViewRowsDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
