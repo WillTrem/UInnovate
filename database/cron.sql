@@ -7,7 +7,7 @@ ALTER POLICY cron_job_run_details_policy ON cron.job_run_details
 USING (username = current_user OR current_user = 'configurator');
 ALTER POLICY cron_job_policy ON cron.job 
 USING (username = current_user OR current_user = 'configurator');
-
+ALTER ROLE administrator LOGIN;
 -- EXPORT CRON CONFIGURATIONS FUNCTION
 CREATE OR REPLACE FUNCTION cron.export_cronconfig_to_json()
 RETURNS json
