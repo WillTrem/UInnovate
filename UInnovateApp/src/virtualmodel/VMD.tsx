@@ -177,7 +177,8 @@ class VirtualModelDefinition {
         table.addColumn(
           new Column(data.column),
           data.references_table,
-          data.is_editable
+          data.is_editable,
+          data.references_by
         );
       });
 
@@ -274,6 +275,12 @@ class VirtualModelDefinition {
             break;
           case "stand_alone_details_view":
             table.stand_alone_details_view = config.value === "true";
+            break;
+          case "lookup_tables":
+            table.lookup_tables = config.value as string;
+            break;
+          case "lookup_counter":
+            table.lookup_counter = config.value as string;
             break;
         }
       });
@@ -506,8 +513,9 @@ export class Table {
   has_details_view: boolean;
   columns: Column[];
   url: string;
-  lookup_tables: Row;
+  lookup_tables: string;
   stand_alone_details_view: boolean;
+  lookup_counter: string;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -516,14 +524,16 @@ export class Table {
     this.has_details_view = true;
     this.columns = [];
     this.url = API_BASE_URL + table_name;
-    this.lookup_tables = { "-1": "none" };
+    this.lookup_tables = "null";
     this.stand_alone_details_view = false;
+    this.lookup_counter = "0";
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column, references_table: string, is_editable: boolean) {
+  addColumn(column: Column, references_table: string, is_editable: boolean, references_by: string) {
     column.setReferenceTable(references_table);
     column.setEditability(is_editable);
+    column.setReferencesBy(references_by);
 
     this.columns.push(column);
   }
@@ -620,7 +630,7 @@ export class Table {
 
   // Method to set the table's lookup tables
   // return type : void
-  setLookupTables(lookup_tables: Row) {
+  setLookupTables(lookup_tables: string) {
     this.lookup_tables = lookup_tables;
   }
 
@@ -635,6 +645,19 @@ export class Table {
   setStandAloneDetailsView(stand_alone_details_view: boolean) {
     this.stand_alone_details_view = stand_alone_details_view;
   }
+
+  // Method to get the table's lookup counter
+  // return type : number
+  getLookupCounter() {
+    return this.lookup_counter;
+  }
+
+  // Method to set the table's lookup counter
+  // return type : void
+  setLookupCounter(lookup_counter: string) {
+    this.lookup_counter = lookup_counter;
+  }
+
 }
 
 export class Column {
@@ -644,6 +667,7 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
+  references_by: string;
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -652,6 +676,7 @@ export class Column {
     this.reqOnCreate = false;
     this.references_table = "";
     this.is_editable = false;
+    this.references_by = "";
   }
 
   // Method to set the column type
@@ -689,6 +714,18 @@ export class Column {
   getEditability() {
     return this.is_editable;
   }
+
+  // Method to set the column's references by
+  // return type : void
+  setReferencesBy(references_by: string) {
+    this.references_by = references_by;
+  }
+
+  // Method to get the column's references by
+  // return type : string
+  getReferencesBy() {
+    return this.references_by;
+  }
 }
 
 export class View {
@@ -713,6 +750,7 @@ interface ColumnData {
   column: string;
   references_table: string;
   is_editable: boolean;
+  references_by: string;
 }
 // Defining ViewData interface for type checking when calling /views with the API
 interface ViewData {
