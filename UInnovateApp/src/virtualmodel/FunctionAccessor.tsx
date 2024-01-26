@@ -1,4 +1,4 @@
-import axios from "axios"
+import axiosCustom from "../api/AxiosCustom"
 import { Row } from "./DataAccessor";
 
 export class FunctionAccessor {
@@ -21,15 +21,15 @@ export class FunctionAccessor {
 
 	// Method to execute a database function
 	// return type: AxiosResponse
-	async executeFunction() {
+	async executeFunction(config?: {}) {
 		try {
-			const response = await axios.post(this.function_url, this.values, {
+			const response = await axiosCustom.post(this.function_url, this.values, {
 				headers: this.headers,
+				...config
 			});
 
 			return response;
 		} catch (error) {
-			console.error("Error while executing function at " + this.function_url + " :", error);
 			throw error;
 		}
 	}

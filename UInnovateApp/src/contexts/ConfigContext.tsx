@@ -1,18 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { config_properties_values } from "../virtualmodel/Config";
+import { ConfigData } from "../virtualmodel/VMD";
 
-export type ConfigValueType = {
-  id?: number;
-  property: string;
-  table?: string;
-  column?: string;
-  value: string;
-};
-export type ConfigType = Array<ConfigValueType> | undefined;
+
+export type ConfigType = ConfigData[] | undefined;
 
 interface ConfigContextType {
   config: ConfigType;
-  updateConfig: (newValue: ConfigValueType) => void;
+  updateConfig: (newValue: ConfigData) => void;
 }
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -23,7 +18,7 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
   // TODO : Fetch the config from the DB via PostgREST API call
   const [config, setConfig] = useState<ConfigType>(config_properties_values);
 
-  const updateConfig = (newValue: ConfigValueType) => {
+  const updateConfig = (newValue: ConfigData) => {
     let found = false;
     const newConfig: ConfigType = config?.map((value) => {
       if (
@@ -43,8 +38,8 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("CONFIG");
-    console.log(config);
+  console.log("CONFIG");
+  console.log(config);
   }, [config]);
 
   return (

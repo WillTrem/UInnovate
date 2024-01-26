@@ -1,4 +1,4 @@
-import axios from "axios";
+import axiosCustom from "../api/AxiosCustom";
 
 export class DataAccessor {
   data_url: string;
@@ -24,7 +24,7 @@ export class DataAccessor {
     try {
       const rows: Row[] = [];
 
-      const response = await axios.get(this.data_url, {
+      const response = await axiosCustom.get(this.data_url, {
         headers: this.headers,
       });
 
@@ -42,7 +42,7 @@ export class DataAccessor {
   // return type: AxiosResponse
   async addRow() {
     try {
-      const response = await axios.post(this.data_url, this.values, {
+      const response = await axiosCustom.post(this.data_url, this.values, {
         headers: this.headers,
       });
 
@@ -56,7 +56,7 @@ export class DataAccessor {
   // return type: AxiosResponse
   async updateRow() {
     try {
-      const response = await axios.patch(this.data_url, this.values, {
+      const response = await axiosCustom.patch(this.data_url, this.values, {
         headers: this.headers,
       });
 
@@ -70,7 +70,7 @@ export class DataAccessor {
   // return type: AxiosResponse
   async upsert() {
     try {
-      const response = await axios.post(this.data_url, this.values, {
+      const response = await axiosCustom.post(this.data_url, this.values, {
         params: this.params,
         headers: this.headers,
       });
@@ -79,6 +79,10 @@ export class DataAccessor {
     } catch (error) {
       console.error("Could not update or insert row:", error);
     }
+  }
+
+  toggleAuthentication(value: boolean){
+    axiosCustom.defaults.withCredentials = value;
   }
 }
 

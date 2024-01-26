@@ -1,10 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import schemaReducer from "./SchemaSlice";
+import authReducer from './AuthSlice'
+import loadingReducer from './LoadingSlice'
 
 // App state store
 const Store = configureStore({
   reducer: {
     schema: schemaReducer,
+    auth: authReducer,
+    loading: loadingReducer
   },
 });
 

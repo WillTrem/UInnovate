@@ -19,7 +19,7 @@ interface TableItemProps {
 
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
-  
+
 
 
   if (!schema) {
@@ -51,6 +51,13 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     table.setHasDetailsView(!isVisible);
     await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
   };
+
+  const handleToggleStandAloneDetails = async () => {
+    const isVisible = table.getStandAloneDetailsView();
+    table.setStandAloneDetailsView(!isVisible);
+    await updateTableConfig(ConfigProperty.STAND_ALONE_DETAILS_VIEW, (!isVisible).toString());
+  };
+
 
   const handleDisplayTypeSelect = async (event: SelectChangeEvent<string>) => {
     const newDisplayType = event.target.value;
@@ -96,18 +103,27 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
             </div>
 
             <div className="details-views">
-            <span className="px-1" style={{ width: '180px' }}>Details View</span>
-            <Switch
-                  defaultChecked={table.getHasDetailsView()}
-                  onChange={handleToggleDetails}
-                  data-testid="detail-visibility-switch"
-                />
+              <span className="px-1" style={{ width: '180px' }}>Details View</span>
+              <Switch
+                checked={table.getHasDetailsView()}
+                onChange={handleToggleDetails}
+                data-testid="detail-visibility-switch"
+              />
 
-                </div>  
-              <div className="details-view">
-                <LookUpTable table={table}/>
             </div>
-            
+            <div className="details-views">
+              <span className="px-1" style={{ width: '180px' }}>Stand Alone Detail view</span>
+              <Switch
+                checked={table.getStandAloneDetailsView()}
+                onChange={handleToggleStandAloneDetails}
+                data-testid="Stand_Alone_detail-visibility-switch"
+              />
+
+            </div>
+            <div className="details-view">
+              <LookUpTable table={table} />
+            </div>
+
           </div>
         </Card.Body>
       </Card>
