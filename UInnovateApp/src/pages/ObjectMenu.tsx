@@ -16,12 +16,11 @@ export function ObjectMenu() {
   const navigate = useNavigate()
   const handleTableSelect = (tableName: Table) => {
     setActiveTable(tableName);
-
     // Navigate to the TableListView route with the selected table name
     navigate(`/objview/${tableName.table_display_type}/${tableName.table_name}`);
   };
   const { tableName } = useParams()
-
+  const { Type } = useParams()
 
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
@@ -57,12 +56,12 @@ export function ObjectMenu() {
               <Tab.Content>
                 {tables?.map((table: Table) => (
                   <Tab.Pane key={table.table_name} eventKey={table.table_name}>
-                    {activeTable?.table_name === table.table_name ? (
-                      table.table_display_type === "list" ? (
-                        <TableListView table={table}></TableListView>
-                      ) : (
-                        <TableEnumView table={table}></TableEnumView>
-                      )
+                    {tableName === table.table_name ? (
+                      Type === "list" || Type === "details" ? (
+                        <TableListView></TableListView>
+                      ) : Type === "enum" ? (
+                        <TableEnumView />
+                      ) : null
                     ) : null}
                   </Tab.Pane>
                 ))}

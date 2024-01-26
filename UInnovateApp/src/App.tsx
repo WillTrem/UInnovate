@@ -8,6 +8,7 @@ import vmd from "./virtualmodel/VMD";
 import { useEffect } from "react";
 import PersistLogin from "./components/PersistLogin";
 import TableListView from "./components/TableListView";
+import TableEnumView from "./components/TableEnumView";
 function App() {
   useEffect(() => {
     // Printing the schemas to the console
@@ -23,6 +24,8 @@ function App() {
         <Route path="/objview/:Type/:tableName" element={<ObjectMenu />} />
         <Route path="/objview/:Type/:tableName/:primeKey" element={<ObjectMenu />} />
         <Route path="/objview" element={<ObjectMenu/> } />
+        <Route path="/objview/:Type/:tableName" element={<TableEnumView />} />
+        <Route path="/objview/:Type/:tableName" element={<TableListView />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<Home />}/>
         {/* //<Route path="/objview/List/:tableName" element={<TableListView/> } /> */}
