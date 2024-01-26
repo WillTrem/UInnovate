@@ -79,7 +79,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
   
     const MyButtonComponent = ({ buttonIndex }: { buttonIndex: number }) => {
       return (
-        <div >
+        <div style={{marginTop:'2em'}} >
 
           <FormControl size="small">
             <h6>Lookup Tables</h6>
@@ -202,7 +202,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
             -
           </button>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08', marginTop: '2em' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08'}}>
           {[...Array(counter)].map((_, index) => (
 
             <MyButtonComponent key={index} buttonIndex={index} />
