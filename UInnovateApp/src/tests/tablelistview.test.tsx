@@ -30,7 +30,7 @@ describe("TableListView component", () => {
     render(
       <ConfigProvider>
         <MemoryRouter>
-          <TableListView table={table} />
+          <TableListView   />
         </MemoryRouter>
       </ConfigProvider>
     );
@@ -41,7 +41,7 @@ describe("TableListView component", () => {
 
     it("opens and closes the sliding panel", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<TableListView   /* props */ />);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -54,7 +54,7 @@ describe("TableListView component", () => {
       expect(screen.getByText("Details")).toBeInTheDocument();
     });
     it("renders the Show Look up Table button when showTable is false", () => {
-      const { getByText } = render(<TableListView table={table} />);
+      const { getByText } = render(<TableListView   />);
 
       expect(getByText("Show Look up Table")).toBeInTheDocument();
     });
@@ -62,7 +62,7 @@ describe("TableListView component", () => {
       // Mock localStorage
       Storage.prototype.getItem = jest.fn(() => "mock value");
 
-      const { getByText } = render(<TableListView table={table} />);
+      const { getByText } = render(<TableListView   />);
       const button = getByText("Show Look up Table");
       fireEvent.click(button);
       // Assuming LookUpTableDetails renders some text, replace 'Some text' with that text
@@ -71,7 +71,7 @@ describe("TableListView component", () => {
 
     it("renders the date time picker", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<TableListView   /* props */ />);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -88,7 +88,7 @@ describe("TableListView component", () => {
 
     it("renders the date picker", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<TableListView   /* props */ />);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -105,7 +105,7 @@ describe("TableListView component", () => {
 
     it("renders the category selector", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<TableListView   /* props */ />);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();

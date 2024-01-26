@@ -64,6 +64,7 @@ const inputStyle = {
 
 const TableListView= () => {
   const { tableName } = useParams()
+  const navigate = useNavigate() 
   if(!tableName) {
     return null;
   }
