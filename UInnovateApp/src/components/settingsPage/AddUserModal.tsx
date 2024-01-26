@@ -5,7 +5,7 @@ import "../../styles/Modals.css"
 import "../../styles/UserManagementTab.css"
 import vmd from "../../virtualmodel/VMD"
 import { Row } from "../../virtualmodel/DataAccessor"
-import { MultiSelect } from "./UserMangementTab"
+import MultiSelect from "./MultiSelect"
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
 import { Role } from "../../redux/AuthSlice"
 
@@ -73,7 +73,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 
 	// All the props from AddUserModal are directly passed down to the Modal component
 	return <Modal onClose={handleClose} {...props}>
-		<Box className='modal-container'>
+		<Box className='modal-container-center'>
 			<div className="modal-content">
 				<Typography variant="h5">Add new user</Typography>
 				<div className="form">
@@ -108,15 +108,15 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 						</label>
 					</div>
 				</div>
-				<div className="button-container">
+				<div className="button-container-wide">
+					<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>
+						Cancel
+					</Button>
 					<Button
 						variant="contained"
 						onClick={handleFormSubmit}
 						sx={{ backgroundColor: "#404040" }}>
 						Add
-					</Button>
-					<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>
-						Cancel
 					</Button>
 				</div>
 			</div>
