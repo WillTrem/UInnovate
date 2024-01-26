@@ -24,11 +24,8 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import Pagination from "@mui/material/Pagination";
-
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
-import "../styles/TableListViewStyle.css";
 import {
   LocalizationProvider,
   StaticDateTimePicker,
@@ -44,7 +41,6 @@ import {
   RichTextEditor,
   type RichTextEditorRef,
 } from "mui-tiptap";
-import ScriptLoadPopup from "./ScriptLoadPopup";
 import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 
@@ -257,30 +253,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   //For when page number changes
   const handlePageChange = (event, value) => {
     setPageNumber(value);
-  };
-
-  const onItemAdded = (e, item, itemImage, itemName, currentColumn) => {
-    e.preventDefault();
-    const nonEditableColumn = table.columns.find(
-      (column) => column.is_editable === false
-    );
-    if (nonEditableColumn) {
-      setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
-    setItem(item);
-    setItemImage(itemImage);
-    setItemName(itemName);
-
-    setInputValues((prevInputValues) => ({
-      ...prevInputValues,
-      [currentColumn]: item,
-    }));
-    let temp = columnsAndFile;
-    temp = [...temp, [currentColumn, item]];
-    setColumnsAndFile([...columnsAndFile, [currentColumn, item]]);
-    let tempRow = currentRow;
-    tempRow.row = { ...tempRow.row, [currentColumn]: item };
-    setCurrentRow(tempRow);
   };
 
   const onItemAdded = (e, item, itemImage, itemName, currentColumn) => {
@@ -579,73 +551,12 @@ const TableListView: React.FC<TableListViewProps> = ({
         );
       } else if (columnDisplayType.value == "file") {
         let response;
-        files?.forEach((file) => {
+        files?.forEach(async (file) => {
           if (file["id"] == currentRow.row[column.column_name]) {
             response = file;
           }
         });
-        response = response ? response : null;
         console.log(response);
-        return (
-          <div className="centerize">
-            <Dropzone
-              onItemAdded={onItemAdded}
-              items={response ? response["blob"] : null}
-              itemsImage={response ? true : false}
-              itemsName={response ? response["file_name"] : null}
-              currentColumn={column.column_name}
-            />
-          </div>
-        );
-      } else if (columnDisplayType.value == "file") {
-        let currentFile;
-        files?.forEach((file) => {
-          if (file["id"] == currentRow?.row[column.column_name]) {
-            currentFile = file;
-          }
-        });
-        const response = currentFile;
-        console.log(currentRow);
-        return (
-          <div className="centerize">
-            <Dropzone
-              onItemAdded={onItemAdded}
-              items={response ? response["blob"] : null}
-              itemsImage={response ? true : false}
-              itemsName={response ? response["file_name"] : null}
-              currentColumn={column.column_name}
-            />
-          </div>
-        );
-      } else if (columnDisplayType.value == "file") {
-        let currentFile;
-        files?.forEach((file) => {
-          if (file["id"] == currentRow?.row[column.column_name]) {
-            currentFile = file;
-          }
-        });
-        const response = currentFile;
-        console.log(currentRow);
-        return (
-          <div className="centerize">
-            <Dropzone
-              onItemAdded={onItemAdded}
-              items={response ? response["blob"] : null}
-              itemsImage={response ? true : false}
-              itemsName={response ? response["file_name"] : null}
-              currentColumn={column.column_name}
-            />
-          </div>
-        );
-      } else if (columnDisplayType.value == "file") {
-        let currentFile;
-        files?.forEach((file) => {
-          if (file["id"] == currentRow?.row[column.column_name]) {
-            currentFile = file;
-          }
-        });
-        const response = currentFile;
-        console.log(currentRow);
         return (
           <div className="centerize">
             <Dropzone
@@ -670,7 +581,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentCategory,
     inputValues,
     currentWYSIWYG,
-    files,
   ]);
 
   // Function to save the current row
@@ -783,7 +693,11 @@ const TableListView: React.FC<TableListViewProps> = ({
                 {Object.values(row.row).map((cell, idx) => {
                   return (
                     <td key={idx}>
-                      {typeof cell === "boolean" ? cell.toString() : cell}
+                      {typeof cell === "boolean"
+                        ? cell.toString()
+                        : cell?.toString().substring(0, 5) === "file_"
+                        ? files?.find((file) => file.id == cell)?.file_name
+                        : cell}
                     </td>
                   );
                 })}

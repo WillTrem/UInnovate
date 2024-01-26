@@ -24,6 +24,7 @@ export enum ColumnDisplayTypes {
   email = "email",
   currency = "currency",
   multiline_wysiwyg = "multiline_wysiwyg",
+  file = "file",
 }
 
 export enum CategoriesDisplayType {
@@ -34,7 +35,6 @@ export enum CategoriesDisplayType {
   category5 = "category5",
   category6 = "category6",
   category7 = "category7",
-  file = "file",
 }
 
 // This function will update the appconfig_values table in the database by inserting new values and updating exisiting ones
