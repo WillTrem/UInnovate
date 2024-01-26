@@ -36,7 +36,7 @@ export const editEnvVar = async (varID: string, varNewValue: string) => {
 		);
 
 		// Use data accessor to add the new row woop woop
-		await data_accessor.addRow();
+		await data_accessor.updateRow();
 		alert("Environment variable saved successfully."); // Let user know it worked yay
 	} catch (error) {
 		console.error("Error in upserting environment variable:", error);
