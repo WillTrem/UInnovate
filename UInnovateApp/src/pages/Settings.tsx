@@ -45,6 +45,7 @@ export function Settings() {
 											Scheduled Activities
 										</Nav.Link>
 										<Nav.Link eventKey='scripting'>Scripting</Nav.Link>
+										<Nav.Link eventKey='envVar'>Environment Variables</Nav.Link>
 									</Nav.Item>
 									{(role === Role.ADMIN || LOGIN_BYPASS) && (
 										<Nav.Item>
