@@ -284,7 +284,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     columnName: string | undefined,
     type: string | undefined
   ) => {
-    // console.log(event + " " + columnName + " " + type);
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
     );
@@ -308,7 +307,6 @@ const TableListView: React.FC<TableListViewProps> = ({
         eventValue = event.target.value;
       }
     }
-    console.log(eventValue);
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
@@ -360,7 +358,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
     data_accessor.updateRow().then((res) => {
       getRows();
-      console.log(res);
     });
     setInputValues({});
     setOpenPanel(false);
@@ -533,7 +530,6 @@ const TableListView: React.FC<TableListViewProps> = ({
             onChange={(event) => {
               handleInputChange(event, column.column_name, undefined);
               rteRef.current?.editor.setContent(event);
-              console.log(event);
             }}
             ref={rteRef}
             extensions={[StarterKit]} // Or any Tiptap extensions you wish!
@@ -556,7 +552,6 @@ const TableListView: React.FC<TableListViewProps> = ({
             response = file;
           }
         });
-        console.log(response);
         return (
           <div className="centerize">
             <Dropzone
@@ -585,7 +580,6 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
-    console.log(inputValues);
     setCurrentRow(row);
     setCurrentPhone("");
     setCurrentCategory("");
