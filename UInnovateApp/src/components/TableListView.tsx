@@ -2,7 +2,7 @@ import "../styles/TableComponent.css";
 import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
@@ -47,7 +47,9 @@ import ScriptLoadPopup from "./ScriptLoadPopup";
 import { useNavigate, useParams } from "react-router-dom";
 
 
-
+interface TableListViewProps {
+  table: Table;
+}
 
 const buttonStyle = {
   marginTop: 20,
@@ -62,17 +64,12 @@ const inputStyle = {
   width: "65%",
 };
 
-const TableListView= () => {
-  const { tableName } = useParams()
+const TableListView: React.FC<TableListViewProps> = ({
+  table,
+}: {
+  table: Table;
+}) => {
   const navigate = useNavigate() 
-  if(!tableName) {
-    return null;
-  }
-  const Tschema = vmd.getTableSchema(tableName);
-  const table = vmd.getTable(Tschema?.schema_name ?? "", tableName);
-  if(!table) {
-    return null;
-  }
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -207,7 +204,7 @@ const TableListView= () => {
     getConfigs();
   }, [inputValues]);
 
-  const inputStyle = {
+  const inputStyle:CSSProperties= {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",

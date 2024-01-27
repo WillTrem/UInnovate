@@ -65,7 +65,7 @@ export function ObjectMenu() {
                     <Tab.Pane key={table.table_name} eventKey={table.table_name}>
                       {tableName === table.table_name ? (
                         Type?.toLowerCase() === "list" || Type?.toLowerCase() === "details" ? (
-                          <TableListView></TableListView>
+                          <TableListView table={table}></TableListView>
                         ) : Type?.toLowerCase() === "enum" ? (
                           <TableEnumView />
                         ) : null
