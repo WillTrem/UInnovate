@@ -36,7 +36,6 @@ function App() {
         <Route path="/objview/:Type/:tableName/:primeKey" element={<ObjectMenu />} />
         <Route path="/objview" element={<ObjectMenu/> } />
         <Route path="/objview/:Type/:tableName" element={<TableEnumView />} />
-        <Route path="/objview/:Type/:tableName" element={<TableListView />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<><p>Cannot be Found</p></>}/>
       </Routes>}
