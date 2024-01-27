@@ -58,7 +58,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:3000/contact",
 					"host": [
@@ -109,7 +115,7 @@
 							"    pm.response.to.not.be.error;\r",
 							"    pm.response.to.have.jsonBody()\r",
 							"    var companyIdOne = data.find((element) => element.company_id == 1)\r",
-							"    pm.expect(companyIdOne.first_name).to.equal(\"Google\")\r",
+							"    pm.expect(companyIdOne.company_name).to.equal(\"Google\")\r",
 							"\r",
 							"})\r",
 							"\r",
@@ -121,7 +127,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:3000/company",
 					"host": [
@@ -187,7 +199,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:3000/purchase_order",
 					"host": [
@@ -249,7 +267,13 @@
 			],
 			"request": {
 				"method": "GET",
-				"header": [],
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
 				"url": {
 					"raw": "localhost:3000/tool",
 					"host": [
