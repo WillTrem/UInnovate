@@ -155,9 +155,9 @@ CREATE TABLE IF NOT EXISTS meta.i18n_languages (
 -- Creating the keys table
 CREATE TABLE IF NOT EXISTS meta.i18n_keys (
     id SERIAL PRIMARY KEY,
-    key_code VARCHAR(255) UNIQUE NOT NULL
+    key_code VARCHAR(255) UNIQUE NOT NULL,
+    is_default BOOLEAN DEFAULT false  -- Add the is_default column here
 );
-
 -- Creating the values table
 CREATE TABLE IF NOT EXISTS meta.i18n_values (
     id SERIAL PRIMARY KEY,
@@ -167,13 +167,14 @@ CREATE TABLE IF NOT EXISTS meta.i18n_values (
     CONSTRAINT unique_translation UNIQUE (language_id, key_id)
 );
 
--- Creating the translation view (combines the languages, keys and values tables)
+-- Creating the translation view (combines the languages, keys, and values tables)
 CREATE OR REPLACE VIEW meta.i18n_translations AS
 SELECT
     k.id AS translation_id,
     l.language_code,
     k.key_code,
-    COALESCE(v.value, '') AS value
+    COALESCE(v.value, '') AS value,
+    k.is_default  -- Adding the is_default attribute
 FROM
     meta.i18n_languages l
 CROSS JOIN
@@ -185,7 +186,8 @@ SELECT
     k.id AS translation_id,
     NULL AS language_code,
     k.key_code,
-    '' AS value
+    '' AS value,
+    k.is_default  -- Adding the is_default attribute
 FROM
     meta.i18n_keys k
 WHERE
