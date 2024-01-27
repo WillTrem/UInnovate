@@ -129,6 +129,12 @@ A trigger function that logs changes to the `app_service_support.service_tickets
 
 A trigger function that logs changes to the `app_service_support.ticket_comments` table. It logs when a comment is added, updated, or deleted.
 
+
+## Unit Tests
+
+To run the unit test using pgTap navigate to script folder and run command :
+`./refresh_database.sh -f '/useCase2' -rt true`
+
 ---
 
 # ER Diagram
