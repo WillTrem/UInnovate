@@ -2,6 +2,7 @@
 
 ## Database Functions
 
+
 ### add_ticket_comment
 
 #### Parameters
@@ -17,6 +18,17 @@
 #### Description
 
 Adds a comment to a service ticket in the `app_service_support.ticket_comments` table.
+
+#### API URL:
+http://localhost:3000/rpc/add_ticket_comment
+
+json param example:
+
+`{
+    "p_ticket_id":1,
+    "p_user_id":"user2@test.com",
+    "p_comment_text": "This is a test comment"
+}`
 
 ---
 
@@ -34,6 +46,16 @@ Adds a comment to a service ticket in the `app_service_support.ticket_comments` 
 #### Description
 
 Assigns a service ticket to a user in the `app_service_support.ticket_assignments` table.
+
+#### API URL:
+http://localhost:3000/rpc/assign_ticket
+
+json param example:
+
+`{
+    "p_ticket_id": 5,
+    "p_assigned_user_id": "user35@test.com"
+}`
 
 ---
 
@@ -53,6 +75,15 @@ Assigns a service ticket to a user in the `app_service_support.ticket_assignment
 #### Description
 
 Retrieves all comments for a specific service ticket.
+
+#### API URL:
+http://localhost:3000/rpc/get_ticket_comments
+
+json param example:
+
+`{
+    "p_ticket_id": 1
+}`
 
 ---
 
@@ -79,6 +110,15 @@ Retrieves all comments for a specific service ticket.
 
 Retrieves all service tickets assigned to a specific user.
 
+#### API URL:
+http://localhost:3000/rpc/get_assigned_tickets
+
+json param example:
+
+`{
+    "p_assigned_user_id":"user2@test.com"
+}`
+
 ---
 
 ### add_ticket_tag
@@ -96,6 +136,16 @@ Retrieves all service tickets assigned to a specific user.
 
 Adds a new record to the `app_service_support.ticket_tags` table, associating a tag with a service ticket.
 
+#### API URL:
+http://localhost:3000/rpc/add_ticket_tag
+
+json param example:
+
+`{
+    "p_ticket_id": 1,
+    "p_tag_name": "MyNewTagName"
+}`
+
 ---
 
 ### remove_ticket_tag
@@ -112,6 +162,16 @@ Adds a new record to the `app_service_support.ticket_tags` table, associating a 
 #### Description
 
 Removes a tag from a service ticket and deletes it if not associated with any other ticket.
+
+#### API URL:
+http://localhost:3000/rpc/remove_ticket_tag
+
+json param example:
+
+`{
+    "p_ticket_id": 1,
+    "p_tag_name": "MyNewTagName"
+}`
 
 ---
 
@@ -133,6 +193,7 @@ A trigger function that logs changes to the `app_service_support.ticket_comments
 ## Unit Tests
 
 To run the unit test using pgTap navigate to script folder and run command :
+
 `./refresh_database.sh -f '/useCase2' -rt true`
 
 ---
