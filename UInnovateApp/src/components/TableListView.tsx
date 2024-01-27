@@ -44,10 +44,10 @@ import {
   type RichTextEditorRef,
 } from "mui-tiptap";
 import ScriptLoadPopup from "./ScriptLoadPopup";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface TableListViewProps {
-  table: Table;
-}
+
+
 
 const buttonStyle = {
   marginTop: 20,
@@ -62,12 +62,17 @@ const inputStyle = {
   width: "65%",
 };
 
-const TableListView: React.FC<TableListViewProps> = ({
-  table,
-}: {
-  table: Table;
-}) => {
-
+const TableListView= () => {
+  const { tableName } = useParams()
+  const navigate = useNavigate() 
+  if(!tableName) {
+    return null;
+  }
+  const Tschema = vmd.getTableSchema(tableName);
+  const table = vmd.getTable(Tschema?.schema_name ?? "", tableName);
+  if(!table) {
+    return null;
+  }
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -91,14 +96,14 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
-    const schema = vmd.getTableSchema(table.table_name);
+    const schemas = vmd.getTableSchema(table.table_name);
 
-    if (!schema) {
+    if (!schemas) {
       return;
     }
 
     const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
-      schema.schema_name,
+      schemas.schema_name,
       table.table_name,
       OrderValue,
       PaginationValue,
@@ -106,7 +111,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
 
     const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema.schema_name,
+      schemas.schema_name,
       table.table_name
     );
     const count = await countAccessor.fetchRows();
@@ -496,7 +501,11 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-   
+    if (table.stand_alone_details_view) {
+      console.log("No Stand Alone Details View " + table.table_name);
+    }
+    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]); 
+    
     setOpenPanel(true);
   };
 

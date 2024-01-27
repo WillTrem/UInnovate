@@ -11,6 +11,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "./redux/Store";
 import { Box, CircularProgress, Typography } from "@mui/material";
 
+import TableListView from "./components/TableListView";
+import TableEnumView from "./components/TableEnumView";
 function App() {
   const loading = useSelector((state: RootState) => state.loading.loading); 
   useEffect(() => {
@@ -30,8 +32,13 @@ function App() {
        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/check" element={<NavBar />} />
-        <Route path="/objview" element={<ObjectMenu />} />
+        <Route path="/objview/:Type/:tableName" element={<ObjectMenu />} />
+        <Route path="/objview/:Type/:tableName/:primeKey" element={<ObjectMenu />} />
+        <Route path="/objview" element={<ObjectMenu/> } />
+        <Route path="/objview/:Type/:tableName" element={<TableEnumView />} />
+        <Route path="/objview/:Type/:tableName" element={<TableListView />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="*" element={<><p>Cannot be Found</p></>}/>
       </Routes>}
     </ConfigProvider>
   );
