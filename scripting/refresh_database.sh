@@ -4,6 +4,7 @@ cd "$(dirname "$(readlink -f "$0")")"
 source ../.env
 
 USECASE_FOLDER="/useCase1"
+RUNTEST="false"
 # Parse command-line arguments
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -11,6 +12,10 @@ while [[ $# -gt 0 ]]; do
             USECASE_FOLDER="$2"
             shift 2
             echo "Using use case folder: $USECASE_FOLDER"
+            ;;
+        -rt|--runTest)
+            RUNTEST="$2"
+            shift 2
             ;;
         *)
             echo "defaulting to option: $USECASE_FOLDER usecase folder"
@@ -29,6 +34,7 @@ META_FILE=".././database/meta.sql"
 SCHEMA_FILE=".././database$USECASE_FOLDER/structure.sql"
 DATA_FILE=".././database$USECASE_FOLDER/sampledata.sql"
 PROCEDURES_FILE=".././database$USECASE_FOLDER/procedures.sql"
+TEST_FILE=".././database$USECASE_FOLDER/unittest.sql"
 META_DATA_FILE=".././database/meta_data.sql"
 LOG_FILE=".././database/refresh_log.txt"
 CRON_FILE=".././database/cron.sql"
@@ -60,3 +66,7 @@ done
 # Log completion time
 echo "Database refresh completed at $(date)" | tee -a $LOG_FILE
 
+if [ "$RUNTEST" == true ]; then
+    echo "Executing $TEST_FILE..." | tee -a $LOG_FILE
+    docker exec -i db psql -U $DB_USER -d $DB_NAME -a -f - < $TEST_FILE 2>&1 | tee -a $LOG_FILE
+fi
