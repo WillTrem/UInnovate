@@ -1,5 +1,28 @@
 # UInnovate
 
+- [UInnovate](#uinnovate)
+  - [Setting up Docker](#setting-up-docker)
+    - [PostgreSQL server \& pgAdmin containers](#postgresql-server--pgadmin-containers)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Supported Testing](#supported-testing)
+    - [Unit Tests](#unit-tests)
+    - [Component Tests](#component-tests)
+    - [Integration Tests](#integration-tests)
+    - [Cypress Component Testing](#cypress-component-testing)
+  - [Coverage Reports](#coverage-reports)
+  - [Start vite server and run cypress](#start-vite-server-and-run-cypress)
+  - [Available Scripts](#available-scripts)
+  - [Refresh Database Script](#refresh-database-script)
+  - [Postman Endpoint Testing](#postman-endpoint-testing)
+  - [Configuration](#configuration)
+    - [Adding new configuration properties](#adding-new-configuration-properties)
+  - [MkDocs Set up with docker](#mkdocs-set-up-with-docker)
+  - [PostGOAT Website Deployment](#postgoat-website-deployment)
+  - [Running the Postgoat Docker container](#running-the-postgoat-docker-container)
+
+
 ## Setting up Docker
 
 > :warning: Prior to following the steps below, ensure you have: <br/> 1. Installed Docker on your machine.
