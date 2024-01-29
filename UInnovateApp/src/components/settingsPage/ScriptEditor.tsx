@@ -26,6 +26,7 @@ interface ScriptEditorProps {
 }
 
 export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
+  console.log(script);
   const script_name = script["name"];
   const tables = vmd.getAllTables();
 
@@ -46,6 +47,9 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
       case "btn_name":
         updatedScript = { ...updateScript, btn_name: event.target.value };
         break;
+      case "description":
+        updatedScript = { ...updateScript, description: event.target.value };
+        break;
     }
 
     setUpdateScript(updatedScript);
@@ -64,9 +68,9 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
       <Card>
         <Card.Body>
           <Card.Title>Script: {script_name}</Card.Title>
-          <div className="config-pane">
-            <div className="d-flex flex-row align-items-center">
-              <span className="px-3">Button Name</span>
+          <div className="config-pane mt-3">
+            <div className="d-flex flex-column align-items-start">
+              <h6>Button Name</h6>
               <TextField
                 defaultValue={script["btn_name"]}
                 onChange={(event) =>
@@ -93,40 +97,54 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
               </FormHelperText>
             </FormControl>
           </div>
-          <div style={{ display: "flex", flexDirection: "row" }}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <IconButton onClick={() => setIsEditing(!isEditing)}>
-                <EditIcon />
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  handleChange(
-                    { target: { value: content } } as SelectChangeEvent,
-                    "content"
-                  );
-                  setIsEditing(false);
+          <div className="d-flex flex-column align-items-start mb-5">
+            <h6>Description</h6>
+            <TextField
+              multiline
+              fullWidth
+              defaultValue={script["description"]}
+              onChange={(event) =>
+                handleChange(event as SelectChangeEvent, "description")
+              }
+            ></TextField>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <h6>Content</h6>
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                <IconButton onClick={() => setIsEditing(!isEditing)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    handleChange(
+                      { target: { value: content } } as SelectChangeEvent,
+                      "content"
+                    );
+                    setIsEditing(false);
+                  }}
+                >
+                  <SaveIcon />
+                </IconButton>
+              </div>
+              <AceEditor
+                mode="javascript"
+                theme="github"
+                value={content}
+                onChange={(value) => {
+                  setContent(value);
                 }}
-              >
-                <SaveIcon />
-              </IconButton>
+                name="script-editor"
+                readOnly={!isEditing}
+                editorProps={{ $blockScrolling: true }}
+                setOptions={{
+                  enableBasicAutocompletion: true,
+                  enableLiveAutocompletion: true,
+                  enableSnippets: true,
+                }}
+                style={{ opacity: isEditing ? 1 : 0.5 }}
+              />
             </div>
-            <AceEditor
-              mode="javascript"
-              theme="github"
-              value={content}
-              onChange={(value) => {
-                setContent(value);
-              }}
-              name="script-editor"
-              readOnly={!isEditing}
-              editorProps={{ $blockScrolling: true }}
-              setOptions={{
-                enableBasicAutocompletion: true,
-                enableLiveAutocompletion: true,
-                enableSnippets: true,
-              }}
-              style={{ opacity: isEditing ? 1 : 0.5 }}
-            />
           </div>
         </Card.Body>
       </Card>

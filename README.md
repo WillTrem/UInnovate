@@ -1,5 +1,28 @@
 # UInnovate
 
+- [UInnovate](#uinnovate)
+  - [Setting up Docker](#setting-up-docker)
+    - [PostgreSQL server \& pgAdmin containers](#postgresql-server--pgadmin-containers)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Supported Testing](#supported-testing)
+    - [Unit Tests](#unit-tests)
+    - [Component Tests](#component-tests)
+    - [Integration Tests](#integration-tests)
+    - [Cypress Component Testing](#cypress-component-testing)
+  - [Coverage Reports](#coverage-reports)
+  - [Start vite server and run cypress](#start-vite-server-and-run-cypress)
+  - [Available Scripts](#available-scripts)
+  - [Refresh Database Script](#refresh-database-script)
+  - [Postman Endpoint Testing](#postman-endpoint-testing)
+  - [Configuration](#configuration)
+    - [Adding new configuration properties](#adding-new-configuration-properties)
+  - [MkDocs Set up with docker](#mkdocs-set-up-with-docker)
+  - [PostGOAT Website Deployment](#postgoat-website-deployment)
+  - [Running the Postgoat Docker container](#running-the-postgoat-docker-container)
+
+
 ## Setting up Docker
 
 > :warning: Prior to following the steps below, ensure you have: <br/> 1. Installed Docker on your machine.
@@ -10,7 +33,7 @@
 1. Open the repository in the code editor of your liking.
 2. Make a copy of the file `.env.template`.
 3. Rename the copy to `.env`.
-4. Replace all the fields within '<>' by actual values (not keeping the <>). They can be any of your choosing.
+4. Replace all the fields within '<>' by actual values (not keeping the <>). They can be any of your choosing, except for the PLATFORM_DOMAIN, which has to correspond to the domain of the application.
 
    > 💡 Note that you don't have to create any account or credentials prior to this setup. It will be done automatically when you first run the containers.
 
@@ -23,13 +46,13 @@
 
 8. Run `.\refresh_database.sh` in your terminal to populate the db. (Note: \ on Windows, / on Linux)
    > 💡 Note: To run bash commands on windows you need to:
-      - Enable WSL on window
-      - A linux distro installed from the windows store
-      - see this [link](https://www.thetechedvocate.org/how-to-install-and-run-bash-on-windows-11/) or [video]( https://youtu.be/sUsTQTJFmjs?si=qx6QiqUiYSZ8W-6U ) for more help
-   > 💡 Note: You may run into this error "The command 'docker' could not be found in this WSL 2 distro.""
-      - Update your docker desktop to the latest version.   
-      - Go to Settings > Resources > WSL integration > check "Enable integration with my default WSL distro" or manually toggle the linux distro from the list
-   > 💡 Note: You may need to shut down the db and server containers and restart them after running the refresh database command. To do so, use `docker compose stop && docker compose up  -d` in your terminal after the .\refresh_database.sh command
+   - Enable WSL on window
+   - A linux distro installed from the windows store
+   - see this [link](https://www.thetechedvocate.org/how-to-install-and-run-bash-on-windows-11/) or [video](https://youtu.be/sUsTQTJFmjs?si=qx6QiqUiYSZ8W-6U) for more help
+     > 💡 Note: You may run into this error "The command 'docker' could not be found in this WSL 2 distro.""
+   - Update your docker desktop to the latest version.
+   - Go to Settings > Resources > WSL integration > check "Enable integration with my default WSL distro" or manually toggle the linux distro from the list
+     > 💡 Note: You may need to shut down the db and server containers and restart them after running the refresh database command. To do so, use `docker compose stop && docker compose up  -d` in your terminal after the .\refresh_database.sh command
 9. In a web browser window, access to localhost:5050
 10. Log in to pgAdmin with the credentials you provided in your `.env` file.
 11. On the home page, click on "Add New Server".
@@ -195,14 +218,13 @@ refresh script, follow the steps below:
 2. Change directories to the UInnovate folder where the refresh_database.sh is located
 3. From a terminal, run:
 
-   💡 *.\refresh_database.sh*  for the default use case 1 folder.
+   💡 _.\refresh_database.sh_ for the default use case 1 folder.
 
-   💡 *.\refresh_database.sh --folder '/useCase2'*  for instance to change to use case 2 folder.
+   💡 _.\refresh_database.sh --folder '/useCase2'_ for instance to change to use case 2 folder.
 
-   💡 *.\refresh_database.sh -f '/useCase2'* will yield to the same result as *./refresh_database.sh --folder '/useCase2'*
+   💡 _.\refresh_database.sh -f '/useCase2'_ will yield to the same result as _./refresh_database.sh --folder '/useCase2'_
 
 4. A log file will be generated to see everything that was done to the DB and any errors that occurred
-
 
 ## Postman Endpoint Testing
 
@@ -217,6 +239,7 @@ To use Postman for testing the PostgREST API corrrectly accessing the database:
 ## Configuration
 
 ### Adding new configuration properties
+
 To add a new configuration property to the database, simply add an entry for it in `meta_data.sql` (under ./database) where indicated. Then, simply refresh the database using the `refresh_database.sh` script.
 
 Also, don't forget to add an entry for it in the enum of the `ConfigProperties.ts` file to use it within the code itself.
@@ -247,14 +270,30 @@ Run the container.
 docker run -it -p 8080:8000  polinux/mkdocs
 ```
 
-You should be able to see the mkdocs website: http://localhost:8080/ 
+You should be able to see the mkdocs website: http://localhost:8080/
 You can go also through docker to open it but don't use http://0.0.0.0:8000/
 
 If you want to add pages, they should go under documentation/docs.
 
 ## PostGOAT Website Deployment
 
-Link to repo: https://github.com/MariaR001/PostGoat 
+Link to repo: https://github.com/MariaR001/PostGoat
 <br>
-Link to website: https://uinnovate.netlify.app/ 
+Link to website: https://uinnovate.netlify.app/
 
+## Running the Postgoat Docker container
+
+1. From root, `cd UInnovateApp` and run `npm run build`
+2. Notice there is a new folder called 'build' inside the UInnovate repo. This folder containers the minified JS for the frontend that will be served as a static web page.
+
+3. `cd ../` back to root and run the following command to build the docker image from the Dockerfile.goat file, which is at root level:
+
+```
+DOCKER_BUILDKIT=1 docker build -f Dockerfile.goat -t goat-dock .
+```
+
+Note; this can take up to a few minutes the first time, it's normal.
+
+4. `docker run -p 8080:80 goat-dock` to run the container. This will serve the minified js as a static web page on an Nginx server.
+
+5. Visit localhost:8080 to see Postgoat container running (for now, blank page, but inspecting element will reveal the minified JS files in the source tab)

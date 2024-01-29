@@ -9,16 +9,11 @@ interface TableListViewProps {
 }
 
 const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListViewProps) => {
-  const name = table.table_name + "T";
-  const Local = localStorage.getItem(name);
-  if (Local == null) {
-    return (<></>)
-  }
-  else {
+
     const [Columns, setColumns] = useState<Column[][]>([]);
     const [rows, setRows] = useState<Row[][] | undefined>([]);
-    const getTable = JSON.parse(Local!);
-    var count = Object.keys(getTable).length - 1;
+    const getTable = JSON.parse(table.lookup_tables);
+    const count = Object.keys(getTable).length - 1;
 
 
     const LookUpTables = (num: number) => {
@@ -32,18 +27,20 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
         const search = table.getColumns()
 
         let toolsColumn: string = "";
+        let toolsColumnName: string = "";
         search?.map((attribute) => {
           if (attribute.references_table == tableName) {
             toolsColumn = attribute.column_name;
+            toolsColumnName = attribute.references_by;
           }
           else {
-            return (<>nothing</>);
+            return (<>no</>);
           }
         });
-        const temp = toolsColumn + "L";
+        const temp = toolsColumn;
         const connectionID = localStorage.getItem(temp);
         if (connectionID == undefined) {
-          return (<>nothing</>);
+          return (<>Missing ConnectionID</>);
         }
 
 
@@ -63,7 +60,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
             const data_accessor: DataAccessor = vmd.getRowsDataAccessorForLookUpTable(
               schemaObj.schema_name,
               tableName,
-              toolsColumn,
+              toolsColumnName,
               connectionID
             );
             console.log(data_accessor);
@@ -89,7 +86,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
        
         return (
           <div>
-            {tableName} look up table:
+            {tableName} look up table: 
             <div>
               {/* Here is the table name: {toolsColumn} */}
             </div>
@@ -140,7 +137,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListVi
 
 
 
-  }
+  
 }
 
 export default LookUpTableDetails;

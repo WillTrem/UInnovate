@@ -14,5 +14,5 @@ returns void as $$
   select
     set_config('pgrst.db_schemas', string_agg(nspname, ','), true)
   from pg_namespace
-  where nspname = 'meta' or nspname like 'app_%';
+  where nspname = 'meta' or nspname = 'cron' or nspname like 'app_%';
 $$ language sql;
