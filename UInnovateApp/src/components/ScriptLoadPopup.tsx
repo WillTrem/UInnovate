@@ -1,6 +1,7 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import "../styles/AddEnumModal.css";
 import { Row } from "../virtualmodel/DataAccessor";
+import ScriptHandler from "../virtualmodel/ScriptHandler";
 
 const ScriptLoadPopup = ({
   onClose,
@@ -10,7 +11,11 @@ const ScriptLoadPopup = ({
   script: Row | null;
 }) => {
   const handleConfirm = () => {
-    // TODO: Load script
+    const scriptHandler = new ScriptHandler({ x: 3 });
+
+    const code = "x += 40; var y = 17;";
+
+    scriptHandler.runScript(code);
   };
 
   const style = {
