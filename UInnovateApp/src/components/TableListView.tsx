@@ -1,7 +1,6 @@
 import "../styles/TableComponent.css";
 import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
-import scriptHandler from "../virtualmodel/ScriptHandler";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
@@ -47,7 +46,6 @@ import {
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import { useNavigate, useParams } from "react-router-dom";
 
-
 interface TableListViewProps {
   table: Table;
 }
@@ -70,7 +68,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
-  const navigate = useNavigate() 
+  const navigate = useNavigate();
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -83,8 +81,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
-  if(defaultOrderValue == undefined){
-    defaultOrderValue = table.columns[0].column_name
+  if (defaultOrderValue == undefined) {
+    defaultOrderValue = table.columns[0].column_name;
   }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
@@ -140,12 +138,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
     () => <></>
   );
-
-  /* This section is for the scripts
-  We first fetch the scripts that are associated with the table selected and then we display them as buttons
-  We make sure that the script is associated with the table by filtering the scripts by table name
-  We then use the handleScriptLogic function to execute the script with the ScriptHandler singleton object
-  */
   const schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
@@ -211,12 +203,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     getConfigs();
   }, [inputValues]);
 
-  const handleScriptLogic = (script: string) => {
-    scriptHandler.runScript(script);
-  };
-  // --------- End of Script Logic
-
-  const inputStyle:CSSProperties= {
+  const inputStyle: CSSProperties = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
@@ -229,13 +216,11 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleOrderchange = (event: SelectChangeEvent) => {
     setOrderValue(event.target.value as string);
   };
-  };
 
   //For when pagination limitm changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
     setPaginationValue(event.target.value as number);
     setPageNumber(1);
-  };
   };
 
   //For when page number changes
@@ -292,9 +277,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
     );
-    const storedPrimaryKeyValue = localStorage.getItem(
-      "currentPrimaryKeyValue"
-    );
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -311,7 +293,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
 
   // }
-
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!appConfigValues) {
@@ -324,11 +305,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-      if (column.is_editable == false) {
-        localStorage.setItem(
-          "currentPrimaryKeyValue",
-          currentRow.row[column.column_name]
-        );
       if (column.is_editable == false) {
         localStorage.setItem(
           "currentPrimaryKeyValue",
@@ -524,8 +500,13 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
-    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]); 
-    
+    navigate(
+      "/objview/details/" +
+        table.table_name +
+        "/" +
+        row.row[table.table_name + "_id"]
+    );
+
     setOpenPanel(true);
   };
 
@@ -604,7 +585,6 @@ const TableListView: React.FC<TableListViewProps> = ({
         </div>
         <div>
           <FormControl size="small">
-            <h6 style={{ textAlign: "left" }}>Ordering</h6>
             <h6 style={{ textAlign: "left" }}>Ordering</h6>
             <Select
               value={OrderValue}
@@ -724,12 +704,6 @@ const TableListView: React.FC<TableListViewProps> = ({
                 width: "fit-content",
                 marginLeft: 10,
               }}
-              style={{
-                marginTop: 20,
-                backgroundColor: "#403eb5",
-                width: "fit-content",
-                marginLeft: 10,
-              }}
               onClick={handleFormSubmit}
             >
               Save
@@ -737,10 +711,11 @@ const TableListView: React.FC<TableListViewProps> = ({
           </div>
         </div>
         <div style={{ paddingBottom: "2em" }}>
-          {table.lookup_tables=="null" ? (
+          {table.lookup_tables == "null" ? (
             <div></div>
-          ) : JSON.parse(table.lookup_tables)[-1] =="none" ? (
-          <div></div>) : showTable ? (
+          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+            <div></div>
+          ) : showTable ? (
             <div style={{ paddingBottom: "2em" }}>
               <LookUpTableDetails table={table} />
             </div>
@@ -755,23 +730,6 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           )}
         </div>
-        {localStorage.getItem(table.table_name + "T") === null ||
-        getTable[-1] == "none" ? (
-          <div></div>
-        ) : showTable ? (
-          <div style={{ paddingBottom: "2em" }}>
-            <LookUpTableDetails table={table} />
-          </div>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginLeft: 15 }}
-            onClick={() => setShowTable(true)}
-          >
-            Show Look up Table
-          </Button>
-        )}
       </SlidingPanel>
     </div>
   );
