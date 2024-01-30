@@ -1,6 +1,7 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
 import "../styles/AddEnumModal.css";
 import { Row } from "../virtualmodel/DataAccessor";
+import vmd, { Table } from "../virtualmodel/VMD";
 import ScriptHandler from "../virtualmodel/ScriptHandler";
 
 const ScriptLoadPopup = ({
@@ -11,11 +12,30 @@ const ScriptLoadPopup = ({
   script: Row | null;
 }) => {
   const handleConfirm = () => {
-    const scriptHandler = new ScriptHandler({ x: 3 });
+    if (script) {
+      const schema_name = vmd.getTableSchema(script["table_name"])?.schema_name;
 
-    const code = "x += 40; var y = 17;";
+      if (schema_name) {
+        const table: Table = vmd.getTable(
+          schema_name,
+          script["table_name"]
+        ) as Table;
 
-    scriptHandler.runScript(code);
+        const firstLine = "const handler = new ScriptHandler(script);";
+        const userScript = script["content"];
+
+        const execute_script = new Function(
+          "ScriptHandler",
+          "script",
+          "table",
+          firstLine + "\n" + userScript
+        );
+
+        console.log(execute_script);
+        execute_script(ScriptHandler, script, table);
+      }
+    }
+    onClose();
   };
 
   const style = {
