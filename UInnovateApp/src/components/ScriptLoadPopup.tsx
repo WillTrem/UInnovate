@@ -21,7 +21,7 @@ const ScriptLoadPopup = ({
           script["table_name"]
         ) as Table;
 
-        const firstLine = "const handler = new ScriptHandler(script);";
+        const firstLine = "const handler = new ScriptHandler(script, table);";
         const userScript = script["content"];
 
         const execute_script = new Function(
