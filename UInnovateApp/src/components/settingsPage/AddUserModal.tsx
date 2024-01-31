@@ -1,5 +1,5 @@
-import { Box, Button, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
-import React, { ReactNode, useState } from "react"
+import { Box, Button, FormControl, InputLabel, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
+import React, { ReactNode, useEffect, useState } from "react"
 
 import "../../styles/Modals.css"
 import "../../styles/UserManagementTab.css"
@@ -9,6 +9,7 @@ import MultiSelect from "./MultiSelect"
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
 import { Role } from "../../redux/AuthSlice"
 
+import { ErrMsg } from "./SignupModal"
 
 interface AddUserModalProps extends Omit<ModalProps, 'children'> {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -20,14 +21,24 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 	const defaultInputValues = { role: "user" };
 	const [inputValues, setInputValues] = useState<Row>(defaultInputValues)
 
+	const [emailError, setEmailError] = useState<string>("");
+
 	// Role selection state
 	const [role, setRole] = useState("user");
 
 	// Schema Access List state
 	const [schemaAccessList, setSchemaAccessList] = useState<string[]>([]);
+	// const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
 
-
+	// Handles updating the input values with the schemaAccessList
+	useEffect(() => {
+		const newInput = {
+			...inputValues,
+			schemas: `{${schemaAccessList.join(', ')}}` // Formats the schema access list into the postgresql array format
+		}
+		setInputValues(newInput);
+	}, [schemaAccessList])
 
 	// Handles change in input field
 	function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -35,7 +46,6 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 			...inputValues,
 			[e.target.name]: e.target.value,
 		}
-		console.log(newInput);
 		setInputValues(newInput);
 	};
 
@@ -77,36 +87,37 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 			<div className="modal-content">
 				<Typography variant="h5">Add new user</Typography>
 				<div className="form">
-					<div style={{ marginBottom: 10 }}>
-						<label>
-							Email
-							<TextField
-								name="email"
-								onChange={handleInputChange}
-							/>
-						</label>
-					</div>
-					<div style={{ marginBottom: 10 }}>
-						<label>
-							Role
-							<Select
-								name="role"
-								value={role}
-								onChange={(event) => handleRoleChange(event)}
-								displayEmpty
-							>
-								<MenuItem value={Role.USER}>User</MenuItem>
-								<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
-								<MenuItem value={Role.ADMIN}>Admin</MenuItem>
-							</Select>
-						</label>
-					</div>
-					<div style={{ marginBottom: 10 }}>
-						<label>
-							Schema Access
-							<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} />
-						</label>
-					</div>
+					<TextField id="email-field"
+						label="Email"
+						variant="outlined"
+						onChange={handleInputChange}
+						name="email"
+						helperText={emailError}
+						error={emailError === "" ? false : true}
+						className="textField" />
+					<FormControl fullWidth>
+						<InputLabel id="role-label">Role</InputLabel>
+						<Select
+							labelId="role-label"
+							name="role"
+							value={role}
+							onChange={(event) => handleRoleChange(event)}
+							variant="outlined"
+							label="Role"
+						>
+							<MenuItem value={Role.USER}>User</MenuItem>
+							<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
+							<MenuItem value={Role.ADMIN}>Admin</MenuItem>
+						</Select>
+					</FormControl>
+					<FormControl>
+						<InputLabel id='schema-access-label'>Schema Access</InputLabel>
+						<MultiSelect selectedList={schemaAccessList}
+							setSelectedList={setSchemaAccessList}
+							choiceList={schemaNames}
+							labelId='schema-access-label'
+							label="Schema Access" />
+					</FormControl>
 				</div>
 				<div className="button-container-wide">
 					<Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}>

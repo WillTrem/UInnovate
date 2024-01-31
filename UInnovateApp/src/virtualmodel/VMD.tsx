@@ -134,6 +134,15 @@ class VirtualModelDefinition {
     return this.schemas;
   }
 
+  /**
+   * Returns all application schemas of the vmd object
+   * @returns Schema[]
+   */
+  getApplicationSchemas(){
+    const appSchemaPattern = new RegExp(/^app_/);
+    return this.schemas.filter((schema) => appSchemaPattern.test(schema.schema_name));
+  }
+
   // Method to print the vmd object
   // return type : void
   printVMD() {

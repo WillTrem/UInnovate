@@ -7,13 +7,14 @@ CREATE TABLE IF NOT EXISTS authentication.users (
 	last_name text,
 	role name NOT NULL CHECK (length(role) < 512),
 	PASSWORD text CHECK (length(PASSWORD) < 512),
-	is_active bool NOT NULL
+	is_active bool NOT NULL, 
+	schemas text[]
 );
 
-CREATE TABLE IF NOT EXISTS meta.user_schema_access (
-	email text REFERENCES authentication.users,
-	schema text -- Add trigger to verify if schema exists in schema view
-);
+-- CREATE TABLE IF NOT EXISTS meta.user_schema_access (
+-- 	email text REFERENCES authentication.users,
+-- 	schema text -- Add trigger to verify if schema exists in schema view
+-- );
 
 -- Creates a VIEW that gives the users information (except the passwords)
 CREATE OR REPLACE VIEW meta.user_info AS (
@@ -42,23 +43,23 @@ INSERT
 	OR
 UPDATE ON authentication.users FOR each ROW EXECUTE PROCEDURE authentication.check_role_exists();
 
--- TRIGGER to ensure the schemas from user_schema_access are existing schemas
-CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
-		SELECT 1
-		FROM meta.schemas AS s
-		WHERE s.schema = new.schema
-	) THEN raise foreign_key_violation USING message = 'invalid schema : ' || new.role;
-RETURN NULL;
-END IF;
-RETURN new;
-END $$ language plpgsql;
+-- -- TRIGGER to ensure the schemas from user_schema_access are existing schemas
+-- CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
+-- 		SELECT 1
+-- 		FROM meta.schemas AS s
+-- 		WHERE s.schema = new.schema
+-- 	) THEN raise foreign_key_violation USING message = 'invalid schema : ' || new.role;
+-- RETURN NULL;
+-- END IF;
+-- RETURN new;
+-- END $$ language plpgsql;
 
-DROP TRIGGER IF EXISTS ensure_schema_exists ON meta.user_schema_access;
-CREATE CONSTRAINT TRIGGER ensure_schema_exists
-AFTER
-INSERT
-	OR
-UPDATE ON meta.user_schema_access FOR each ROW EXECUTE PROCEDURE meta.check_schema_exists();
+-- DROP TRIGGER IF EXISTS ensure_schema_exists ON meta.user_schema_access;
+-- CREATE CONSTRAINT TRIGGER ensure_schema_exists
+-- AFTER
+-- INSERT
+-- 	OR
+-- UPDATE ON meta.user_schema_access FOR each ROW EXECUTE PROCEDURE meta.check_schema_exists();
 
 -- TRIGGER to keep the passwords encrypted with pgcrypto
 CREATE extension IF NOT EXISTS pgcrypto;
@@ -155,11 +156,10 @@ END;
 $$ language plpgsql SECURITY DEFINER;
 
 
-
 -- FUNCTION CREATE USER, for administrators to create the users in the database before they can sign up 
-CREATE OR REPLACE FUNCTION meta.create_user(email text, role name) RETURNS SETOF integer AS $$ BEGIN
-INSERT INTO authentication.users(email, role, is_active)
-VALUES (email, role, TRUE);
+CREATE OR REPLACE FUNCTION meta.create_user(email text, role name, schemas text[]) RETURNS SETOF integer AS $$ BEGIN
+INSERT INTO authentication.users(email, role, is_active, schemas)
+VALUES (email, role, TRUE, create_user.schemas);
 RETURN;
 END;
 $$ language plpgsql SECURITY DEFINER;
@@ -309,30 +309,30 @@ END LOOP;
 END LOOP;
 END $$ LANGUAGE plpgsql;
 
-GRANT USAGE ON SCHEMA meta TO "user";
-GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
-GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
-GRANT SELECT ON TABLE meta.appconfig_values TO "user";
-GRANT SELECT ON TABLE meta.scripts TO "user";
-GRANT SELECT ON TABLE meta.schemas TO "user";
-GRANT SELECT ON TABLE meta.tables TO "user";
-GRANT SELECT ON TABLE meta.columns TO "user";
-GRANT SELECT ON TABLE meta.constraints TO "user";
-GRANT SELECT ON TABLE meta.user_schema_access TO "user";
+-- GRANT USAGE ON SCHEMA meta TO "user";
+-- GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
+-- GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
+-- GRANT SELECT ON TABLE meta.appconfig_values TO "user";
+-- GRANT SELECT ON TABLE meta.scripts TO "user";
+-- GRANT SELECT ON TABLE meta.schemas TO "user";
+-- GRANT SELECT ON TABLE meta.tables TO "user";
+-- GRANT SELECT ON TABLE meta.columns TO "user";
+-- GRANT SELECT ON TABLE meta.constraints TO "user";
+-- GRANT SELECT ON TABLE meta.user_schema_access TO "user";
 GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 
 -- Configurator role
 
-GRANT ALL ON SCHEMA meta TO configurator;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
-GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
-GRANT ALL ON TABLE meta.appconfig_values TO configurator;
-GRANT ALL ON TABLE meta.scripts TO configurator;
-GRANT ALL ON TABLE meta.schemas TO configurator;
-GRANT ALL ON TABLE meta.tables TO configurator;
-GRANT ALL ON TABLE meta.columns TO configurator;
-GRANT ALL ON TABLE meta.constraints TO configurator;
-GRANT ALL ON TABLE meta.user_schema_access TO configurator;
+-- GRANT ALL ON SCHEMA meta TO configurator;
+-- GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
+-- GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
+-- GRANT ALL ON TABLE meta.appconfig_values TO configurator;
+-- GRANT ALL ON TABLE meta.scripts TO configurator;
+-- GRANT ALL ON TABLE meta.schemas TO configurator;
+-- GRANT ALL ON TABLE meta.tables TO configurator;
+-- GRANT ALL ON TABLE meta.columns TO configurator;
+-- GRANT ALL ON TABLE meta.constraints TO configurator;
+-- GRANT ALL ON TABLE meta.user_schema_access TO configurator;
 
 -- Administrator role
 
@@ -352,7 +352,8 @@ INSERT INTO authentication.users(
 		last_name,
 		PASSWORD,
 		is_active,
-		role
+		role, 
+		schemas
 	)
 VALUES (
 		'admin@test.com',
@@ -360,7 +361,8 @@ VALUES (
 		'admin',
 		'admin123',
 		TRUE,
-		'administrator'
+		'administrator', 
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'config@test.com',
@@ -368,7 +370,8 @@ VALUES (
 		'admin',
 		'config123',
 		TRUE,
-		'configurator'
+		'configurator',
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'user@test.com',
@@ -376,7 +379,8 @@ VALUES (
 		'admin',
 		'user123',
 		TRUE,
-		'user'
+		'user',
+		'{app_rentals, app_service_support}'
 	) ON CONFLICT (email) DO NOTHING;
 -- If you change anything here after they've been created once in the database, it won't have any effect. You need to remove them first from the database.
 NOTIFY pgrst,

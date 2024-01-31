@@ -14,7 +14,7 @@ const SchemaSelector = ({
   displayType = DisplayType.NavDropdown,
 }: SchemaSelectorProps) => {
   const schemas = [
-    ...new Set(vmd.getSchemas().map((schema) => schema.schema_name)),
+    ...new Set(vmd.getApplicationSchemas().map((schema) => schema.schema_name)),
   ];
 
   const selectedSchema: string = useSelector(

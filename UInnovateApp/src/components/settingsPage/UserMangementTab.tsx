@@ -21,10 +21,10 @@ const UserManagementTab = () => {
 	const [users, setUsers] = useState<Row[]>([]);
 
 	const role = useSelector((state: RootState) => state.auth.role);
-	
+
 	// Hides the menu for non-admin roles (except for anonymous)
-	if(!(role === Role.ADMIN || role === null)){
-		return <UnauthorizedScreen/>
+	if (!(role === Role.ADMIN || role === null)) {
+		return <UnauthorizedScreen />
 	}
 
 	const getUsers = async () => {
@@ -83,7 +83,6 @@ const UserManagementTab = () => {
 									return <React.Fragment key={idx} />
 
 								})}
-								{/* <UserTableRow firstName="John" lastName="Doe" emailAddress="john.doe@email.com" role="admin" active schemaAccess={[]} /> */}
 							</tbody>
 						</TableComponent>
 					</div>
@@ -109,6 +108,7 @@ interface UserTableRowProps {
 }
 const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, role, active, schemaAccess }) => {
 	const [schemaAccessList, setSchemaAccessList] = useState(schemaAccess);
+	// const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
 
 	function handleActiveToggle() {
@@ -124,7 +124,9 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
 		</td>
 		<td>
-			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} size="small" />
+			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} size="small" sx={{
+				'& .MuiSelect-select': {}, minWidth: 400, maxWidth: 400
+			}} />
 		</td>
 	</tr >
 }

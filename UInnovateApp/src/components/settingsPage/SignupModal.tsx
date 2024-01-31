@@ -36,7 +36,7 @@ const REGEX_LIST = [
 enum SignupState {
 	INITIAL, LOGIN, SIGNUP, SIGNUP_SUCCESSFUL
 };
-enum ErrMsg {
+export enum ErrMsg {
 	INVALID_EMAIL = "Invalid email address",
 	EMAIL_NOT_FOUND = "Couldn't find your email address in the system",
 	WRONG_PASSWORD = "Incorrect password for the given email address",
