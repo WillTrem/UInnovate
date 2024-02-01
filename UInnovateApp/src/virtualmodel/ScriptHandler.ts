@@ -91,14 +91,15 @@ class ScriptHandler {
   }
 
   // This method will be used to get all rows from the table
-  public getAllRows() {
+  public async getAllRows() {
     const accessor = vmd.getRowsDataAccessor(
       this.schema.schema_name,
       this.table.table_name
     );
 
     try {
-      return accessor.fetchRows();
+      const rows = await accessor.fetchRows();
+      return rows;
     } catch (error) {
       ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
       return;
