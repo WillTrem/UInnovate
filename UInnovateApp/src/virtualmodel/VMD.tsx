@@ -475,14 +475,15 @@ class VirtualModelDefinition {
   getRemoveRowAccessor(
     schema_name: string,
     table_name: string,
-    row_id: string
+    primary_key: string,
+    primary_key_value: string
   ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
       return new DataAccessor(
-        `${table.url}?id=eq.${row_id}`, // PostgREST URL for removing a row from its id
+        `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
         {
           "Content-Profile": schema_name,
         }
@@ -604,6 +605,12 @@ export class Table {
   // return type : Column[]
   getColumns() {
     return this.columns;
+  }
+
+  // Method to get the table's primary key
+  // return type : Column
+  getPrimaryKey() {
+    return this.columns.find((column) => column.getEditability() === false);
   }
 
   // Method to get the table's required columns

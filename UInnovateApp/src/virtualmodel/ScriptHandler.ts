@@ -10,9 +10,11 @@ interact with a table in the list view page through custom scripts
 */
 class ScriptHandler {
   public script: Row;
-  public table: Table;
+  public table: Table = new Table("");
 
   private readonly schema: Schema;
+  private readonly primary_key: string = this.table.getPrimaryKey()
+    ?.column_name as string;
 
   // This constructor will be used to initialize the script handler
   constructor(script: Row, table: Table) {
@@ -50,7 +52,24 @@ class ScriptHandler {
 
   // This method will be used to remove a row from the table
   // Controversial method, we need to discuss how to implement this
-  public removeRow(row: Row) {}
+  public removeRow(row: Row) {
+    const accessor = vmd.getRemoveRowAccessor(
+      this.schema.schema_name,
+      this.table.table_name,
+      this.primary_key,
+      row[this.primary_key]
+    );
+
+    try {
+      accessor.deleteRow();
+    } catch (error) {
+      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
+      return;
+    }
+
+    vmd.refetchSchemas();
+    ScriptSuccessPopup({ onClose: () => {} });
+  }
 
   // This method will be used to update a row in the table
   public updateRow(row: Row) {
