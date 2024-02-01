@@ -1,10 +1,13 @@
-import { Row, DataAccessor } from "../virtualmodel/DataAccessor";
+import { Row } from "../virtualmodel/DataAccessor";
 import vmd, { Table, Schema } from "../virtualmodel/VMD";
+import {
+  ScriptErrorPopup,
+  ScriptSuccessPopup,
+} from "../components/ScriptPopup";
 
 /* This class will be used to define methods that users can use to 
 interact with a table in the list view page through custom scripts
 */
-
 class ScriptHandler {
   public script: Row;
   public table: Table;
@@ -21,29 +24,77 @@ class ScriptHandler {
     if (!schema) {
       throw new Error("Table schema not found");
     }
+
     this.schema = schema;
   }
 
   // This method will be used to add a row to the table
-  public addRow() {}
+  // We need to refetch schemas to dynamically update the display of the table
+  public addRow(row: Row) {
+    const accessor = vmd.getAddRowDataAccessor(
+      this.schema.schema_name,
+      this.table.table_name,
+      row
+    );
+
+    try {
+      accessor.addRow();
+    } catch (error) {
+      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
+      return;
+    }
+
+    vmd.refetchSchemas();
+    return ScriptSuccessPopup({ onClose: () => {} });
+  }
 
   // This method will be used to remove a row from the table
-  public removeRow() {}
+  // Controversial method, we need to discuss how to implement this
+  public removeRow(row: Row) {}
 
   // This method will be used to update a row in the table
-  public updateRow() {}
+  public updateRow(row: Row) {
+    const accessor = vmd.getUpdateRowDataAccessor(
+      this.schema.schema_name,
+      this.table.table_name,
+      row
+    );
 
-  // This method will be used to get a row from the table
-  public getRow() {}
+    try {
+      accessor.updateRow();
+    } catch (error) {
+      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
+      return;
+    }
+
+    vmd.refetchSchemas();
+    ScriptSuccessPopup({ onClose: () => {} });
+  }
 
   // This method will be used to get all rows from the table
-  public getAllRows() {}
+  public getAllRows() {
+    const accessor = vmd.getRowsDataAccessor(
+      this.schema.schema_name,
+      this.table.table_name
+    );
 
-  // This method will be used to get a column from the table
-  public getColumn() {}
+    try {
+      return accessor.fetchRows();
+    } catch (error) {
+      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
+      return;
+    }
+  }
+
+  // This method will be used to get one column from a table
+  public getColumn(columnName: string) {
+    return this.table.getColumn(columnName);
+  }
 
   // This method will be used to get all columns from the table
-  public getAllColumns() {}
+  public getAllColumns() {
+    return this.table.getColumns();
+  }
 }
 
 export default ScriptHandler;

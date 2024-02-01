@@ -230,8 +230,8 @@ class VirtualModelDefinition {
       const data: ConfigData[] = response.data;
 
       data.forEach((config) => {
-                // Find the table's schema
-                const schema = this.getTableSchema(config.table);
+        // Find the table's schema
+        const schema = this.getTableSchema(config.table);
 
         if (!schema) {
           // If the schema doesn't exist, skip this config
@@ -320,29 +320,52 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
   // return type : DataAccessor
-  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, Limit: number, Page: number) {
+  getRowsDataAccessorForOrder(
+    schema_name: string,
+    table_name: string,
+    order_by: string,
+    Limit: number,
+    Page: number
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
     const limit = Limit.toString();
     const page = ((Page - 1) * Limit).toString();
     if (schema && table) {
-      return new DataAccessor(table.url + "?order=" + order_by + "&limit=" + limit + "&offset=" + page, {
-        "Accept-Profile": schema.schema_name,
-      });
+      return new DataAccessor(
+        table.url +
+          "?order=" +
+          order_by +
+          "&limit=" +
+          limit +
+          "&offset=" +
+          page,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
     } else {
       throw new Error("Schema or table does not exist");
     }
   }
   // Method to return a data accessor object to fetch rows from a table For Look up Table
   // return type : DataAccessor
-  getRowsDataAccessorForLookUpTable(schema_name: string, table_name: string, SearchKey: string, SearchValue: string) {
+  getRowsDataAccessorForLookUpTable(
+    schema_name: string,
+    table_name: string,
+    SearchKey: string,
+    SearchValue: string
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
-      return new DataAccessor(table.url + "?" + SearchKey + "=eq." + SearchValue, {
-        "Accept-Profile": schema.schema_name,
-      });
+      return new DataAccessor(
+        table.url + "?" + SearchKey + "=eq." + SearchValue,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
     } else {
       throw new Error("Schema or table does not exist");
     }
@@ -394,7 +417,13 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to update a row in a table
   // return type : DataAccessor
-  getUpdateRowDataAccessorView(schema_name: string, table_name: string, row: Row, primarykey: string, primarykeyvalue: string) {
+  getUpdateRowDataAccessorView(
+    schema_name: string,
+    table_name: string,
+    row: Row,
+    primarykey: string,
+    primarykeyvalue: string
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -434,6 +463,28 @@ class VirtualModelDefinition {
         },
         params,
         row
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+  // Method to return a data accessor to remove a row from a table
+  // return type: DataAccessor
+  getRemoveRowAccessor(
+    schema_name: string,
+    table_name: string,
+    row_id: string
+  ) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+
+    if (schema && table) {
+      return new DataAccessor(
+        `${table.url}?id=eq.${row_id}`, // PostgREST URL for removing a row from its id
+        {
+          "Content-Profile": schema_name,
+        }
       );
     } else {
       throw new Error("Schema or table does not exist");
@@ -530,7 +581,12 @@ export class Table {
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column, references_table: string, is_editable: boolean, references_by: string) {
+  addColumn(
+    column: Column,
+    references_table: string,
+    is_editable: boolean,
+    references_by: string
+  ) {
     column.setReferenceTable(references_table);
     column.setEditability(is_editable);
     column.setReferencesBy(references_by);
@@ -657,7 +713,6 @@ export class Table {
   setLookupCounter(lookup_counter: string) {
     this.lookup_counter = lookup_counter;
   }
-
 }
 
 export class Column {
