@@ -470,6 +470,7 @@ class VirtualModelDefinition {
   }
 
   // Method to return a data accessor to remove a row from a table
+  // Note that this removes a row from its id (if the table's primary key isnt exactly "id", this will not work)
   // return type: DataAccessor
   getRemoveRowAccessor(
     schema_name: string,

@@ -81,7 +81,21 @@ export class DataAccessor {
     }
   }
 
-  toggleAuthentication(value: boolean){
+  // Method to delete a row from a table
+  // return type: AxiosResponse
+  async deleteRow() {
+    try {
+      const response = await axiosCustom.delete(this.data_url, {
+        headers: this.headers,
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Could not delete row:", error);
+    }
+  }
+
+  toggleAuthentication(value: boolean) {
     axiosCustom.defaults.withCredentials = value;
   }
 }
