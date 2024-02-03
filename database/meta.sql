@@ -239,6 +239,46 @@ BEGIN
 END;
 $BODY$;
 
+-- EXPORT FUNCTIONALITY FOR i18n Configurations such as languages, keys, and values
+CREATE OR REPLACE FUNCTION meta.export_i18n_to_json()
+RETURNS json
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    i18n_languages_json json;
+    i18n_keys_json json;
+    i18n_values_json json;
+BEGIN
+    SELECT COALESCE(json_agg(row_to_json(lang)), '[]') INTO i18n_json
+    -- Construct the JSON object using the i18n_languages 
+    FROM (
+        SELECT id, language_code, language_name
+        FROM meta.i18n_languages
+    ) lang;
+    -- Construct the JSON object using the i18n_keys
+    SELECT json_agg(row_to_json(keys)) INTO i18n_json
+    FROM (
+        SELECT id, key_code, is_default
+        FROM meta.i18n_keys
+    ) keys;
+    -- Construct the JSON object using the i18n_values
+    SELECT json_agg(row_to_json(values)) INTO i18n_json
+    FROM (
+        SELECT id, language_id, key_id, value
+        FROM meta.i18n_values
+    ) values;
+
+    -- Combine the JSON objects into a single JSON object
+    i18n_json = json_build_object(
+        'languages', i18n_languages_json,
+        'keys', i18n_keys_json,
+        'values', i18n_values_json
+    );
+
+    RETURN i18n_json;
+END;
+$BODY$;
+
 -- IMPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.import_appconfig_from_json(json)
 RETURNS void
@@ -267,11 +307,45 @@ BEGIN
 END;
 $BODY$;
 
+-- IMPORT FUNCTIONALITY FOR i18n configurations such as languages, keys, and values
+CREATE OR REPLACE FUNCTION meta.import_i18n_from_json(json)
+RETURNS void
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    i18n_data json;
+    i18n_languages_data json;
+    i18n_keys_data json;
+    i18n_values_data json;
+BEGIN
+    -- Extract data for i18n_languages and insert into meta.i18n_languages
+    i18n_data = $1;
+    i18n_languages_data = i18n_data->'languages';
+    i18n_keys_data = i18n_data->'keys';
+    i18n_values_data = i18n_data->'values';
+    DELETE FROM meta.i18n_languages;
+    INSERT INTO meta.i18n_languages (id, language_code, language_name)
+    SELECT (lang_row->>'id')::int, lang_row->>'language_code', lang_row->>'language_name'
+    FROM json_array_elements(i18n_languages_data) AS lang_row;
+    DELETE FROM meta.i18n_keys;
+    INSERT INTO meta.i18n_keys (id, key_code, is_default)
+    SELECT (key_row->>'id')::int, key_row->>'key_code', (key_row->>'is_default')::boolean
+    FROM json_array_elements(i18n_keys_data) AS key_row;
+    DELETE FROM meta.i18n_values;
+    INSERT INTO meta.i18n_values (id, language_id, key_id, value)
+    SELECT (val_row->>'id')::int, (val_row->>'language_id')::int, (val_row->>'key_id')::int, val_row->>'value'
+    FROM json_array_elements(i18n_values_data) AS val_row;
+END;
+$BODY$;
+
+
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
 GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
+GRANT ALL ON FUNCTION meta.export_i18n_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_i18n_from_json(json) TO configurator;
 GRANT USAGE ON SCHEMA information_schema TO "user";
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
 GRANT SELECT ON information_schema.referential_constraints TO "user";
