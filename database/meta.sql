@@ -249,33 +249,29 @@ DECLARE
     i18n_keys_json json;
     i18n_values_json json;
 BEGIN
-    SELECT COALESCE(json_agg(row_to_json(lang)), '[]') INTO i18n_json
-    -- Construct the JSON object using the i18n_languages 
+    SELECT COALESCE(json_agg(row_to_json(lang)), '[]') INTO i18n_languages_json
     FROM (
         SELECT id, language_code, language_name
         FROM meta.i18n_languages
     ) lang;
-    -- Construct the JSON object using the i18n_keys
-    SELECT json_agg(row_to_json(keys)) INTO i18n_json
+
+    SELECT COALESCE(json_agg(row_to_json(keys)), '[]') INTO i18n_keys_json
     FROM (
         SELECT id, key_code, is_default
         FROM meta.i18n_keys
     ) keys;
-    -- Construct the JSON object using the i18n_values
-    SELECT json_agg(row_to_json(values)) INTO i18n_json
+
+    SELECT COALESCE(json_agg(row_to_json(values)), '[]') INTO i18n_values_json
     FROM (
         SELECT id, language_id, key_id, value
         FROM meta.i18n_values
     ) values;
 
-    -- Combine the JSON objects into a single JSON object
-    i18n_json = json_build_object(
+    RETURN json_build_object(
         'languages', i18n_languages_json,
         'keys', i18n_keys_json,
         'values', i18n_values_json
     );
-
-    RETURN i18n_json;
 END;
 $BODY$;
 
