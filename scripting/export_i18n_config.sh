@@ -8,13 +8,8 @@ output_file="i18n_configurations.json"
 POSTGREST_ENDPOINT="http://localhost:3000"
 FUNCTION_ENDPOINT="$POSTGREST_ENDPOINT/rpc/export_i18n_to_json"
 
-DB_CONTAINER_NAME="db"
-DB_USER=$POSTGRES_USER
-DB_PASS=$POSTGRES_PASSWORD
-DB_NAME=$POSTGRES_DB_NAME
-
 # Call the function directly
 curl -s "$FUNCTION_ENDPOINT" \
- -X POST -H "Content-Profile: meta" -H "Content-Type: application/json" > "$output_file"
+    -X POST -H "Content-Profile: meta" -H "Content-Type: application/json" > "$output_file"
 
 echo "i18n configurations have been exported to $output_file"
