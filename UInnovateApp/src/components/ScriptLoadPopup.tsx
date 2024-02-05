@@ -22,18 +22,13 @@ const ScriptLoadPopup = ({
           script["table_name"]
         ) as Table;
 
-        const firstLine = "const handler = new ScriptHandler(script, table);";
+        const handler = new ScriptHandler(script, table);
         const userScript = script["content"];
 
-        const execute_script = new Function(
-          "ScriptHandler",
-          "script",
-          "table",
-          firstLine + "\n" + userScript
-        );
+        const sandbox = new ScriptSandbox();
+        sandbox.executeScript(userScript, table, handler);
 
-        console.log(execute_script);
-        execute_script(ScriptHandler, script, table);
+        console.log(sandbox);
       }
     }
     onClose();
