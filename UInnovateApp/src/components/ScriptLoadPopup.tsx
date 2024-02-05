@@ -3,7 +3,7 @@ import "../styles/AddEnumModal.css";
 import { Row } from "../virtualmodel/DataAccessor";
 import vmd, { Table } from "../virtualmodel/VMD";
 import ScriptHandler from "../virtualmodel/ScriptHandler";
-import ScriptSandbox from "../virtualmodel/commonjs/ScriptSandbox";
+import ScriptSandbox from "../virtualmodel/sandbox/ScriptSandbox";
 
 const ScriptLoadPopup = ({
   onClose,

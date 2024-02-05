@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"node src/virtualmodel/sandbox/index.js\"",
     "build": "tsc --noEmit --skipLibCheck --noUnusedLocals || true && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives  --max-warnings 0",
     "preview": "vite preview",
@@ -63,6 +63,7 @@
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.0.3",
     "@vitest/coverage-istanbul": "^0.34.6",
+    "concurrently": "^8.2.2",
     "cypress": "^13.3.0",
     "cypress-vite": "^1.4.2",
     "eslint": "^8.51.0",
