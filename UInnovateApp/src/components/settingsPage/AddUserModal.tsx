@@ -28,14 +28,14 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 
 	// Schema Access List state
 	const [schemaAccessList, setSchemaAccessList] = useState<string[]>([]);
-	// const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
-	const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
+	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
+	// const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
 
 	// Handles updating the input values with the schemaAccessList
 	useEffect(() => {
 		const newInput = {
 			...inputValues,
-			schemas: `{${schemaAccessList.join(', ')}}` // Formats the schema access list into the postgresql array format
+			schema_access: `{${schemaAccessList.join(', ')}}` // Formats the schema access list into the postgresql array format
 		}
 		setInputValues(newInput);
 	}, [schemaAccessList])

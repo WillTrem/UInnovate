@@ -108,8 +108,8 @@ interface UserTableRowProps {
 }
 const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, role, active, schemaAccess }) => {
 	const [schemaAccessList, setSchemaAccessList] = useState(schemaAccess);
-	// const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
-	const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
+	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
+	// const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
 
 	function handleActiveToggle() {
 		// TODO: Implement the active toggle function

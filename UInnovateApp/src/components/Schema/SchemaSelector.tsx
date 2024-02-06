@@ -5,16 +5,25 @@ import { updateSelectedSchema } from "../../redux/SchemaSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import vmd from "../../virtualmodel/VMD";
+import { LOGIN_BYPASS } from "../../redux/AuthSlice";
 
 interface SchemaSelectorProps {
   displayType?: DisplayType;
 }
 
-const SchemaSelector = ({
+const SchemaSelector: React.FC<SchemaSelectorProps> = ({
   displayType = DisplayType.NavDropdown,
 }: SchemaSelectorProps) => {
+  const schema_access = useSelector((state: RootState) => state.auth.schema_access);
   const schemas = [
-    ...new Set(vmd.getApplicationSchemas().map((schema) => schema.schema_name)),
+    ...new Set(vmd.getApplicationSchemas()
+      .map((schema) => schema.schema_name)
+      .filter((schema_name) => {
+        // Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
+        if ((LOGIN_BYPASS && !schema_access) || schema_access  && (schema_access as string[]).includes(schema_name)) {
+          return schema_name;
+        }
+      })),
   ];
 
   const selectedSchema: string = useSelector(

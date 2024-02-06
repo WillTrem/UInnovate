@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS authentication.users (
 	role name NOT NULL CHECK (length(role) < 512),
 	PASSWORD text CHECK (length(PASSWORD) < 512),
 	is_active bool NOT NULL, 
-	schemas text[]
+	schema_access text[]
 );
 
 -- CREATE TABLE IF NOT EXISTS meta.user_schema_access (
@@ -115,12 +115,15 @@ CREATE TYPE authentication.jwt_token AS (token text);
 
 CREATE OR REPLACE FUNCTION meta.login(email text, PASSWORD text) RETURNS authentication.jwt_token AS $$
 DECLARE _role name;
+_schema_access text[];
 result authentication.jwt_token;
 refresh_token authentication.jwt_token;
 BEGIN -- check email & password
 SELECT authentication.user_role(email, PASSWORD) INTO _role;
 IF _role IS NULL THEN raise invalid_password USING message = 'invalid email or password';
 END IF;
+-- Obtains the schema access list of the user 
+SELECT schema_access FROM authentication.users WHERE users.email = login.email INTO _schema_access;
 -- signs the jwt access token
 SELECT sign(
 		row_to_json(r),
@@ -129,10 +132,11 @@ SELECT sign(
 FROM (
 		SELECT _role AS role,
 			login.email AS email,
+			_schema_access as schema_access,
 			extract(
 				epoch
 				FROM NOW()
-			)::integer + 60 * 60 AS exp -- 1 hr
+			)::integer + 60 * 60 AS exp -- 1 hr,
 	) AS r INTO result;
 SELECT sign(
 		row_to_json(rt),
@@ -157,9 +161,9 @@ $$ language plpgsql SECURITY DEFINER;
 
 
 -- FUNCTION CREATE USER, for administrators to create the users in the database before they can sign up 
-CREATE OR REPLACE FUNCTION meta.create_user(email text, role name, schemas text[]) RETURNS SETOF integer AS $$ BEGIN
-INSERT INTO authentication.users(email, role, is_active, schemas)
-VALUES (email, role, TRUE, create_user.schemas);
+CREATE OR REPLACE FUNCTION meta.create_user(email text, role name, schema_access text[]) RETURNS SETOF integer AS $$ BEGIN
+INSERT INTO authentication.users(email, role, is_active, schema_access)
+VALUES (email, role, TRUE, create_user.schema_access);
 RETURN;
 END;
 $$ language plpgsql SECURITY DEFINER;
