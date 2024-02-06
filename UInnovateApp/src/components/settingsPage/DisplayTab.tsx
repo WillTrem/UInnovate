@@ -5,9 +5,15 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
 import vmd from "../../virtualmodel/VMD";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
 
 const DisplayTab = () => {
-  const tables = vmd.getAllTables();
+  const selectedSchema = useSelector((state: RootState) => state.schema.value);
+  // const tables = vmd.getAllTables();
+
+  // Only show tables of the selected schema
+  const tables = vmd.getSchema(selectedSchema)?.tables;
   const tableItems = tables?.map((table) => (
     <TableItem key={table.table_name} table={table} />
   ));
