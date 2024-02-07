@@ -43,6 +43,7 @@ import {
 } from "mui-tiptap";
 import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
+import axios from "axios";
 
 interface TableListViewProps {
   table: Table;
@@ -138,34 +139,47 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentPhone, setCurrentPhone] = useState<string>("");
   const [currentCategory, setCurrentCategory] = useState<string>("");
   const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
+  const [showFiles, setShowFiles] = useState<boolean>(false);
   const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
     () => <></>
   );
-  const [item, setItem] = useState(null);
-  const [itemImage, setItemImage] = useState(null);
-  const [itemName, setItemName] = useState(null);
-  const [currentFile, setCurrentFile] = useState(null);
+  const [item, setItem] = useState({});
 
-  const schema = vmd.getSchema("meta");
+  const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
-  const fileSchema = vmd.getSchema("app_filemanager");
-  const fileTable = vmd.getTable("app_filemanager", "app_filestorage");
+  const fileSchema = vmd.getSchema("filemanager");
+  const fileTable = vmd.getTable("filemanager", "filestorage");
+  const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
+    "filemanager",
+    "filegroup_view"
+  );
+  const fileStorageViewDataAccessor = vmd.getViewRowsDataAccessor(
+    "filemanager",
+    "filestorage_view"
+  );
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [scriptDescription, setScriptDescription] = useState<string | null>("");
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [files, setFiles] = useState<Row[] | undefined>([]);
-  const [columnsAndFile, setColumnsAndFile] = useState([]);
+  const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
+  const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
+
+  const getFileGroupsView = async () => {
+    fileGroupsViewDataAccessor.fetchRows().then((response) => {
+      setFileGroupsView(response);
+    });
+  };
 
   const getScripts = async () => {
-    if (!schema || !script_table) {
+    if (!meta_schema || !script_table) {
       throw new Error("Schema or table not found");
     }
 
     const scripts_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema?.schema_name,
+      meta_schema?.schema_name,
       script_table?.table_name
     );
 
@@ -196,12 +210,12 @@ const TableListView: React.FC<TableListViewProps> = ({
   }, [selectedScript]);
 
   const getConfigs = async () => {
-    if (!schema || !config_table) {
+    if (!meta_schema || !config_table) {
       throw new Error("Schema or table not found");
     }
 
     const config_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema?.schema_name,
+      meta_schema?.schema_name,
       config_table?.table_name
     );
 
@@ -228,6 +242,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     getScripts();
     getConfigs();
     getFiles();
+    getFileGroupsView();
   }, [inputValues]);
 
   const inputStyle = {
@@ -255,28 +270,81 @@ const TableListView: React.FC<TableListViewProps> = ({
     setPageNumber(value);
   };
 
-  const onItemAdded = (e, item, itemImage, itemName, currentColumn) => {
+  const onItemAdded = async (
+    e,
+    item,
+    itemExtension,
+    itemName,
+    currentColumn
+  ) => {
     e.preventDefault();
+    await axios
+      .post(
+        "http://localhost:3000/rpc/add_file_to_group",
+        {
+          in_filegroupid: currentRow.row[currentColumn]
+            ? currentRow.row[currentColumn]
+            : null,
+          in_blob: item,
+          in_filename: itemName,
+          in_extension: itemExtension,
+        },
+        {
+          headers: {
+            "Content-Profile": "filemanager",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        vmd
+          .getUpdateRowDataAccessor(
+            vmd.getTableSchema(table.table_name)?.schema_name,
+            table.table_name,
+            { ...currentRow.row, [currentColumn]: response.data[0].groupid }
+          )
+          .updateRow();
+        setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
+      });
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
     );
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
     }
-    setItem(item);
-    setItemImage(itemImage);
-    setItemName(itemName);
+    setItem({ file: item, name: itemName, extension: itemExtension });
+    getRows();
+  };
 
-    setInputValues((prevInputValues) => ({
-      ...prevInputValues,
-      [currentColumn]: item,
-    }));
-    let temp = columnsAndFile;
-    temp = [...temp, [currentColumn, item]];
-    setColumnsAndFile([...columnsAndFile, [currentColumn, item]]);
-    let tempRow = currentRow;
-    tempRow.row = { ...tempRow.row, [currentColumn]: item };
-    setCurrentRow(tempRow);
+  const onItemRemoved = async (e, item, currentColumn) => {
+    e.preventDefault();
+    await axios.post(
+      "http://localhost:3000/rpc/remove_file_from_group",
+      {
+        in_filegroupid: currentRow.row[currentColumn],
+        in_fileid: item.id,
+      },
+      {
+        headers: {
+          "Content-Profile": "filemanager",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const newItems = allFileGroups?.filter((file) => file.id !== item.id);
+    setAllFileGroups(newItems);
+    getRows();
+  };
+
+  const handleShowFiles = (column: Column) => {
+    fileStorageViewDataAccessor.fetchRows().then((response) => {
+      setAllFileGroups(
+        response?.filter(
+          (file) => file.groupid == currentRow.row[column.column_name]
+        )
+      );
+    });
+    setShowFiles(true);
   };
 
   const handleInputChange = (
@@ -326,33 +394,30 @@ const TableListView: React.FC<TableListViewProps> = ({
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
     );
-    let file_accessor = null;
-    let response = null;
-    let tempInput = inputValues;
-    if (columnsAndFile && columnsAndFile.length !== 0) {
-      columnsAndFile.forEach(async (columnAndFile) => {
-        if (columnAndFile[1] != null) {
-          file_accessor = vmd.getAddRowDataAccessor(
-            fileSchema?.schema_name,
-            fileTable?.table_name,
-            { file_name: itemName, extension: ".pdf", blob: columnAndFile[1] }
-          );
-          response = await file_accessor.addRow();
-          tempInput = {
-            ...tempInput,
-            [columnAndFile[0]]: response.data[0]["id"],
-          };
-        }
-      });
-    }
-    await new Promise((r) => setTimeout(r, 500));
-
-    getFiles();
+    // if (columnsAndFile && columnsAndFile.length !== 0 && item.name != null) {
+    //   columnsAndFile.forEach(async (columnAndFile) => {
+    //     if (columnAndFile[1] != null) {
+    //       file_accessor = vmd.getAddRowDataAccessor(
+    //         fileSchema?.schema_name,
+    //         fileTable?.table_name,
+    //         { file_name: item.name, extension: ".pdf", blob: columnAndFile[1] }
+    //       );
+    //       await file_accessor.addRow().then((response) => {
+    //         tempInput = {
+    //           ...tempInput,
+    //           [columnAndFile[0]]: response.data[0]["id"],
+    //         };
+    //       });
+    //     }
+    //   });
+    // }
+    // await new Promise((r) => setTimeout(r, 500));
+    // getFiles();
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
       table.table_name,
-      tempInput,
+      inputValues,
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
@@ -366,217 +431,224 @@ const TableListView: React.FC<TableListViewProps> = ({
   // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
 
   // }
+  const NewInputField = (column: Column) => {
+    if (!appConfigValues) {
+      return null;
+    }
+    const columnDisplayType = appConfigValues?.find(
+      (element) =>
+        element.column == column.column_name &&
+        element.table == table.table_name &&
+        element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
+    );
+
+    if (column.is_editable == false) {
+      localStorage.setItem(
+        "currentPrimaryKeyValue",
+        currentRow.row[column.column_name]
+      );
+    }
+
+    if (column.references_table != null) {
+      const string = column.column_name + "L";
+      localStorage.setItem(
+        string,
+        currentRow.row[column.column_name] as string
+      );
+    }
+    if (
+      !columnDisplayType ||
+      columnDisplayType.value == "text" ||
+      columnDisplayType.value == "email"
+    ) {
+      return (
+        <input
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow?.row[column.column_name]) || ""}
+          name={column.column_name}
+          type="text"
+          style={inputStyle}
+          onChange={handleInputChange}
+        />
+      );
+    } else if (columnDisplayType.value == "number") {
+      return (
+        <input
+          type="number"
+          name={column.column_name}
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          style={inputStyle}
+          onChange={handleInputChange}
+        />
+      );
+    } else if (columnDisplayType.value == "longtext") {
+      return (
+        <textarea
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          name={column.column_name}
+          type="text"
+          style={inputStyle}
+          onChange={handleInputChange}
+        />
+      );
+    } else if (columnDisplayType.value == "boolean") {
+      return (
+        <Switch
+          checked={
+            currentRow?.row[column.column_name] == "true"
+              ? true
+              : false || false
+          }
+          name={column.column_name}
+        />
+      );
+    } else if (columnDisplayType.value == "date") {
+      return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <StaticDatePicker
+            value={dayjs(currentRow.row[column.column_name])}
+            onChange={(date) =>
+              handleInputChange(date, column.column_name, "date")
+            }
+            name={column.column_name}
+            className="date-time-picker"
+            readOnly={column.is_editable === false ? true : false}
+          />
+        </LocalizationProvider>
+      );
+    } else if (columnDisplayType.value == "datetime") {
+      return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <StaticDateTimePicker
+            value={dayjs(currentRow.row[column.column_name])}
+            onChange={(date) =>
+              handleInputChange(date, column.column_name, "date")
+            }
+            name={column.column_name}
+            className="date-time-picker"
+            readOnly={column.is_editable === false ? true : false}
+          />
+        </LocalizationProvider>
+      );
+    } else if (columnDisplayType.value == "categories") {
+      return (
+        <Select
+          value={
+            currentCategory
+              ? currentCategory
+              : currentRow.row[column.column_name]
+          }
+          name={column.column_name}
+          onChange={(event) => {
+            handleInputChange(event, column.column_name, undefined);
+            setCurrentCategory(event.target.value);
+          }}
+          native
+          className="width"
+        >
+          {Object.keys(CategoriesDisplayType).map((value) => (
+            <option key={value} value={value}>
+              {value}
+            </option>
+          ))}
+        </Select>
+      );
+    } else if (columnDisplayType.value == "phone") {
+      return (
+        <MuiTelInput
+          value={
+            currentPhone !== "" || currentPhone
+              ? currentPhone
+              : currentRow.row[column.column_name]
+          }
+          onChange={(phone) => {
+            handleInputChange(phone, column.column_name, "phone");
+            setCurrentPhone(phone);
+          }}
+          name={column.column_name}
+        />
+      );
+    } else if (columnDisplayType.value == "currency") {
+      return (
+        <input
+          type="number"
+          name={column.column_name}
+          readOnly={column.is_editable === false ? true : false}
+          placeholder={String(currentRow.row[column.column_name]) || ""}
+          style={inputStyle}
+          onChange={handleInputChange}
+        />
+      );
+    } else if (columnDisplayType.value == "multiline_wysiwyg") {
+      return (
+        <RichTextEditor
+          name={column.column_name}
+          content={
+            currentWYSIWYG ? currentWYSIWYG : currentRow.row[column.column_name]
+          }
+          onChange={(event) => {
+            handleInputChange(event, column.column_name, undefined);
+            rteRef.current?.editor.setContent(event);
+          }}
+          ref={rteRef}
+          extensions={[StarterKit]} // Or any Tiptap extensions you wish!
+          // Optionally include `renderControls` for a menu-bar atop the editor:
+          renderControls={() => (
+            <MenuControlsContainer>
+              <MenuSelectHeading />
+              <MenuDivider />
+              <MenuButtonBold />
+              <MenuButtonItalic />
+              {/* Add more controls of your choosing here */}
+            </MenuControlsContainer>
+          )}
+        />
+      );
+    } else if (column.references_table == "filegroup") {
+      //filestorage_view.groupid == filegroup.id (filter filestorage view to only show things in that group)
+      //display icons needed depending on extension, filenames, number of files
+      //on drag and drop, add file to filestorage using the stored proc add_file_to_group(), but first convert file bytes to b64.
+      return showFiles ? (
+        <Dropzone
+          onItemAdded={onItemAdded}
+          onItemRemoved={onItemRemoved}
+          items={allFileGroups}
+          setAllFileGroups={setAllFileGroups}
+          currentColumn={column.column_name}
+        />
+      ) : (
+        <Button
+          variant="contained"
+          color="primary"
+          style={{ marginLeft: 15 }}
+          onClick={handleShowFiles.bind(this, column)}
+        >
+          Show Files
+        </Button>
+      );
+    }
+  };
+
+  // useEffect(() => {
+  //   setInputField(() => newInputField as (column: Column) => JSX.Element);
+  // }, [
+  //   currentRow,
+  //   columns,
+  //   table,
+  //   appConfigValues,
+  //   currentPhone,
+  //   rows,
+  //   currentCategory,
+  //   inputValues,
+  //   currentWYSIWYG,
+  //   showFiles,
+  // ]);
 
   useEffect(() => {
-    const newInputField = (column: Column) => {
-      if (!appConfigValues) {
-        return null;
-      }
-      const columnDisplayType = appConfigValues?.find(
-        (element) =>
-          element.column == column.column_name &&
-          element.table == table.table_name &&
-          element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-      );
-
-      if (column.is_editable == false) {
-        localStorage.setItem(
-          "currentPrimaryKeyValue",
-          currentRow.row[column.column_name]
-        );
-      }
-
-      if (column.references_table != null) {
-        const string = column.column_name + "L";
-        localStorage.setItem(
-          string,
-          currentRow.row[column.column_name] as string
-        );
-      }
-      if (
-        !columnDisplayType ||
-        columnDisplayType.value == "text" ||
-        columnDisplayType.value == "email"
-      ) {
-        return (
-          <input
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow?.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "number") {
-        return (
-          <input
-            type="number"
-            name={column.column_name}
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "longtext") {
-        return (
-          <textarea
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "boolean") {
-        return (
-          <Switch
-            checked={
-              currentRow?.row[column.column_name] == "true"
-                ? true
-                : false || false
-            }
-            name={column.column_name}
-          />
-        );
-      } else if (columnDisplayType.value == "date") {
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticDatePicker
-              value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) =>
-                handleInputChange(date, column.column_name, "date")
-              }
-              name={column.column_name}
-              className="date-time-picker"
-              readOnly={column.is_editable === false ? true : false}
-            />
-          </LocalizationProvider>
-        );
-      } else if (columnDisplayType.value == "datetime") {
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticDateTimePicker
-              value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) =>
-                handleInputChange(date, column.column_name, "date")
-              }
-              name={column.column_name}
-              className="date-time-picker"
-              readOnly={column.is_editable === false ? true : false}
-            />
-          </LocalizationProvider>
-        );
-      } else if (columnDisplayType.value == "categories") {
-        return (
-          <Select
-            value={
-              currentCategory
-                ? currentCategory
-                : currentRow.row[column.column_name]
-            }
-            name={column.column_name}
-            onChange={(event) => {
-              handleInputChange(event, column.column_name, undefined);
-              setCurrentCategory(event.target.value);
-            }}
-            native
-            className="width"
-          >
-            {Object.keys(CategoriesDisplayType).map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </Select>
-        );
-      } else if (columnDisplayType.value == "phone") {
-        return (
-          <MuiTelInput
-            value={
-              currentPhone !== "" || currentPhone
-                ? currentPhone
-                : currentRow.row[column.column_name]
-            }
-            onChange={(phone) => {
-              handleInputChange(phone, column.column_name, "phone");
-              setCurrentPhone(phone);
-            }}
-            name={column.column_name}
-          />
-        );
-      } else if (columnDisplayType.value == "currency") {
-        return (
-          <input
-            type="number"
-            name={column.column_name}
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "multiline_wysiwyg") {
-        return (
-          <RichTextEditor
-            name={column.column_name}
-            content={
-              currentWYSIWYG
-                ? currentWYSIWYG
-                : currentRow.row[column.column_name]
-            }
-            onChange={(event) => {
-              handleInputChange(event, column.column_name, undefined);
-              rteRef.current?.editor.setContent(event);
-            }}
-            ref={rteRef}
-            extensions={[StarterKit]} // Or any Tiptap extensions you wish!
-            // Optionally include `renderControls` for a menu-bar atop the editor:
-            renderControls={() => (
-              <MenuControlsContainer>
-                <MenuSelectHeading />
-                <MenuDivider />
-                <MenuButtonBold />
-                <MenuButtonItalic />
-                {/* Add more controls of your choosing here */}
-              </MenuControlsContainer>
-            )}
-          />
-        );
-      } else if (columnDisplayType.value == "file") {
-        let response;
-        files?.forEach(async (file) => {
-          if (file["id"] == currentRow.row[column.column_name]) {
-            response = file;
-          }
-        });
-        return (
-          <div className="centerize">
-            <Dropzone
-              onItemAdded={onItemAdded}
-              items={response ? response["blob"] : null}
-              itemsImage={response ? true : false}
-              itemsName={response ? response["file_name"] : null}
-              currentColumn={column.column_name}
-            />
-          </div>
-        );
-      }
-    };
-    setInputField(() => newInputField as (column: Column) => JSX.Element);
-  }, [
-    currentRow,
-    columns,
-    table,
-    appConfigValues,
-    currentPhone,
-    rows,
-    currentCategory,
-    inputValues,
-    currentWYSIWYG,
-  ]);
+    getRows();
+  }, [showFiles]);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
@@ -689,8 +761,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                     <td key={idx}>
                       {typeof cell === "boolean"
                         ? cell.toString()
-                        : cell?.toString().substring(0, 5) === "file_"
-                        ? files?.find((file) => file.id == cell)?.file_name
+                        : columns[idx].references_table === "filegroup"
+                        ? fileGroupsView?.find(
+                            (fileGroup) => fileGroup.id === cell
+                          )?.count
                         : cell}
                     </td>
                   );
@@ -740,6 +814,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           setCurrentWYSIWYG("");
           setOpenPanel(false);
           setInputValues({});
+          setShowFiles(false);
         }}
       >
         <div className="form-panel-container">
@@ -752,7 +827,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                     <label key={column.column_name + colIdx}>
                       {column.column_name}
                     </label>
-                    {inputField(column)}
+                    <NewInputField {...column} />
                   </div>
                 );
               })}
@@ -768,6 +843,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                 setCurrentWYSIWYG("");
                 setInputValues({});
                 setOpenPanel(false);
+                setShowFiles(false);
               }}
             >
               close

@@ -1,20 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
+import DownloadIcon from "@mui/icons-material/Download";
 import "../styles/Dropzone.css";
+import vmd from "../virtualmodel/VMD";
 
-function Dropzone({
-  onItemAdded,
-  items,
-  itemsImage,
-  itemsName,
-  currentColumn,
-}) {
+function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
   const [highlight, setHighlight] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [itemImage, setItemImage] = useState(itemsImage);
-  const [itemName, setItemName] = useState(itemsName);
-  const [item, setItem] = useState(items);
+  const [itemsList, setItemsList] = useState(items);
+
   const fileInputRef = React.createRef();
   const openFileDialog = () => {
     fileInputRef.current.click();
@@ -23,18 +18,62 @@ function Dropzone({
   const onItemAddedDefault = (evt) => {
     const name = evt.target.files[0].name;
     const extension = evt.target.files[0].type.replace(/(.*)\//g, "");
-    setItemName(name);
-    setItemImage("pdf-icon.png");
-    setItem(evt.target.files[0]);
-    if (onItemAdded) {
-      onItemAdded(
-        evt,
-        URL.createObjectURL(evt.target.files[0]),
-        true,
-        name,
-        currentColumn
-      );
+    const reader = new FileReader();
+    reader.readAsDataURL(evt.target.files[0]);
+    reader.onload = (e) => {
+      const buffer =
+        extension == "pdf"
+          ? reader.result
+              ?.toString()
+              .replace("data:application/pdf;base64,", "")
+          : extension == "jpg"
+          ? reader.result?.toString().replace("data:image/jpg;base64,", "")
+          : extension == "jpeg"
+          ? reader.result?.toString().replace("data:image/jpeg;base64,", "")
+          : extension == "png"
+          ? reader.result?.toString().replace("data:image/png;base64,", "")
+          : extension == "csv"
+          ? reader.result?.toString().replace("data:text/csv;base64,", "")
+          : null;
+
+      if (onItemAdded) {
+        onItemAdded(evt, buffer, extension, name, currentColumn);
+      }
+    };
+  };
+
+  function convertToByteArray(input) {
+    input = atob(input);
+    const binaryLen = input.length;
+    const bytes = new Uint8Array(binaryLen);
+    for (let i = 0; i < binaryLen; i++) {
+      const ascii = input.charCodeAt(i);
+      bytes[i] = ascii;
     }
+    return bytes;
+  }
+
+  const fetchAndDownloadFile = (e, item) => {
+    e.preventDefault();
+    vmd
+      .getRowDataAccessor("filemanager", "filestorage", "id", item.id)
+      .fetchRows()
+      .then((response) => {
+        const bytes = convertToByteArray(response[0].blob);
+        const blob = new Blob([bytes], {
+          type: "application/" + item.extension,
+        });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", item.filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   const onDragOver = (event) => {
@@ -53,7 +92,7 @@ function Dropzone({
     const files = event.dataTransfer.files;
     if (onItemAdded) {
       const array = fileListToArray(files);
-      onItemAdded(array);
+      onItemAdded(event, array);
     }
   };
 
@@ -64,18 +103,67 @@ function Dropzone({
     }
     return array;
   };
-
   return (
-    <>
-      {!item ? (
+    <div>
+      <div className="flex-row">
+        {itemsList?.length > 0
+          ? itemsList.map((item, index) => {
+              return (
+                <div className="display-flex" key={index}>
+                  <div className="display-flex-row align-end">
+                    <button
+                      className="delete-button margin-lr"
+                      onClick={(e) => onItemRemoved(e, item, currentColumn)}
+                      type="button"
+                    >
+                      {" "}
+                      <CloseIcon color="error"></CloseIcon>
+                    </button>
+                    <a href="" download={item.filename}>
+                      <button
+                        className="download-button margin-lr"
+                        type="button"
+                        onClick={(e) => fetchAndDownloadFile(e, item)}
+                      >
+                        {" "}
+                        <DownloadIcon></DownloadIcon>
+                      </button>
+                    </a>
+                  </div>
+                  <div className="display-inline-block" key={index}>
+                    <img
+                      alt="Item"
+                      id="image-stop"
+                      src={
+                        item.extension == "pdf"
+                          ? "pdf-icon.png"
+                          : item.extension == "jpg" ||
+                            item.extension == "jpeg" ||
+                            item.extension == "png"
+                          ? "image-icon.png"
+                          : item.extension == "csv"
+                          ? "csv-icon.png"
+                          : null
+                      }
+                      className="image-size"
+                    />
+                    <figcaption className="text-align truncate">
+                      {item.filename}
+                    </figcaption>
+                  </div>
+                </div>
+              );
+            })
+          : null}
         <div
-          className={`Dropzone ${highlight ? "bg-[#673ab7]/20" : ""}`}
+          className={`display-inline-block Dropzone ${
+            highlight ? "bg-[#673ab7]/20" : ""
+          }`}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
           onDrop={onDrop}
           onClick={openFileDialog}
-          style={{ cursor: item ? "default" : "pointer" }}
-          hidden={item !== null}
+          style={{ cursor: "pointer" }}
         >
           <>
             <input
@@ -93,31 +181,8 @@ function Dropzone({
             <span>Upload item</span>
           </>
         </div>
-      ) : (
-        <div className="flex flex-col">
-          <div className="flex justify-end p-0">
-            <button
-              className="flex p-0 justify-end"
-              onClick={(e) => onItemAdded(e, null, null, null, currentColumn)}
-            >
-              {" "}
-              <CloseIcon color="error"></CloseIcon>
-            </button>
-          </div>
-          <div className="centerize">
-            <img
-              alt="Item"
-              id="image-stop"
-              src={itemImage ? "pdf-icon.png" : null}
-              className="image-size"
-            />
-            <label htmlFor="image-stop" className="image-size">
-              {itemName}
-            </label>
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }
 

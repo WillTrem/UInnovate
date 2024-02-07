@@ -81,7 +81,7 @@ export class DataAccessor {
     }
   }
 
-  toggleAuthentication(value: boolean){
+  toggleAuthentication(value: boolean) {
     axios.defaults.withCredentials = value;
   }
 }
