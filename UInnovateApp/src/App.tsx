@@ -32,9 +32,9 @@ function App() {
        <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/check" element={<NavBar />} />
-        <Route path="/objview/:Type/:tableName" element={<ObjectMenu />} />
+        <Route path="/:schema" element={<ObjectMenu />} />
         <Route path="/objview/:Type/:tableName/:primeKey" element={<ObjectMenu />} />
-        <Route path="/objview" element={<ObjectMenu/> } />
+        <Route path="/:schema/:tableName" element={<ObjectMenu/> } />
         <Route path="/objview/:Type/:tableName" element={<TableEnumView />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<><p>Cannot be Found</p></>}/>

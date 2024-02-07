@@ -1,7 +1,7 @@
 import { NavBar } from "../components/NavBar";
 import vmd from "../virtualmodel/VMD";
 import { RootState } from "../redux/Store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Tab, Nav, Row, Col } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { Table } from "../virtualmodel/VMD";
@@ -10,6 +10,7 @@ import TableEnumView from "../components/TableEnumView";
 import UnauthorizedScreen from "../components/UnauthorizedScreen";
 import { LOGIN_BYPASS } from "../redux/AuthSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import { updateSelectedSchema } from "../redux/SchemaSlice";
 
 export function ObjectMenu() {
   const selectedSchema: string = useSelector(
@@ -18,18 +19,22 @@ export function ObjectMenu() {
   const navigate = useNavigate()
   const handleTableSelect = (tableName: Table) => {
     setActiveTable(tableName);
+    const schema = vmd.getTableSchema(tableName.table_name)
     // Navigate to the TableListView route with the selected table name
-    navigate(`/objview/${tableName.table_display_type.toLowerCase()}/${tableName.table_name.toLowerCase()}`);
+    navigate(`/${schema?.schema_name.toLowerCase()}/${tableName.table_name.toLowerCase()}`);
   };
+  const dispatch = useDispatch();
   const { tableName } = useParams()
-  const { Type } = useParams()
-
+  const {schema} = useParams()
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
 
   // Get the visible tables from the VMD for the selected schema
-  const tables = vmd.getVisibleTables(selectedSchema);
-
+  const tables = vmd.getVisibleTables(schema ?? selectedSchema);
+  
+  useEffect(() => {
+    dispatch(updateSelectedSchema(schema ?? ""));
+  }, [schema]);
   const user = useSelector((state: RootState) => state.auth.user);
 
 
@@ -64,9 +69,9 @@ export function ObjectMenu() {
                   {tables?.map((table: Table) => (
                     <Tab.Pane key={table.table_name} eventKey={table.table_name}>
                       {tableName === table.table_name ? (
-                        Type?.toLowerCase() === "list" || Type?.toLowerCase() === "details" ? (
+                        table.table_display_type === "list" ? (
                           <TableListView table={table}></TableListView>
-                        ) : Type?.toLowerCase() === "enum" ? (
+                        ) : table.table_display_type === "enum" ? (
                           <TableEnumView />
                         ) : null
                       ) : null}
