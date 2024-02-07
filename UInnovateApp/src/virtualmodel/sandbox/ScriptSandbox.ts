@@ -1,6 +1,7 @@
 "use strict";
 
-import ivm = require("isolated-vm");
+// import ivm = require("isolated-vm");
+import ivm from "isolated-vm";
 import ScriptHandler from "../ScriptHandler";
 import { Table } from "../VMD";
 
