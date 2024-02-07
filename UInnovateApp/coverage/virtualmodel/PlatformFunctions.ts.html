@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for virtualmodel/FunctionAccessor.tsx</title>
+    <title>Code coverage report for virtualmodel/PlatformFunctions.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">virtualmodel</a> FunctionAccessor.tsx</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">virtualmodel</a> PlatformFunctions.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.55% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/9</span>
+                <span class='fraction'>0/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/3</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.55% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/9</span>
+                <span class='fraction'>0/13</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -117,76 +117,76 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axiosCustom from "../api/AxiosCustom"
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import vmd from "./VMD";
 import { Row } from "./DataAccessor";
 &nbsp;
-export class FunctionAccessor {
-	function_url: string;
-	params?: { [key: string]: string };
-	headers: { [key: string]: string };
-	values?: Row;
+export interface ProcedureSchedulingParams {
+    functionName: string;
+    stored_procedure: string;
+    cron_schedule?: string;
+}
 &nbsp;
-	constructor(
-		function_url: string,
-		headers: { [key: string]: string },
-		params?: { [key: string]: string },
-		values?: Row
-	) {
-		this.function_url = function_url;
-		this.headers = headers;
-		this.params = params;
-		this.values = values;
-	}
 &nbsp;
-	// Method to execute a database function
-	// return type: AxiosResponse
-<span class="fstat-no" title="function not covered" >	async e</span>xecuteFunction(config?: {}) {
-<span class="cstat-no" title="statement not covered" >		try {</span>
-			const response = <span class="cstat-no" title="statement not covered" >await axiosCustom.post(this.function_url, this.values, {</span>
-				headers: this.headers,
-				...config
-			});
+export async function <span class="fstat-no" title="function not covered" >scheduleProcedure(p</span>arams: ProcedureSchedulingParams): Promise&lt;void&gt; {
+    // TODO: 
+    // 1. Ask VMD to give schema for cron
+    const schema = <span class="cstat-no" title="statement not covered" >await vmd.getSchema('cron');</span>
+    // 2. Ask to give all functions inside the schema
+    
+    // 3. Get function accessor for schedule job by name
+    const func = <span class="cstat-no" title="statement not covered" >await vmd.getFunctionAccessor(schema?.schema_name || '', params.functionName);</span>
+    const input = <span class="cstat-no" title="statement not covered" >new Row();</span>
+<span class="cstat-no" title="statement not covered" >    input.stored_procedure = params.stored_procedure;</span>
+<span class="cstat-no" title="statement not covered" >    input.cron_schedule = params.cron_schedule;</span>
+<span class="cstat-no" title="statement not covered" >    func.setBody(input);</span>
+<span class="cstat-no" title="statement not covered" >    await func.executeFunction();</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >			return response;</span>
-		} catch (error) {
-<span class="cstat-no" title="statement not covered" >			throw error;</span>
-		}
-	}
+    // 4. Call the function accessor with the schedule
+}
 &nbsp;
-	// Method to set the body of the function API call
-	// return type: void
-	setBody(body: Row) {
-		this.values = body;
-	}
-}</pre></td></tr></table></pre>
+export async function <span class="fstat-no" title="function not covered" >unscheduleProcedure(p</span>arams: ProcedureSchedulingParams): Promise&lt;void&gt; {
+    // TODO: 
+    // 1. Ask VMD to give schema for cron
+    const schema = <span class="cstat-no" title="statement not covered" >await vmd.getSchema('cron');</span>
+    // 2. Ask to give all functions inside the schema
+    // 3. Get function accessor for unschedule job by name
+    const func = <span class="cstat-no" title="statement not covered" >await vmd.getFunctionAccessor(schema?.schema_name || '', params.functionName);</span>
+    const input = <span class="cstat-no" title="statement not covered" >new Row();</span>
+<span class="cstat-no" title="statement not covered" >    input.stored_procedure = params.stored_procedure;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    func.setBody(input);</span>
+<span class="cstat-no" title="statement not covered" >    await func.executeFunction();</span>
+    // 4. Call the function accessor with the schedule
+}
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
