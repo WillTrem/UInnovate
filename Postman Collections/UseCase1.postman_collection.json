@@ -1,0 +1,359 @@
+{
+	"info": {
+		"_postman_id": "dd83673e-efb1-4fd9-82c0-b12831caa6aa",
+		"name": "UseCase1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30499607"
+	},
+	"item": [
+		{
+			"name": "contact",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"//Fetch all contacts and validate data structure\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each contact should have the correct structure\", function() {\r",
+							"    const contacts = pm.response.json();\r",
+							"    contacts.forEach(contact => {\r",
+							"        pm.expect(contact).to.have.property('contact_id');\r",
+							"        pm.expect(contact).to.have.property('company_id');\r",
+							"        pm.expect(contact).to.have.property('first_name');\r",
+							"        pm.expect(contact).to.have.property('last_name');\r",
+							"        pm.expect(contact).to.have.property('full_name');\r",
+							"        pm.expect(contact).to.have.property('contact_position');\r",
+							"        pm.expect(contact).to.have.property('phone_number');\r",
+							"        pm.expect(contact).to.have.property('email');\r",
+							"        pm.expect(contact).to.have.property('active');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response should contain 20 rows\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    pm.expect(data.length).to.equal(20)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Contact with ID 1 should have first name equal to Jack\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    var contactIdOne = data.find((element) => element.contact_id == 1)\r",
+							"    pm.expect(contactIdOne.first_name).to.equal(\"Jack\")\r",
+							"\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/contact",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"contact"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "company",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"//Fetch all companies and validate data structure\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each company should have the correct structure\", function() {\r",
+							"    const companies = pm.response.json();\r",
+							"    companies.forEach(company => {\r",
+							"        pm.expect(company).to.have.property('company_id');\r",
+							"        pm.expect(company).to.have.property('company_name');\r",
+							"        pm.expect(company).to.have.property('address');\r",
+							"        pm.expect(company).to.have.property('primary_contact_id');\r",
+							"        pm.expect(company).to.have.property('is_prev_customer');\r",
+							"        pm.expect(company).to.have.property('pricing_rate');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response should contain 20 rows\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    pm.expect(data.length).to.equal(20)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"company with ID 1 should have company name equal to Google\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    var companyIdOne = data.find((element) => element.company_id == 1)\r",
+							"    pm.expect(companyIdOne.company_name).to.equal(\"Google\")\r",
+							"\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/company",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"company"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "purchase_order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"//Fetch all purchase orders and validate data structure\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each purchase order should have the correct structure\", function() {\r",
+							"    const purchase_orders = pm.response.json();\r",
+							"    purchase_orders.forEach(purchase_order => {\r",
+							"        pm.expect(purchase_order).to.have.property('purchase_order_id');\r",
+							"        pm.expect(purchase_order).to.have.property('quotation_id');\r",
+							"        pm.expect(purchase_order).to.have.property('company_id');\r",
+							"        pm.expect(purchase_order).to.have.property('order_date');\r",
+							"        pm.expect(purchase_order).to.have.property('tools_rented_qty');\r",
+							"        pm.expect(purchase_order).to.have.property('total_adjusted_price');\r",
+							"        pm.expect(purchase_order).to.have.property('gst');\r",
+							"        pm.expect(purchase_order).to.have.property('qst');\r",
+							"        pm.expect(purchase_order).to.have.property('final_price');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response should contain 20 rows\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    pm.expect(data.length).to.equal(20)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"purchase_order with ID 1 should have gst equal to $7.50\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    var purchaseOrderIdOne = data.find((element) => element.purchase_order_id == 1)\r",
+							"    pm.expect(purchaseOrderIdOne.gst).to.equal(\"$7.50\")\r",
+							"\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/purchase_order",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"purchase_order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "tool",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"//Fetch all tools and validate data structure\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each tool should have the correct structure\", function() {\r",
+							"    const tools = pm.response.json();\r",
+							"    tools.forEach(tool => {\r",
+							"        pm.expect(tool).to.have.property('tool_id');\r",
+							"        pm.expect(tool).to.have.property('tool_type');\r",
+							"        pm.expect(tool).to.have.property('tool_name');\r",
+							"        pm.expect(tool).to.have.property('tool_price');\r",
+							"        pm.expect(tool).to.have.property('tool_description');\r",
+							"        pm.expect(tool).to.have.property('tool_qty_available');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response should contain 20 rows\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    pm.expect(data.length).to.equal(20)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"tool with ID 1 should have tool name equal to Cordless Drill\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    var toolIdOne = data.find((element) => element.tool_id == 1)\r",
+							"    pm.expect(toolIdOne.tool_name).to.equal(\"Cordless Drill\")\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept-Profile",
+						"value": "app_rentals",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:3000/tool",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"tool"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "unit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = pm.response.json()\r",
+							"//Fetch all units and validate data structure\r",
+							"\r",
+							"pm.test(\"Status code is 200\", function() {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Each unit should have the correct structure\", function() {\r",
+							"    const units = pm.response.json();\r",
+							"    units.forEach(unit => {\r",
+							"        pm.expect(unit).to.have.property('unit_id');\r",
+							"        pm.expect(unit).to.have.property('tool_id');\r",
+							"        pm.expect(unit).to.have.property('tool_type');\r",
+							"        pm.expect(unit).to.have.property('unit_serial_number');\r",
+							"        pm.expect(unit).to.have.property('unit_weight');\r",
+							"        pm.expect(unit).to.have.property('unit_height');\r",
+							"        pm.expect(unit).to.have.property('unit_condition');\r",
+							"        pm.expect(unit).to.have.property('unit_available');\r",
+							"        pm.expect(unit).to.have.property('unit_last_exited_date');\r",
+							"        pm.expect(unit).to.have.property('unit_last_returned_date')\r",
+							"        pm.expect(unit).to.have.property('last_calibration_certificate_id');\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Response should contain 20 rows\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    pm.expect(data.length).to.equal(20)\r",
+							"})\r",
+							"\r",
+							"pm.test(\"unit with ID 1 should have unit condition equal to Good\", function() {\r",
+							"    pm.response.to.not.be.error;\r",
+							"    pm.response.to.have.jsonBody()\r",
+							"    var unitIdOne = data.find((element) => element.unit_id == 1)\r",
+							"    pm.expect(unitIdOne.unit_condition).to.equal(\"Good\")\r",
+							"\r",
+							"})\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:3000/unit",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"unit"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

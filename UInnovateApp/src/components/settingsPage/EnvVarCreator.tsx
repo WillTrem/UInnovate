@@ -106,12 +106,14 @@ export const EnvVarCreator = () => {
 									{columns?.map((column) => {
 										if (
 											column.column_name === "id" ||
-											// column.column_name === "table_name" ||
+
+										
+											column.column_name === "table_name" ||
 											column.column_name === "name" || // Exclude if already added
 											column.column_name === "value" // Exclude if already added
 										)
 											return null;
-										//
+
 									})}
 								</Form>
 							</Modal.Body>

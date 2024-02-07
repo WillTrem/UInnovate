@@ -24,19 +24,29 @@ const ConfigurationSaver: React.FC = () => {
   // Initializes the timer and the cleanup functions
   useEffect(() => {
     const interval = setInterval(() => {
-      updateAppConfigValues(configRef.current);
-      setSnackbarVisible(true);
-      console.log("Saving the configuration in the DB via timer.");
+	try{
+		updateAppConfigValues(configRef.current);
+		setSnackbarVisible(true);
+      	console.log("Saving the configuration in the DB via timer.");
+	}
+	catch(error: any){
+		console.log("Failed to save the configuration in the DB. Reason: " + error?.message)
+	}
+      
     }, CONFIG_UPDATE_TIMER_MS);
 
 		// Cleanup function
 		return () => {
 			clearInterval(interval);
-			setSnackbarVisible(true);
-			updateAppConfigValues(configRef.current);
-			console.log(
-				"Unmounting ConfigurationSaver, saving the configuration to the DB."
-			);
+			try{
+				updateAppConfigValues(configRef.current);
+				setSnackbarVisible(true);
+				console.log(
+					"Unmounting ConfigurationSaver, saving the configuration to the DB."
+				);
+			}catch(error: any){
+				console.log("Failed to save the configuration in the DB. Reason: " + error?.message)
+			}
 		};
 	}, []);
 

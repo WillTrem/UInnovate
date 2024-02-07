@@ -2,7 +2,7 @@ import "../styles/TableComponent.css";
 import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
@@ -44,6 +44,8 @@ import {
   type RichTextEditorRef,
 } from "mui-tiptap";
 import ScriptLoadPopup from "./ScriptLoadPopup";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 interface TableListViewProps {
   table: Table;
@@ -67,7 +69,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
-
+  const navigate = useNavigate() 
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -91,14 +93,14 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
-    const schema = vmd.getTableSchema(table.table_name);
+    const schemas = vmd.getTableSchema(table.table_name);
 
-    if (!schema) {
+    if (!schemas) {
       return;
     }
 
     const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
-      schema.schema_name,
+      schemas.schema_name,
       table.table_name,
       OrderValue,
       PaginationValue,
@@ -106,7 +108,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
 
     const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema.schema_name,
+      schemas.schema_name,
       table.table_name
     );
     const count = await countAccessor.fetchRows();
@@ -202,7 +204,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     getConfigs();
   }, [inputValues]);
 
-  const inputStyle = {
+  const inputStyle:CSSProperties= {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
@@ -496,7 +498,11 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-   
+    if (table.stand_alone_details_view) {
+      console.log("No Stand Alone Details View " + table.table_name);
+    }
+    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]); 
+    
     setOpenPanel(true);
   };
 
