@@ -7,9 +7,24 @@ import ConfigurationSaver from "./ConfigurationSaver";
 import vmd from "../../virtualmodel/VMD";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { LOGIN_BYPASS } from "../../redux/AuthSlice";
 
 const DisplayTab = () => {
-  const selectedSchema = useSelector((state: RootState) => state.schema.value);
+
+  const schema_access = useSelector((state: RootState) => state.auth.schema_access);
+  const schemas = [
+    ...new Set(vmd.getApplicationSchemas()
+      .map((schema) => schema.schema_name)
+      .filter((schema_name) => {
+        // Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
+        if ((LOGIN_BYPASS && !schema_access) || schema_access && (schema_access as string[]).includes(schema_name)) {
+          return schema_name;
+        }
+      })),
+  ];
+  const [selectedSchema, setSelectedSchema] = useState(schemas[0]);
   // const tables = vmd.getAllTables();
 
   // Only show tables of the selected schema
@@ -18,13 +33,36 @@ const DisplayTab = () => {
     <TableItem key={table.table_name} table={table} />
   ));
 
+  const handleSchemaChange = (event: SelectChangeEvent) => {
+    setSelectedSchema(event.target.value);
+  };
+
   return (
     <div>
       <ConfigurationSaver />
       <Tab.Container>
         <Row>
           <Col sm={3}>
-            <h4>Tables</h4>
+            <Box display="flex" gap="1rem" alignItems={"center"} >
+              <h4 style={{ marginBottom: 0 }}>Tables</h4>
+              <FormControl fullWidth>
+                <InputLabel id="schema-label">Schema</InputLabel>
+                <Select
+                  labelId="schema-label"
+                  name="schema"
+                  value={selectedSchema}
+                  onChange={(event) => handleSchemaChange(event)}
+                  variant="outlined"
+                  label="Schema"
+                  size="small"
+                >
+                  {schemas.map((schema) => {
+                    return <MenuItem key={schema} value={schema}>{schema}</MenuItem>
+                  })};
+                </Select>
+              </FormControl>
+            </Box>
+
             <Nav variant="pills" className="flex-column">
               {tables?.map(({ table_name }) => {
                 return (
