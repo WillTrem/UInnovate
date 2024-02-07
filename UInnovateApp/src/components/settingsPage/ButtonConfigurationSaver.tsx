@@ -2,6 +2,8 @@ import { ConfigType, useConfig } from "../../contexts/ConfigContext";
 import { useEffect, useRef } from "react";
 import { updateAppConfigValues } from "../../virtualmodel/Config";
 import { Button } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { saveUserDataToDB } from "../../redux/UserDataSlice";
 
 const primaryButtonStyle = {
   marginTop: 20,
@@ -12,6 +14,7 @@ const primaryButtonStyle = {
 const ButtonConfigurationSaver: React.FC = () => {
   const { config } = useConfig();
   const configRef = useRef<ConfigType>(config);
+  const dispatch = useDispatch();
 
   // Keeps configRef up to date with the most recent config value
   useEffect(() => {
@@ -22,6 +25,7 @@ const ButtonConfigurationSaver: React.FC = () => {
   // On click, saves the configuration to the DB
   function handleClick() {
     updateAppConfigValues(configRef.current);
+    dispatch(saveUserDataToDB());
     console.log("Saving the configuration in the DB via button.");
   }
 

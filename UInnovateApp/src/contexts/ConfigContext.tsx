@@ -37,11 +37,6 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({ children }) => {
     setConfig(newConfig);
   };
 
-  useEffect(() => {
-  console.log("CONFIG");
-  console.log(config);
-  }, [config]);
-
   return (
     <ConfigContext.Provider value={{ config, updateConfig }}>
       {children}

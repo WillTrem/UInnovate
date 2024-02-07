@@ -7,11 +7,12 @@ import vmd, { UserData } from "../../virtualmodel/VMD";
 import React, { useEffect, useState } from "react";
 import AddUserModal from "./AddUserModal";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { Role } from "../../redux/AuthSlice";
 import UnauthorizedScreen from "../UnauthorizedScreen";
 import MultiSelect from "./MultiSelect";
+import  { setUserData, updateUserData } from "../../redux/UserDataSlice";
 
 
 
@@ -21,6 +22,7 @@ const UserManagementTab = () => {
 	const [users, setUsers] = useState<Row[]>([]);
 
 	const role = useSelector((state: RootState) => state.auth.role);
+	const dispatch = useDispatch();
 
 	// Hides the menu for non-admin roles (except for anonymous)
 	if (!(role === Role.ADMIN || role === null)) {
@@ -36,6 +38,7 @@ const UserManagementTab = () => {
 		const rows = await data_accessor.fetchRows();
 		if (rows) {
 			setUsers(rows);
+			dispatch(setUserData(rows as UserData[]));
 		}
 	}
 
@@ -78,7 +81,7 @@ const UserManagementTab = () => {
 											emailAddress={user["email"] as string}
 											role={user["role"] as string}
 											active={user["is_active"] as boolean}
-											schemaAccess={[]} />
+											schemaAccess={user["schema_access"]} />
 									}
 									return <React.Fragment key={idx} />
 
@@ -107,13 +110,25 @@ interface UserTableRowProps {
 	schemaAccess: string[]
 }
 const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, role, active, schemaAccess }) => {
+	const [userData, setUserData] = useState<UserData>({first_name: firstName, last_name: lastName, email: emailAddress, role, is_active: active, schema_access: schemaAccess})
 	const [schemaAccessList, setSchemaAccessList] = useState(schemaAccess);
 	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
-	// const schemaNames = vmd.getSchemas().map((schema) => schema.schema_name);
+	const dispatch = useDispatch();
 
 	function handleActiveToggle() {
 		// TODO: Implement the active toggle function
 	};
+
+	// Updates the local user data state 
+	useEffect(() => {
+		setUserData({...userData, schema_access: schemaAccessList});
+	}, [schemaAccessList])
+
+	// Updates the global user data state with new user data 
+	useEffect(() => {
+		dispatch(updateUserData(userData))
+	}, [userData]);
+
 
 	return <tr>
 		<td>{emailAddress}</td>

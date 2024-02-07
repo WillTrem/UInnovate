@@ -22,7 +22,8 @@ CREATE OR REPLACE VIEW meta.user_info AS (
 			first_name,
 			last_name,
 			role,
-			is_active
+			is_active,
+			schema_access
 		FROM authentication.users
 	);
 -- TRIGGER to ensure the role from the authentication.users table is an actual database role
@@ -286,6 +287,34 @@ $$ BEGIN
   PERFORM set_config('response.headers', '[{"Set-Cookie": "token=; Max-Age=0;"}]', true);
   END;
 $$language plpgsql SECURITY DEFINER;
+
+-- TYPE of user data, used in meta.update_user_data
+CREATE TYPE user_data AS (
+	email text,
+	first_name text,
+	last_name text,
+	role name,
+	is_active bool, 
+	schema_access text[]
+
+);
+
+-- FUNCTION Updates the user's data in bulk from an array of new user data
+CREATE OR REPLACE FUNCTION meta.update_user_data(users json)
+RETURNS VOID AS $$
+BEGIN 
+	UPDATE authentication.users AS oldud
+	SET 
+		first_name = newud.first_name,
+		last_name = newud.last_name,
+		role = newud.role,
+		is_active = newud.is_active,
+		schema_access = newud.schema_access
+	FROM (SELECT * FROM json_populate_recordset(null::user_data, users)) as newud
+	WHERE oldud.email = newud.email;
+
+END;
+$$ language plpgsql SECURITY DEFINER;
 
 
 -- ROLES ----------------------------------------------------------------
