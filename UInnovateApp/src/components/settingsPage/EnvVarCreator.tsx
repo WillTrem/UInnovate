@@ -7,8 +7,7 @@ import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
 import { IoLockClosed, IoLockOpen } from "react-icons/io5";
 import { insertNewEnvVar, editEnvVar } from "../../virtualmodel/EnvVarAccessor";
-import { EnvVarValueEditor, UpdateFunction } from "./EnvVarValueEditor";
-import { edit } from "ace-builds";
+import { EnvVarValueEditor } from "./EnvVarValueEditor";
 
 export const EnvVarCreator = () => {
 	const schema = vmd.getSchema("meta");
@@ -107,26 +106,12 @@ export const EnvVarCreator = () => {
 									{columns?.map((column) => {
 										if (
 											column.column_name === "id" ||
-											column.column_name === "table_name" ||
+											// column.column_name === "table_name" ||
 											column.column_name === "name" || // Exclude if already added
 											column.column_name === "value" // Exclude if already added
 										)
 											return null;
-										return (
-											<Form.Group key={column.column_name}>
-												<Form.Label>{column.column_name}</Form.Label>
-												<Form.Control
-													type='text'
-													value={newEnvVar[column.column_name] || ""}
-													onChange={(e) => {
-														setNewEnvVar({
-															...newEnvVar,
-															[column.column_name]: e.target.value,
-														});
-													}}
-												/>
-											</Form.Group>
-										);
+										//
 									})}
 								</Form>
 							</Modal.Body>
