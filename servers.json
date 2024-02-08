@@ -1,0 +1,14 @@
+{
+	"Servers": {
+		"Test": {
+			"Name": "PostGOAT",
+			"Group": "Servers",
+			"Port": 5432,
+			"Username": "<user>",
+			"Passfile": "/pgpass",
+			"Host": "localhost",
+			"SSLMode": "prefer",
+			"MaintenanceDB": "postgres"
+		}
+	}
+}
