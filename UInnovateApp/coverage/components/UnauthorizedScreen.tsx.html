@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for components/settingsPage/GeneralTab.tsx</title>
+    <title>Code coverage report for components/UnauthorizedScreen.tsx</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../../prettify.css" />
-    <link rel="stylesheet" href="../../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
+    <link rel="stylesheet" href="../prettify.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../../sort-arrow-sprite.png);
+            background-image: url(../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">components/settingsPage</a> GeneralTab.tsx</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">components</a> UnauthorizedScreen.tsx</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/5</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/2</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">20% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/2</span>
+                <span class='fraction'>1/5</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -80,41 +80,59 @@
 <a name='L15'></a><a href='#L15'>15</a>
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
-<a name='L18'></a><a href='#L18'>18</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L18'></a><a href='#L18'>18</a>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Card from "react-bootstrap/Card";
-import ListGroup from "react-bootstrap/ListGroup";
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Box, Typography, Button} from "@mui/material"
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import {useNavigate} from 'react-router-dom'
 &nbsp;
-export const GeneralTab = () =&gt; {
-	return (
-		&lt;Card&gt;
-			&lt;ListGroup variant='flush'&gt;
-				&lt;ListGroup.Item&gt;
-					&lt;div className='customization-title'&gt;Layout Personalization&lt;/div&gt;
-				&lt;/ListGroup.Item&gt;
-				&lt;ListGroup.Item&gt;
-					&lt;div className='customization-title'&gt;Color Customization&lt;/div&gt;
-				&lt;/ListGroup.Item&gt;
-			&lt;/ListGroup&gt;
-		&lt;/Card&gt;
-	);
-};
-&nbsp;</pre></td></tr></table></pre>
+const UnauthorizedScreen: React.FC = <span class="fstat-no" title="function not covered" >() =&gt; {</span>
+	const navigate = <span class="cstat-no" title="statement not covered" >useNavigate();</span>
+&nbsp;
+	const handleClick = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >		navigate('/');</span>
+	}
+<span class="cstat-no" title="statement not covered" >	return &lt;Box display={"flex"} flexDirection={"column"} alignItems={"center"} padding={"4rem"} gap={"1rem"}&gt;</span>
+		&lt;Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}&gt;
+			&lt;WarningAmberIcon sx={{"fontSize":"5rem"}}/&gt;
+			&lt;Typography variant="h3"&gt;Unauthorized&lt;/Typography&gt;
+			&lt;WarningAmberIcon sx={{"fontSize":"5rem"}}/&gt;
+		&lt;/Box&gt;
+		&lt;Typography variant="h5"&gt;You are trying to access a page beyond your privilege rights &lt;/Typography&gt;
+		&lt;Typography variant="h5"&gt;Press the button below to return to the home screen &lt;/Typography&gt;
+		&lt;Button variant="contained" onClick={handleClick} sx={{ backgroundColor: "#404040" }}&gt;
+			Back to home screen&lt;/Button&gt;
+	&lt;/Box&gt;
+}
+&nbsp;
+export default UnauthorizedScreen;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
@@ -123,14 +141,14 @@ export const GeneralTab = () =&gt; {
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
                 at 2024-02-07T21:52:55.337Z
             </div>
-        <script src="../../prettify.js"></script>
+        <script src="../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../../sorter.js"></script>
-        <script src="../../block-navigation.js"></script>
+        <script src="../sorter.js"></script>
+        <script src="../block-navigation.js"></script>
     </body>
 </html>
     
