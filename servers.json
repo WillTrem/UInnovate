@@ -1,12 +1,12 @@
 {
 	"Servers": {
 		"Test": {
-			"Name": "PostGOAT",
+			"Name": "UInnovateDB",
 			"Group": "Servers",
 			"Port": 5432,
-			"Username": "<user>",
-			"Passfile": "/pgpass",
-			"Host": "localhost",
+			"Username": "postgres",
+			"Passfile": "/tmp/pgpass",
+			"Host": "db",
 			"SSLMode": "prefer",
 			"MaintenanceDB": "postgres"
 		}
