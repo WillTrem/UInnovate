@@ -4,11 +4,11 @@
 			"Name": "UInnovateDB",
 			"Group": "Servers",
 			"Port": 5432,
-			"Username": "postgres",
-			"Passfile": "/tmp/pgpass",
+			"Username": "zanaalex",
+			"Passfile": "/pgpass",
 			"Host": "db",
 			"SSLMode": "prefer",
-			"MaintenanceDB": "postgres"
+			"MaintenanceDB": "db"
 		}
 	}
 }

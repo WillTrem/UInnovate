@@ -24,24 +24,24 @@ services:
     restart: always
 
   pgadmin:
-    image: dpage/pgadmin4:latest
+    image: dpage/pgadmin4:8.2
     container_name: pgadmin
     profiles:
       - tool
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-      - PGAMIN_CONFIG_SERVER_MODE="False"
-      - PGAMIN_CONFIG_MASTER_PASSWORD_REQUIRED="False"
+      - PGAMIN_CONFIG_SERVER_MODE=False
+      - PGAMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
     ports:
       - "5050:80"
     networks:
       - backend
     volumes:
       - ./servers.json:/pgadmin4/servers.json
-      - ./generate_pgpass.sh:/generate_pgpass.sh
-      - ./pgpass:/tmp/pgpass # passwords for the connections in this file
-    entrypoint: /bin/sh -c '/generate_pgpass.sh && exec /entrypoint.sh'
+      - ./generate_pgpass.sh:/pgadmin4/generate_pgpass.sh
+      - ./pgpass:/pgpass
+    entrypoint: /bin/sh -c 'exec /entrypoint.sh'
 
   server:
     image: postgrest/postgrest
