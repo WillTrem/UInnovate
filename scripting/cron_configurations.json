@@ -1,1 +1,0 @@
-[{"jobid":16,"schedule":"* * * * *","command":"CALL process()","nodename":"localhost","nodeport":5432,"database":"uinnovate_test_db","username":"tsitirides","active":true,"jobname":"process"}]

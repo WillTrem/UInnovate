@@ -81,3 +81,6 @@ $BODY$;
 
 GRANT ALL ON FUNCTION cron.export_cronconfig_to_json() TO configurator;
 GRANT ALL ON FUNCTION cron.import_cronconfig_from_json(json) TO configurator;
+
+GRANT ALL ON cron.job TO configurator;
+GRANT ALL ON cron.job_run_details TO configurator;
