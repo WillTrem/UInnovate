@@ -335,7 +335,9 @@ END;
 $BODY$;
 
 
--- Env Variables -- 
+-- Env Variables --
+
+-- Export for environment variables
 CREATE OR REPLACE FUNCTION meta.export_env_vars_to_json()
 RETURNS json
 LANGUAGE plpgsql
@@ -353,6 +355,31 @@ BEGIN
 END;
 $BODY$;
 
+-- Import for environment variables
+CREATE OR REPLACE FUNCTION meta.import_env_vars_from_json(json)
+RETURNS void
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    env_vars_data json; 
+    env_vars_row json;   
+BEGIN
+    env_vars_data := $1; -- Assign the passed JSON to env_vars_data
+
+    -- Assuming you want to clear the existing cron jobs and replace with new ones
+    DELETE FROM meta.env_vars;
+
+    -- Iterate through each element in the JSON array
+    FOR env_vars_row IN SELECT * FROM json_array_elements(env_vars_data)
+    LOOP
+        -- Insert each cron job into the cron_jobs table
+        INSERT INTO meta.env_vars (id, name, value)
+        VALUES ((env_vars_row->>'id')::int, 
+                env_vars_row->>'name', 
+                env_vars_row->>'value' );
+    END LOOP;
+END;
+$BODY$;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
@@ -360,6 +387,8 @@ GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
 GRANT ALL ON FUNCTION meta.export_i18n_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_i18n_from_json(json) TO configurator;
+GRANT ALL ON FUNCTION meta.export_env_vars_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_env_vars_from_json(json) TO configurator;
 GRANT USAGE ON SCHEMA information_schema TO "user";
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
 GRANT SELECT ON information_schema.referential_constraints TO "user";
