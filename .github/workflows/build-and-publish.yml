@@ -23,7 +23,7 @@ jobs:
         run: docker pull alexicazana/goat-dock
 
       - name: Tag Docker image
-        run: docker tag alexicazana/goat-dock yourdockerhubusername/postgoat-frontend:latest
+        run: docker tag alexicazana/goat-dock mariar001/postgoat-frontend:latest
 
       - name: Push Docker image to Docker Hub
-        run: docker push yourdockerhubusername/postgoat-frontend:latest
+        run: docker push mariar001/postgoat-frontend:latest
