@@ -17,7 +17,16 @@ jobs:
         run: docker pull alexicazana/goat-dock:v1
 
       - name: Tag Docker image
-        run: docker tag alexicazana/goat-dock:v1 mariar001/postgoat-frontend:latest
+        run: docker tag alexicazana/goat-dock:v1 alexicazana/postgoat-frontend:latest
+
+     # test
+     # - name: Run container and test
+     #   run: |
+     #    docker run --rm mariar001/postgoat-frontend:latest ./run_tests.sh 
 
       - name: Push Docker image to Docker Hub
-        run: docker push mariar001/postgoat-frontend:latest
+     #   if: success() 
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: docker push alexicazana/postgoat-frontend:latest
