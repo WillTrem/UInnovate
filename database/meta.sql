@@ -335,6 +335,24 @@ END;
 $BODY$;
 
 
+-- Env Variables -- 
+CREATE OR REPLACE FUNCTION meta.export_env_vars_to_json()
+RETURNS json
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    env_vars_json json;
+BEGIN
+    SELECT COALESCE(json_agg(row_to_json(c)), '[]') INTO env_vars_json
+    FROM (
+        SELECT id, name, value
+        FROM meta.env_vars
+    ) c;
+
+    RETURN env_vars_json;
+END;
+$BODY$;
+
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
