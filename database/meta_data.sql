@@ -34,10 +34,6 @@ INSERT INTO meta.scripts (name, description, content, table_name)
 VALUES
     ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts');
 
--- Inser the new column to visually flag the default values
-ALTER TABLE meta.i18n_keys
-ADD COLUMN is_default BOOLEAN DEFAULT false;
-
 -- Insert the tables names, columns names, schema tables into the i18n_keys table
 -- Insert unique column names into i18n_keys
 INSERT INTO meta.i18n_keys (key_code, is_default)

@@ -1,5 +1,28 @@
 # UInnovate
 
+- [UInnovate](#uinnovate)
+  - [Setting up Docker](#setting-up-docker)
+    - [PostgreSQL server \& pgAdmin containers](#postgresql-server--pgadmin-containers)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+  - [Supported Testing](#supported-testing)
+    - [Unit Tests](#unit-tests)
+    - [Component Tests](#component-tests)
+    - [Integration Tests](#integration-tests)
+    - [Cypress Component Testing](#cypress-component-testing)
+  - [Coverage Reports](#coverage-reports)
+  - [Start vite server and run cypress](#start-vite-server-and-run-cypress)
+  - [Available Scripts](#available-scripts)
+  - [Refresh Database Script](#refresh-database-script)
+  - [Postman Endpoint Testing](#postman-endpoint-testing)
+  - [Configuration](#configuration)
+    - [Adding new configuration properties](#adding-new-configuration-properties)
+  - [MkDocs Set up with docker](#mkdocs-set-up-with-docker)
+  - [PostGOAT Website Deployment](#postgoat-website-deployment)
+  - [Running the Postgoat Docker container](#running-the-postgoat-docker-container)
+
+
 ## Setting up Docker
 
 > :warning: Prior to following the steps below, ensure you have: <br/> 1. Installed Docker on your machine.
@@ -261,6 +284,7 @@ Link to website: https://uinnovate.netlify.app/
 ## Running the Postgoat Docker container
 
 
+
 First you'll need to go inside your .env file and add the following to the PLATFORM_DOMAIN variable:
 
 ```http://localhost:8080
@@ -283,3 +307,4 @@ Note; this can take up to a few minutes the first time, it's normal.
 4. `docker run -p 8080:80 goat-dock` to run the container. This will serve the minified js as a static web page on an Nginx server.
 
 5. Visit localhost:8080 to see Postgoat container running on your local machine.
+

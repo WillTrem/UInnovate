@@ -12,8 +12,9 @@ COPY UInnovateApp/ ./
 RUN npm run build
 
 # Base image for postgoat 
-# FROM nginx:alpine
+
 FROM nginx:1-alpine-slim
+
 COPY --from=builder /app/build /usr/share/nginx/html
 COPY /build.conf /etc/nginx/conf.d/build.conf
 
@@ -23,3 +24,4 @@ CMD ["nginx", "-g", "daemon off;"]
 
 
 #  DOCKER_BUILDKIT=1 docker build -f Dockerfile.goat -t goat-dock .       
+
