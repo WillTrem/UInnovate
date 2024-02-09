@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS authentication.users (
 	role name NOT NULL CHECK (length(role) < 512),
 	PASSWORD text CHECK (length(PASSWORD) < 512),
 	is_active bool NOT NULL, 
-	schema_access text[]
+	schema_access text[] DEFAULT '{}'
 );
 
 -- CREATE TABLE IF NOT EXISTS meta.user_schema_access (
