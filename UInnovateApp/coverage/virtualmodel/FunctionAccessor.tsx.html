@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>5/9</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/3</span>
+                <span class='fraction'>2/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/10</span>
+                <span class='fraction'>5/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -119,10 +119,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -133,19 +133,19 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axios from "axios"
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axiosCustom from "../api/AxiosCustom"
 import { Row } from "./DataAccessor";
 &nbsp;
 export class FunctionAccessor {
@@ -154,37 +154,37 @@ export class FunctionAccessor {
 	headers: { [key: string]: string };
 	values?: Row;
 &nbsp;
-<span class="fstat-no" title="function not covered" >	constructor(</span>
+	constructor(
 		function_url: string,
 		headers: { [key: string]: string },
 		params?: { [key: string]: string },
 		values?: Row
 	) {
-<span class="cstat-no" title="statement not covered" >		this.function_url = function_url;</span>
-<span class="cstat-no" title="statement not covered" >		this.headers = headers;</span>
-<span class="cstat-no" title="statement not covered" >		this.params = params;</span>
-<span class="cstat-no" title="statement not covered" >		this.values = values;</span>
+		this.function_url = function_url;
+		this.headers = headers;
+		this.params = params;
+		this.values = values;
 	}
 &nbsp;
 	// Method to execute a database function
 	// return type: AxiosResponse
-<span class="fstat-no" title="function not covered" >	async e</span>xecuteFunction() {
+<span class="fstat-no" title="function not covered" >	async e</span>xecuteFunction(config?: {}) {
 <span class="cstat-no" title="statement not covered" >		try {</span>
-			const response = <span class="cstat-no" title="statement not covered" >await axios.post(this.function_url, this.values, {</span>
+			const response = <span class="cstat-no" title="statement not covered" >await axiosCustom.post(this.function_url, this.values, {</span>
 				headers: this.headers,
+				...config
 			});
 &nbsp;
 <span class="cstat-no" title="statement not covered" >			return response;</span>
 		} catch (error) {
-<span class="cstat-no" title="statement not covered" >			console.error("Error while executing function at " + this.function_url + " :", error);</span>
 <span class="cstat-no" title="statement not covered" >			throw error;</span>
 		}
 	}
 &nbsp;
 	// Method to set the body of the function API call
 	// return type: void
-<span class="fstat-no" title="function not covered" >	setBody(b</span>ody: Row) {
-<span class="cstat-no" title="statement not covered" >		this.values = body;</span>
+	setBody(body: Row) {
+		this.values = body;
 	}
 }</pre></td></tr></table></pre>
 
@@ -193,7 +193,7 @@ export class FunctionAccessor {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-01-06T02:04:44.246Z
+                at 2024-02-07T21:52:55.337Z
             </div>
         <script src="../prettify.js"></script>
         <script>
