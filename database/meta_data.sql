@@ -43,7 +43,7 @@ VALUES
 ', 'scripts'),
     ('add_script_object', 'Add a dummy script object to the scripts table.', 'try {
     addRow({
-        id: 4,
+        id: 5,
         name: "dummy_script",
         description: "this is just a dummy script",
         content: "console.log(Adding a dummy script);"

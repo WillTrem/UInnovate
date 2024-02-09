@@ -104,6 +104,9 @@ export class DataAccessor {
     const primary_key = table.getPrimaryKey()?.column_name;
     const schema_name = vmd.getTableSchema(table.table_name)?.schema_name;
 
+    // After fetching rows, change the header from Accept-Profile to Content-Profile
+    this.headers = { "Content-Profile": schema_name as string };
+
     if (!primary_key) return false;
 
     for (const new_row of new_table_data) {
@@ -113,27 +116,27 @@ export class DataAccessor {
 
       if (old_row) {
         for (const key in new_row) {
-          if (new_row[key] !== new_row[key]) {
+          if (old_row[key] !== new_row[key]) {
+            console.log(this);
             this.values = new_row;
+            this.data_url = `${table.getURL()}?${primary_key}=eq.${new_row[primary_key]}`;
             await this.updateRow();
           }
         }
       } else {
-        console.log("Adding row");
         this.values = new_row;
+        this.data_url = table.getURL();
         await this.addRow();
       }
     }
 
-    // If th new data does not contain a row that exists in the old data, delete the row from the table
+    // If the new data does not contain a row that exists in the old data, delete the row from the table
     old_table_data = old_table_data?.filter((old_row) => {
       const existsInNewData = new_table_data.some(
         (new_row) => new_row[primary_key] === old_row[primary_key]
       );
       if (!existsInNewData) {
-        this.data_url = `${this.data_url}?${primary_key}=eq.${old_row[primary_key]}`;
-        this.headers = { "Content-Profile": schema_name as string };
-
+        this.data_url = `${table.getURL()}?${primary_key}=eq.${old_row[primary_key]}`;
         this.deleteRow();
       }
       return existsInNewData;
