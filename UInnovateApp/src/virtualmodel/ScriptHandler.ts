@@ -9,9 +9,10 @@ class ScriptHandler {
   private script: Row;
   private schema_name: string | undefined;
 
-  private table: Table = {} as Table;
   private table_data: Row[] | undefined = {} as Row[];
-  private new_table_data: Row[] | undefined = {} as Row[];
+  private new_table_data: Row[] = {} as Row[];
+
+  private table: Table = {} as Table;
   private accessor: DataAccessor = {} as DataAccessor;
 
   constructor(script: Row) {
@@ -52,6 +53,15 @@ class ScriptHandler {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  async updateTableData() {
+    this.accessor = new DataAccessor(
+      this.table.getURL(),
+      this.accessor.headers
+    );
+
+    this.accessor.updateTableData(this.new_table_data, this.table);
   }
 }
 

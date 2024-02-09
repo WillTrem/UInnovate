@@ -15,9 +15,8 @@ const ScriptLoadPopup = ({
       const handler = new ScriptHandler(script);
 
       await handler.init();
-      const new_data = await handler.executeScript();
-
-      console.log(new_data);
+      await handler.executeScript();
+      await handler.updateTableData();
     }
     onClose();
   };

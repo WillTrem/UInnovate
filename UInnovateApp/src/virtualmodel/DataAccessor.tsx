@@ -1,4 +1,6 @@
 import axiosCustom from "../api/AxiosCustom";
+import { Table } from "./VMD";
+import vmd from "./VMD";
 
 export class DataAccessor {
   data_url: string;
@@ -93,6 +95,49 @@ export class DataAccessor {
     } catch (error) {
       console.error("Could not delete row:", error);
     }
+  }
+
+  async updateTableData(new_table_data: Row[], table: Table) {
+    let old_row: Row | undefined = {} as Row;
+    let old_table_data = await this.fetchRows();
+
+    const primary_key = table.getPrimaryKey()?.column_name;
+    const schema_name = vmd.getTableSchema(table.table_name)?.schema_name;
+
+    if (!primary_key) return false;
+
+    for (const new_row of new_table_data) {
+      old_row = old_table_data?.find(
+        (r) => r[primary_key] === new_row[primary_key]
+      );
+
+      if (old_row) {
+        for (const key in new_row) {
+          if (new_row[key] !== new_row[key]) {
+            this.values = new_row;
+            await this.updateRow();
+          }
+        }
+      } else {
+        console.log("Adding row");
+        this.values = new_row;
+        await this.addRow();
+      }
+    }
+
+    // If th new data does not contain a row that exists in the old data, delete the row from the table
+    old_table_data = old_table_data?.filter((old_row) => {
+      const existsInNewData = new_table_data.some(
+        (new_row) => new_row[primary_key] === old_row[primary_key]
+      );
+      if (!existsInNewData) {
+        this.data_url = `${this.data_url}?${primary_key}=eq.${old_row[primary_key]}`;
+        this.headers = { "Content-Profile": schema_name as string };
+
+        this.deleteRow();
+      }
+      return existsInNewData;
+    });
   }
 
   toggleAuthentication(value: boolean) {
