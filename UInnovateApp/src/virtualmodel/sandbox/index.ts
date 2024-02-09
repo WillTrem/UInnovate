@@ -10,11 +10,14 @@ app.use(cors());
 app.use(bodyParser.json());
 
 app.post("/execute", (req: Request, res: Response) => {
-  const { script, table, handler } = req.body;
-  const sandbox = new ScriptSandbox();
+  const { script, table } = req.body;
 
-  sandbox.executeScript(script, table, handler);
-  res.send("Script executed successfully");
+  const sandbox = new ScriptSandbox();
+  const new_table_data = sandbox.executeScript(script, table);
+
+  res.send(new_table_data);
+
+  sandbox.dispose();
 });
 
 app.listen(3001, () => {

@@ -1,8 +1,6 @@
 import { Modal, Box, Typography, Button } from "@mui/material";
-import axios from "axios";
 import "../styles/AddEnumModal.css";
 import { Row } from "../virtualmodel/DataAccessor";
-import vmd, { Table } from "../virtualmodel/VMD";
 import ScriptHandler from "../virtualmodel/ScriptHandler";
 
 const ScriptLoadPopup = ({
@@ -14,29 +12,12 @@ const ScriptLoadPopup = ({
 }) => {
   const handleConfirm = async () => {
     if (script) {
-      const schema_name = vmd.getTableSchema(script["table_name"])?.schema_name;
+      const handler = new ScriptHandler(script);
 
-      if (schema_name) {
-        const table: Table = vmd.getTable(
-          schema_name,
-          script["table_name"]
-        ) as Table;
+      await handler.init();
+      const new_data = await handler.executeScript();
 
-        const handler = new ScriptHandler(script, table);
-        const userScript = script["content"];
-
-        try {
-          const result = await axios.post("http://localhost:3001/execute", {
-            script: userScript,
-            table: table,
-            handler: handler,
-          });
-
-          console.log(result.data);
-        } catch (error) {
-          console.error(error);
-        }
-      }
+      console.log(new_data);
     }
     onClose();
   };

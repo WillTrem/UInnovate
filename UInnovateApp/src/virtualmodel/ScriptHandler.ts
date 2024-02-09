@@ -1,119 +1,56 @@
-import { Row } from "../virtualmodel/DataAccessor";
-import vmd, { Table, Schema } from "../virtualmodel/VMD";
-import {
-  ScriptErrorPopup,
-  ScriptSuccessPopup,
-} from "../components/ScriptPopup";
+import { DataAccessor, Row } from "./DataAccessor";
+import vmd, { Table } from "./VMD";
+import axios from "axios";
 
 /* This class will be used to define methods that users can use to 
 interact with a table in the list view page through custom scripts
 */
 class ScriptHandler {
-  public script: Row;
-  public table: Table = new Table("");
+  private script: Row;
+  private schema_name: string | undefined;
 
-  private readonly schema: Schema;
-  private readonly primary_key: string = this.table.getPrimaryKey()
-    ?.column_name as string;
+  private table: Table = {} as Table;
+  private table_data: Row[] | undefined = {} as Row[];
+  private new_table_data: Row[] | undefined = {} as Row[];
+  private accessor: DataAccessor = {} as DataAccessor;
 
-  // This constructor will be used to initialize the script handler
-  constructor(script: Row, table: Table) {
+  constructor(script: Row) {
     this.script = script;
-    this.table = table;
+    this.schema_name = vmd.getTableSchema(script["table_name"])?.schema_name;
+    this.accessor = {} as DataAccessor;
 
-    const schema = vmd.getTableSchema(this.table.table_name);
-
-    if (!schema) {
-      throw new Error("Table schema not found");
+    if (this.schema_name) {
+      this.table = vmd.getTable(
+        this.schema_name,
+        script["table_name"]
+      ) as Table;
     }
-
-    this.schema = schema;
   }
 
-  // This method will be used to add a row to the table
-  // We need to refetch schemas to dynamically update the display of the table
-  public addRow(row: Row) {
-    const accessor = vmd.getAddRowDataAccessor(
-      this.schema.schema_name,
-      this.table.table_name,
-      row
-    );
+  async init() {
+    if (this.table && this.schema_name) {
+      this.accessor = vmd.getRowsDataAccessor(
+        this.schema_name,
+        this.table.table_name
+      );
 
+      this.table_data = await this.accessor.fetchRows();
+    }
+  }
+
+  async executeScript() {
     try {
-      accessor.addRow();
+      const result = await axios.post("http://localhost:3001/execute", {
+        script: this.script["content"],
+        table: this.table_data,
+      });
+
+      this.new_table_data = result.data;
+
+      return this.new_table_data;
     } catch (error) {
-      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
-      return;
+      console.log(error);
     }
-
-    vmd.refetchSchemas();
-    return ScriptSuccessPopup({ onClose: () => {} });
-  }
-
-  // This method will be used to remove a row from the table
-  // Controversial method, we need to discuss how to implement this
-  public removeRow(row: Row) {
-    const accessor = vmd.getRemoveRowAccessor(
-      this.schema.schema_name,
-      this.table.table_name,
-      this.primary_key,
-      row[this.primary_key]
-    );
-
-    try {
-      accessor.deleteRow();
-    } catch (error) {
-      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
-      return;
-    }
-
-    vmd.refetchSchemas();
-    ScriptSuccessPopup({ onClose: () => {} });
-  }
-
-  // This method will be used to update a row in the table
-  public updateRow(row: Row) {
-    const accessor = vmd.getUpdateRowDataAccessor(
-      this.schema.schema_name,
-      this.table.table_name,
-      row
-    );
-
-    try {
-      accessor.updateRow();
-    } catch (error) {
-      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
-      return;
-    }
-
-    vmd.refetchSchemas();
-    ScriptSuccessPopup({ onClose: () => {} });
-  }
-
-  // This method will be used to get all rows from the table
-  public async getAllRows() {
-    const accessor = vmd.getRowsDataAccessor(
-      this.schema.schema_name,
-      this.table.table_name
-    );
-
-    try {
-      const rows = await accessor.fetchRows();
-      return rows;
-    } catch (error) {
-      ScriptErrorPopup({ onClose: () => {}, error: error as string | Error });
-      return;
-    }
-  }
-
-  // This method will be used to get one column from a table
-  public getColumn(columnName: string) {
-    return this.table.getColumn(columnName);
-  }
-
-  // This method will be used to get all columns from the table
-  public getAllColumns() {
-    return this.table.getColumns();
   }
 }
 
