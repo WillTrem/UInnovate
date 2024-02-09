@@ -2,7 +2,7 @@ import "../styles/TableComponent.css";
 import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
@@ -44,6 +44,8 @@ import {
 import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
+import ScriptLoadPopup from "./ScriptLoadPopup";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface TableListViewProps {
   table: Table;
@@ -60,10 +62,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
-  let defaultOrderValue = table.columns.find(
-    (column) => column.is_editable === false
-  )?.column_name;
-
+  const navigate = useNavigate();
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -94,26 +93,17 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const name = table.table_name + "T";
-  const Local = localStorage.getItem(name);
-  if (Local == null) {
-    const nulll = Local;
-  }
-  if (defaultOrderValue == undefined) {
-    defaultOrderValue = table.columns[0].column_name;
-  }
-  const getTable = JSON.parse(Local!);
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
-    const schema = vmd.getTableSchema(table.table_name);
+    const schemas = vmd.getTableSchema(table.table_name);
 
-    if (!schema) {
+    if (!schemas) {
       return;
     }
 
     const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
-      schema.schema_name,
+      schemas.schema_name,
       table.table_name,
       OrderValue,
       PaginationValue,
@@ -121,7 +111,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
 
     const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema.schema_name,
+      schemas.schema_name,
       table.table_name
     );
     const count = await countAccessor.fetchRows();
@@ -216,7 +206,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     getFileGroupsView();
   }, [inputValues]);
 
-  const inputStyle = {
+  const inputStyle: CSSProperties = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
@@ -403,7 +393,6 @@ const TableListView: React.FC<TableListViewProps> = ({
         currentRow.row[column.column_name]
       );
     }
-
     if (column.references_table != null) {
       const string = column.column_name + "L";
       localStorage.setItem(
@@ -598,7 +587,15 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-
+    if (table.stand_alone_details_view) {
+      console.log("No Stand Alone Details View " + table.table_name);
+    }
+    navigate(
+      "/objview/details/" +
+        table.table_name +
+        "/" +
+        row.row[table.table_name + "_id"]
+    );
     setOpenPanel(true);
   };
 
@@ -801,23 +798,26 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
           </div>
         </div>
-        {localStorage.getItem(table.table_name + "T") === null ||
-        getTable[-1] == "none" ? (
-          <div></div>
-        ) : showTable ? (
-          <div style={{ paddingBottom: "2em" }}>
-            <LookUpTableDetails table={table} />
-          </div>
-        ) : (
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginLeft: 15 }}
-            onClick={() => setShowTable(true)}
-          >
-            Show Look up Table
-          </Button>
-        )}
+        <div style={{ paddingBottom: "2em" }}>
+          {table.lookup_tables == "null" ? (
+            <div></div>
+          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+            <div></div>
+          ) : showTable ? (
+            <div style={{ paddingBottom: "2em" }}>
+              <LookUpTableDetails table={table} />
+            </div>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              style={{ marginLeft: 15 }}
+              onClick={() => setShowTable(true)}
+            >
+              Show Look Up Table
+            </Button>
+          )}
+        </div>
       </SlidingPanel>
     </div>
   );

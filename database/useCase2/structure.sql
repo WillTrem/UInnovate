@@ -4,7 +4,7 @@ DROP SCHEMA IF EXISTS  app_service_support CASCADE ;
 
 CREATE SCHEMA IF NOT EXISTS  app_service_support ;
 
-GRANT USAGE ON SCHEMA  app_service_support TO web_anon;
+GRANT USAGE ON SCHEMA  app_service_support TO "user";
 
 NOTIFY pgrst, 'reload config';
 NOTIFY pgrst, 'reload schema';
@@ -110,19 +110,19 @@ CREATE TABLE  app_service_support.ticket_tags (
     PRIMARY KEY (ticket_id, tag_id)
 );
 
-GRANT ALL ON  app_service_support.ticket_categories TO web_anon;
-GRANT ALL ON  app_service_support.ticket_priorities TO web_anon;
-GRANT ALL ON  app_service_support.ticket_status TO web_anon;
-GRANT ALL ON  app_service_support.locations TO web_anon;
-GRANT ALL ON  app_service_support.service_tickets TO web_anon;
-GRANT ALL ON  app_service_support.ticket_comments TO web_anon;
-GRANT ALL ON  app_service_support.ticket_assignments TO web_anon;
-GRANT ALL ON  app_service_support.system_logs TO web_anon;
-GRANT ALL ON  app_service_support.tags TO web_anon;
-GRANT ALL ON  app_service_support.ticket_tags TO web_anon;
+GRANT ALL ON  app_service_support.ticket_categories TO "user";
+GRANT ALL ON  app_service_support.ticket_priorities TO "user";
+GRANT ALL ON  app_service_support.ticket_status TO "user";
+GRANT ALL ON  app_service_support.locations TO "user";
+GRANT ALL ON  app_service_support.service_tickets TO "user";
+GRANT ALL ON  app_service_support.ticket_comments TO "user";
+GRANT ALL ON  app_service_support.ticket_assignments TO "user";
+GRANT ALL ON  app_service_support.system_logs TO "user";
+GRANT ALL ON  app_service_support.tags TO "user";
+GRANT ALL ON  app_service_support.ticket_tags TO "user";
 
 -- Grant necessary permissions on the sequence to the user
-GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_assignments_assignment_id_seq TO web_anon;
-GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_comments_comment_id_seq TO web_anon;
-GRANT USAGE ON SEQUENCE app_service_support.system_logs_log_id_seq TO web_anon;
-GRANT USAGE ON SEQUENCE app_service_support.tags_tag_id_seq TO web_anon;
+GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_assignments_assignment_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_service_support.ticket_comments_comment_id_seq TO "user";
+GRANT USAGE ON SEQUENCE app_service_support.system_logs_log_id_seq TO "user";
+GRANT USAGE ON SEQUENCE app_service_support.tags_tag_id_seq TO "user";

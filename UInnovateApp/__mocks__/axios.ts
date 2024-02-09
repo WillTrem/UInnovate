@@ -1,4 +1,5 @@
 import { vi } from "vitest";
+import axios from 'axios';
 const tableURL = "http://localhost:3000/tables";
 const attrURL = "http://localhost:3000/columns";
 const appconfig_valuesURL = "http://localhost:3000/appconfig_values";
@@ -109,6 +110,7 @@ const mock_table_list_view = [
   { Column1: 3, Column2: "mock row 3", Column3: "mock description 3" },
 ];
 export default {
+  ...axios,
   get: vi.fn().mockImplementation((url, { headers }) => {
     if (headers["Accept-Profile"] === "meta") {
       switch (url) {

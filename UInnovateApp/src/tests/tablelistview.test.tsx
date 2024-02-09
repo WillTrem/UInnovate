@@ -5,7 +5,10 @@ import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
+import { DataAccessorMock } from "../virtualmodel/__mocks__/DataAccessor";
+
 vi.mock("axios");
+vi.mock("DataAccessor");
 vi.mock("../contexts/ConfigContext)");
 
 describe("TableListView component", () => {
@@ -152,5 +155,55 @@ describe("TableListView component", () => {
     const uploadPop = await screen.findAllByTitle("Dropzone");
 
     expect(uploadPop[0]).not.toBeInTheDocument();
+    it("renders the date time picker", () => {
+      // Render the component
+      render(<TableListView table={table} /* props */ />);
+
+      // Check if the sliding panel is not open by default
+      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+
+      // Find the button that opens the sliding panel and simulate a click event
+      const openButton = screen.getAllByRole("button");
+      fireEvent.click(openButton[1]);
+
+      // Check if the sliding panel is now open
+      expect(screen.getByText("Details")).toBeInTheDocument();
+
+      expect(screen.getByText("SELECT DATE & TIME")).toBeInTheDocument();
+    });
+
+    it("renders the date picker", () => {
+      // Render the component
+      render(<TableListView table={table} /* props */ />);
+
+      // Check if the sliding panel is not open by default
+      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+
+      // Find the button that opens the sliding panel and simulate a click event
+      const openButton = screen.getAllByRole("button");
+      fireEvent.click(openButton[1]);
+
+      // Check if the sliding panel is now open
+      expect(screen.getByText("Details")).toBeInTheDocument();
+
+      expect(screen.getByText("SELECT DATE")).toBeInTheDocument();
+    });
+
+    it("renders the category selector", () => {
+      // Render the component
+      render(<TableListView table={table} /* props */ />);
+
+      // Check if the sliding panel is not open by default
+      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+
+      // Find the button that opens the sliding panel and simulate a click event
+      const openButton = screen.getAllByRole("button");
+      fireEvent.click(openButton[1]);
+
+      // Check if the sliding panel is now open
+      expect(screen.getByText("Details")).toBeInTheDocument();
+
+      expect(screen.getByText("category1")).toBeInTheDocument();
+    });
   });
 });
