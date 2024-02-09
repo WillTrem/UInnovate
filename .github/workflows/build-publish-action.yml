@@ -17,7 +17,6 @@ jobs:
         working-directory: ./
     permissions:
       contents: read
-      push: write
       pull-request: write
     steps:
       - name: Set up QEMU
