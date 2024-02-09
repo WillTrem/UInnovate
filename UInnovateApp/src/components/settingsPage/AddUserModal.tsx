@@ -10,6 +10,7 @@ import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
 import { Role } from "../../redux/AuthSlice"
 
 import { ErrMsg } from "./SignupModal"
+import validator from "validator"
 
 interface AddUserModalProps extends Omit<ModalProps, 'children'> {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -67,6 +68,9 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 
 	// Handles adding a user 
 	function handleFormSubmit() {
+		if(!validateEmail()){
+			return;
+		}
 		// Function accessor
 		const functionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "create_user");
 		functionAccessor.setBody(inputValues);
@@ -79,6 +83,21 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 			.catch((error) => {
 				console.error("An error occured while creating user " + inputValues["email"]);
 			});
+	}
+
+	function validateEmail(): boolean {
+		setEmailError("");
+		if (!inputValues.email || inputValues.email.trim() === '') {
+			setEmailError(ErrMsg.MISSING_FIELD);
+			return false;
+		}
+		else if (!validator.isEmail(inputValues.email)) {
+			setEmailError(ErrMsg.INVALID_EMAIL);
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 
 	// All the props from AddUserModal are directly passed down to the Modal component
