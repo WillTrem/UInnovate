@@ -3,7 +3,6 @@ name: Build and Publish Postgoat Image
 on:
   push:
     branches:
-      - main
       - 237-automation-postgoat-image-dockerhub
 # basic sanity check before pushing the image is necessary -> create test tag
 env:
