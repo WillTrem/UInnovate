@@ -15,9 +15,6 @@ jobs:
     defaults:
       run:
         working-directory: ./
-    permissions:
-      contents: read
-      push: write
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
