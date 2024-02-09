@@ -57,7 +57,8 @@ export function Settings() {
 											Scheduled Activities
 										</Nav.Link>
 										<Nav.Link eventKey='scripting'onClick={() => handleNavClick('scripting')}>Scripting</Nav.Link>
-										<Nav.Link eventKey='envVar' onClick={() => handleNavClick('envVar')}>Environment Variables</Nav.Link>
+										
+										<Nav.Link eventKey='envvar' onClick={() => handleNavClick('envvar')}>Environment Variables</Nav.Link>
 									</Nav.Item>
 									{(role === Role.ADMIN || LOGIN_BYPASS) && (
 										<Nav.Item>
@@ -85,7 +86,7 @@ export function Settings() {
 									<Tab.Pane eventKey='scripting'>
 										<ScriptingTab />
 									</Tab.Pane>
-									<Tab.Pane eventKey='envVar'>
+									<Tab.Pane eventKey='envvar'>
 										<EnvVarCreator />
 									</Tab.Pane>
 									{(role === Role.ADMIN || role === null) && (
