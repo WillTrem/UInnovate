@@ -7,8 +7,9 @@ import vmd from "../virtualmodel/VMD";
 
 function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
   const [highlight, setHighlight] = useState(false);
-  const [disabled, setDisabled] = useState(false);
   const [itemsList, setItemsList] = useState(items);
+  const [showPreview, setShowPreview] = useState(false);
+  const [currentBlob, setCurrentBlob] = useState("");
 
   const fileInputRef = React.createRef();
   const openFileDialog = () => {
@@ -53,56 +54,58 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
     return bytes;
   }
 
-  const fetchAndDownloadFile = (e, item) => {
-    e.preventDefault();
-    vmd
+  const fetchFile = async (item) => {
+    const response = await vmd
       .getRowDataAccessor("filemanager", "filestorage", "id", item.id)
-      .fetchRows()
-      .then((response) => {
-        const bytes = convertToByteArray(response[0].blob);
-        const blob = new Blob([bytes], {
-          type: "application/" + item.extension,
-        });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", item.filename);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+      .fetchRows();
+    const bytes = convertToByteArray(response[0].blob);
+    const blob = new Blob([bytes], {
+      type: "application/" + item.extension,
+    });
+    setCurrentBlob(window.URL.createObjectURL(blob));
+    return blob;
   };
 
-  const onDragOver = (event) => {
-    event.preventDefault();
-    if (disabled) return;
-    setHighlight(true);
+  const downloadFile = (blob, item) => {
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", item.filename);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
   };
 
-  const onDragLeave = (event) => {
-    setHighlight(false);
+  const fetchAndDownloadFile = async (e, item) => {
+    e.preventDefault();
+    downloadFile(await fetchFile(item), item);
   };
 
-  const onDrop = (event) => {
-    event.preventDefault();
-    if (disabled) return;
-    const files = event.dataTransfer.files;
-    if (onItemAdded) {
-      const array = fileListToArray(files);
-      onItemAdded(event, array);
-    }
-  };
+  // const onDragOver = (event) => {
+  //   event.preventDefault();
+  //   setHighlight(true);
+  // };
 
-  const fileListToArray = (list) => {
-    const array = [];
-    for (var i = 0; i < list.length; i++) {
-      array.push(list.item(i));
-    }
-    return array;
-  };
+  // const onDragLeave = (event) => {
+  //   setHighlight(false);
+  // };
+
+  // const onDrop = (event) => {
+  //   event.preventDefault();
+  //   const files = event.dataTransfer.files;
+  //   if (onItemAdded) {
+  //     const array = fileListToArray(files);
+  //     onItemAdded(event, array);
+  //   }
+  // };
+
+  // const fileListToArray = (list) => {
+  //   const array = [];
+  //   for (var i = 0; i < list.length; i++) {
+  //     array.push(list.item(i));
+  //   }
+  //   return array;
+  // };
   return (
     <div>
       <div className="flex-row">
@@ -129,6 +132,17 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
                         <DownloadIcon></DownloadIcon>
                       </button>
                     </a>
+                    <button
+                      className="delete-button margin-lr"
+                      onClick={(e) => {
+                        fetchFile(item);
+                        setShowPreview(true);
+                      }}
+                      type="button"
+                    >
+                      {" "}
+                      <CloseIcon color="error"></CloseIcon>
+                    </button>
                   </div>
                   <div className="display-inline-block" key={index}>
                     <img
@@ -159,9 +173,9 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
           className={`display-inline-block Dropzone ${
             highlight ? "bg-[#673ab7]/20" : ""
           }`}
-          onDragOver={onDragOver}
-          onDragLeave={onDragLeave}
-          onDrop={onDrop}
+          // onDragOver={onDragOver}
+          // onDragLeave={onDragLeave}
+          // onDrop={onDrop}
           onClick={openFileDialog}
           style={{ cursor: "pointer" }}
         >

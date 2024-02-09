@@ -13,7 +13,7 @@ export default {
   }),
   getRowsDataAccessorForOrder: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessorForOrder in VMD mock was called");
-    return new DataAccessorMock();
+    return new DataAccessorMock("For List View");
   }),
   getUpsertDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getUpsertDataAccessor in VMD mock was called");
@@ -45,7 +45,7 @@ export default {
     console.log("getFunctionAccessor in VMD mock was called");
     return new FunctionAccessorMock();
   }),
-  getViewRowsDataAccessor: vi.fn().mockImplementation(() => {   
+  getViewRowsDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getViewRowsDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),

@@ -55,18 +55,15 @@ const buttonStyle = {
   width: "fit-content",
 };
 
-const inputStyle = {
-  display: "flex",
-  flexDirection: "column", // This will make the children (input elements) stack vertically
-  alignItems: "flex-start",
-  width: "65%",
-};
-
 const TableListView: React.FC<TableListViewProps> = ({
   table,
 }: {
   table: Table;
 }) => {
+  let defaultOrderValue = table.columns.find(
+    (column) => column.is_editable === false
+  )?.column_name;
+
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -76,12 +73,22 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
   );
-  let defaultOrderValue = table.columns.find(
-    (column) => column.is_editable === false
-  )?.column_name;
-  if (defaultOrderValue == undefined) {
-    defaultOrderValue = table.columns[0].column_name;
-  }
+  const [openPanel, setOpenPanel] = useState(false);
+  const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
+  const [currentPhone, setCurrentPhone] = useState<string>("");
+  const [currentCategory, setCurrentCategory] = useState<string>("");
+  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
+  const [showFiles, setShowFiles] = useState<boolean>(false);
+  const [scripts, setScripts] = useState<Row[] | undefined>([]);
+  const [scriptDescription, setScriptDescription] = useState<string | null>("");
+  const [selectedScript, setSelectedScript] = useState<Row | null>(null);
+  const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
+  const rteRef = useRef<RichTextEditorRef>(null);
+  const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
+  const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
+  const meta_schema = vmd.getSchema("meta");
+  const script_table = vmd.getTable("meta", "scripts");
+  const config_table = vmd.getTable("meta", "appconfig_values");
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -91,6 +98,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const Local = localStorage.getItem(name);
   if (Local == null) {
     const nulll = Local;
+  }
+  if (defaultOrderValue == undefined) {
+    defaultOrderValue = table.columns[0].column_name;
   }
   const getTable = JSON.parse(Local!);
 
@@ -134,22 +144,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     getRows();
   }, [table, OrderValue, PageNumber, PaginationValue]);
 
-  const [openPanel, setOpenPanel] = useState(false);
-  const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
-  const [currentPhone, setCurrentPhone] = useState<string>("");
-  const [currentCategory, setCurrentCategory] = useState<string>("");
-  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
-  const [showFiles, setShowFiles] = useState<boolean>(false);
-  const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
-    () => <></>
-  );
-  const [item, setItem] = useState({});
-
-  const meta_schema = vmd.getSchema("meta");
-  const script_table = vmd.getTable("meta", "scripts");
-  const config_table = vmd.getTable("meta", "appconfig_values");
-  const fileSchema = vmd.getSchema("filemanager");
-  const fileTable = vmd.getTable("filemanager", "filestorage");
   const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
     "filemanager",
     "filegroup_view"
@@ -158,14 +152,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     "filemanager",
     "filestorage_view"
   );
-  const [scripts, setScripts] = useState<Row[] | undefined>([]);
-  const [scriptDescription, setScriptDescription] = useState<string | null>("");
-  const [selectedScript, setSelectedScript] = useState<Row | null>(null);
-  const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
-  const rteRef = useRef<RichTextEditorRef>(null);
-  const [files, setFiles] = useState<Row[] | undefined>([]);
-  const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
-  const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
 
   const getFileGroupsView = async () => {
     fileGroupsViewDataAccessor.fetchRows().then((response) => {
@@ -224,24 +210,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     setAppConfigValues(config_rows);
   };
 
-  const getFiles = async () => {
-    if (!fileSchema || !fileTable) {
-      throw new Error("Schema or table not found");
-    }
-    const file_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      fileSchema?.schema_name,
-      fileTable?.table_name
-    );
-
-    const file_rows = await file_data_accessor?.fetchRows();
-
-    setFiles(file_rows);
-  };
-
   useEffect(() => {
     getScripts();
     getConfigs();
-    getFiles();
     getFileGroupsView();
   }, [inputValues]);
 
@@ -297,6 +268,11 @@ const TableListView: React.FC<TableListViewProps> = ({
         }
       )
       .then((response) => {
+        let tempRow = {
+          ...currentRow.row,
+          [currentColumn]: response.data[0].groupid,
+        };
+        setCurrentRow({ row: tempRow });
         vmd
           .getUpdateRowDataAccessor(
             vmd.getTableSchema(table.table_name)?.schema_name,
@@ -312,25 +288,26 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (nonEditableColumn) {
       setCurrentPrimaryKey(nonEditableColumn.column_name);
     }
-    setItem({ file: item, name: itemName, extension: itemExtension });
     getRows();
   };
 
   const onItemRemoved = async (e, item, currentColumn) => {
     e.preventDefault();
-    await axios.post(
-      "http://localhost:3000/rpc/remove_file_from_group",
-      {
-        in_filegroupid: currentRow.row[currentColumn],
-        in_fileid: item.id,
-      },
-      {
-        headers: {
-          "Content-Profile": "filemanager",
-          "Content-Type": "application/json",
+    await axios
+      .post(
+        "http://localhost:3000/rpc/remove_file_from_group",
+        {
+          in_filegroupid: currentRow.row[currentColumn],
+          in_fileid: item.id,
         },
-      }
-    );
+        {
+          headers: {
+            "Content-Profile": "filemanager",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => console.log(res));
     const newItems = allFileGroups?.filter((file) => file.id !== item.id);
     setAllFileGroups(newItems);
     getRows();
@@ -394,25 +371,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
     );
-    // if (columnsAndFile && columnsAndFile.length !== 0 && item.name != null) {
-    //   columnsAndFile.forEach(async (columnAndFile) => {
-    //     if (columnAndFile[1] != null) {
-    //       file_accessor = vmd.getAddRowDataAccessor(
-    //         fileSchema?.schema_name,
-    //         fileTable?.table_name,
-    //         { file_name: item.name, extension: ".pdf", blob: columnAndFile[1] }
-    //       );
-    //       await file_accessor.addRow().then((response) => {
-    //         tempInput = {
-    //           ...tempInput,
-    //           [columnAndFile[0]]: response.data[0]["id"],
-    //         };
-    //       });
-    //     }
-    //   });
-    // }
-    // await new Promise((r) => setTimeout(r, 500));
-    // getFiles();
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -428,9 +386,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     setOpenPanel(false);
   };
 
-  // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
-
-  // }
   const NewInputField = (column: Column) => {
     if (!appConfigValues) {
       return null;
@@ -456,7 +411,28 @@ const TableListView: React.FC<TableListViewProps> = ({
         currentRow.row[column.column_name] as string
       );
     }
-    if (
+    if (column.references_table == "filegroup") {
+      return showFiles ? (
+        <div title="Dropzone">
+          <Dropzone
+            onItemAdded={onItemAdded}
+            onItemRemoved={onItemRemoved}
+            items={allFileGroups}
+            currentColumn={column.column_name}
+          />
+        </div>
+      ) : (
+        <Button
+          title="Show Files Button"
+          variant="contained"
+          color="primary"
+          style={{ marginLeft: 15 }}
+          onClick={handleShowFiles.bind(this, column)}
+        >
+          Show Files
+        </Button>
+      );
+    } else if (
       !columnDisplayType ||
       columnDisplayType.value == "text" ||
       columnDisplayType.value == "email"
@@ -606,45 +582,8 @@ const TableListView: React.FC<TableListViewProps> = ({
           )}
         />
       );
-    } else if (column.references_table == "filegroup") {
-      //filestorage_view.groupid == filegroup.id (filter filestorage view to only show things in that group)
-      //display icons needed depending on extension, filenames, number of files
-      //on drag and drop, add file to filestorage using the stored proc add_file_to_group(), but first convert file bytes to b64.
-      return showFiles ? (
-        <Dropzone
-          onItemAdded={onItemAdded}
-          onItemRemoved={onItemRemoved}
-          items={allFileGroups}
-          setAllFileGroups={setAllFileGroups}
-          currentColumn={column.column_name}
-        />
-      ) : (
-        <Button
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: 15 }}
-          onClick={handleShowFiles.bind(this, column)}
-        >
-          Show Files
-        </Button>
-      );
     }
   };
-
-  // useEffect(() => {
-  //   setInputField(() => newInputField as (column: Column) => JSX.Element);
-  // }, [
-  //   currentRow,
-  //   columns,
-  //   table,
-  //   appConfigValues,
-  //   currentPhone,
-  //   rows,
-  //   currentCategory,
-  //   inputValues,
-  //   currentWYSIWYG,
-  //   showFiles,
-  // ]);
 
   useEffect(() => {
     getRows();
@@ -755,7 +694,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         <tbody>
           {rows?.map((row, rowIdx) => {
             return (
-              <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
+              <tr title="row" key={rowIdx} onClick={() => handleOpenPanel(row)}>
                 {Object.values(row.row).map((cell, idx) => {
                   return (
                     <td key={idx}>
