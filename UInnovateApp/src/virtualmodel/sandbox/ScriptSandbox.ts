@@ -3,7 +3,6 @@
 // import ivm = require("isolated-vm");
 import ivm from "isolated-vm";
 import { Row } from "../DataAccessor";
-import { table } from "console";
 
 /* This class will be used to create a sandbox for the user's script */
 class ScriptSandbox {
@@ -81,23 +80,23 @@ class ScriptSandbox {
       };
     `);
 
-    const updateRow = function (id: number, updatedRow: Partial<Row>) {
-      // Find the row with the given id
-      const row = table_data.find((row) => row.id === id);
-      if (!row) {
-        throw new Error("Row not found");
-      }
+    // Define the updateRow function inside the sandbox
+    this.context.evalSync(`
+      const updateRow = function (key_value, updatedRow) {
+        // Find the row with the given primary key
+        const row = table_data.find((r) => r[primary_key] === key_value);
+        if (!row) {
+          throw new Error("Row not found");
+        }
 
-      // Update the row
-      row.name = updatedRow.name ?? row.name;
-      row.description = updatedRow.description ?? row.description;
-      row.content = updatedRow.content ?? row.content;
-      row.table_name = updatedRow.table_name ?? row.table_name;
-      row.btn_name = updatedRow.btn_name ?? row.btn_name;
-    };
-
-    // Adding custom methods to the sandbox's context
-    this.jail.setSync("updateRow", updateRow);
+        // Update the row
+        for (let key in updatedRow) {
+          if (updatedRow.hasOwnProperty(key)) {
+            row[key] = updatedRow[key];
+          }
+        }
+      };
+    `);
 
     const script = this.isolate.compileScriptSync(user_script);
     script.runSync(this.context);
