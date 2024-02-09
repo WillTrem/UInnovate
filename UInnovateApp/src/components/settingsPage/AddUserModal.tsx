@@ -9,8 +9,9 @@ import MultiSelect from "./MultiSelect"
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
 import { Role } from "../../redux/AuthSlice"
 
-import { ErrMsg } from "./SignupModal"
+import { ErrMsg } from "../../enums/ErrMsg"
 import validator from "validator"
+import { AxiosError } from "axios"
 
 interface AddUserModalProps extends Omit<ModalProps, 'children'> {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -80,7 +81,11 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 				getUsers();
 				resetModal();
 			})
-			.catch((error) => {
+			.catch((error: AxiosError) => {
+				console.log(error);
+				if(error.response?.status === 409){
+					setEmailError(ErrMsg.USER_ALREADY_EXISTS)
+				}
 				console.error("An error occured while creating user " + inputValues["email"]);
 			});
 	}

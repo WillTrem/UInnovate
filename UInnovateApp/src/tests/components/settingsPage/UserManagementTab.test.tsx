@@ -6,7 +6,7 @@ import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
 import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { Provider } from "react-redux";
-import { ErrMsg } from "../../../components/settingsPage/SignupModal";
+import { ErrMsg } from "../../../enums/ErrMsg";
 
 describe("UserManagementTab component", () => {
 	const initialState = {

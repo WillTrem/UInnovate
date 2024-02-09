@@ -10,6 +10,7 @@ import { logIn } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff, Check, Close, NavigateNext, NavigateBefore } from '@mui/icons-material';
 import { green, grey } from '@mui/material/colors';
+import { ErrMsg } from "../../enums/ErrMsg";
 
 const LENGTH_REGEX = new RegExp(/.{8,}$/);
 const UPPERCASE_REGEX = new RegExp(/.*[A-Z]/);
@@ -36,15 +37,6 @@ const REGEX_LIST = [
 enum SignupState {
 	INITIAL, LOGIN, SIGNUP, SIGNUP_SUCCESSFUL
 };
-export enum ErrMsg {
-	INVALID_EMAIL = "Invalid email address",
-	EMAIL_NOT_FOUND = "Couldn't find your email address in the system",
-	WRONG_PASSWORD = "Incorrect password for the given email address",
-	INSECURE_PASSWORD = "Password doesn't meet the requirements",
-	NO_MATCH_CONFIRM_PASSWORD = "Passwords don't match",
-	MISSING_FIELD = "Missing field"
-}
-
 const USER_NOT_FOUND_CODE = "42704";
 const USER_NEVER_SIGNED_UP_CODE = "01000";
 
