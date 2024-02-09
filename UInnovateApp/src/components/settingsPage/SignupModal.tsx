@@ -67,7 +67,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 
 	// Reset the inputValues state's values
 	const resetValues = () => setInputValues({});
-		
+
 	// Cancels and closes the form
 	const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
 		props.onClose && props.onClose(event, "escapeKeyDown");
@@ -134,7 +134,10 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	}
 
 	// Resets the state back to INITIAL
-	const handleBack = () => setCurrentState(SignupState.INITIAL);
+	const handleBack = () => {
+		setCurrentState(SignupState.INITIAL);
+		setInputValues({ email: inputValues.email })
+	}
 
 	const handleFormSubmit = () => {
 		if (!validateUserInput()) {
@@ -163,7 +166,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 		}
 		else if (currentState === SignupState.SIGNUP) {
 			// Removing confirm password value from the sent input fields
-			const {confirm_password, ...signupInputValues} = inputValues;
+			const { confirm_password, ...signupInputValues } = inputValues;
 			signUpFunctionAccessor.setBody(signupInputValues);
 			signUpFunctionAccessor.executeFunction({ withCredentials: true })
 				.then(() => {
@@ -240,7 +243,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 				else {
 					return true;
 				}
-			default: 
+			default:
 				return true
 		}
 	};
@@ -344,8 +347,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 
 	const signupSuccessfulFormContent =
 		<>
-			<Typography variant='body1' align="center">Sign up has been done successfully.</Typography>
-			<Typography variant='body1' align="center">You can now log in using your credentials.</Typography>
+			<Typography variant='body1' align="center">Sign up has been done successfully. <br />
+				You can now log in using your credentials.</Typography>
 			<Button variant="contained"
 				onClick={handleBack}
 				sx={{ backgroundColor: "#404040" }}>
@@ -354,31 +357,30 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 		</>
 
 	return <Modal {...props} onClose={handleCancel} >
-		<Box className='modal-container' component="form" >
+		<Box className='modal-container-center' component="form" >
 			<div className="modal-content-center">
 				<Typography variant="h5">
-					{currentState === SignupState.INITIAL 
-					? "Sign up (or Log in)"
-					: currentState === SignupState.LOGIN
-					? "Log in"
-				: "Sign up"}
+					{currentState === SignupState.INITIAL
+						? "Sign up (or Log in)"
+						: currentState === SignupState.LOGIN
+							? "Log in"
+							: "Sign up"}
 				</Typography>
 				<div className="form">
-					{currentState === SignupState.INITIAL 
-					? initialFormContent
-					: currentState === SignupState.LOGIN
-					? loginFormContent
-					: currentState === SignupState.SIGNUP
-					? signupFormContent
-					: signupSuccessfulFormContent }
+					{currentState === SignupState.INITIAL
+						? initialFormContent
+						: currentState === SignupState.LOGIN
+							? loginFormContent
+							: currentState === SignupState.SIGNUP
+								? signupFormContent
+								: signupSuccessfulFormContent}
 				</div>
-				<div className="button-container-wide">
-					{currentState !== SignupState.SIGNUP_SUCCESSFUL &&
-						<Button variant="contained"
-							onClick={handleCancel}
-							sx={{ backgroundColor: "#404040" }}>
-							Cancel
-						</Button>}
+				<div className="button-container-wide" hidden={currentState === SignupState.SIGNUP_SUCCESSFUL}>
+					<Button variant="contained"
+						onClick={handleCancel}
+						sx={{ backgroundColor: "#404040" }}>
+						Cancel
+					</Button>
 					{/* If in Login or Signup state, display login/signup button. Otherwise, display the 'next' button. */}
 					{currentState === SignupState.LOGIN || currentState === SignupState.SIGNUP
 						?
@@ -444,7 +446,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 			autoFocus={props.autoFocus}
 			onFocus={() => setSelected(true)}
 			onBlur={() => setSelected(false)}
-			
+
 
 			endAdornment={
 				<InputAdornment position="end" >
