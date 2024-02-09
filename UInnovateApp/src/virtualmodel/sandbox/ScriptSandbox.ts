@@ -3,6 +3,7 @@
 // import ivm = require("isolated-vm");
 import ivm from "isolated-vm";
 import { Row } from "../DataAccessor";
+import { table } from "console";
 
 /* This class will be used to create a sandbox for the user's script */
 class ScriptSandbox {
@@ -18,44 +19,25 @@ class ScriptSandbox {
 
   // This method will be used to execute the user's script
   executeScript(user_script: string, table_data: Row[], primary_key: string) {
-    // Defining the global variables inside the sandbox
+    // Defining the global variable inside the sandbox
     this.jail.setSync("global", this.jail.derefInto());
+
+    // Defining the table_data and primary_key variables inside the sandbox
     this.jail.setSync("user_script", user_script);
     this.jail.setSync("primary_key", primary_key);
+
+    // Defining the log method inside the sandbox
     this.jail.setSync("log", function (...args: string[]): void {
       console.log(...args);
     });
 
-    // Serialize the table data to pass it to the sandbox
+    // Serializing the table data to pass it to the sandbox
     const serializedTableData = JSON.stringify(table_data);
 
-    // Parse the serialized table data in the sandbox
+    // Parsing the serialized table data in the sandbox
     this.context.evalSync(
       `table_data = JSON.parse(${JSON.stringify(serializedTableData)})`
     );
-
-    // Define the addRow, removeRow, and updateRow functions inside the sandbox
-    const addRow = function (row: Partial<Row>) {
-      // Check if the row with the same id already exists
-      const exists = table_data.some((r) => r.id === row.id);
-      if (exists) {
-        throw new Error("Row with the same id or name already exists");
-      }
-
-      // Create a new row with default values
-      const newRow: Row = {
-        id: row.id,
-        name: row.name,
-        description: row.description,
-        content: row.content,
-        table_name: row.table_name ?? "scripts",
-        btn_name: row.btn_name ?? "Do a magic trick!",
-        created_at: null,
-      };
-
-      // Add the new row to the table_data array
-      table_data.push(newRow);
-    };
 
     // Adding the console.log method to the sandbox
     this.context.evalSync(`
@@ -67,9 +49,26 @@ class ScriptSandbox {
         }   
     `);
 
+    // Define the addRow function inside the sandbox
+    this.context.evalSync(`
+      const addRow = function (row) {
+        // Check if the row with the same id already exists
+        const exists = table_data.some(
+          (r) => r[primary_key] === row[primary_key]
+        );
+        if (exists) {
+          throw new Error("Row with the same key already exists");
+        }
+
+        // We can't check for constraints here. We can only check for the primary key
+        // The checking will be done when the changes will be tried to be committed to the database
+        console.log("Row added:", row);
+        table_data.push(row);
+      };
+    `);
+
     // Define the removeRow function inside the sandbox
     this.context.evalSync(`
-      console.log(primary_key);
       const removeRow = function (key_value) {
         // Find the index of the row with the given primary key
         const index = table_data.findIndex((row) => row[primary_key] === key_value);
@@ -98,7 +97,6 @@ class ScriptSandbox {
     };
 
     // Adding custom methods to the sandbox's context
-    this.jail.setSync("addRow", addRow);
     this.jail.setSync("updateRow", updateRow);
 
     const script = this.isolate.compileScriptSync(user_script);
