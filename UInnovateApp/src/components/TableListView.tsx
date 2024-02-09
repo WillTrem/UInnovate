@@ -88,6 +88,12 @@ const TableListView: React.FC<TableListViewProps> = ({
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
+  let defaultOrderValue = table.columns.find(
+    (column) => column.is_editable === false
+  )?.column_name;
+  if (defaultOrderValue == undefined) {
+    defaultOrderValue = table.columns[0].column_name;
+  }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -662,6 +668,15 @@ const TableListView: React.FC<TableListViewProps> = ({
               </Tooltip>
             );
           })}
+          {isScriptPopupVisible && selectedScript && (
+            <ScriptLoadPopup
+              onClose={() => {
+                setIsScriptPopupVisible(false);
+                setSelectedScript(null);
+              }}
+              script={selectedScript}
+            />
+          )}
         </div>
         <div>
           <FormControl size="small">
