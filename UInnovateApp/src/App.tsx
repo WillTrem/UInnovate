@@ -37,6 +37,8 @@ function App() {
         <Route path="/:schema/:tableName" element={<ObjectMenu/> } />
         <Route path="/objview/:Type/:tableName" element={<TableEnumView />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/settings/:option" element={<Settings />} />
+
         <Route path="*" element={<><p>Cannot be Found</p></>}/>
       </Routes>}
     </ConfigProvider>
