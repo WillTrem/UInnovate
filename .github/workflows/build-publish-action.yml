@@ -7,8 +7,8 @@ on:
       - 237-automation-postgoat-image-dockerhub
 # basic sanity check before pushing the image is necessary -> create test tag
 env:
-  TEST_TAG: alexicazana/postgoat-frontend:test
-  LATEST_TAG: alexicazana/postgoat-frontend:latest
+  TEST_TAG: alexicazana/goat-dock:test
+  LATEST_TAG: alexicazana/goat-dock:latest
 
 jobs:
   docker:
@@ -41,4 +41,4 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: alexicazana/postgoat-frontend:latest
+          tags: alexicazana/goat-dock:latest
