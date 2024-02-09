@@ -28,7 +28,7 @@ export function ObjectMenu() {
   const {schema} = useParams()
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
-
+  
   // Get the visible tables from the VMD for the selected schema
   const tables = vmd.getVisibleTables(schema ?? selectedSchema);
   
@@ -72,7 +72,7 @@ export function ObjectMenu() {
                         table.table_display_type === "list" ? (
                           <TableListView table={table}></TableListView>
                         ) : table.table_display_type === "enum" ? (
-                          <TableEnumView />
+                          <TableEnumView table={table}></TableEnumView>
                         ) : null
                       ) : null}
                     </Tab.Pane>

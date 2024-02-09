@@ -15,7 +15,7 @@ const DisplayTab = () => {
 
   const correctSchemas = schemas.filter((schema) => schema.schema_name !== "cron");
   const [currentSchema, SetcurrentSchema] = useState<string>(correctSchemas[0].schema_name);
-  const tables = vmd.getTables(currentSchema);
+  const tables = vmd.getTables(currentSchema) || []; 
   const tableItems = tables?.map((table) => (
     <TableItem key={table.table_name} table={table} />
   ));
