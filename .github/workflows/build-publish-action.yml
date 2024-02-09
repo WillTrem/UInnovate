@@ -27,6 +27,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ../Dockerfile.goat
           load: true
           tags: ${{ env.TEST_TAG }}
       - name: Test
