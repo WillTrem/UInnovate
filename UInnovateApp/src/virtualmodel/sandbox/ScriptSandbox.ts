@@ -17,20 +17,21 @@ class ScriptSandbox {
   }
 
   // This method will be used to execute the user's script
-  executeScript(user_script: string, table_data: Row[]) {
+  executeScript(user_script: string, table_data: Row[], primary_key: string) {
     // Defining the global variables inside the sandbox
     this.jail.setSync("global", this.jail.derefInto());
+    this.jail.setSync("user_script", user_script);
+    this.jail.setSync("primary_key", primary_key);
     this.jail.setSync("log", function (...args: string[]): void {
       console.log(...args);
     });
-    this.jail.setSync("user_script", user_script);
 
     // Serialize the table data to pass it to the sandbox
     const serializedTableData = JSON.stringify(table_data);
 
     // Parse the serialized table data in the sandbox
     this.context.evalSync(
-      `global.table_data = JSON.parse(${JSON.stringify(serializedTableData)})`
+      `table_data = JSON.parse(${JSON.stringify(serializedTableData)})`
     );
 
     // Define the addRow, removeRow, and updateRow functions inside the sandbox
@@ -56,16 +57,30 @@ class ScriptSandbox {
       table_data.push(newRow);
     };
 
-    const removeRow = function (id: number) {
-      // Find the index of the row with the given id
-      const index = table_data.findIndex((row) => row.id === id);
-      if (index === -1) {
-        throw new Error("Row not found");
-      }
+    // Adding the console.log method to the sandbox
+    this.context.evalSync(`
+      global.console = { 
+        log: function() { 
+          const args = Array.prototype.slice.call(arguments);
+          global.log.apply(null, args);
+          } 
+        }   
+    `);
 
-      // Remove the row from the table_data array
-      table_data.splice(index, 1);
-    };
+    // Define the removeRow function inside the sandbox
+    this.context.evalSync(`
+      console.log(primary_key);
+      const removeRow = function (key_value) {
+        // Find the index of the row with the given primary key
+        const index = table_data.findIndex((row) => row[primary_key] === key_value);
+        if (index === -1) {
+          throw new Error("Row not found");
+        }
+
+        // Remove the row from the table_data array
+        table_data.splice(index, 1);
+      };
+    `);
 
     const updateRow = function (id: number, updatedRow: Partial<Row>) {
       // Find the row with the given id
@@ -82,25 +97,17 @@ class ScriptSandbox {
       row.btn_name = updatedRow.btn_name ?? row.btn_name;
     };
 
+    // Adding custom methods to the sandbox's context
     this.jail.setSync("addRow", addRow);
-    this.jail.setSync("removeRow", removeRow);
     this.jail.setSync("updateRow", updateRow);
 
-    this.context.evalSync("log(table_data)");
+    const script = this.isolate.compileScriptSync(user_script);
+    script.runSync(this.context);
 
-    // const script = this.isolate.compileScriptSync(user_script);
-    // script.run(this.context);
-    const trial = this.isolate.compileScriptSync(
-      `console.log("Trial succeeded.");`
-    );
-    trial.run(this.context).catch((err) => console.error(err));
-
-    // Serialize the table data back into a string inside the sandbox
+    // Serialize the table data back into a string inside the sandbox and parse it outside the sandbox
     const serializedResult = this.context.evalSync(
       "JSON.stringify(table_data)"
     );
-
-    // Parse the serialized result outside the sandbox
     const result = JSON.parse(serializedResult);
 
     return result;

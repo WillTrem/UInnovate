@@ -43,6 +43,7 @@ class ScriptHandler {
       const result = await axios.post("http://localhost:3001/execute", {
         script: this.script["content"],
         table: this.table_data,
+        primary_key: this.table.getPrimaryKey()?.column_name,
       });
 
       this.new_table_data = result.data;
