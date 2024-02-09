@@ -27,7 +27,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: .././Dockerfile.goat
+          file: ../.Dockerfile.goat
           load: true
           tags: ${{ env.TEST_TAG }}
       - name: Test
@@ -37,7 +37,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ..././Dockerfile.goat
+          file: ../.Dockerfile.goat
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           platforms: linux/amd64,linux/arm64
           push: true
