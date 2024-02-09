@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: List Files
-        uses: ls -lah
+        uses: ls
       - name: Build and export to Docker
         uses: docker/build-push-action@v5
         with:
