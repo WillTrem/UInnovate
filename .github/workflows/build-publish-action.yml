@@ -22,8 +22,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Checkout repository
-        uses: ls -l
       - name: Build and export to Docker
         uses: docker/build-push-action@v5
         with:
