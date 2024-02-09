@@ -12,7 +12,7 @@ env:
 jobs:
   docker:
     runs-on: ubuntu-latest
-     env:
+    env:
       working-directory: ./
     steps:
       - name: Set up QEMU
