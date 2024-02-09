@@ -8,6 +8,7 @@ on:
 env:
   TEST_TAG: alexicazana/goat-dock:test
   LATEST_TAG: alexicazana/goat-dock:latest
+  working-directory: ./
 
 jobs:
   docker:
