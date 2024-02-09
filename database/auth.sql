@@ -253,6 +253,7 @@ payload json;
 valid boolean;
 token_email text;
 _role name;
+selected_user authentication.users%ROWTYPE;
 result authentication.jwt_token;
 BEGIN -- if the token cookie exists, take its value and set the authorization header with the token
 SELECT current_setting('request.cookies', TRUE)::JSON->>'token' INTO token_cookie;
@@ -266,18 +267,28 @@ FROM verify(
 	);
 IF payload IS NULL THEN RAISE EXCEPTION 'Invalid refresh token';
 ELSE token_email := payload->>'email';
--- 	Obtains the user's role
-SELECT role
+-- 	Obtains the user's information (mostly role and is_active)
+SELECT *
 FROM authentication.users
-WHERE users.email = token_email INTO _role;
+WHERE users.email = token_email INTO selected_user;
+
+-- If the user has been deactivated, do not send back a new access token
+IF (NOT selected_user.is_active)
+THEN -- Set the "Set-Cookie" header to clear the cookie
+	RAISE sqlstate 'PGRST' USING
+    message = '{"code":"01110","message":"User deactivated","details":"User has been deactivated, preventing them from logging back in"}',
+    detail = '{"status":400,"headers":{"Set-Cookie":"token=; Max-Age=0;"}}';
+END IF;
+
 -- 	Signs and returns the new access token
 SELECT sign(
 		row_to_json(r),
 		current_setting('custom.jwt_secret')
 	) AS token
 FROM (
-		SELECT _role AS role,
+		SELECT selected_user.role AS role,
 			token_email AS email,
+			selected_user.schema_access as schema_access,
 			extract(
 				epoch
 				FROM NOW()
@@ -289,6 +300,7 @@ END IF;
 RAISE EXCEPTION 'No refresh token found';
 END;
 $$ language plpgsql SECURITY DEFINER;
+
 
 
 -- FUNCTION logout to clear cookies containing refresh tokens
