@@ -5,15 +5,43 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
 import vmd from "../../virtualmodel/VMD";
+import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+import { useState } from "react";
+import { c } from "vitest/dist/reporters-5f784f42.js";
 
 const DisplayTab = () => {
-  const tables = vmd.getAllTables();
+  const schemas = vmd.getSchemas();
+
+
+  const correctSchemas = schemas.filter((schema) => schema.schema_name !== "cron");
+  const [currentSchema, SetcurrentSchema] = useState<string>(correctSchemas[0].schema_name);
+  const tables = vmd.getTables(currentSchema);
   const tableItems = tables?.map((table) => (
     <TableItem key={table.table_name} table={table} />
   ));
+  const handleSchemaSelect = (event: SelectChangeEvent<string>) => {
+    SetcurrentSchema(event.target.value as string);
+  };
+
 
   return (
     <div>
+      <FormControl size="small" style={{marginBottom:'2em', marginTop:'-2em' } }>
+        <h6>Schema</h6>
+        <Select
+          data-testid="display-type-table-config"
+          value={currentSchema}
+          onChange={handleSchemaSelect}
+          
+        >
+          {correctSchemas.map((schema) => (
+            <MenuItem value={schema.schema_name}>{schema.schema_name}</MenuItem>
+          ))}
+        </Select>
+        <FormHelperText>
+          Choose which schema to change the tables of
+        </FormHelperText>
+      </FormControl>
       <ConfigurationSaver />
       <Tab.Container>
         <Row>
