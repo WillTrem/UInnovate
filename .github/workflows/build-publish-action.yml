@@ -10,6 +10,8 @@ env:
   LATEST_TAG: alexicazana/goat-dock:latest
 
 jobs:
+  env:
+      working-directory: ./
   docker:
     runs-on: ubuntu-latest
     steps:
