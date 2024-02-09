@@ -1,32 +1,32 @@
-name: Build and Publish Docker Image
+# name: Build and Publish Docker Image
 
-on:
-  push:
-    branches:
-      - 237-automation-postgoat-image-dockerhub
+# on:
+#   push:
+#     branches:
+#       - 237-automation-postgoat-image-dockerhub
 
-jobs:
-  build_and_publish:
-    runs-on: ubuntu-latest
+# jobs:
+#   build_and_publish:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
 
-      - name: Pull Docker image
-        run: docker pull alexicazana/goat-dock:v1
+#       - name: Pull Docker image
+#         run: docker pull alexicazana/goat-dock:v1
 
-      - name: Tag Docker image
-        run: docker tag alexicazana/goat-dock:v1 alexicazana/postgoat-frontend:latest
+#       - name: Tag Docker image
+#         run: docker tag alexicazana/goat-dock:v1 alexicazana/postgoat-frontend:latest
 
-     # test
-     # - name: Run container and test
-     #   run: |
-     #    docker run --rm mariar001/postgoat-frontend:latest ./run_tests.sh 
+#      # test
+#      # - name: Run container and test
+#      #   run: |
+#      #    docker run --rm mariar001/postgoat-frontend:latest ./run_tests.sh
 
-      - name: Push Docker image to Docker Hub
-     #   if: success() 
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        run: docker push alexicazana/postgoat-frontend:latest
+#       - name: Push Docker image to Docker Hub
+#      #   if: success()
+#         env:
+#           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+#           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+#         run: docker push alexicazana/postgoat-frontend:latest
