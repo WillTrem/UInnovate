@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72% </span>
+                <span class="strong">75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/25</span>
+                <span class='fraction'>18/24</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.83% </span>
+                <span class="strong">73.91% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/24</span>
+                <span class='fraction'>17/23</span>
             </div>
         
             
@@ -187,10 +187,7 @@
 <a name='L122'></a><a href='#L122'>122</a>
 <a name='L123'></a><a href='#L123'>123</a>
 <a name='L124'></a><a href='#L124'>124</a>
-<a name='L125'></a><a href='#L125'>125</a>
-<a name='L126'></a><a href='#L126'>126</a>
-<a name='L127'></a><a href='#L127'>127</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L125'></a><a href='#L125'>125</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -219,6 +216,7 @@
 <span class="cline-any cline-yes">30x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">15x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -226,7 +224,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -249,7 +246,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -315,16 +311,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Box, Button, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Box, Button, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, Typography } from "@mui/material"
 import React, { ReactNode, useState } from "react"
 &nbsp;
-import "../../styles/Modals.css"
+import "../../styles/AddUserModal.css"
 import "../../styles/UserManagementTab.css"
 import vmd from "../../virtualmodel/VMD"
 import { Row } from "../../virtualmodel/DataAccessor"
-import MultiSelect from "./MultiSelect"
+import { MultiSelect } from "./UserMangementTab"
 import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
-import { Role } from "../../redux/AuthSlice"
 &nbsp;
 &nbsp;
 interface AddUserModalProps extends Omit&lt;ModalProps, 'children'&gt; {
@@ -344,21 +339,21 @@ const AddUserModal: React.FC&lt;AddUserModalProps&gt; = ({ setOpen, getUsers, ..
 	const [schemaAccessList, setSchemaAccessList] = useState&lt;string[]&gt;([]);
 	const schemaNames = vmd.getSchemas().map((schema) =&gt; schema.schema_name);
 &nbsp;
-&nbsp;
+	// Function accessor
+	const functionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "create_user");
 &nbsp;
 	// Handles change in input field
-	function <span class="fstat-no" title="function not covered" >handleInputChange(e</span>: React.ChangeEvent&lt;HTMLInputElement&gt;) {
+	function <span class="fstat-no" title="function not covered" >handleInputChange(e</span>: React.ChangeEvent&lt;HTMLInputElement&gt; | SelectChangeEvent&lt;string&gt;) {
 		const newInput = <span class="cstat-no" title="statement not covered" >{</span>
 			...inputValues,
 			[e.target.name]: e.target.value,
 		}
-<span class="cstat-no" title="statement not covered" >		console.log(newInput);</span>
 <span class="cstat-no" title="statement not covered" >		setInputValues(newInput);</span>
 	};
 &nbsp;
 	function <span class="fstat-no" title="function not covered" >handleRoleChange(e</span>: SelectChangeEvent&lt;string&gt;) {
 <span class="cstat-no" title="statement not covered" >		setRole(e.target.value);</span>
-<span class="cstat-no" title="statement not covered" >		handleInputChange(e as React.ChangeEvent&lt;HTMLInputElement&gt;);</span>
+<span class="cstat-no" title="statement not covered" >		handleInputChange(e);</span>
 	}
 &nbsp;
 	function resetModal() {
@@ -374,8 +369,7 @@ const AddUserModal: React.FC&lt;AddUserModalProps&gt; = ({ setOpen, getUsers, ..
 &nbsp;
 	// Handles adding a user 
 	function handleFormSubmit() {
-		// Function accessor
-		const functionAccessor: FunctionAccessor = vmd.getFunctionAccessor("meta", "create_user");
+		// TODO: Implement function
 		functionAccessor.setBody(inputValues);
 		functionAccessor.executeFunction()
 			.then((response) =&gt; {
@@ -390,52 +384,52 @@ const AddUserModal: React.FC&lt;AddUserModalProps&gt; = ({ setOpen, getUsers, ..
 &nbsp;
 	// All the props from AddUserModal are directly passed down to the Modal component
 	return &lt;Modal onClose={handleClose} {...props}&gt;
-		&lt;Box className='modal-container-center'&gt;
-			&lt;div className="modal-content"&gt;
-				&lt;Typography variant="h5"&gt;Add new user&lt;/Typography&gt;
-				&lt;div className="form"&gt;
-					&lt;div style={{ marginBottom: 10 }}&gt;
-						&lt;label&gt;
-							Email
-							&lt;TextField
-								name="email"
-								onChange={handleInputChange}
-							/&gt;
-						&lt;/label&gt;
-					&lt;/div&gt;
-					&lt;div style={{ marginBottom: 10 }}&gt;
-						&lt;label&gt;
-							Role
-							&lt;Select
-								name="role"
-								value={role}
-								onChange={<span class="fstat-no" title="function not covered" >(e</span>vent) =&gt; <span class="cstat-no" title="statement not covered" >handleRoleChange(event)}</span>
-								displayEmpty
-							&gt;
-								&lt;MenuItem value={Role.USER}&gt;User&lt;/MenuItem&gt;
-								&lt;MenuItem value={Role.CONFIG}&gt;Configurator&lt;/MenuItem&gt;
-								&lt;MenuItem value={Role.ADMIN}&gt;Admin&lt;/MenuItem&gt;
-							&lt;/Select&gt;
-						&lt;/label&gt;
-					&lt;/div&gt;
-					&lt;div style={{ marginBottom: 10 }}&gt;
-						&lt;label&gt;
-							Schema Access
-							&lt;MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} /&gt;
-						&lt;/label&gt;
-					&lt;/div&gt;
+		&lt;Box className='modal-container'&gt;
+			&lt;Typography variant="h5"&gt;Add new user&lt;/Typography&gt;
+			&lt;div className="form"&gt;
+				&lt;div style={{ marginBottom: 10 }}&gt;
+					&lt;label&gt;
+						Email
+						&lt;input
+							type="text"
+							name="email"
+							onChange={handleInputChange}
+						/&gt;
+					&lt;/label&gt;
 				&lt;/div&gt;
-				&lt;div className="button-container-wide"&gt;
-					&lt;Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}&gt;
-						Cancel
-					&lt;/Button&gt;
-					&lt;Button
-						variant="contained"
-						onClick={handleFormSubmit}
-						sx={{ backgroundColor: "#404040" }}&gt;
-						Add
-					&lt;/Button&gt;
+				&lt;div style={{ marginBottom: 10 }}&gt;
+					&lt;label&gt;
+						Role
+						&lt;Select
+							name="role"
+							value={role}
+							onChange={<span class="fstat-no" title="function not covered" >(e</span>vent) =&gt; <span class="cstat-no" title="statement not covered" >handleRoleChange(event)}</span>
+							displayEmpty
+						&gt;
+							{/*TODO:  Should create the  list of roles from a db table*/}
+							&lt;MenuItem value={"user"}&gt;User&lt;/MenuItem&gt;
+							&lt;MenuItem value={"configurator"}&gt;Configurator&lt;/MenuItem&gt;
+							&lt;MenuItem value={"administrator"}&gt;Admin&lt;/MenuItem&gt;
+						&lt;/Select&gt;
+					&lt;/label&gt;
 				&lt;/div&gt;
+				&lt;div style={{ marginBottom: 10 }}&gt;
+					&lt;label&gt;
+						Schema Access
+						&lt;MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} /&gt;
+					&lt;/label&gt;
+				&lt;/div&gt;
+			&lt;/div&gt;
+			&lt;div className="button-container"&gt;
+				&lt;Button
+					variant="contained"
+					onClick={handleFormSubmit}
+					sx={{ backgroundColor: "#404040" }}&gt;
+					Add
+				&lt;/Button&gt;
+				&lt;Button variant="contained" onClick={handleClose} sx={{ backgroundColor: "#404040" }}&gt;
+					Cancel
+				&lt;/Button&gt;
 			&lt;/div&gt;
 		&lt;/Box&gt;
 	&lt;/Modal&gt;
@@ -448,7 +442,7 @@ export default AddUserModal;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-07T21:52:55.337Z
+                at 2024-01-06T02:04:44.246Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

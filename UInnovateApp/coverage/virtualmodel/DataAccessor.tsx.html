@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">4% </span>
+                <span class="strong">4.16% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/25</span>
+                <span class='fraction'>1/24</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.5% </span>
+                <span class="strong">14.28% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/8</span>
+                <span class='fraction'>1/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">4% </span>
+                <span class="strong">4.16% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/25</span>
+                <span class='fraction'>1/24</span>
             </div>
         
             
@@ -157,11 +157,7 @@
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
 <a name='L94'></a><a href='#L94'>94</a>
-<a name='L95'></a><a href='#L95'>95</a>
-<a name='L96'></a><a href='#L96'>96</a>
-<a name='L97'></a><a href='#L97'>97</a>
-<a name='L98'></a><a href='#L98'>98</a>
-<a name='L99'></a><a href='#L99'>99</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L95'></a><a href='#L95'>95</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -245,21 +241,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axiosCustom from "../api/AxiosCustom";
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import axios from "axios";
 &nbsp;
 export class DataAccessor {
   data_url: string;
@@ -285,7 +277,7 @@ export class DataAccessor {
 <span class="cstat-no" title="statement not covered" >    try {</span>
       const rows: Row[] = <span class="cstat-no" title="statement not covered" >[];</span>
 &nbsp;
-      const response = <span class="cstat-no" title="statement not covered" >await axiosCustom.get(this.data_url, {</span>
+      const response = <span class="cstat-no" title="statement not covered" >await axios.get(this.data_url, {</span>
         headers: this.headers,
       });
 &nbsp;
@@ -303,7 +295,7 @@ export class DataAccessor {
   // return type: AxiosResponse
 <span class="fstat-no" title="function not covered" >  async a</span>ddRow() {
 <span class="cstat-no" title="statement not covered" >    try {</span>
-      const response = <span class="cstat-no" title="statement not covered" >await axiosCustom.post(this.data_url, this.values, {</span>
+      const response = <span class="cstat-no" title="statement not covered" >await axios.post(this.data_url, this.values, {</span>
         headers: this.headers,
       });
 &nbsp;
@@ -317,7 +309,7 @@ export class DataAccessor {
   // return type: AxiosResponse
 <span class="fstat-no" title="function not covered" >  async u</span>pdateRow() {
 <span class="cstat-no" title="statement not covered" >    try {</span>
-      const response = <span class="cstat-no" title="statement not covered" >await axiosCustom.patch(this.data_url, this.values, {</span>
+      const response = <span class="cstat-no" title="statement not covered" >await axios.patch(this.data_url, this.values, {</span>
         headers: this.headers,
       });
 &nbsp;
@@ -331,7 +323,7 @@ export class DataAccessor {
   // return type: AxiosResponse
 <span class="fstat-no" title="function not covered" >  async u</span>psert() {
 <span class="cstat-no" title="statement not covered" >    try {</span>
-      const response = <span class="cstat-no" title="statement not covered" >await axiosCustom.post(this.data_url, this.values, {</span>
+      const response = <span class="cstat-no" title="statement not covered" >await axios.post(this.data_url, this.values, {</span>
         params: this.params,
         headers: this.headers,
       });
@@ -340,10 +332,6 @@ export class DataAccessor {
     } catch (error) {
 <span class="cstat-no" title="statement not covered" >      console.error("Could not update or insert row:", error);</span>
     }
-  }
-&nbsp;
-<span class="fstat-no" title="function not covered" >  toggleAuthentication(v</span>alue: boolean){
-<span class="cstat-no" title="statement not covered" >    axiosCustom.defaults.withCredentials = value;</span>
   }
 }
 &nbsp;
@@ -364,7 +352,7 @@ export class Row {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-07T21:52:55.337Z
+                at 2024-01-06T02:04:44.246Z
             </div>
         <script src="../prettify.js"></script>
         <script>
