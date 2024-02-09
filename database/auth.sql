@@ -209,29 +209,41 @@ RETURN;
 END $$ language plpgsql SECURITY DEFINER;
 
 -- FUNCTION to verify whether a user already signed up or not
-CREATE OR REPLACE FUNCTION meta.verify_signup(email TEXT) RETURNS TEXT AS $$ BEGIN -- If the user hasn't been created yet, raise an exception with code 42704 
-	IF NOT EXISTS (
-		SELECT *
+CREATE OR REPLACE FUNCTION meta.verify_signup(email TEXT) RETURNS TEXT AS $$ 
+DECLARE 
+	selected_user authentication.users%rowtype;	
+BEGIN 
+-- If the user hasn't been created yet, raise an exception with code 42704 
+	SELECT *
 		FROM authentication.users
-		WHERE users.email = verify_signup.email
-	) THEN raise exception 'User not found' USING ERRCODE = '42704',
-	DETAIL = format(
-		'User %L could not be found in the system.',
-		verify_signup.email
-	);
+		INTO selected_user
+		WHERE users.email = verify_signup.email;
+		
+	IF NOT FOUND
+		THEN raise exception 'User not found' 
+		USING 
+			ERRCODE = '42704',
+			DETAIL = format('User %L could not be found in the system.', verify_signup.email);
 
 	-- If the user has been created but never signed up, raise an exception with code 01000
-ELSIF NOT EXISTS (
-	SELECT *
-	FROM authentication.users
-	WHERE users.email = verify_signup.email
-		AND users.password IS NOT NULL
-) THEN raise exception 'User did not sign up.' USING ERRCODE = '01000',
-DETAIL = format('User %L never signed up.', verify_signup.email);
--- If the user exists and already signed up, return its address email.
-ELSE RETURN verify_signup.email;
+	ELSIF selected_user.password IS NULL
+	THEN raise exception 'User did not sign up.' 
+		USING 
+			ERRCODE = '01000',
+			DETAIL = format('User %L never signed up.', verify_signup.email);
+			
+	-- If the user signed up but it's account isn't active
+	ELSIF (NOT selected_user.is_active)
+	THEN raise exception 'User has been deactivated.'
+	USING 
+		ERRCODE = '01100',
+		DETAIL = format('User %L has been deactivated. Please contact an administrator in order to know the reason.', verify_signup.email);
+
+	-- If the user exists and already signed up, return its address email.
+	ELSE RETURN selected_user.email;
 END IF;
 END $$ language plpgsql SECURITY DEFINER;
+
 
 -- FUNCTION to refresh the access token using the refresh token from cookies
 CREATE OR REPLACE FUNCTION meta.token_refresh() RETURNS authentication.jwt_token AS $$

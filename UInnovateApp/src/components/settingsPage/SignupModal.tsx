@@ -39,6 +39,7 @@ enum SignupState {
 };
 const USER_NOT_FOUND_CODE = "42704";
 const USER_NEVER_SIGNED_UP_CODE = "01000";
+const USER_DEACTIVATED_CODE = "01100";
 
 
 /**
@@ -60,11 +61,21 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	// Reset the inputValues state's values
 	const resetValues = () => setInputValues({});
 
+	function resetErrorMessages(){
+		//Reset Error Message states
+		setEmailError("");
+		setPasswordError("");
+		setFirstNameError("");
+		setLastNameError("");
+		setConfirmPasswordError("");
+	}
+
 	// Cancels and closes the form
 	const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
 		props.onClose && props.onClose(event, "escapeKeyDown");
 		setCurrentState(SignupState.INITIAL);
 		resetValues();
+		resetErrorMessages();
 	}
 
 	// Handles change in input field
@@ -99,6 +110,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 						case USER_NOT_FOUND_CODE: setEmailError(ErrMsg.EMAIL_NOT_FOUND);
 							break;
 						case USER_NEVER_SIGNED_UP_CODE: setCurrentState(SignupState.SIGNUP);
+							break;
+						case USER_DEACTIVATED_CODE: setEmailError(ErrMsg.USER_DEACTIVATED);
 							break;
 					}
 				}
@@ -152,7 +165,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 					handleCancel(dummyEvent as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
 					navigate('/');
 				})
-				.catch((error) => {
+				.catch(() => {
 					setPasswordError(ErrMsg.WRONG_PASSWORD);
 				});
 		}
@@ -169,14 +182,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	}
 
 	const validateUserInput = (): boolean => {
-		//Reset Error Message states
-		setEmailError("");
-		setPasswordError("");
-		setFirstNameError("");
-		setLastNameError("");
-		setConfirmPasswordError("");
-
-
+		
+		resetErrorMessages();
 
 		//Validate Credentials based on the current state of the signup
 		switch (currentState) {
