@@ -10,10 +10,10 @@ env:
   LATEST_TAG: alexicazana/goat-dock:latest
 
 jobs:
-  env:
-      working-directory: ./
   docker:
     runs-on: ubuntu-latest
+     env:
+      working-directory: ./
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
