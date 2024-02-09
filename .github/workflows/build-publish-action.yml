@@ -25,6 +25,8 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Delete UI1
+        run: rm /UInnovate
       - name: Checkout repository
         run: echo "$PWD"
       - name: Build and export to Docker
