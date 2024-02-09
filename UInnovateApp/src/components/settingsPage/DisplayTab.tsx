@@ -25,7 +25,6 @@ const DisplayTab = () => {
       })),
   ];
   const [selectedSchema, setSelectedSchema] = useState(schemas[0]);
-  // const tables = vmd.getAllTables();
 
   // Only show tables of the selected schema
   const tables = vmd.getSchema(selectedSchema)?.tables;

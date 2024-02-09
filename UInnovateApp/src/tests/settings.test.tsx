@@ -7,6 +7,7 @@ import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
 import { Role } from "../redux/AuthSlice";
+import { Middleware } from "@reduxjs/toolkit";
 
 vi.mock("../NavBar");
 
@@ -14,9 +15,9 @@ describe("Settings.tsx", () => {
   const initialState = {
     schema: { schema_name: "application" },
     script_table: { table_name: "script_mock" },
-    auth: { role: Role.ADMIN, user: "admin", token: "token"}
+    auth: { role: Role.ADMIN, user: "admin", token: "token", schema_access: ['mock schema name'] }
   };
-  const middlewares = [];
+  const middlewares: Middleware[] = [];
   const mockStore = configureStore(middlewares);
   let store;
 
