@@ -283,6 +283,16 @@ Link to website: https://uinnovate.netlify.app/
 
 ## Running the Postgoat Docker container
 
+
+
+First you'll need to go inside your .env file and add the following to the PLATFORM_DOMAIN variable:
+
+```http://localhost:8080
+```
+This ensures we expose the PostgREST API to the frontend. This enables the frontend to make requests to the PostgREST API, which allows you to see the containerized application when running the Postgoat container.
+
+Then, follow the steps below:
+
 1. From root, `cd UInnovateApp` and run `npm run build`
 2. Notice there is a new folder called 'build' inside the UInnovate repo. This folder containers the minified JS for the frontend that will be served as a static web page.
 
@@ -296,4 +306,5 @@ Note; this can take up to a few minutes the first time, it's normal.
 
 4. `docker run -p 8080:80 goat-dock` to run the container. This will serve the minified js as a static web page on an Nginx server.
 
-5. Visit localhost:8080 to see Postgoat container running (for now, blank page, but inspecting element will reveal the minified JS files in the source tab)
+5. Visit localhost:8080 to see Postgoat container running on your local machine.
+

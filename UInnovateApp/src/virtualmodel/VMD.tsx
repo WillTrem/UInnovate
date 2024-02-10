@@ -134,6 +134,15 @@ class VirtualModelDefinition {
     return this.schemas;
   }
 
+  /**
+   * Returns all application schemas of the vmd object
+   * @returns Schema[]
+   */
+  getApplicationSchemas(){
+    const appSchemaPattern = new RegExp(/^app_/);
+    return this.schemas.filter((schema) => appSchemaPattern.test(schema.schema_name));
+  }
+
   // Method to print the vmd object
   // return type : void
   printVMD() {
@@ -766,13 +775,14 @@ export interface ConfigData {
   property: string;
   value: string | boolean;
 }
-// Defining UserData interface for type checking when calling /user_info with the API
+// Defining UserData interface for type checking when calling /user_info with the API 
 export interface UserData {
   email: string;
-  firstName?: string;
-  lastName?: string;
-  role: string;
-  is_active: boolean;
+  first_name?: string;
+  last_name?: string;
+  role?: string;
+  is_active?: boolean;
+  schema_access?: string[];
 }
 
 // Creating a VMD object and exporting it

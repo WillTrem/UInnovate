@@ -5,48 +5,68 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConfigurationSaver from "./ConfigurationSaver";
 import vmd from "../../virtualmodel/VMD";
-import { FormControl, FormHelperText, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { useState } from "react";
-import { c } from "vitest/dist/reporters-5f784f42.js";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { LOGIN_BYPASS } from "../../redux/AuthSlice";
 
 const DisplayTab = () => {
-  const schemas = vmd.getSchemas();
 
+  const { user, schema_access } = useSelector((state: RootState) => state.auth);
+  const schemas = [
+    ...new Set(vmd.getApplicationSchemas()
+      .map((schema) => schema.schema_name)
+      .filter((schema_name) => {
+        // Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
+        if ((LOGIN_BYPASS && user === null) || schema_access.includes(schema_name)) {
+          return schema_name;
+        }
+      })),
+  ];
+  // Prevents error when schema_access has a length of 0
+  const initialSelectedSchema = schemas.length === 0 ? "" : schemas[0]
+  const [selectedSchema, setSelectedSchema] = useState(initialSelectedSchema);
 
-  const correctSchemas = schemas.filter((schema) => schema.schema_name !== "cron");
-  const [currentSchema, SetcurrentSchema] = useState<string>(correctSchemas[0].schema_name);
-  const tables = vmd.getTables(currentSchema) || []; 
+  // Only show tables of the selected schema
+  const tables = vmd.getSchema(selectedSchema)?.tables;
   const tableItems = tables?.map((table) => (
     <TableItem key={table.table_name} table={table} />
   ));
-  const handleSchemaSelect = (event: SelectChangeEvent<string>) => {
-    SetcurrentSchema(event.target.value as string);
-  };
 
+  const handleSchemaChange = (event: SelectChangeEvent) => {
+    setSelectedSchema(event.target.value);
+  };
 
   return (
     <div>
-      <FormControl size="small" style={{marginBottom:'2em', marginTop:'-2em' } }>
-        <h6>Schema</h6>
-        <Select
-          data-testid="display-type-table-config"
-          value={currentSchema}
-          onChange={handleSchemaSelect}
-          
-        >
-          {correctSchemas.map((schema) => (
-            <MenuItem value={schema.schema_name}>{schema.schema_name}</MenuItem>
-          ))}
-        </Select>
-        <FormHelperText>
-          Choose which schema to change the tables of
-        </FormHelperText>
-      </FormControl>
+      
       <ConfigurationSaver />
+      {schemas.length !== 0 ?
       <Tab.Container>
         <Row>
           <Col sm={3}>
-            <h4>Tables</h4>
+            
+              <Box display="flex" gap="1rem" alignItems={"center"} >
+                <h4 style={{ marginBottom: 0 }}>Tables</h4>
+                <FormControl fullWidth disabled={schemas.length === 0}>
+                  <InputLabel id="schema-label">Schema</InputLabel>
+                  <Select
+                    labelId="schema-label"
+                    name="schema"
+                    value={selectedSchema}
+                    onChange={(event) => handleSchemaChange(event)}
+                    variant="outlined"
+                    label="Schema"
+                    size="small"
+                  >
+                    {schemas.map((schema) => {
+                      return <MenuItem key={schema} value={schema}>{schema}</MenuItem>
+                    })};
+                  </Select>
+                </FormControl>
+              </Box>
+              
             <Nav variant="pills" className="flex-column">
               {tables?.map(({ table_name }) => {
                 return (
@@ -75,6 +95,8 @@ const DisplayTab = () => {
           </Col>
         </Row>
       </Tab.Container>
+      :
+      <Typography variant="body1">You don't have access to any tables.</Typography>}
     </div>
   );
 };

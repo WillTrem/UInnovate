@@ -54,7 +54,7 @@ input{
     flex-direction: column;
     margin: 8px 0px;
     align-items: center;
-    gap: 48px;
+    gap: 24px;
 }
 
 .form{
