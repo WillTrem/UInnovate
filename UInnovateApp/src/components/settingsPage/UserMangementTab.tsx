@@ -115,8 +115,10 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const dispatch = useDispatch();
 
-	function handleActiveToggle() {
+	function handleActiveToggle(event: React.ChangeEvent<HTMLInputElement>, checked: boolean ) {
 		// TODO: Implement the active toggle function
+		setUserData({...userData, is_active: checked});
+		console.log(checked)
 	};
 
 	// Updates the local user data state 
