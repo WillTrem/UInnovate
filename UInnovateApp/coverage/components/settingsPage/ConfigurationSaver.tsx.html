@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.91% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/23</span>
+                <span class='fraction'>18/27</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.91% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/23</span>
+                <span class='fraction'>18/27</span>
             </div>
         
             
@@ -150,7 +150,17 @@
 <a name='L85'></a><a href='#L85'>85</a>
 <a name='L86'></a><a href='#L86'>86</a>
 <a name='L87'></a><a href='#L87'>87</a>
-<a name='L88'></a><a href='#L88'>88</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a>
+<a name='L93'></a><a href='#L93'>93</a>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,6 +189,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -187,7 +203,11 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -263,19 +283,29 @@ const ConfigurationSaver: React.FC = () =&gt; {
   // Initializes the timer and the cleanup functions
   useEffect(() =&gt; {
     const interval = setInterval(<span class="fstat-no" title="function not covered" >() =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      updateAppConfigValues(configRef.current);</span>
-<span class="cstat-no" title="statement not covered" >      setSnackbarVisible(true);</span>
-<span class="cstat-no" title="statement not covered" >      console.log("Saving the configuration in the DB via timer.");</span>
+<span class="cstat-no" title="statement not covered" >	try{</span>
+<span class="cstat-no" title="statement not covered" >		updateAppConfigValues(configRef.current);</span>
+<span class="cstat-no" title="statement not covered" >		setSnackbarVisible(true);</span>
+<span class="cstat-no" title="statement not covered" >      	console.log("Saving the configuration in the DB via timer.");</span>
+	}
+	catch(error: any){
+<span class="cstat-no" title="statement not covered" >		console.log("Failed to save the configuration in the DB. Reason: " + error?.message)</span>
+	}
+      
     }, CONFIG_UPDATE_TIMER_MS);
 &nbsp;
 		// Cleanup function
 		return () =&gt; {
 			clearInterval(interval);
-			setSnackbarVisible(true);
-			updateAppConfigValues(configRef.current);
-			console.log(
-				"Unmounting ConfigurationSaver, saving the configuration to the DB."
-			);
+			try{
+				updateAppConfigValues(configRef.current);
+				setSnackbarVisible(true);
+				console.log(
+					"Unmounting ConfigurationSaver, saving the configuration to the DB."
+				);
+			}catch(error: any){
+<span class="cstat-no" title="statement not covered" >				console.log("Failed to save the configuration in the DB. Reason: " + error?.message)</span>
+			}
 		};
 	}, []);
 &nbsp;
@@ -331,7 +361,7 @@ export default ConfigurationSaver;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-01-06T02:04:44.246Z
+                at 2024-02-07T21:52:55.337Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
