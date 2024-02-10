@@ -24,13 +24,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Checkout repository
         run: echo "$PWD"
+      - name: List repository contents
+        run: ls -al
       - name: Build and export to Docker
-        env:
-          working-directory: ./
         uses: docker/build-push-action@v5
         with:
-          context: ./
-          file: ./Dockerfile.goat
+          context: ${{ github.workspace }}
+          file: ${{ github.workspace }}/Dockerfile.goat
           load: true
           tags: ${{ env.TEST_TAG }}
       - name: Test
