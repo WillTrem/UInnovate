@@ -30,8 +30,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           working-directory: ./
-          context: ${{ github.workspace }}
-          file: ${{ github.workspace }}/Dockerfile.goat
+          context: .
+          file: Dockerfile.goat
           load: true
           tags: ${{ env.TEST_TAG }}
       - name: Test
