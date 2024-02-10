@@ -357,6 +357,7 @@ class VirtualModelDefinition {
     schema_name: string,
     table_name: string,
     order_by: string,
+    sortOrder: string,
     Limit: number,
     Page: number
   ) {
@@ -369,6 +370,8 @@ class VirtualModelDefinition {
         table.url +
           "?order=" +
           order_by +
+          "." +
+          sortOrder +
           "&limit=" +
           limit +
           "&offset=" +
@@ -381,7 +384,6 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
-
   // Method to return a data accessor object to fetch rows from a table For Look up Table
   // return type : DataAccessor
   getRowsDataAccessorForLookUpTable(
@@ -476,7 +478,6 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
-
   // Method to return a data accessor object to upsert a set of rows in a table
   // return type : DataAccessor
   getUpsertDataAccessor(
@@ -504,6 +505,23 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor to get all the rows from a view of a given schema
+  // return type: DataAccessor
+  getViewRowsDataAccessor(
+    schema_name: string,
+    view_name: string
+  ): DataAccessor {
+    const schema = this.getSchema(schema_name);
+    const view = schema?.getView(view_name);
+    if (schema && view) {
+      return new DataAccessor(view.url, {
+        "Accept-Profile": schema.schema_name,
+      });
+    } else {
+      throw new Error("Schema or view does not exist");
+    }
+  }
+
   // Method to return a data accessor to remove a row from a table
   // Note that this removes a row from its id (if the table's primary key isnt exactly "id", this will not work)
   // return type: DataAccessor
@@ -525,23 +543,6 @@ class VirtualModelDefinition {
       );
     } else {
       throw new Error("Schema or table does not exist");
-    }
-  }
-
-  // Method to return a data accessor to get all the rows from a view of a given schema
-  // return type: DataAccessor
-  getViewRowsDataAccessor(
-    schema_name: string,
-    view_name: string
-  ): DataAccessor {
-    const schema = this.getSchema(schema_name);
-    const view = schema?.getView(view_name);
-    if (schema && view) {
-      return new DataAccessor(view.url, {
-        "Accept-Profile": schema.schema_name,
-      });
-    } else {
-      throw new Error("Schema or view does not exist");
     }
   }
 
