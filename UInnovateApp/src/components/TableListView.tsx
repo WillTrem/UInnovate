@@ -644,12 +644,16 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
-    const schema = vmd.getTableSchema(table.table_name)
+    const schema = vmd.getTableSchema(table.table_name);
     let detailtype = "overlay";
     if (table.stand_alone_details_view) {
       detailtype = "standalone";
     }
-    navigate(`/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]}?details=${detailtype}`);
+    navigate(
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
+        row.row[table.table_name + "_id"]
+      }?details=${detailtype}`
+    );
     setOpenPanel(true);
   };
 
@@ -816,7 +820,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          {table.stand_alone_details_view ? (<NavBar />) : <div></div>}
+          {table.stand_alone_details_view ? <NavBar /> : <div></div>}
           <div className="form-panel-container">
             <Typography variant="h5">Details</Typography>
             <form>
@@ -827,7 +831,11 @@ const TableListView: React.FC<TableListViewProps> = ({
                       <label key={column.column_name + colIdx}>
                         {column.column_name}
                       </label>
-                      {inputField(column)}
+                      {column.references_table == "filegroup" ? (
+                        <FileInputField {...column} />
+                      ) : (
+                        inputField(column)
+                      )}
                     </div>
                   );
                 })}
@@ -866,11 +874,12 @@ const TableListView: React.FC<TableListViewProps> = ({
           {table.lookup_tables == "null" ? (
             <div></div>
           ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
-            <div></div>) : showTable ? (
-              <div style={{ paddingBottom: "2em" }}>
-                <LookUpTableDetails table={table} />
-              </div>
-            ) : (
+            <div></div>
+          ) : showTable ? (
+            <div style={{ paddingBottom: "2em" }}>
+              <LookUpTableDetails table={table} />
+            </div>
+          ) : (
             <Button
               variant="contained"
               color="primary"
