@@ -23,9 +23,18 @@ export default {
   }),
   getSchema: vi.fn().mockImplementation(() => {
     console.log("getSchema in VMD mock was called");
-    return new Schema("mock schema name");
+    const mockSchema = new Schema("mock schema name");
+    mockSchema.tables = [new Table("mock table name"), new Table("mock table name 2")]
+    return mockSchema;
   }),
   getSchemas: vi.fn().mockImplementation(() => {
+    console.log("getSchemas in VMD mock was called");
+    return [
+      { schema_name: "mock schema name" },
+      { schema_name: "mock schema name 2" },
+    ];
+  }),
+  getApplicationSchemas: vi.fn().mockImplementation(() => {
     console.log("getSchemas in VMD mock was called");
     return [
       { schema_name: "mock schema name" },
@@ -35,6 +44,10 @@ export default {
   getTable: vi.fn().mockImplementation(() => {
     console.log("getTable in VMD mock was called");
     return new Table("mock table name");
+  }),
+  getTables: vi.fn().mockImplementation(() => {
+    console.log("getTables in VMD mock was called");
+    return [new Table("mock1"), new Table("mock2"), new Table("mock3")];
   }),
   getTableSchema: vi.fn().mockImplementation(() => {
     console.log("getTableSchema in VMD mock was called");

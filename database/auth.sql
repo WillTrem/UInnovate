@@ -1,19 +1,21 @@
 -- SCHEMA AND TABLES CREATION
 CREATE SCHEMA IF NOT EXISTS authentication;
 
+DROP TABLE IF EXISTS authentication.users;
 CREATE TABLE IF NOT EXISTS authentication.users (
 	email text PRIMARY KEY CHECK (email ~* '^.+@.+\..+$'),
 	first_name text,
 	last_name text,
 	role name NOT NULL CHECK (length(role) < 512),
 	PASSWORD text CHECK (length(PASSWORD) < 512),
-	is_active bool NOT NULL
+	is_active bool NOT NULL, 
+	schema_access text[] DEFAULT '{}'
 );
 
-CREATE TABLE IF NOT EXISTS meta.user_schema_access (
-	email text REFERENCES authentication.users,
-	schema text -- Add trigger to verify if schema exists in schema view
-);
+-- CREATE TABLE IF NOT EXISTS meta.user_schema_access (
+-- 	email text REFERENCES authentication.users,
+-- 	schema text -- Add trigger to verify if schema exists in schema view
+-- );
 
 -- Creates a VIEW that gives the users information (except the passwords)
 CREATE OR REPLACE VIEW meta.user_info AS (
@@ -21,7 +23,8 @@ CREATE OR REPLACE VIEW meta.user_info AS (
 			first_name,
 			last_name,
 			role,
-			is_active
+			is_active,
+			schema_access
 		FROM authentication.users
 	);
 -- TRIGGER to ensure the role from the authentication.users table is an actual database role
@@ -42,23 +45,23 @@ INSERT
 	OR
 UPDATE ON authentication.users FOR each ROW EXECUTE PROCEDURE authentication.check_role_exists();
 
--- TRIGGER to ensure the schemas from user_schema_access are existing schemas
-CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
-		SELECT 1
-		FROM meta.schemas AS s
-		WHERE s.schema = new.schema
-	) THEN raise foreign_key_violation USING message = 'invalid schema : ' || new.role;
-RETURN NULL;
-END IF;
-RETURN new;
-END $$ language plpgsql;
+-- -- TRIGGER to ensure the schemas from user_schema_access are existing schemas
+-- CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
+-- 		SELECT 1
+-- 		FROM meta.schemas AS s
+-- 		WHERE s.schema = new.schema
+-- 	) THEN raise foreign_key_violation USING message = 'invalid schema : ' || new.role;
+-- RETURN NULL;
+-- END IF;
+-- RETURN new;
+-- END $$ language plpgsql;
 
-DROP TRIGGER IF EXISTS ensure_schema_exists ON meta.user_schema_access;
-CREATE CONSTRAINT TRIGGER ensure_schema_exists
-AFTER
-INSERT
-	OR
-UPDATE ON meta.user_schema_access FOR each ROW EXECUTE PROCEDURE meta.check_schema_exists();
+-- DROP TRIGGER IF EXISTS ensure_schema_exists ON meta.user_schema_access;
+-- CREATE CONSTRAINT TRIGGER ensure_schema_exists
+-- AFTER
+-- INSERT
+-- 	OR
+-- UPDATE ON meta.user_schema_access FOR each ROW EXECUTE PROCEDURE meta.check_schema_exists();
 
 -- TRIGGER to keep the passwords encrypted with pgcrypto
 CREATE extension IF NOT EXISTS pgcrypto;
@@ -114,12 +117,15 @@ CREATE TYPE authentication.jwt_token AS (token text);
 
 CREATE OR REPLACE FUNCTION meta.login(email text, PASSWORD text) RETURNS authentication.jwt_token AS $$
 DECLARE _role name;
+_schema_access text[];
 result authentication.jwt_token;
 refresh_token authentication.jwt_token;
 BEGIN -- check email & password
 SELECT authentication.user_role(email, PASSWORD) INTO _role;
 IF _role IS NULL THEN raise invalid_password USING message = 'invalid email or password';
 END IF;
+-- Obtains the schema access list of the user 
+SELECT schema_access FROM authentication.users WHERE users.email = login.email INTO _schema_access;
 -- signs the jwt access token
 SELECT sign(
 		row_to_json(r),
@@ -128,10 +134,11 @@ SELECT sign(
 FROM (
 		SELECT _role AS role,
 			login.email AS email,
+			_schema_access as schema_access,
 			extract(
 				epoch
 				FROM NOW()
-			)::integer + 60 * 60 AS exp -- 1 hr
+			)::integer + 60 * 60 AS exp -- 1 hr,
 	) AS r INTO result;
 SELECT sign(
 		row_to_json(rt),
@@ -155,11 +162,10 @@ END;
 $$ language plpgsql SECURITY DEFINER;
 
 
-
 -- FUNCTION CREATE USER, for administrators to create the users in the database before they can sign up 
-CREATE OR REPLACE FUNCTION meta.create_user(email text, role name) RETURNS SETOF integer AS $$ BEGIN
-INSERT INTO authentication.users(email, role, is_active)
-VALUES (email, role, TRUE);
+CREATE OR REPLACE FUNCTION meta.create_user(email text, role name, schema_access text[]) RETURNS SETOF integer AS $$ BEGIN
+INSERT INTO authentication.users(email, role, is_active, schema_access)
+VALUES (email, role, TRUE, create_user.schema_access);
 RETURN;
 END;
 $$ language plpgsql SECURITY DEFINER;
@@ -283,6 +289,34 @@ $$ BEGIN
   END;
 $$language plpgsql SECURITY DEFINER;
 
+-- TYPE of user data, used in meta.update_user_data
+CREATE TYPE user_data AS (
+	email text,
+	first_name text,
+	last_name text,
+	role name,
+	is_active bool, 
+	schema_access text[]
+
+);
+
+-- FUNCTION Updates the user's data in bulk from an array of new user data
+CREATE OR REPLACE FUNCTION meta.update_user_data(users json)
+RETURNS VOID AS $$
+BEGIN 
+	UPDATE authentication.users AS oldud
+	SET 
+		first_name = newud.first_name,
+		last_name = newud.last_name,
+		role = newud.role,
+		is_active = newud.is_active,
+		schema_access = newud.schema_access
+	FROM (SELECT * FROM json_populate_recordset(null::user_data, users)) as newud
+	WHERE oldud.email = newud.email;
+
+END;
+$$ language plpgsql SECURITY DEFINER;
+
 
 -- ROLES ----------------------------------------------------------------
 
@@ -309,30 +343,30 @@ END LOOP;
 END LOOP;
 END $$ LANGUAGE plpgsql;
 
-GRANT USAGE ON SCHEMA meta TO "user";
-GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
-GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
-GRANT SELECT ON TABLE meta.appconfig_values TO "user";
-GRANT SELECT ON TABLE meta.scripts TO "user";
-GRANT SELECT ON TABLE meta.schemas TO "user";
-GRANT SELECT ON TABLE meta.tables TO "user";
-GRANT SELECT ON TABLE meta.columns TO "user";
-GRANT SELECT ON TABLE meta.constraints TO "user";
-GRANT SELECT ON TABLE meta.user_schema_access TO "user";
+-- GRANT USAGE ON SCHEMA meta TO "user";
+-- GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
+-- GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
+-- GRANT SELECT ON TABLE meta.appconfig_values TO "user";
+-- GRANT SELECT ON TABLE meta.scripts TO "user";
+-- GRANT SELECT ON TABLE meta.schemas TO "user";
+-- GRANT SELECT ON TABLE meta.tables TO "user";
+-- GRANT SELECT ON TABLE meta.columns TO "user";
+-- GRANT SELECT ON TABLE meta.constraints TO "user";
+-- GRANT SELECT ON TABLE meta.user_schema_access TO "user";
 GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 
 -- Configurator role
 
-GRANT ALL ON SCHEMA meta TO configurator;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
-GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
-GRANT ALL ON TABLE meta.appconfig_values TO configurator;
-GRANT ALL ON TABLE meta.scripts TO configurator;
-GRANT ALL ON TABLE meta.schemas TO configurator;
-GRANT ALL ON TABLE meta.tables TO configurator;
-GRANT ALL ON TABLE meta.columns TO configurator;
-GRANT ALL ON TABLE meta.constraints TO configurator;
-GRANT ALL ON TABLE meta.user_schema_access TO configurator;
+-- GRANT ALL ON SCHEMA meta TO configurator;
+-- GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
+-- GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
+-- GRANT ALL ON TABLE meta.appconfig_values TO configurator;
+-- GRANT ALL ON TABLE meta.scripts TO configurator;
+-- GRANT ALL ON TABLE meta.schemas TO configurator;
+-- GRANT ALL ON TABLE meta.tables TO configurator;
+-- GRANT ALL ON TABLE meta.columns TO configurator;
+-- GRANT ALL ON TABLE meta.constraints TO configurator;
+-- GRANT ALL ON TABLE meta.user_schema_access TO configurator;
 
 -- Administrator role
 
@@ -352,7 +386,8 @@ INSERT INTO authentication.users(
 		last_name,
 		PASSWORD,
 		is_active,
-		role
+		role, 
+		schema_access
 	)
 VALUES (
 		'admin@test.com',
@@ -360,7 +395,8 @@ VALUES (
 		'admin',
 		'admin123',
 		TRUE,
-		'administrator'
+		'administrator', 
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'config@test.com',
@@ -368,7 +404,8 @@ VALUES (
 		'admin',
 		'config123',
 		TRUE,
-		'configurator'
+		'configurator',
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'user@test.com',
@@ -376,7 +413,8 @@ VALUES (
 		'admin',
 		'user123',
 		TRUE,
-		'user'
+		'user',
+		'{app_rentals, app_service_support}'
 	) ON CONFLICT (email) DO NOTHING;
 -- If you change anything here after they've been created once in the database, it won't have any effect. You need to remove them first from the database.
 NOTIFY pgrst,

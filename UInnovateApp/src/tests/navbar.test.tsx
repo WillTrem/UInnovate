@@ -13,7 +13,7 @@ describe ("NavBar.jsx", () => {
     const initialState = {
 		schema: { schema_name: "application" },
 		script_table: { table_name: "script_mock" },
-		auth: { role: Role.ADMIN, user: "admin", token: "token" }
+		auth: { role: Role.ADMIN, user: "admin", token: "token", schema_access:["mock schema 1"] }
 	};
 	const middlewares: Middleware[] = [];
 	const mockStore = configureStore(middlewares);

@@ -16,10 +16,22 @@ import UnauthorizedScreen from "../components/UnauthorizedScreen";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
 import { LOGIN_BYPASS, Role } from "../redux/AuthSlice";
+import { useNavigate, useParams } from "react-router-dom";
 import AdditionalViewTab from "../components/settingsPage/additionalView/AdditionalViewTab";
 
 export function Settings() {
 	const role = useSelector((state: RootState) => state.auth.role);
+	const navigate = useNavigate();
+	const {option} = useParams();
+
+
+	const handleNavClick = (
+		val: string	) => {
+		
+		navigate(`/settings/${val.toLowerCase()}`);
+	};
+
+
 	return (
 		<>
 			<NavBar />
@@ -31,30 +43,31 @@ export function Settings() {
 						<h1 className='title'>Settings</h1>
 						<ButtonConfigurationSaver />
 					</div>
-					<Tab.Container id='left-tabs-example' defaultActiveKey='first'>
+					<Tab.Container activeKey={option} id='left-tabs-example' >
 						<Row>
 							<Col sm={3}>
-								<Nav variant='pills' className='flex-column'>
+								<Nav variant='pills' className='flex-column' >
 									<Nav.Item>
-										<Nav.Link eventKey='general'>General</Nav.Link>
+										<Nav.Link eventKey='general'  onClick={() => handleNavClick('general')} >General</Nav.Link>
 									</Nav.Item>
 									<Nav.Item>
-										<Nav.Link eventKey='display'>Display</Nav.Link>
+										<Nav.Link eventKey='display' onClick={() => handleNavClick('display')}>Display</Nav.Link>
 									</Nav.Item>
 									<Nav.Item>
-										<Nav.Link eventKey='schedule'>
+										<Nav.Link eventKey='schedule'onClick={() => handleNavClick('schedule')}>
 											Scheduled Activities
 										</Nav.Link>
-										<Nav.Link eventKey='scripting'>Scripting</Nav.Link>
-										<Nav.Link eventKey='envVar'>Environment Variables</Nav.Link>
+										<Nav.Link eventKey='scripting'onClick={() => handleNavClick('scripting')}>Scripting</Nav.Link>
+										
+										<Nav.Link eventKey='envvar' onClick={() => handleNavClick('envvar')}>Environment Variables</Nav.Link>
 									</Nav.Item>
 									{(role === Role.ADMIN || LOGIN_BYPASS) && (
 										<Nav.Item>
-											<Nav.Link eventKey='users'>Users</Nav.Link>
+											<Nav.Link eventKey='users' onClick={() => handleNavClick('users')} >Users</Nav.Link>
 										</Nav.Item>
 									)}
 									<Nav.Item>
-										<Nav.Link eventKey='internationalization'>
+										<Nav.Link eventKey='internationalization' onClick={() => handleNavClick('internationalization')} >
 											Internationalization
 										</Nav.Link>
 									</Nav.Item>
@@ -79,7 +92,7 @@ export function Settings() {
 									<Tab.Pane eventKey='scripting'>
 										<ScriptingTab />
 									</Tab.Pane>
-									<Tab.Pane eventKey='envVar'>
+									<Tab.Pane eventKey='envvar'>
 										<EnvVarCreator />
 									</Tab.Pane>
 									{(role === Role.ADMIN || role === null) && (
