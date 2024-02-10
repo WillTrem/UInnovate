@@ -386,7 +386,7 @@ INSERT INTO authentication.users(
 		PASSWORD,
 		is_active,
 		role, 
-		schemas
+		schema_access
 	)
 VALUES (
 		'admin@test.com',
