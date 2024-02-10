@@ -1,0 +1,96 @@
+.Dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  font-size: 16px;
+}
+
+.bordered {
+  border: 2px dashed gray;
+}
+
+.Highlight {
+  background-color: rgb(188, 185, 236);
+}
+.centerize {
+  display: flex;
+  flex-direction: column;
+  flex: 2 1 auto;
+}
+
+.flex-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.FileInput {
+  display: none;
+}
+
+.image-size {
+  max-width: 30%;
+}
+
+.display-inline-block {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid black;
+}
+
+.truncate {
+  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-all;
+}
+
+.text-align {
+  text-align: center;
+}
+
+.display-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.display-flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.margin-lr {
+  margin-left: 10px;
+}
+.align-end {
+  align-self: end;
+}
+
+.delete-button {
+  border: 1px solid lightcoral;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease 0s;
+}
+
+.download-button {
+  border: 1px solid;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease 0s;
+}
+.delete-button:hover {
+  background-color: lightcoral;
+}
+.download-button:hover {
+  background-color: lightgray;
+}

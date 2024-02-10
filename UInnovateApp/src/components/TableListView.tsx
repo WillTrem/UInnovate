@@ -12,6 +12,9 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
+import { NavBar } from "./NavBar";
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
 import {
   Switch,
   Button,
@@ -24,10 +27,8 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
-import "../styles/TableListViewStyle.css";
 import {
   LocalizationProvider,
   StaticDateTimePicker,
@@ -43,8 +44,13 @@ import {
   RichTextEditor,
   type RichTextEditorRef,
 } from "mui-tiptap";
+import Dropzone from "./Dropzone";
+import "../styles/TableListView.css";
+import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import { useNavigate, useParams } from "react-router-dom";
+import { Table as Tabless, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
+
 
 interface TableListViewProps {
   table: Table;
@@ -56,18 +62,12 @@ const buttonStyle = {
   width: "fit-content",
 };
 
-const inputStyle = {
-  display: "flex",
-  flexDirection: "column", // This will make the children (input elements) stack vertically
-  alignItems: "flex-start",
-  width: "65%",
-};
-
 const TableListView: React.FC<TableListViewProps> = ({
   table,
 }: {
   table: Table;
 }) => {
+  const navigate = useNavigate();
   const navigate = useNavigate();
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
@@ -78,18 +78,38 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
   );
+  const [openPanel, setOpenPanel] = useState(false);
+  const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
+  const [currentPhone, setCurrentPhone] = useState<string>("");
+  const [currentCategory, setCurrentCategory] = useState<string>("");
+  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
+  const [showFiles, setShowFiles] = useState<boolean>(false);
+  const [scripts, setScripts] = useState<Row[] | undefined>([]);
+  const [scriptDescription, setScriptDescription] = useState<string | null>("");
+  const [selectedScript, setSelectedScript] = useState<Row | null>(null);
+  const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
+  const rteRef = useRef<RichTextEditorRef>(null);
+  const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
+  const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
+  const [inputField, setInputField] =
+    useState<(column: Column) => JSX.Element>();
+  const meta_schema = vmd.getSchema("meta");
+  const script_table = vmd.getTable("meta", "scripts");
+  const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
+  if (defaultOrderValue == undefined) {
+    defaultOrderValue = table.columns[0].column_name;
   }
-  const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
-  const [PaginationValue, setPaginationValue] = useState<number>(50);
+  const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
-
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState(defaultOrderValue);
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
     const schemas = vmd.getTableSchema(table.table_name);
@@ -101,7 +121,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
       schemas.schema_name,
       table.table_name,
-      OrderValue,
+      orderBy,
+      sortOrder,
       PaginationValue,
       PageNumber
     );
@@ -128,32 +149,30 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getRows();
-  }, [table, OrderValue, PageNumber, PaginationValue]);
+  }, [table, orderBy, PageNumber, PaginationValue, sortOrder]);
 
-  const [openPanel, setOpenPanel] = useState(false);
-  const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
-  const [currentPhone, setCurrentPhone] = useState<string>("");
-  const [currentCategory, setCurrentCategory] = useState<string>("");
-  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
-  const [inputField, setInputField] = useState<(column: Column) => JSX.Element>(
-    () => <></>
+  const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
+    "filemanager",
+    "filegroup_view"
   );
-  const schema = vmd.getSchema("meta");
-  const script_table = vmd.getTable("meta", "scripts");
-  const config_table = vmd.getTable("meta", "appconfig_values");
-  const [scripts, setScripts] = useState<Row[] | undefined>([]);
-  const [scriptDescription, setScriptDescription] = useState<string | null>("");
-  const [selectedScript, setSelectedScript] = useState<Row | null>(null);
-  const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
-  const rteRef = useRef<RichTextEditorRef>(null);
+  const fileStorageViewDataAccessor = vmd.getViewRowsDataAccessor(
+    "filemanager",
+    "filestorage_view"
+  );
+
+  const getFileGroupsView = async () => {
+    fileGroupsViewDataAccessor.fetchRows().then((response) => {
+      setFileGroupsView(response);
+    });
+  };
 
   const getScripts = async () => {
-    if (!schema || !script_table) {
+    if (!meta_schema || !script_table) {
       throw new Error("Schema or table not found");
     }
 
     const scripts_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema?.schema_name,
+      meta_schema?.schema_name,
       script_table?.table_name
     );
 
@@ -184,12 +203,12 @@ const TableListView: React.FC<TableListViewProps> = ({
   }, [selectedScript]);
 
   const getConfigs = async () => {
-    if (!schema || !config_table) {
+    if (!meta_schema || !config_table) {
       throw new Error("Schema or table not found");
     }
 
     const config_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      schema?.schema_name,
+      meta_schema?.schema_name,
       config_table?.table_name
     );
 
@@ -201,6 +220,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   useEffect(() => {
     getScripts();
     getConfigs();
+    getFileGroupsView();
   }, [inputValues]);
 
   const inputStyle: CSSProperties = {
@@ -213,9 +233,21 @@ const TableListView: React.FC<TableListViewProps> = ({
     ? "form-group-stand-alone"
     : "form-group";
   //For when order changes
-  const handleOrderchange = (event: SelectChangeEvent) => {
-    setOrderValue(event.target.value as string);
+  const handleSort = (column: React.SetStateAction<string>) => {
+    const isAsc = orderBy === column && sortOrder === 'asc';
+    setSortOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(column);
   };
+
+  //For sorting of rows with asc and desc
+  const sortedRows = [...rows].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a[orderBy] < b[orderBy] ? -1 : 1;
+    } else {
+      return a[orderBy] > b[orderBy] ? -1 : 1;
+    }
+  });
+
 
   //For when pagination limitm changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
@@ -228,12 +260,102 @@ const TableListView: React.FC<TableListViewProps> = ({
     setPageNumber(value);
   };
 
+  const onItemAdded = async (
+    e,
+    item,
+    itemExtension,
+    itemName,
+    currentColumn
+  ) => {
+    e.preventDefault();
+    await axios
+      .post(
+        "http://localhost:3000/rpc/add_file_to_group",
+        {
+          in_filegroupid: currentRow.row[currentColumn]
+            ? currentRow.row[currentColumn]
+            : null,
+          in_blob: item,
+          in_filename: itemName,
+          in_extension: itemExtension,
+        },
+        {
+          headers: {
+            "Content-Profile": "filemanager",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        let tempRow = {
+          ...currentRow.row,
+          [currentColumn]: response.data[0].groupid,
+        };
+        setCurrentRow({ row: tempRow });
+        vmd
+          .getUpdateRowDataAccessor(
+            vmd.getTableSchema(table.table_name)?.schema_name,
+            table.table_name,
+            { ...currentRow.row, [currentColumn]: response.data[0].groupid }
+          )
+          .updateRow();
+        setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
+      });
+    const nonEditableColumn = table.columns.find(
+      (column) => column.is_editable === false
+    );
+    if (nonEditableColumn) {
+      setCurrentPrimaryKey(nonEditableColumn.column_name);
+    }
+    getRows();
+  };
+
+  const onItemRemoved = async (e, item, currentColumn) => {
+    e.preventDefault();
+    await axios
+      .post(
+        "http://localhost:3000/rpc/remove_file_from_group",
+        {
+          in_filegroupid: currentRow.row[currentColumn],
+          in_fileid: item.id,
+        },
+        {
+          headers: {
+            "Content-Profile": "filemanager",
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((response) => {
+        if (response.data) {
+          let tempRow = {
+            ...currentRow.row,
+            [currentColumn]: null,
+          };
+          setCurrentRow({ row: tempRow });
+        }
+      });
+    const newItems = allFileGroups?.filter((file) => file.id !== item.id);
+    setAllFileGroups(newItems);
+    getRows();
+  };
+
+  const handleShowFiles = (column: Column) => {
+    fileStorageViewDataAccessor.fetchRows().then((response) => {
+      setAllFileGroups(
+        response?.filter(
+          (file) => file.groupid == currentRow.row[column.column_name]
+        )
+      );
+    });
+    setShowFiles(true);
+  };
+
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     columnName: string | undefined,
     type: string | undefined
   ) => {
-    // console.log(event + " " + columnName + " " + type);
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
     );
@@ -257,7 +379,6 @@ const TableListView: React.FC<TableListViewProps> = ({
         eventValue = event.target.value;
       }
     }
-    console.log(eventValue);
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
@@ -265,7 +386,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }));
   };
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const schema = vmd.getTableSchema(table.table_name);
@@ -285,14 +406,54 @@ const TableListView: React.FC<TableListViewProps> = ({
       currentPrimaryKey as string,
       storedPrimaryKeyValue as string
     );
-    data_accessor.updateRow().then(() => getRows());
+    data_accessor.updateRow().then((res) => {
+      getRows();
+    });
     setInputValues({});
     setOpenPanel(false);
   };
 
-  // const ReadPrimaryKeyandValue = (Primekey:string, PrimekeyValue:string) => {
+  const FileInputField = (column: Column) => {
+    if (!appConfigValues) {
+      return null;
+    }
 
-  // }
+    if (column.is_editable == false) {
+      localStorage.setItem(
+        "currentPrimaryKeyValue",
+        currentRow.row[column.column_name]
+      );
+    }
+
+    if (column.references_table != null) {
+      const string = column.column_name + "L";
+      localStorage.setItem(
+        string,
+        currentRow.row[column.column_name] as string
+      );
+    }
+    return showFiles ? (
+      <div title="Dropzone">
+        <Dropzone
+          onItemAdded={onItemAdded}
+          onItemRemoved={onItemRemoved}
+          items={allFileGroups}
+          currentColumn={column.column_name}
+        />
+      </div>
+    ) : (
+      <Button
+        title="Show Files Button"
+        variant="contained"
+        color="primary"
+        style={{ marginLeft: 15 }}
+        onClick={handleShowFiles.bind(this, column)}
+      >
+        Show Files
+      </Button>
+    );
+  };
+
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!appConfigValues) {
@@ -313,7 +474,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
 
       if (column.references_table != null) {
-        const string = column.column_name;
+        const string = column.column_name + "L";
         localStorage.setItem(
           string,
           currentRow.row[column.column_name] as string
@@ -456,7 +617,6 @@ const TableListView: React.FC<TableListViewProps> = ({
             onChange={(event) => {
               handleInputChange(event, column.column_name, undefined);
               rteRef.current?.editor.setContent(event);
-              console.log(event);
             }}
             ref={rteRef}
             extensions={[StarterKit]} // Or any Tiptap extensions you wish!
@@ -485,11 +645,15 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentCategory,
     inputValues,
     currentWYSIWYG,
+    allFileGroups,
+    showFiles,
   ]);
+  useEffect(() => {
+    getRows();
+  }, [showFiles]);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
-    console.log(inputValues);
     setCurrentRow(row);
     setCurrentPhone("");
     setCurrentCategory("");
@@ -500,13 +664,16 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
+    const schema = vmd.getTableSchema(table.table_name);
+    let detailtype = "overlay";
+    if (table.stand_alone_details_view) {
+      detailtype = "standalone";
+    }
     navigate(
-      "/objview/details/" +
-        table.table_name +
-        "/" +
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
         row.row[table.table_name + "_id"]
+      }?details=${detailtype}`
     );
-
     setOpenPanel(true);
   };
 
@@ -522,6 +689,12 @@ const TableListView: React.FC<TableListViewProps> = ({
       }, 1000);
     }
   }, [openPanel]);
+
+
+
+  
+
+ 
 
   return (
     <div>
@@ -584,47 +757,50 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-        <div>
-          <FormControl size="small">
-            <h6 style={{ textAlign: "left" }}>Ordering</h6>
-            <Select
-              value={OrderValue}
-              displayEmpty
-              onChange={handleOrderchange}
-            >
-              {table.columns.map((column, index) => (
-                <MenuItem value={column.column_name} key={index}>
-                  {column.column_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
       </div>
-      <TableComponent striped bordered hover>
-        <thead>
-          <tr>
-            {columns.map((column, index) => {
-              return <th key={index}>{column.column_name}</th>;
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {rows?.map((row, rowIdx) => {
-            return (
-              <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
-                {Object.values(row.row).map((cell, idx) => {
-                  return (
-                    <td key={idx}>
-                      {typeof cell === "boolean" ? cell.toString() : cell}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </TableComponent>
+
+      <TableContainer >
+      <Tabless className="table-container" size="medium" sx={{ border: '1px solid lightgrey' }}>
+        <TableHead>
+          <TableRow>
+            {columns.map((column, index) => (
+              <TableCell key={index} style={{ textAlign: 'center' }}>
+                <TableSortLabel
+                  active={orderBy === column.column_name}
+                  direction={sortOrder as "asc" | "desc" | undefined} 
+                  onClick={() => handleSort(column.column_name)}
+                >
+                  {column.column_name}
+                </TableSortLabel>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {sortedRows?.map((row, rowIdx) => (
+            <TableRow title="row" key={rowIdx} onClick={() => handleOpenPanel(row)} sx={{backgroundColor: rowIdx % 2 === 0 ? '#f2f2f2' : 'white'}}>
+              {Object.values(row.row).map((cell, idx) => (
+                <TableCell key={idx}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    {typeof cell === 'boolean'
+                        ? cell.toString()
+                        : columns[idx].references_table === "filegroup"
+                        ? fileGroupsView?.find(
+                            (fileGroup) => fileGroup.id === cell
+                          )?.count
+                        : cell as React.ReactNode}
+                  </Box>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Tabless>
+    </TableContainer>
+
+
+
+
       <div>
         <Container>
           <RRow>
@@ -642,11 +818,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
-                  <MenuItem value={1}>1 per page</MenuItem>
-                  <MenuItem value={5}>5 per page</MenuItem>
-                  <MenuItem value={25}>25 per page</MenuItem>
-                  <MenuItem value={30}>30 per page</MenuItem>
+                   <MenuItem value={10}>10 per page</MenuItem>
+                  <MenuItem value={20}>20 per page</MenuItem>
                   <MenuItem value={50}>50 per page</MenuItem>
+                  <MenuItem value={100}>100 per page</MenuItem>
                 </Select>
               </FormControl>
             </CCol>
@@ -665,57 +840,69 @@ const TableListView: React.FC<TableListViewProps> = ({
           setCurrentWYSIWYG("");
           setOpenPanel(false);
           setInputValues({});
+          setShowFiles(false);
         }}
       >
-        <div className="form-panel-container">
-          <Typography variant="h5">Details</Typography>
-          <form>
-            <div className={tableStyle}>
-              {columns.map((column, colIdx) => {
-                return (
-                  <div key={colIdx} className="row-details">
-                    <label key={column.column_name + colIdx}>
-                      {column.column_name}
-                    </label>
-                    {inputField(column)}
-                  </div>
-                );
-              })}
+        <div>
+          {table.stand_alone_details_view ? <NavBar /> : <div></div>}
+          <div className="form-panel-container">
+            <Typography variant="h5">Details</Typography>
+            <form>
+              <div className={tableStyle}>
+                {columns.map((column, colIdx) => {
+                  return (
+                    <div key={colIdx} className="row-details">
+                      <label key={column.column_name + colIdx}>
+                        {column.column_name}
+                      </label>
+                      {column.references_table == "filegroup" ? (
+                        <FileInputField {...column} />
+                      ) : (
+                        inputField(column)
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </form>
+            <div>
+              <Button
+                variant="contained"
+                style={buttonStyle}
+                onClick={() => {
+                  setCurrentPhone("");
+                  setCurrentCategory("");
+                  setCurrentWYSIWYG("");
+                  setInputValues({});
+                  setOpenPanel(false);
+                }}
+              >
+                close
+              </Button>
+              <Button
+                variant="contained"
+                style={{
+                  marginTop: 20,
+                  backgroundColor: "#403eb5",
+                  width: "fit-content",
+                  marginLeft: 10,
+                }}
+                onClick={handleFormSubmit}
+              >
+                Save
+              </Button>
             </div>
-          </form>
-          <div>
-            <Button
-              variant="contained"
-              style={buttonStyle}
-              onClick={() => {
-                setCurrentPhone("");
-                setCurrentCategory("");
-                setCurrentWYSIWYG("");
-                setInputValues({});
-                setOpenPanel(false);
-              }}
-            >
-              close
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                marginTop: 20,
-                backgroundColor: "#403eb5",
-                width: "fit-content",
-                marginLeft: 10,
-              }}
-              onClick={handleFormSubmit}
-            >
-              Save
-            </Button>
           </div>
         </div>
         <div style={{ paddingBottom: "2em" }}>
           {table.lookup_tables == "null" ? (
             <div></div>
           ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+          {table.lookup_tables == "null" ? (
             <div></div>
+          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+            <div></div>
+          ) : showTable ? (
           ) : showTable ? (
             <div style={{ paddingBottom: "2em" }}>
               <LookUpTableDetails table={table} />

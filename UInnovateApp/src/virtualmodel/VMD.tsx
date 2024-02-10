@@ -134,6 +134,15 @@ class VirtualModelDefinition {
     return this.schemas;
   }
 
+  /**
+   * Returns all application schemas of the vmd object
+   * @returns Schema[]
+   */
+  getApplicationSchemas(){
+    const appSchemaPattern = new RegExp(/^app_/);
+    return this.schemas.filter((schema) => appSchemaPattern.test(schema.schema_name));
+  }
+
   // Method to print the vmd object
   // return type : void
   printVMD() {
@@ -318,6 +327,28 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to fetch rows from a table
+  // return type : DataAccessor
+  getRowDataAccessor(
+    schema_name: string,
+    table_name: string,
+    primaryKey: string,
+    primaryKeyValue: string
+  ) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    if (schema && table) {
+      return new DataAccessor(
+        `${table.url}?${primaryKey}=eq.${primaryKeyValue}`,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
   // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
   // return type : DataAccessor
   getRowsDataAccessorForOrder(
@@ -356,10 +387,22 @@ class VirtualModelDefinition {
     SearchKey: string,
     SearchValue: string
   ) {
+  getRowsDataAccessorForLookUpTable(
+    schema_name: string,
+    table_name: string,
+    SearchKey: string,
+    SearchValue: string
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
+      return new DataAccessor(
+        table.url + "?" + SearchKey + "=eq." + SearchValue,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
       return new DataAccessor(
         table.url + "?" + SearchKey + "=eq." + SearchValue,
         {
@@ -417,6 +460,13 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to update a row in a table
   // return type : DataAccessor
+  getUpdateRowDataAccessorView(
+    schema_name: string,
+    table_name: string,
+    row: Row,
+    primarykey: string,
+    primarykeyvalue: string
+  ) {
   getUpdateRowDataAccessorView(
     schema_name: string,
     table_name: string,
@@ -509,6 +559,31 @@ class VirtualModelDefinition {
       throw new Error("Schema or view does not exist");
     }
   }
+
+  // Method to return a data accessor to remove a row from a table
+  // Note that this removes a row from its id (if the table's primary key isnt exactly "id", this will not work)
+  // return type: DataAccessor
+  getRemoveRowAccessor(
+    schema_name: string,
+    table_name: string,
+    primary_key: string,
+    primary_key_value: string
+  ) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+
+    if (schema && table) {
+      return new DataAccessor(
+        `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
+        {
+          "Content-Profile": schema_name,
+        }
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
   // Method to return a function accessor to call a database function (stored procedure)
   // return type: FunctionAccessor
   getFunctionAccessor(
@@ -829,13 +904,14 @@ export interface ConfigData {
   property: string;
   value: string | boolean;
 }
-// Defining UserData interface for type checking when calling /user_info with the API
+// Defining UserData interface for type checking when calling /user_info with the API 
 export interface UserData {
   email: string;
-  firstName?: string;
-  lastName?: string;
-  role: string;
-  is_active: boolean;
+  first_name?: string;
+  last_name?: string;
+  role?: string;
+  is_active?: boolean;
+  schema_access?: string[];
 }
 
 // Creating a VMD object and exporting it

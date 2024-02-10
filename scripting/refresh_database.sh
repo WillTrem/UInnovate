@@ -42,6 +42,7 @@ PROCEDURES_FILE=".././database$USECASE_FOLDER/procedures.sql"
 TEST_FILE=".././database$USECASE_FOLDER/unittest.sql"
 META_DATA_FILE=".././database/meta_data.sql"
 LOG_FILE=".././database/refresh_log.txt"
+FILE_STORAGE=".././database/files.sql"
 CRON_FILE=".././database/cron.sql"
 APPCONFIG_PROPERTIES_FILE=".././dataFiles/appconfig_properties.csv"
 AUTH_FILE=".././database/auth.sql"
@@ -65,7 +66,7 @@ check_file_existence $DATA_FILE
 echo "Database refresh started at $(date)" | tee -a $LOG_FILE
 
 # Recreate meta tables and views, schema (drop and create tables), and data (insert new data)
-for SQL_FILE in $INIT_SQL $ROLES_FILE $META_FILE $SCHEMA_FILE $DATA_FILE $PROCEDURES_FILE $META_DATA_FILE $CRON_FILE $AUTH_FILE; do
+for SQL_FILE in $INIT_SQL $ROLES_FILE $META_FILE $FILE_STORAGE $SCHEMA_FILE $DATA_FILE $PROCEDURES_FILE $META_DATA_FILE $CRON_FILE $AUTH_FILE; do
     echo "Executing $SQL_FILE..." | tee -a $LOG_FILE
     docker exec -i db psql -U $DB_USER -d $DB_NAME -a -f - < $SQL_FILE 2>&1 | tee -a $LOG_FILE
 done
