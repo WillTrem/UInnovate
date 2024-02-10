@@ -12,9 +12,8 @@ env:
 jobs:
   docker:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./
+    env:
+      working-directory: ./
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -28,6 +27,7 @@ jobs:
       - name: Checkout repository
         run: echo "$PWD"
       - name: Build and export to Docker
+        working-directory: ./
         uses: docker/build-push-action@v5
         with:
           context: .
