@@ -138,9 +138,11 @@ class VirtualModelDefinition {
    * Returns all application schemas of the vmd object
    * @returns Schema[]
    */
-  getApplicationSchemas(){
+  getApplicationSchemas() {
     const appSchemaPattern = new RegExp(/^app_/);
-    return this.schemas.filter((schema) => appSchemaPattern.test(schema.schema_name));
+    return this.schemas.filter((schema) =>
+      appSchemaPattern.test(schema.schema_name)
+    );
   }
 
   // Method to print the vmd object
@@ -379,14 +381,9 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
+
   // Method to return a data accessor object to fetch rows from a table For Look up Table
   // return type : DataAccessor
-  getRowsDataAccessorForLookUpTable(
-    schema_name: string,
-    table_name: string,
-    SearchKey: string,
-    SearchValue: string
-  ) {
   getRowsDataAccessorForLookUpTable(
     schema_name: string,
     table_name: string,
@@ -397,12 +394,6 @@ class VirtualModelDefinition {
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
-      return new DataAccessor(
-        table.url + "?" + SearchKey + "=eq." + SearchValue,
-        {
-          "Accept-Profile": schema.schema_name,
-        }
-      );
       return new DataAccessor(
         table.url + "?" + SearchKey + "=eq." + SearchValue,
         {
@@ -467,13 +458,6 @@ class VirtualModelDefinition {
     primarykey: string,
     primarykeyvalue: string
   ) {
-  getUpdateRowDataAccessorView(
-    schema_name: string,
-    table_name: string,
-    row: Row,
-    primarykey: string,
-    primarykeyvalue: string
-  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -492,6 +476,7 @@ class VirtualModelDefinition {
       throw new Error("Schema or table does not exist");
     }
   }
+
   // Method to return a data accessor object to upsert a set of rows in a table
   // return type : DataAccessor
   getUpsertDataAccessor(
@@ -557,30 +542,6 @@ class VirtualModelDefinition {
       });
     } else {
       throw new Error("Schema or view does not exist");
-    }
-  }
-
-  // Method to return a data accessor to remove a row from a table
-  // Note that this removes a row from its id (if the table's primary key isnt exactly "id", this will not work)
-  // return type: DataAccessor
-  getRemoveRowAccessor(
-    schema_name: string,
-    table_name: string,
-    primary_key: string,
-    primary_key_value: string
-  ) {
-    const schema = this.getSchema(schema_name);
-    const table = this.getTable(schema_name, table_name);
-
-    if (schema && table) {
-      return new DataAccessor(
-        `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
-        {
-          "Content-Profile": schema_name,
-        }
-      );
-    } else {
-      throw new Error("Schema or table does not exist");
     }
   }
 
@@ -904,7 +865,7 @@ export interface ConfigData {
   property: string;
   value: string | boolean;
 }
-// Defining UserData interface for type checking when calling /user_info with the API 
+// Defining UserData interface for type checking when calling /user_info with the API
 export interface UserData {
   email: string;
   first_name?: string;
