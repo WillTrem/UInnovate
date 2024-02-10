@@ -30,21 +30,18 @@ const ScriptLoadPopup = ({
         await handler.init();
         await handler.executeScript();
         await handler.updateTableData();
+
         setSuccess(true);
       } catch (error) {
         console.error("Error executing script:", error);
         setError(error as Error);
+
+        return;
       }
     }
-
-    onClose();
   };
 
-  useEffect(() => {
-    if (error || success) {
-      onClose();
-    }
-  }, [error, success, onClose]);
+  useEffect(() => {}, [error, success, onClose]);
 
   const style = {
     position: "absolute",
@@ -105,8 +102,8 @@ const ScriptLoadPopup = ({
           </div>
         </Box>
       </Modal>
-      {error && <ScriptErrorPopup onClose={handleClose} error={error} />}
-      {success && <ScriptSuccessPopup onClose={handleClose} />}{" "}
+      {error ? <ScriptErrorPopup onClose={handleClose} error={error} /> : null}
+      {success ? <ScriptSuccessPopup onClose={handleClose} /> : null}
     </>
   );
 };

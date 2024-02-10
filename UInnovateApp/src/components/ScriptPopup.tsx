@@ -41,6 +41,7 @@ const ScriptErrorPopup = ({
         </Typography>
         <Typography id="modal-modal-description" sx={{ mt: 2 }}>
           It seems that an error occurred while trying to execute the script.
+          <br />
           {error.toString()}
         </Typography>
         <Button variant="contained" style={buttonStyle} onClick={onClose}>

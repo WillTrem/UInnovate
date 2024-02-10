@@ -723,6 +723,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           {scripts?.map((script) => {
             return (
               <Tooltip
+                key={script["id"]}
                 title={script["description"]}
                 open={scriptDescription === script["description"]}
                 placement="right"

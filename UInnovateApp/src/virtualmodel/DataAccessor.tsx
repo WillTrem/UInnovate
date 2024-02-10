@@ -109,25 +109,34 @@ export class DataAccessor {
 
     if (!primary_key) return false;
 
-    for (const new_row of new_table_data) {
-      old_row = old_table_data?.find(
-        (r) => r[primary_key] === new_row[primary_key]
-      );
-
-      if (old_row) {
-        for (const key in new_row) {
-          if (old_row[key] !== new_row[key]) {
-            console.log(this);
-            this.values = new_row;
-            this.data_url = `${table.getURL()}?${primary_key}=eq.${new_row[primary_key]}`;
-            await this.updateRow();
-          }
-        }
-      } else {
-        this.values = new_row;
-        this.data_url = table.getURL();
-        await this.addRow();
+    try {
+      if (!(typeof new_table_data[Symbol.iterator] === "function")) {
+        throw new Error("new_table_data is not iterable");
       }
+
+      for (const new_row of new_table_data) {
+        old_row = old_table_data?.find(
+          (r) => r[primary_key] === new_row[primary_key]
+        );
+
+        if (old_row) {
+          for (const key in new_row) {
+            if (old_row[key] !== new_row[key]) {
+              console.log(this);
+              this.values = new_row;
+              this.data_url = `${table.getURL()}?${primary_key}=eq.${new_row[primary_key]}`;
+              await this.updateRow();
+            }
+          }
+        } else {
+          this.values = new_row;
+          this.data_url = table.getURL();
+          await this.addRow();
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+      throw error;
     }
 
     // If the new data does not contain a row that exists in the old data, delete the row from the table
@@ -137,7 +146,12 @@ export class DataAccessor {
       );
       if (!existsInNewData) {
         this.data_url = `${table.getURL()}?${primary_key}=eq.${old_row[primary_key]}`;
-        this.deleteRow();
+        try {
+          this.deleteRow();
+        } catch (error) {
+          console.error("Error updating row:", error);
+          throw error;
+        }
       }
       return existsInNewData;
     });

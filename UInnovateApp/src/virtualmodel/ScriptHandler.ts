@@ -35,7 +35,11 @@ class ScriptHandler {
         this.table.table_name
       );
 
-      this.table_data = await this.accessor.fetchRows();
+      try {
+        this.table_data = await this.accessor.fetchRows();
+      } catch (error) {
+        throw new Error("Error fetching table data: " + error);
+      }
     }
   }
 
@@ -61,7 +65,11 @@ class ScriptHandler {
       this.accessor.headers
     );
 
-    this.accessor.updateTableData(this.new_table_data, this.table);
+    try {
+      await this.accessor.updateTableData(this.new_table_data, this.table);
+    } catch (error) {
+      throw new Error("Error updating table data: " + error);
+    }
   }
 }
 
