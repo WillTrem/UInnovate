@@ -9,7 +9,7 @@ export interface AuthState {
 	user: string | null;
 	token: string | null;
 	role: string | null;
-	schema_access: string[] | null;
+	schema_access: string[];
 }
 
 interface DecodedToken {
@@ -27,7 +27,7 @@ export enum Role {
 
 const authSlice = createSlice({
 	name: "auth",
-	initialState: { user: null, token: null, role: null, schema_access: null },
+	initialState: { user: null, token: null, role: null, schema_access: [] } as AuthState,
 	reducers: {
 		logIn: (state: AuthState, action: PayloadAction<string>) => {
 			const token = action.payload;
@@ -37,7 +37,7 @@ const authSlice = createSlice({
 			const decodedToken = jwtDecode(token) as DecodedToken;
 			state.role = decodedToken.role;
 			state.user = decodedToken.email;
-			state.schema_access = decodedToken.schema_access;
+			state.schema_access = decodedToken.schema_access || [];
 			console.log(state.schema_access)
 
 			axiosCustom.defaults.headers.common["Authorization"] = `bearer ${token}`;
@@ -46,7 +46,7 @@ const authSlice = createSlice({
 			state.user = null;
 			state.token = null;
 			state.role = null;
-			state.schema_access = null;
+			state.schema_access = [];
 
 			axiosCustom.defaults.headers.common["Authorization"] = undefined;
 
