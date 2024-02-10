@@ -29,6 +29,7 @@ jobs:
       - name: Build and export to Docker
         uses: docker/build-push-action@v5
         with:
+          working-directory: ./
           context: ${{ github.workspace }}
           file: ${{ github.workspace }}/Dockerfile.goat
           load: true
