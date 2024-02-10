@@ -1,6 +1,7 @@
 -- SCHEMA AND TABLES CREATION
 CREATE SCHEMA IF NOT EXISTS authentication;
 
+DROP TABLE IF EXISTS authentication.users;
 CREATE TABLE IF NOT EXISTS authentication.users (
 	email text PRIMARY KEY CHECK (email ~* '^.+@.+\..+$'),
 	first_name text,
