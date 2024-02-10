@@ -17,34 +17,34 @@ GET /tools
 ```json
 [
   {
-    "tool_id": 1,
+    "id": 1,
     "tool_type": 1,
     "tool_name": "Drill",
     "tool_price": 25.0,
     "tool_description": "Powerful cordless drill",
     "tool_qty_available": 10
-  },
+  }
   // ... additional tools
 ]
 ```
 
 #### 2. Retrieve Tool by ID
 
-**Endpoint:** `GET /tools/{tool_id}`
+**Endpoint:** `GET /tools/{id}`
 
 Retrieve details for a specific tool.
 
 **Request:**
 
 ```plaintext
-GET /tools/{tool_id}
+GET /tools/{id}
 ```
 
 **Response:**
 
 ```json
 {
-  "tool_id": 1,
+  "id": 1,
   "tool_type": 1,
   "tool_name": "Drill",
   "tool_price": 25.0,
@@ -79,7 +79,7 @@ POST /tools
 
 ```json
 {
-  "tool_id": 2,
+  "id": 2,
   "tool_type": 1,
   "tool_name": "Circular Saw",
   "tool_price": 40.0,
@@ -90,14 +90,14 @@ POST /tools
 
 #### 4. Update Tool by ID
 
-**Endpoint:** `PUT /tools/{tool_id}`
+**Endpoint:** `PUT /tools/{id}`
 
 Update details for a specific tool.
 
 **Request:**
 
 ```plaintext
-PUT /tools/{tool_id}
+PUT /tools/{id}
 ```
 
 ```json
@@ -110,7 +110,7 @@ PUT /tools/{tool_id}
 
 ```json
 {
-  "tool_id": 2,
+  "id": 2,
   "tool_type": 1,
   "tool_name": "Circular Saw",
   "tool_price": 45.0,
@@ -121,14 +121,14 @@ PUT /tools/{tool_id}
 
 #### 5. Delete Tool by ID
 
-**Endpoint:** `DELETE /tools/{tool_id}`
+**Endpoint:** `DELETE /tools/{id}`
 
 Delete a tool.
 
 **Request:**
 
 ```plaintext
-DELETE /tools/{tool_id}
+DELETE /tools/{id}
 ```
 
 **Response:**
@@ -159,7 +159,7 @@ GET /units
 [
   {
     "unit_id": 1,
-    "tool_id": 1,
+    "id": 1,
     "tool_type": 1,
     "unit_serial_number": "SN123456",
     "unit_weight": 12.5,
@@ -169,7 +169,7 @@ GET /units
     "unit_last_exited_date": "2023-11-14T14:30:00Z",
     "unit_last_returned_date": "2023-11-15T10:00:00Z",
     "last_calibration_certificate_id": 1
-  },
+  }
   // ... additional units
 ]
 ```
@@ -191,7 +191,7 @@ GET /units/{unit_id}
 ```json
 {
   "unit_id": 1,
-  "tool_id": 1,
+  "id": 1,
   "tool_type": 1,
   "unit_serial_number": "SN123456",
   "unit_weight": 12.5,
@@ -218,7 +218,7 @@ POST /units
 
 ```json
 {
-  "tool_id": 2,
+  "id": 2,
   "tool_type": 1,
   "unit_serial_number": "SN789012",
   "unit_weight": 18.0,
@@ -236,7 +236,7 @@ POST /units
 ```json
 {
   "unit_id": 2,
-  "tool_id": 2,
+  "id": 2,
   "tool_type": 1,
   "unit_serial_number": "SN789012",
   "unit_weight": 18.0,
@@ -272,7 +272,7 @@ PUT /units/{unit_id}
 ```json
 {
   "unit_id": 2,
-  "tool_id": 2,
+  "id": 2,
   "tool_type": 1,
   "unit_serial_number": "SN789012",
   "unit_weight": 18.0,
@@ -304,4 +304,3 @@ DELETE /units/{unit_id}
   "message": "Unit deleted successfully."
 }
 ```
-

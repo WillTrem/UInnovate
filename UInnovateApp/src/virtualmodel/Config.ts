@@ -15,6 +15,7 @@ export enum ColumnDisplayTypes {
   email = "email",
   currency = "currency",
   multiline_wysiwyg = "multiline_wysiwyg",
+  file = "file",
 }
 
 export enum CategoriesDisplayType {
