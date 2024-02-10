@@ -3,39 +3,37 @@ import { Row } from "../DataAccessor";
 import { ConfigProperty } from "../ConfigProperties";
 
 export { Row };
-let mock_schema_name = "";
-let mock_table_name = "";
 export class DataAccessorMock {
-  constructor(schema_name?, table_name?) {
-    mock_schema_name = schema_name;
-    mock_table_name = table_name;
+  data_url: string = "";
+  constructor(data_url?: string) {
+    if (data_url === "For List View") {
+      this.data_url = data_url;
+    }
   }
 
   fetchRows = vi.fn().mockImplementation(() => {
     console.log("fetchRows in DataAccessor mock was called");
-    if (mock_schema_name == "meta" && mock_table_name == "appconfig_values") {
+    if (this.data_url === "For List View") {
       return Promise.resolve([
         {
-          column: "Column1",
-          table: "Table1",
-          property: ConfigProperty.COLUMN_DISPLAY_TYPE,
-          value: "datetime",
+          Column1: 1,
+          Column2: "mock row",
+          Column3: "mock description",
         },
         {
-          column: "Column2",
-          table: "Table1",
-          property: ConfigProperty.COLUMN_DISPLAY_TYPE,
-          value: "date",
+          Column1: 2,
+          Column2: "mock row 2",
+          Column3: "mock description 2",
         },
         {
-          column: "Column3",
-          table: "Table1",
-          property: ConfigProperty.COLUMN_DISPLAY_TYPE,
-          value: "categories",
+          Column1: 3,
+          Column2: "mock row 3",
+          Column3: "mock description 3",
         },
       ]);
+    } else {
+      return Promise.resolve([]);
     }
-    return Promise.resolve([]);
   });
 
   upsert = vi.fn().mockImplementation(() => {
