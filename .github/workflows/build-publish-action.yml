@@ -27,7 +27,8 @@ jobs:
       - name: Checkout repository
         run: echo "$PWD"
       - name: Build and export to Docker
-        working-directory: ./
+        env:
+          working-directory: ./
         uses: docker/build-push-action@v5
         with:
           context: .
