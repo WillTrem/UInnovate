@@ -1,4 +1,4 @@
-import { Nav } from "react-bootstrap";
+import { Container, Nav } from "react-bootstrap";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import DisplayType from "./DisplayType";
 import { updateSelectedSchema } from "../../redux/SchemaSlice";
@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import vmd from "../../virtualmodel/VMD";
 import { LOGIN_BYPASS } from "../../redux/AuthSlice";
-
+import { useNavigate } from "react-router-dom";
 interface SchemaSelectorProps {
   displayType?: DisplayType;
 }
@@ -26,6 +26,8 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
       })),
   ];
 
+  const navigate = useNavigate();
+
   const selectedSchema: string = useSelector(
     (state: RootState) => state.schema.value
   );
@@ -43,7 +45,10 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
   ) => {
     const val = eventKey || "no schema";
     e.preventDefault();
+    navigate(`/${val}`);
+
     dispatch(updateSelectedSchema(val));
+    
   };
   if (displayType === DisplayType.NavDropdown)
     return (
@@ -66,7 +71,7 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
 
   if (displayType === DisplayType.NavPills)
     return (
-      <>
+      <Container>
         <Nav
           variant="pills"
           onSelect={handleSelect}
@@ -75,16 +80,17 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
         >
           {schemas.map((item) => (
             <Nav.Item title={item} key={item}>
-              <Nav.Link eventKey={item}>{item}</Nav.Link>
+              <Nav.Link eventKey={item} >{item}</Nav.Link>
             </Nav.Item>
           ))}
         </Nav>
-      </>
+      </Container>
     );
 
   if (displayType === DisplayType.Nav)
     return (
-      <>
+      <Container>
+
         <Nav
           onSelect={handleSelect}
           className="justify-content-left"
@@ -92,11 +98,13 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
         >
           {schemas.map((item: string) => (
             <Nav.Item title={item} key={item}>
-              <Nav.Link eventKey={item}>{item}</Nav.Link>
+              <Nav.Link eventKey={item}>
+                {item}
+                </Nav.Link>
             </Nav.Item>
           ))}
         </Nav>
-      </>
+        </Container>
     );
 };
 

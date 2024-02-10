@@ -45,6 +45,10 @@ export default {
     console.log("getTable in VMD mock was called");
     return new Table("mock table name");
   }),
+  getTables: vi.fn().mockImplementation(() => {
+    console.log("getTables in VMD mock was called");
+    return [new Table("mock1"), new Table("mock2"), new Table("mock3")];
+  }),
   getTableSchema: vi.fn().mockImplementation(() => {
     console.log("getTableSchema in VMD mock was called");
     return new Schema("mock schema name");
