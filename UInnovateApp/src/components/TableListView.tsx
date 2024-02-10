@@ -12,6 +12,8 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
 import {
   Switch,
   Button,
@@ -45,6 +47,7 @@ import {
 } from "mui-tiptap";
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import { useNavigate, useParams } from "react-router-dom";
+import { Table as Tabless, TableBody, TableCell, TableContainer, TableHead, TableRow, TableSortLabel } from '@mui/material';
 
 
 interface TableListViewProps {
@@ -69,7 +72,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
-  const navigate = useNavigate() 
+  const navigate = useNavigate()
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -82,15 +85,16 @@ const TableListView: React.FC<TableListViewProps> = ({
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
-  if(defaultOrderValue == undefined){
-    defaultOrderValue = table.columns[0].column_name
+  if (defaultOrderValue == undefined) {
+    defaultOrderValue = table.columns[0].column_name;
   }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
-
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [orderBy, setOrderBy] = useState(defaultOrderValue);
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
     const schemas = vmd.getTableSchema(table.table_name);
@@ -102,7 +106,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     const data_accessor: DataAccessor = vmd.getRowsDataAccessorForOrder(
       schemas.schema_name,
       table.table_name,
-      OrderValue,
+      orderBy,
+      sortOrder,
       PaginationValue,
       PageNumber
     );
@@ -129,7 +134,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getRows();
-  }, [table, OrderValue, PageNumber, PaginationValue]);
+  }, [table, orderBy, PageNumber, PaginationValue, sortOrder]);
 
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -204,7 +209,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     getConfigs();
   }, [inputValues]);
 
-  const inputStyle:CSSProperties= {
+  const inputStyle: CSSProperties = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
@@ -501,8 +506,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
-    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]); 
-    
+    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]);
+
     setOpenPanel(true);
   };
 
@@ -518,6 +523,26 @@ const TableListView: React.FC<TableListViewProps> = ({
       }, 1000);
     }
   }, [openPanel]);
+
+
+
+  
+
+  const handleSort = (column: React.SetStateAction<string>) => {
+    const isAsc = orderBy === column && sortOrder === 'asc';
+    setSortOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(column);
+  };
+
+  
+  const sortedRows = [...rows].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a[orderBy] < b[orderBy] ? -1 : 1;
+    } else {
+      return a[orderBy] > b[orderBy] ? -1 : 1;
+    }
+  });
+
 
   return (
     <div>
@@ -596,7 +621,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           </FormControl>
         </div>
       </div>
-      <TableComponent striped bordered hover>
+      {/* <TableComponent striped bordered hover>
         <thead>
           <tr>
             {columns.map((column, index) => {
@@ -619,7 +644,44 @@ const TableListView: React.FC<TableListViewProps> = ({
             );
           })}
         </tbody>
-      </TableComponent>
+      </TableComponent> */}
+
+      <TableContainer >
+      <Tabless className="table-container" size="medium" sx={{ border: '1px solid lightgrey' }}>
+        <TableHead>
+          <TableRow>
+            {columns.map((column, index) => (
+              <TableCell key={index} style={{ textAlign: 'center' }}>
+                <TableSortLabel
+                  active={orderBy === column.column_name}
+                  direction={sortOrder as "asc" | "desc" | undefined} // Update the type of the direction prop
+                  onClick={() => handleSort(column.column_name)}
+                >
+                  {column.column_name}
+                </TableSortLabel>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {sortedRows?.map((row, rowIdx) => (
+            <TableRow key={rowIdx} onClick={() => handleOpenPanel(row)}>
+              {Object.values(row.row).map((cell, idx) => (
+                <TableCell key={idx}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    {typeof cell === 'boolean' ? cell.toString() : cell as React.ReactNode}
+                  </Box>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Tabless>
+    </TableContainer>
+
+
+
+
       <div>
         <Container>
           <RRow>
@@ -707,14 +769,14 @@ const TableListView: React.FC<TableListViewProps> = ({
           </div>
         </div>
         <div style={{ paddingBottom: "2em" }}>
-          {table.lookup_tables=="null" ? (
+          {table.lookup_tables == "null" ? (
             <div></div>
-          ) : JSON.parse(table.lookup_tables)[-1] =="none" ? (
-          <div></div>) : showTable ? (
-            <div style={{ paddingBottom: "2em" }}>
-              <LookUpTableDetails table={table} />
-            </div>
-          ) : (
+          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+            <div></div>) : showTable ? (
+              <div style={{ paddingBottom: "2em" }}>
+                <LookUpTableDetails table={table} />
+              </div>
+            ) : (
             <Button
               variant="contained"
               color="primary"
