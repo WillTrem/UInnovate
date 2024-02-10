@@ -12,7 +12,7 @@ const login_url = "http://localhost:3000/rpc/login";
 const logout_url = "http://localhost:3000/rpc/logout";
 const refresh_token_url = "http://localhost:3000/rpc/token_refresh";
 const verify_signup_url = "http://localhost:3000/rpc/verify_signup";
-
+const list_view_table_url = "http://localhost:3000/Table1";
 
 const noMockErrorMessage = "API call to this URL hasn't been mocked.";
 
@@ -74,11 +74,41 @@ const mock_config_values = [
 ];
 
 const mock_user_info_values = [
-  {email: "email1@test.com", firstname: "firstname1", lastname: "lastname1", role: "user", is_active: true},
-  {email: "email2@test.com", firstname: "firstname2", lastname: "lastname2", role: "user", is_active: true},
-  {email: "email3@test.com", firstname: "firstname3", lastname: "lastname3", role: "user", is_active: true},
-  {email: "email4@test.com", firstname: "firstname4", lastname: "lastname4", role: "user", is_active: true},
-]
+  {
+    email: "email1@test.com",
+    firstname: "firstname1",
+    lastname: "lastname1",
+    role: "user",
+    is_active: true,
+  },
+  {
+    email: "email2@test.com",
+    firstname: "firstname2",
+    lastname: "lastname2",
+    role: "user",
+    is_active: true,
+  },
+  {
+    email: "email3@test.com",
+    firstname: "firstname3",
+    lastname: "lastname3",
+    role: "user",
+    is_active: true,
+  },
+  {
+    email: "email4@test.com",
+    firstname: "firstname4",
+    lastname: "lastname4",
+    role: "user",
+    is_active: true,
+  },
+];
+
+const mock_table_list_view = [
+  { Column1: 1, Column2: "mock row", Column3: "mock description" },
+  { Column1: 2, Column2: "mock row 2", Column3: "mock description 2" },
+  { Column1: 3, Column2: "mock row 3", Column3: "mock description 3" },
+];
 export default {
   ...axios,
   get: vi.fn().mockImplementation((url, { headers }) => {
@@ -100,6 +130,13 @@ export default {
           return Promise.resolve();
         case verify_signup_url:
           return Promise.resolve();
+        default:
+          return Promise.reject(new Error(noMockErrorMessage));
+      }
+    } else if (headers["Accept-Profile"] === "application") {
+      switch (url) {
+        case list_view_table_url + `?order=Column1&limit=50&offset=1`:
+          return Promise.resolve(mock_table_list_view);
         default:
           return Promise.reject(new Error(noMockErrorMessage));
       }
