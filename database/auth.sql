@@ -1,6 +1,7 @@
 -- SCHEMA AND TABLES CREATION
 CREATE SCHEMA IF NOT EXISTS authentication;
 
+DROP TABLE IF EXISTS authentication.users;
 CREATE TABLE IF NOT EXISTS authentication.users (
 	email text PRIMARY KEY CHECK (email ~* '^.+@.+\..+$'),
 	first_name text,
@@ -8,7 +9,7 @@ CREATE TABLE IF NOT EXISTS authentication.users (
 	role name NOT NULL CHECK (length(role) < 512),
 	PASSWORD text CHECK (length(PASSWORD) < 512),
 	is_active bool NOT NULL, 
-	schema_access text[]
+	schema_access text[] DEFAULT '{}'
 );
 
 -- CREATE TABLE IF NOT EXISTS meta.user_schema_access (
@@ -410,7 +411,7 @@ INSERT INTO authentication.users(
 		PASSWORD,
 		is_active,
 		role, 
-		schemas
+		schema_access
 	)
 VALUES (
 		'admin@test.com',

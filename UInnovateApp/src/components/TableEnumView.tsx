@@ -8,26 +8,24 @@ import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
 import { useParams } from "react-router-dom";
 
-
+interface TableEnumViewProps {
+  table: Table;
+}
 const buttonStyle = {
   marginRight: 10,
   backgroundColor: "#404040",
 };
 
-const TableEnumView = () => {
+const TableEnumView: React.FC<TableEnumViewProps> = ({
+  table,
+}: {
+  table: Table;
+}) => {
   const [column, setColumn] = useState<Column>();
   const [originalColumns, setOriginalColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
-  const { tableName } = useParams()
-  if(!tableName) {
-    return null;
-  }
-  const schema = vmd.getTableSchema(tableName);
-  const table = vmd.getTable(schema?.schema_name ?? "", tableName);
-  if(!table) {
-    return null;
-  }
+  
 
   useEffect(() => {
     const fetchData = async () => {

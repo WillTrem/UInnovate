@@ -12,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
+import { NavBar } from "./NavBar";
 import {
   Switch,
   Button,
@@ -69,7 +70,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 }: {
   table: Table;
 }) => {
-  const navigate = useNavigate() 
+  const navigate = useNavigate()
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -82,11 +83,11 @@ const TableListView: React.FC<TableListViewProps> = ({
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
-  if(defaultOrderValue == undefined){
+  if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name
   }
   const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
-  const [PaginationValue, setPaginationValue] = useState<number>(50);
+  const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -204,7 +205,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     getConfigs();
   }, [inputValues]);
 
-  const inputStyle:CSSProperties= {
+  const inputStyle: CSSProperties = {
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
@@ -501,8 +502,16 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
-    navigate('/objview/details/' + table.table_name + '/' + row.row[table.table_name + "_id"]); 
+    const schema = vmd.getTableSchema(table.table_name)
+    let detailtype = "overlay";
+    if (table.stand_alone_details_view) {
+      detailtype = "standalone";
+    }
+    navigate(`/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]}?details=${detailtype}`);
     
+   
+    
+
     setOpenPanel(true);
   };
 
@@ -637,11 +646,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
-                  <MenuItem value={1}>1 per page</MenuItem>
-                  <MenuItem value={5}>5 per page</MenuItem>
-                  <MenuItem value={25}>25 per page</MenuItem>
-                  <MenuItem value={30}>30 per page</MenuItem>
+                  <MenuItem value={10}>10 per page</MenuItem>
+                  <MenuItem value={20}>20 per page</MenuItem>
                   <MenuItem value={50}>50 per page</MenuItem>
+                  <MenuItem value={100}>100 per page</MenuItem>
                 </Select>
               </FormControl>
             </CCol>
@@ -662,59 +670,62 @@ const TableListView: React.FC<TableListViewProps> = ({
           setInputValues({});
         }}
       >
-        <div className="form-panel-container">
-          <Typography variant="h5">Details</Typography>
-          <form>
-            <div className={tableStyle}>
-              {columns.map((column, colIdx) => {
-                return (
-                  <div key={colIdx} className="row-details">
-                    <label key={column.column_name + colIdx}>
-                      {column.column_name}
-                    </label>
-                    {inputField(column)}
-                  </div>
-                );
-              })}
+        <div>
+          {table.stand_alone_details_view ? (<NavBar />) : <div></div>}
+          <div className="form-panel-container">
+            <Typography variant="h5">Details</Typography>
+            <form>
+              <div className={tableStyle}>
+                {columns.map((column, colIdx) => {
+                  return (
+                    <div key={colIdx} className="row-details">
+                      <label key={column.column_name + colIdx}>
+                        {column.column_name}
+                      </label>
+                      {inputField(column)}
+                    </div>
+                  );
+                })}
+              </div>
+            </form>
+            <div>
+              <Button
+                variant="contained"
+                style={buttonStyle}
+                onClick={() => {
+                  setCurrentPhone("");
+                  setCurrentCategory("");
+                  setCurrentWYSIWYG("");
+                  setInputValues({});
+                  setOpenPanel(false);
+                }}
+              >
+                close
+              </Button>
+              <Button
+                variant="contained"
+                style={{
+                  marginTop: 20,
+                  backgroundColor: "#403eb5",
+                  width: "fit-content",
+                  marginLeft: 10,
+                }}
+                onClick={handleFormSubmit}
+              >
+                Save
+              </Button>
             </div>
-          </form>
-          <div>
-            <Button
-              variant="contained"
-              style={buttonStyle}
-              onClick={() => {
-                setCurrentPhone("");
-                setCurrentCategory("");
-                setCurrentWYSIWYG("");
-                setInputValues({});
-                setOpenPanel(false);
-              }}
-            >
-              close
-            </Button>
-            <Button
-              variant="contained"
-              style={{
-                marginTop: 20,
-                backgroundColor: "#403eb5",
-                width: "fit-content",
-                marginLeft: 10,
-              }}
-              onClick={handleFormSubmit}
-            >
-              Save
-            </Button>
           </div>
         </div>
         <div style={{ paddingBottom: "2em" }}>
-          {table.lookup_tables=="null" ? (
+          {table.lookup_tables == "null" ? (
             <div></div>
-          ) : JSON.parse(table.lookup_tables)[-1] =="none" ? (
-          <div></div>) : showTable ? (
-            <div style={{ paddingBottom: "2em" }}>
-              <LookUpTableDetails table={table} />
-            </div>
-          ) : (
+          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+            <div></div>) : showTable ? (
+              <div style={{ paddingBottom: "2em" }}>
+                <LookUpTableDetails table={table} />
+              </div>
+            ) : (
             <Button
               variant="contained"
               color="primary"

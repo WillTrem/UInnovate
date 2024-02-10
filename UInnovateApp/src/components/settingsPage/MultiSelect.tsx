@@ -11,7 +11,9 @@ interface MultiSelectProps extends SelectProps{
 
 // Component obtained from https://codesandbox.io/s/mui-multi-select-kptq04?from-embed=&file=%2Fsrc%2FApp.js%3A238-291
 const MultiSelect: React.FC<MultiSelectProps> = ({ selectedList, setSelectedList, choiceList, size, ...props }) => {
-
+	if(!selectedList){
+		selectedList = [];
+	}
 	return (
 		<Select
 			size={size}
