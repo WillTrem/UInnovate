@@ -4,6 +4,8 @@ import { updateAppConfigValues } from "../../virtualmodel/Config";
 import { CircularProgress, Snackbar, Tooltip, Zoom } from "@mui/material";
 import BuildIcon from "@mui/icons-material/Build";
 import { grey } from "@mui/material/colors";
+import { useDispatch } from "react-redux";
+import { saveUserDataToDB } from "../../redux/UserDataSlice";
 
 const CONFIG_UPDATE_TIMER_MS = 10000;
 const CONFIG_SAVE_ANIMATION_DURATION_MS = 1000;
@@ -11,6 +13,7 @@ const CONFIG_SAVE_ANIMATION_DURATION_MS = 1000;
 // invisible component in charge of saving the configuration at regular intervals and on leave
 const ConfigurationSaver: React.FC = () => {
   const { config } = useConfig();
+  const dispatch = useDispatch();
   const configRef = useRef<ConfigType>(config);
   const [isSnackbarVisible, setSnackbarVisible] = useState(false);
 
@@ -26,6 +29,7 @@ const ConfigurationSaver: React.FC = () => {
     const interval = setInterval(() => {
 	try{
 		updateAppConfigValues(configRef.current);
+		dispatch(saveUserDataToDB());
 		setSnackbarVisible(true);
       	console.log("Saving the configuration in the DB via timer.");
 	}
@@ -40,6 +44,7 @@ const ConfigurationSaver: React.FC = () => {
 			clearInterval(interval);
 			try{
 				updateAppConfigValues(configRef.current);
+				dispatch(saveUserDataToDB());
 				setSnackbarVisible(true);
 				console.log(
 					"Unmounting ConfigurationSaver, saving the configuration to the DB."

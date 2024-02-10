@@ -2,13 +2,15 @@ import { configureStore } from "@reduxjs/toolkit";
 import schemaReducer from "./SchemaSlice";
 import authReducer from './AuthSlice'
 import loadingReducer from './LoadingSlice'
+import userDataReducer from './UserDataSlice';
 
 // App state store
 const Store = configureStore({
   reducer: {
     schema: schemaReducer,
     auth: authReducer,
-    loading: loadingReducer
+    loading: loadingReducer,
+    userData: userDataReducer
   },
 });
 
