@@ -88,7 +88,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
-  const [OrderValue, setOrderValue] = useState(defaultOrderValue || "");
   const [PaginationValue, setPaginationValue] = useState<number>(50);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
@@ -219,9 +218,21 @@ const TableListView: React.FC<TableListViewProps> = ({
     ? "form-group-stand-alone"
     : "form-group";
   //For when order changes
-  const handleOrderchange = (event: SelectChangeEvent) => {
-    setOrderValue(event.target.value as string);
+  const handleSort = (column: React.SetStateAction<string>) => {
+    const isAsc = orderBy === column && sortOrder === 'asc';
+    setSortOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(column);
   };
+
+  //For sorting of rows with asc and desc
+  const sortedRows = [...rows].sort((a, b) => {
+    if (sortOrder === 'asc') {
+      return a[orderBy] < b[orderBy] ? -1 : 1;
+    } else {
+      return a[orderBy] > b[orderBy] ? -1 : 1;
+    }
+  });
+
 
   //For when pagination limitm changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
@@ -528,21 +539,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   
 
-  const handleSort = (column: React.SetStateAction<string>) => {
-    const isAsc = orderBy === column && sortOrder === 'asc';
-    setSortOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(column);
-  };
-
-  
-  const sortedRows = [...rows].sort((a, b) => {
-    if (sortOrder === 'asc') {
-      return a[orderBy] < b[orderBy] ? -1 : 1;
-    } else {
-      return a[orderBy] > b[orderBy] ? -1 : 1;
-    }
-  });
-
+ 
 
   return (
     <div>
@@ -604,47 +601,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-        <div>
-          <FormControl size="small">
-            <h6 style={{ textAlign: "left" }}>Ordering</h6>
-            <Select
-              value={OrderValue}
-              displayEmpty
-              onChange={handleOrderchange}
-            >
-              {table.columns.map((column, index) => (
-                <MenuItem value={column.column_name} key={index}>
-                  {column.column_name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </div>
       </div>
-      {/* <TableComponent striped bordered hover>
-        <thead>
-          <tr>
-            {columns.map((column, index) => {
-              return <th key={index}>{column.column_name}</th>;
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {rows?.map((row, rowIdx) => {
-            return (
-              <tr key={rowIdx} onClick={() => handleOpenPanel(row)}>
-                {Object.values(row.row).map((cell, idx) => {
-                  return (
-                    <td key={idx}>
-                      {typeof cell === "boolean" ? cell.toString() : cell}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-      </TableComponent> */}
 
       <TableContainer >
       <Tabless className="table-container" size="medium" sx={{ border: '1px solid lightgrey' }}>
@@ -654,7 +611,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               <TableCell key={index} style={{ textAlign: 'center' }}>
                 <TableSortLabel
                   active={orderBy === column.column_name}
-                  direction={sortOrder as "asc" | "desc" | undefined} // Update the type of the direction prop
+                  direction={sortOrder as "asc" | "desc" | undefined} 
                   onClick={() => handleSort(column.column_name)}
                 >
                   {column.column_name}
@@ -665,7 +622,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         </TableHead>
         <TableBody>
           {sortedRows?.map((row, rowIdx) => (
-            <TableRow key={rowIdx} onClick={() => handleOpenPanel(row)}>
+            <TableRow key={rowIdx} onClick={() => handleOpenPanel(row)} sx={{backgroundColor: rowIdx % 2 === 0 ? '#f2f2f2' : 'white'}}>
               {Object.values(row.row).map((cell, idx) => (
                 <TableCell key={idx}>
                   <Box sx={{ textAlign: 'center' }}>
