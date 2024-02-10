@@ -1,5 +1,5 @@
 import { describe, it, vi } from "vitest";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
@@ -10,31 +10,32 @@ import { DataAccessorMock } from "../virtualmodel/__mocks__/DataAccessor";
 vi.mock("axios");
 vi.mock("DataAccessor");
 vi.mock("../contexts/ConfigContext)");
+
 describe("TableListView component", () => {
+  // Sample data for testing
+  // Making a mock single mock table
+  const table = new Table("Table1");
+  // Making a mock column array of three columns
+  const columns = [
+    new Column("Column1"),
+    new Column("Column2"),
+    new Column("Column3"),
+  ];
+
+  // Adding the columns to the table
+  columns.forEach((column) => {
+    table.addColumn(column, "something", false);
+  });
+
+  render(
+    <ConfigProvider>
+      <MemoryRouter>
+        <TableListView table={table} />
+      </MemoryRouter>
+    </ConfigProvider>
+  );
+
   it("renders a table with the specified attributes", async () => {
-    // Sample data for testing
-    // Making a mock single mock table
-    const table = new Table("Table1");
-    // Making a mock column array of three columns
-    const columns = [
-      new Column("Column1"),
-      new Column("Column2"),
-      new Column("Column3"),
-    ];
-
-    // Adding the columns to the table
-    columns.forEach((column) => {
-      table.addColumn(column);
-    });
-
-    render(
-      <ConfigProvider>
-        <MemoryRouter>
-          <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
-    );
-
     // Wait for the table to be rendered
     const tableElement = await screen.findByRole("table");
     expect(tableElement).toBeInTheDocument();
@@ -68,7 +69,95 @@ describe("TableListView component", () => {
       // Assuming LookUpTableDetails renders some text, replace 'Some text' with that text
       expect(getByText("Some text")).toBeInTheDocument();
     });
+  });
+  it("renders the Show Files button", async () => {
+    render(
+      <ConfigProvider>
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+      </ConfigProvider>
+    );
 
+    // Check for row existence by getting them by title
+    const rows = await screen.findAllByTitle("row");
+
+    // Click the first row
+    act(() => rows[0].click());
+
+    // Find the button that shows files
+    const noShowFilesButton = screen.queryByTitle("Show Files Button");
+
+    // Find the button that opens the sliding panel and simulate a click event
+    expect(noShowFilesButton).toBeNull();
+
+    act(() => {
+      columns[0].setReferenceTable("filegroup");
+      rows[0].click();
+    });
+
+    const showFilesButton = await screen.findAllByTitle("Show Files Button");
+
+    // Click the button
+    expect(showFilesButton[0]).toBeInTheDocument();
+  });
+
+  it("Verify functionality of Shows file button", async () => {
+    render(
+      <ConfigProvider>
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+      </ConfigProvider>
+    );
+    // Check for row existence by getting them by title
+    const rows = await screen.findAllByTitle("row");
+
+    // Click the first row
+    act(() => rows[0].click());
+
+    columns[0].setReferenceTable("filegroup");
+
+    const showFilesButton = await screen.findAllByTitle("Show Files Button");
+
+    expect(showFilesButton[0]).toBeInTheDocument();
+
+    // Click the button
+    act(() => showFilesButton[0].click());
+
+    // Check if the upload pop is now displayed
+    const uploadPop = await screen.findAllByTitle("Dropzone");
+
+    expect(uploadPop[0]).not.toBeInTheDocument();
+  });
+
+  it("Verify functionality of Shows file button", async () => {
+    render(
+      <ConfigProvider>
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+      </ConfigProvider>
+    );
+    // Check for row existence by getting them by title
+    const rows = await screen.findAllByTitle("row");
+
+    // Click the first row
+    act(() => rows[0].click());
+
+    columns[0].setReferenceTable("filegroup");
+
+    const showFilesButton = await screen.findAllByTitle("Show Files Button");
+
+    expect(showFilesButton[0]).toBeInTheDocument();
+
+    // Click the button
+    act(() => showFilesButton[0].click());
+
+    // Check if the upload pop is now displayed
+    const uploadPop = await screen.findAllByTitle("Dropzone");
+
+    expect(uploadPop[0]).not.toBeInTheDocument();
     it("renders the date time picker", () => {
       // Render the component
       render(<TableListView table={table} /* props */ />);

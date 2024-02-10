@@ -1,0 +1,49 @@
+name: Build and Publish Postgoat Image
+
+on:
+  push:
+    branches:
+      - main
+# basic sanity check before pushing the image is necessary -> create test tag
+env:
+  TEST_TAG: alexicazana/goat-dock:test
+  LATEST_TAG: alexicazana/goat-dock:latest
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+     # - name: Checkout repository
+     #   run: echo "$PWD"
+     # - name: List repository contents
+     #   run: ls -al
+      - name: Build and export to Docker
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.goat
+          load: true
+          tags: ${{ env.TEST_TAG }}
+      - name: Test
+        run: |
+         timeout 30s docker run --rm ${{ env.TEST_TAG }} || true
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.goat
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: alexicazana/goat-dock:latest
