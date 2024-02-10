@@ -83,7 +83,7 @@ describe("TableListView component", () => {
     const rows = await screen.findAllByTitle("row");
 
     // Click the first row
-    rows[0].click();
+    act(() => rows[0].click());
 
     // Find the button that shows files
     const noShowFilesButton = screen.queryByTitle("Show Files Button");
@@ -91,7 +91,10 @@ describe("TableListView component", () => {
     // Find the button that opens the sliding panel and simulate a click event
     expect(noShowFilesButton).toBeNull();
 
-    columns[0].setReferenceTable("filegroup");
+    act(() => {
+      columns[0].setReferenceTable("filegroup");
+      rows[0].click();
+    });
 
     const showFilesButton = await screen.findAllByTitle("Show Files Button");
 

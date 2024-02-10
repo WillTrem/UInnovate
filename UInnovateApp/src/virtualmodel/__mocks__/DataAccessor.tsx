@@ -3,8 +3,6 @@ import { Row } from "../DataAccessor";
 import { ConfigProperty } from "../ConfigProperties";
 
 export { Row };
-let mock_schema_name = "";
-let mock_table_name = "";
 export class DataAccessorMock {
   data_url: string = "";
   constructor(data_url?: string) {

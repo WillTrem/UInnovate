@@ -85,6 +85,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
+  const [inputField, setInputField] =
+    useState<(column: Column) => JSX.Element>();
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
@@ -303,7 +305,15 @@ const TableListView: React.FC<TableListViewProps> = ({
           },
         }
       )
-      .then((res) => console.log(res));
+      .then((response) => {
+        if (response.data) {
+          let tempRow = {
+            ...currentRow.row,
+            [currentColumn]: null,
+          };
+          setCurrentRow({ row: tempRow });
+        }
+      });
     const newItems = allFileGroups?.filter((file) => file.id !== item.id);
     setAllFileGroups(newItems);
     getRows();
@@ -382,16 +392,10 @@ const TableListView: React.FC<TableListViewProps> = ({
     setOpenPanel(false);
   };
 
-  const NewInputField = (column: Column) => {
+  const FileInputField = (column: Column) => {
     if (!appConfigValues) {
       return null;
     }
-    const columnDisplayType = appConfigValues?.find(
-      (element) =>
-        element.column == column.column_name &&
-        element.table == table.table_name &&
-        element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-    );
 
     if (column.is_editable == false) {
       localStorage.setItem(
@@ -399,6 +403,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         currentRow.row[column.column_name]
       );
     }
+
     if (column.references_table != null) {
       const string = column.column_name + "L";
       localStorage.setItem(
@@ -406,180 +411,222 @@ const TableListView: React.FC<TableListViewProps> = ({
         currentRow.row[column.column_name] as string
       );
     }
-    if (column.references_table == "filegroup") {
-      return showFiles ? (
-        <div title="Dropzone">
-          <Dropzone
-            onItemAdded={onItemAdded}
-            onItemRemoved={onItemRemoved}
-            items={allFileGroups}
-            currentColumn={column.column_name}
-          />
-        </div>
-      ) : (
-        <Button
-          title="Show Files Button"
-          variant="contained"
-          color="primary"
-          style={{ marginLeft: 15 }}
-          onClick={handleShowFiles.bind(this, column)}
-        >
-          Show Files
-        </Button>
-      );
-    } else if (
-      !columnDisplayType ||
-      columnDisplayType.value == "text" ||
-      columnDisplayType.value == "email"
-    ) {
-      return (
-        <input
-          readOnly={column.is_editable === false ? true : false}
-          placeholder={String(currentRow?.row[column.column_name]) || ""}
-          name={column.column_name}
-          type="text"
-          style={inputStyle}
-          onChange={handleInputChange}
+    return showFiles ? (
+      <div title="Dropzone">
+        <Dropzone
+          onItemAdded={onItemAdded}
+          onItemRemoved={onItemRemoved}
+          items={allFileGroups}
+          currentColumn={column.column_name}
         />
-      );
-    } else if (columnDisplayType.value == "number") {
-      return (
-        <input
-          type="number"
-          name={column.column_name}
-          readOnly={column.is_editable === false ? true : false}
-          placeholder={String(currentRow.row[column.column_name]) || ""}
-          style={inputStyle}
-          onChange={handleInputChange}
-        />
-      );
-    } else if (columnDisplayType.value == "longtext") {
-      return (
-        <textarea
-          readOnly={column.is_editable === false ? true : false}
-          placeholder={String(currentRow.row[column.column_name]) || ""}
-          name={column.column_name}
-          type="text"
-          style={inputStyle}
-          onChange={handleInputChange}
-        />
-      );
-    } else if (columnDisplayType.value == "boolean") {
-      return (
-        <Switch
-          checked={
-            currentRow?.row[column.column_name] == "true"
-              ? true
-              : false || false
-          }
-          name={column.column_name}
-        />
-      );
-    } else if (columnDisplayType.value == "date") {
-      return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <StaticDatePicker
-            value={dayjs(currentRow.row[column.column_name])}
-            onChange={(date) =>
-              handleInputChange(date, column.column_name, "date")
-            }
-            name={column.column_name}
-            className="date-time-picker"
-            readOnly={column.is_editable === false ? true : false}
-          />
-        </LocalizationProvider>
-      );
-    } else if (columnDisplayType.value == "datetime") {
-      return (
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <StaticDateTimePicker
-            value={dayjs(currentRow.row[column.column_name])}
-            onChange={(date) =>
-              handleInputChange(date, column.column_name, "date")
-            }
-            name={column.column_name}
-            className="date-time-picker"
-            readOnly={column.is_editable === false ? true : false}
-          />
-        </LocalizationProvider>
-      );
-    } else if (columnDisplayType.value == "categories") {
-      return (
-        <Select
-          value={
-            currentCategory
-              ? currentCategory
-              : currentRow.row[column.column_name]
-          }
-          name={column.column_name}
-          onChange={(event) => {
-            handleInputChange(event, column.column_name, undefined);
-            setCurrentCategory(event.target.value);
-          }}
-          native
-          className="width"
-        >
-          {Object.keys(CategoriesDisplayType).map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </Select>
-      );
-    } else if (columnDisplayType.value == "phone") {
-      return (
-        <MuiTelInput
-          value={
-            currentPhone !== "" || currentPhone
-              ? currentPhone
-              : currentRow.row[column.column_name]
-          }
-          onChange={(phone) => {
-            handleInputChange(phone, column.column_name, "phone");
-            setCurrentPhone(phone);
-          }}
-          name={column.column_name}
-        />
-      );
-    } else if (columnDisplayType.value == "currency") {
-      return (
-        <input
-          type="number"
-          name={column.column_name}
-          readOnly={column.is_editable === false ? true : false}
-          placeholder={String(currentRow.row[column.column_name]) || ""}
-          style={inputStyle}
-          onChange={handleInputChange}
-        />
-      );
-    } else if (columnDisplayType.value == "multiline_wysiwyg") {
-      return (
-        <RichTextEditor
-          name={column.column_name}
-          content={
-            currentWYSIWYG ? currentWYSIWYG : currentRow.row[column.column_name]
-          }
-          onChange={(event) => {
-            handleInputChange(event, column.column_name, undefined);
-            rteRef.current?.editor.setContent(event);
-          }}
-          ref={rteRef}
-          extensions={[StarterKit]} // Or any Tiptap extensions you wish!
-          // Optionally include `renderControls` for a menu-bar atop the editor:
-          renderControls={() => (
-            <MenuControlsContainer>
-              <MenuSelectHeading />
-              <MenuDivider />
-              <MenuButtonBold />
-              <MenuButtonItalic />
-              {/* Add more controls of your choosing here */}
-            </MenuControlsContainer>
-          )}
-        />
-      );
-    }
+      </div>
+    ) : (
+      <Button
+        title="Show Files Button"
+        variant="contained"
+        color="primary"
+        style={{ marginLeft: 15 }}
+        onClick={handleShowFiles.bind(this, column)}
+      >
+        Show Files
+      </Button>
+    );
   };
 
+  useEffect(() => {
+    const newInputField = (column: Column) => {
+      if (!appConfigValues) {
+        return null;
+      }
+      const columnDisplayType = appConfigValues?.find(
+        (element) =>
+          element.column == column.column_name &&
+          element.table == table.table_name &&
+          element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
+      );
+
+      if (column.is_editable == false) {
+        localStorage.setItem(
+          "currentPrimaryKeyValue",
+          currentRow.row[column.column_name]
+        );
+      }
+
+      if (column.references_table != null) {
+        const string = column.column_name + "L";
+        localStorage.setItem(
+          string,
+          currentRow.row[column.column_name] as string
+        );
+      }
+      if (
+        !columnDisplayType ||
+        columnDisplayType.value == "text" ||
+        columnDisplayType.value == "email"
+      ) {
+        return (
+          <input
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow?.row[column.column_name]) || ""}
+            name={column.column_name}
+            type="text"
+            style={inputStyle}
+            onChange={handleInputChange}
+          />
+        );
+      } else if (columnDisplayType.value == "number") {
+        return (
+          <input
+            type="number"
+            name={column.column_name}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            style={inputStyle}
+            onChange={handleInputChange}
+          />
+        );
+      } else if (columnDisplayType.value == "longtext") {
+        return (
+          <textarea
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            name={column.column_name}
+            type="text"
+            style={inputStyle}
+            onChange={handleInputChange}
+          />
+        );
+      } else if (columnDisplayType.value == "boolean") {
+        return (
+          <Switch
+            checked={
+              currentRow?.row[column.column_name] == "true"
+                ? true
+                : false || false
+            }
+            name={column.column_name}
+          />
+        );
+      } else if (columnDisplayType.value == "date") {
+        return (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <StaticDatePicker
+              value={dayjs(currentRow.row[column.column_name])}
+              onChange={(date) =>
+                handleInputChange(date, column.column_name, "date")
+              }
+              name={column.column_name}
+              className="date-time-picker"
+              readOnly={column.is_editable === false ? true : false}
+            />
+          </LocalizationProvider>
+        );
+      } else if (columnDisplayType.value == "datetime") {
+        return (
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <StaticDateTimePicker
+              value={dayjs(currentRow.row[column.column_name])}
+              onChange={(date) =>
+                handleInputChange(date, column.column_name, "date")
+              }
+              name={column.column_name}
+              className="date-time-picker"
+              readOnly={column.is_editable === false ? true : false}
+            />
+          </LocalizationProvider>
+        );
+      } else if (columnDisplayType.value == "categories") {
+        return (
+          <Select
+            value={
+              currentCategory
+                ? currentCategory
+                : currentRow.row[column.column_name]
+            }
+            name={column.column_name}
+            onChange={(event) => {
+              handleInputChange(event, column.column_name, undefined);
+              setCurrentCategory(event.target.value);
+            }}
+            native
+            className="width"
+          >
+            {Object.keys(CategoriesDisplayType).map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </Select>
+        );
+      } else if (columnDisplayType.value == "phone") {
+        return (
+          <MuiTelInput
+            value={
+              currentPhone !== "" || currentPhone
+                ? currentPhone
+                : currentRow.row[column.column_name]
+            }
+            onChange={(phone) => {
+              handleInputChange(phone, column.column_name, "phone");
+              setCurrentPhone(phone);
+            }}
+            name={column.column_name}
+          />
+        );
+      } else if (columnDisplayType.value == "currency") {
+        return (
+          <input
+            type="number"
+            name={column.column_name}
+            readOnly={column.is_editable === false ? true : false}
+            placeholder={String(currentRow.row[column.column_name]) || ""}
+            style={inputStyle}
+            onChange={handleInputChange}
+          />
+        );
+      } else if (columnDisplayType.value == "multiline_wysiwyg") {
+        return (
+          <RichTextEditor
+            name={column.column_name}
+            content={
+              currentWYSIWYG
+                ? currentWYSIWYG
+                : currentRow.row[column.column_name]
+            }
+            onChange={(event) => {
+              handleInputChange(event, column.column_name, undefined);
+              rteRef.current?.editor.setContent(event);
+            }}
+            ref={rteRef}
+            extensions={[StarterKit]} // Or any Tiptap extensions you wish!
+            // Optionally include `renderControls` for a menu-bar atop the editor:
+            renderControls={() => (
+              <MenuControlsContainer>
+                <MenuSelectHeading />
+                <MenuDivider />
+                <MenuButtonBold />
+                <MenuButtonItalic />
+                {/* Add more controls of your choosing here */}
+              </MenuControlsContainer>
+            )}
+          />
+        );
+      }
+    };
+    setInputField(() => newInputField as (column: Column) => JSX.Element);
+  }, [
+    currentRow,
+    columns,
+    table,
+    appConfigValues,
+    currentPhone,
+    rows,
+    currentCategory,
+    inputValues,
+    currentWYSIWYG,
+    allFileGroups,
+    showFiles,
+  ]);
   useEffect(() => {
     getRows();
   }, [showFiles]);
@@ -778,7 +825,11 @@ const TableListView: React.FC<TableListViewProps> = ({
                     <label key={column.column_name + colIdx}>
                       {column.column_name}
                     </label>
-                    <NewInputField {...column} />
+                    {column.references_table == "filegroup" ? (
+                      <FileInputField {...column} />
+                    ) : (
+                      inputField(column)
+                    )}
                   </div>
                 );
               })}

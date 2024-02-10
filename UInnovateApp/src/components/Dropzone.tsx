@@ -132,17 +132,6 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
                         <DownloadIcon></DownloadIcon>
                       </button>
                     </a>
-                    <button
-                      className="delete-button margin-lr"
-                      onClick={(e) => {
-                        fetchFile(item);
-                        setShowPreview(true);
-                      }}
-                      type="button"
-                    >
-                      {" "}
-                      <CloseIcon color="error"></CloseIcon>
-                    </button>
                   </div>
                   <div className="display-inline-block" key={index}>
                     <img
@@ -150,13 +139,13 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
                       id="image-stop"
                       src={
                         item.extension == "pdf"
-                          ? "pdf-icon.png"
+                          ? "http://localhost:5173/pdf-icon.png"
                           : item.extension == "jpg" ||
                             item.extension == "jpeg" ||
                             item.extension == "png"
-                          ? "image-icon.png"
+                          ? "http://localhost:5173/image-icon.png"
                           : item.extension == "csv"
-                          ? "csv-icon.png"
+                          ? "http://localhost:5173/csv-icon.png"
                           : null
                       }
                       className="image-size"
@@ -190,7 +179,7 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
             <img
               alt="Upload"
               className="Icon"
-              src="baseline-cloud_upload-24px.svg"
+              src="http://localhost:5173/baseline-cloud_upload-24px.svg"
             />
             <span>Upload item</span>
           </>

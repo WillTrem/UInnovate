@@ -56,10 +56,13 @@ END;
 $$;
 
 CREATE OR REPLACE FUNCTION filemanager.remove_file_from_group(in_filegroupid INT, in_fileid TEXT)
-RETURNS VOID
+RETURNS BOOLEAN
 LANGUAGE plpgsql
 AS $$
+DECLARE
+	group_removed BOOLEAN;
 BEGIN
+	group_removed := FALSE;
 	UPDATE filemanager.filegroup
 	SET fileid = array_remove(fileid, in_fileid)
 	WHERE filemanager.filegroup.id = in_filegroupid;
@@ -70,7 +73,11 @@ BEGIN
 	IF (SELECT cardinality(fileid) FROM filemanager.filegroup WHERE filemanager.filegroup.id = in_filegroupid) = 0 THEN
 		DELETE FROM filemanager.filegroup
 		WHERE filemanager.filegroup.id = in_filegroupid;
+
+		group_removed := TRUE;
 	END IF;
+
+	RETURN group_removed;
 END;
 $$;
 
