@@ -21,10 +21,6 @@ export default defineConfig({
     }),
   ],
 
-  optimizeDeps: {
-    include: ["@mui/icons-material", "@mui/material/Tooltip"],
-  },
-
   server: {
     host: true,
     port: 5173,
