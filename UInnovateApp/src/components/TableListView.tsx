@@ -74,7 +74,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   table: Table;
 }) => {
   const navigate = useNavigate()
-  const navigate = useNavigate()
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
@@ -90,7 +89,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
-  const [PaginationValue, setPaginationValue] = useState<number>(50);
+  const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -666,7 +665,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
-                  <MenuItem value={10}>10 per page</MenuItem>
+                   <MenuItem value={10}>10 per page</MenuItem>
                   <MenuItem value={20}>20 per page</MenuItem>
                   <MenuItem value={50}>50 per page</MenuItem>
                   <MenuItem value={100}>100 per page</MenuItem>
