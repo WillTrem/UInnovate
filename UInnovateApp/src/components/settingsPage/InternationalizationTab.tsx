@@ -172,23 +172,25 @@ const InternationalizationTab = () => {
     return (
         <div>
             <div>
-                <Button
-                    onClick={handleAddLanguage}
-                    style={buttonStyle}
-                    variant="contained"
-                >
+            <Button
+                data-testid="add-language-button" 
+                onClick={handleAddLanguage}
+                style={buttonStyle}
+                variant="contained"
+            >
                     Add Language
                 </Button>
                 <Button
                     style={buttonStyle}
                     variant="contained"
+                    data-testid="refresh-button"
                 >
                     Refresh
                 </Button>
             </div>
 
             <div style={{ maxHeight: '700px', overflowY: 'auto' }}> {/* Set max height and enable vertical scrolling */}
-                <TableComponent bordered>
+                <TableComponent bordered data-testid="table-component">
                     <thead>
                         <tr>
                             <th>Label</th>
@@ -221,12 +223,13 @@ const InternationalizationTab = () => {
                     variant="contained"
                     style={buttonStyle}
                     onClick={handleAddRowClick} 
+                    data-testid="add-label-button"
                 >
                     <IoMdAddCircle className="button-icon" /> 
                 </Button>
             </div>
 
-            <Modal show={showModalAddLanguage} onHide={handleClose}>
+            <Modal show={showModalAddLanguage} onHide={handleClose} data-testid="add-language-modal">
                 <Modal.Header>
                     <Modal.Title>Add New Language</Modal.Title>
                 </Modal.Header>
@@ -270,7 +273,7 @@ const InternationalizationTab = () => {
                 </Modal.Footer>
             </Modal>
 
-            <Modal show={showModalAddLabel} onHide={handleClose}>
+            <Modal show={showModalAddLabel} onHide={handleClose} data-testid="add-label-modal">
                 <Modal.Header>
                     <Modal.Title>Add New Label</Modal.Title>
                 </Modal.Header>
