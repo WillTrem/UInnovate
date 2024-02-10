@@ -37,7 +37,11 @@ jobs:
           tags: ${{ env.TEST_TAG }}
       - name: Test
         run: |
-         timeout 30s docker run --rm ${{ env.TEST_TAG }} || true
+          docker run --rm -d --name test-container ${{ env.TEST_TAG }}
+      - name: Stop Test
+        run: |
+          docker stop test-container
+        continue-on-error: true
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
