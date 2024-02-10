@@ -37,7 +37,7 @@ jobs:
           tags: ${{ env.TEST_TAG }}
       - name: Test
         run: |
-         docker run --rm ${{ env.TEST_TAG }} --stop-timeout 30
+         docker run --rm ${{ env.TEST_TAG }} timeout 30s
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
