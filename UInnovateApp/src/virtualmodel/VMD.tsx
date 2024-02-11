@@ -138,9 +138,11 @@ class VirtualModelDefinition {
    * Returns all application schemas of the vmd object
    * @returns Schema[]
    */
-  getApplicationSchemas(){
+  getApplicationSchemas() {
     const appSchemaPattern = new RegExp(/^app_/);
-    return this.schemas.filter((schema) => appSchemaPattern.test(schema.schema_name));
+    return this.schemas.filter((schema) =>
+      appSchemaPattern.test(schema.schema_name)
+    );
   }
 
   // Method to print the vmd object
@@ -239,8 +241,8 @@ class VirtualModelDefinition {
       const data: ConfigData[] = response.data;
 
       data.forEach((config) => {
-                // Find the table's schema
-                const schema = this.getTableSchema(config.table);
+        // Find the table's schema
+        const schema = this.getTableSchema(config.table);
 
         if (!schema) {
           // If the schema doesn't exist, skip this config
@@ -351,15 +353,33 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to fetch rows from a table with ordering and pagination involved
   // return type : DataAccessor
-  getRowsDataAccessorForOrder(schema_name: string, table_name: string, order_by: string, sortOrder:string, Limit: number, Page: number) {
+  getRowsDataAccessorForOrder(
+    schema_name: string,
+    table_name: string,
+    order_by: string,
+    sortOrder: string,
+    Limit: number,
+    Page: number
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
     const limit = Limit.toString();
     const page = ((Page - 1) * Limit).toString();
     if (schema && table) {
-      return new DataAccessor(table.url + "?order=" + order_by +"."+sortOrder+ "&limit=" + limit + "&offset=" + page, {
-        "Accept-Profile": schema.schema_name,
-      });
+      return new DataAccessor(
+        table.url +
+          "?order=" +
+          order_by +
+          "." +
+          sortOrder +
+          "&limit=" +
+          limit +
+          "&offset=" +
+          page,
+        {
+          "Accept-Profile": schema.schema_name,
+        }
+      );
     } else {
       throw new Error("Schema or table does not exist");
     }
@@ -600,7 +620,12 @@ export class Table {
   }
 
   // Method to add a new column to the table object
-  addColumn(column: Column, references_table: string, is_editable: boolean, references_by: string) {
+  addColumn(
+    column: Column,
+    references_table: string,
+    is_editable: boolean,
+    references_by: string
+  ) {
     column.setReferenceTable(references_table);
     column.setEditability(is_editable);
     column.setReferencesBy(references_by);
@@ -617,6 +642,12 @@ export class Table {
   // return type : Column[]
   getColumns() {
     return this.columns;
+  }
+
+  // Method to get the table's primary key
+  // return type : Column
+  getPrimaryKey() {
+    return this.columns.find((column) => column.getEditability() === false);
   }
 
   // Method to get the table's required columns
@@ -727,7 +758,6 @@ export class Table {
   setLookupCounter(lookup_counter: string) {
     this.lookup_counter = lookup_counter;
   }
-
 }
 
 export class Column {
@@ -836,7 +866,7 @@ export interface ConfigData {
   property: string;
   value: string | boolean;
 }
-// Defining UserData interface for type checking when calling /user_info with the API 
+// Defining UserData interface for type checking when calling /user_info with the API
 export interface UserData {
   email: string;
   first_name?: string;

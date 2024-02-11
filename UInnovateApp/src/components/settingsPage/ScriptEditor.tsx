@@ -26,7 +26,6 @@ interface ScriptEditorProps {
 }
 
 export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
-  console.log(script);
   const script_name = script["name"];
   const tables = vmd.getAllTables();
 
