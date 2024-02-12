@@ -197,13 +197,43 @@ WHERE
         JOIN meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
     );
 
--- Creating the envronment variables table
+-- Creating the environment variables table
 CREATE TABLE IF NOT EXISTS meta.env_vars (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
     value TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Creating the  view type table
+CREATE TABLE IF NOT EXISTS meta.view_type(
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255)
+);
+-- Creating the additional view setting table
+CREATE TABLE IF NOT EXISTS meta.additional_view_settings (
+  id SERIAL PRIMARY KEY,
+  schemaName VARCHAR(255),
+  tableName VARCHAR(255),
+  viewName VARCHAR(255),
+  viewType INT,
+  FOREIGN KEY (viewType) REFERENCES meta.view_type(id)
+);
+
+-- Creating the custom view template table
+CREATE TABLE IF NOT EXISTS meta.custom_view_templates(
+  id SERIAL PRIMARY KEY,
+  settingId INT,
+  template TEXT,
+  FOREIGN KEY (settingId) REFERENCES meta.additional_view_settings(id)
+);
+
+-- Inserting default view types
+INSERT INTO meta.view_type(name) VALUES
+('calendar'),
+('timeline'),
+('treeview'),
+('custom');
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
@@ -410,6 +440,9 @@ GRANT ALL ON meta.scripts TO configurator;
 GRANT ALL ON meta.i18n_languages TO configurator;
 GRANT ALL ON meta.i18n_keys TO configurator;
 GRANT ALL ON meta.i18n_values TO configurator;
+GRANT ALL ON meta.view_type TO web_anon;
+GRANT ALL ON meta.additional_view_settings TO web_anon;
+GRANT ALL INSERT ON meta.custom_view_templates TO web_anon;
 
 -- Views (Only SELECT necessary)
 GRANT SELECT ON meta.schemas TO "user"; 

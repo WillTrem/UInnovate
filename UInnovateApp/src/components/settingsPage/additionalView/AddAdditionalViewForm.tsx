@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react'
 import { Form } from 'react-bootstrap'
 import vmd from '../../../virtualmodel/VMD';
 import { ViewTypeEnum } from './ViewTypeEnum';
-
+import './AdditionalViewEditor.css'
 const AddAdditionalViewForm = () => {
     const schemas = [
         ...new Set(vmd.getSchemas().map((schema) => schema.schema_name)),
@@ -27,18 +27,6 @@ const AddAdditionalViewForm = () => {
         <Form.Group className="mb-3" controlId="viewName">
             <Form.Label>view name</Form.Label>
             <Form.Control name='viewName' type="text" placeholder="Enter a view name" onChange={handleInputChange} />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="targetTable">
-            <Form.Label>target table</Form.Label>
-            <Form.Select onChange={handleInputChange}>
-                {
-                    schemas.map((schema)=>
-                        (
-                            <option key={schema} value={schema}>{schema}</option>
-                        )
-                    )
-                }
-            </Form.Select>
         </Form.Group>
         <Form.Group className="mb-3" controlId="viewType">
             <Form.Label>view type</Form.Label>

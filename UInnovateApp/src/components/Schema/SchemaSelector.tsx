@@ -9,12 +9,10 @@ import { LOGIN_BYPASS } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
 interface SchemaSelectorProps {
   displayType?: DisplayType;
-  onSelectCallback?: (...args: any[]) => void;
 }
 
 const SchemaSelector: React.FC<SchemaSelectorProps> = ({
-  displayType = DisplayType.NavDropdown,
-  onSelectCallback
+  displayType = DisplayType.NavDropdown
 }: SchemaSelectorProps) => {
   const {user, schema_access} = useSelector((state: RootState) => state.auth);
   const schemas = [
@@ -33,8 +31,6 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
   const selectedSchema: string = useSelector(
     (state: RootState) => state.schema.value
   );
-
-  const [selectedSchema, setSelectedSchema] = useState(selectedSchemaState);
 
   const dispatch = useDispatch();
 

@@ -452,3 +452,22 @@ UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_
 UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 18 WHERE unit_recalibration_schedule_id = 18;
 UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 19 WHERE unit_recalibration_schedule_id = 19;
 UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 20 WHERE unit_recalibration_schedule_id = 20;
+
+-- sample view
+INSERT INTO meta.additional_view_settings(schemaName, tableName, viewName, viewType) VALUES
+('app_rentals', 'unit_scheduler', 'unit_scheduler_timeline_view', 1),
+('app_rentals', 'unit_recalibration_schedule', 'unit_recalibration_schedule_calendar_view', 2),
+('app_rentals', 'purchase_order', 'purchase_order_treeview_view', 3),
+('app_rentals', 'company', 'unit_scheduler_custom_view', 4);
+
+-- sample custom view 
+INSERT INTO meta.custom_view_templates(settingId, template) VALUES
+(4, 'import React from ''react''
+
+const HelloWorld = () => {
+  return (
+    <div>HelloWorld</div>
+  )
+}
+
+export default HelloWorld')

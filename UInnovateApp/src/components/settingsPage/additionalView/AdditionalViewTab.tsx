@@ -1,28 +1,25 @@
 import React, { useState } from 'react'
-import SchemaSelector from '../../Schema/SchemaSelector'
-import DisplayType from '../../Schema/DisplayType'
 import AdditionalViewEditor from './AdditionalViewEditor';
-import AddAdditionalViewForm from './AddAdditionalViewForm';
-import AdditionalViewModal from './AdditionalViewModal';
+import { Col, Row, Tab } from 'react-bootstrap';
+import SchemaTableSelector from '../../Schema/SchemaTableSelector';
 
 const AdditionalViewTab = () => {
-    const [schema,setSchema] = useState('');
+    const [table,setTable] = useState('');
 
-    const selectCallBack = (val:string)=>{
-        setSchema(val);
-        console.log(val);
-    }
   return (
     <>
-    <div className='row'>
-        <div className='col-sm-3'>
-            <h4>Schema</h4>
-            <SchemaSelector displayType ={DisplayType.StackedPills} onSelectCallback={selectCallBack} />
-        </div>
-        <div className='col-sm-9'>
-            <AdditionalViewEditor selectedSchema={schema} />
-        </div>
-    </div>
+    <Tab.Container>
+        <Tab.Content>
+        <Row>
+            <Col sm='3'>
+                <SchemaTableSelector setTable={setTable}/>
+            </Col>
+            <Col sm='9'>
+                <AdditionalViewEditor selectedTable={table} />
+            </Col>
+        </Row>
+        </Tab.Content>
+    </Tab.Container>
     </>
   )
 }
