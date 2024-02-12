@@ -1,15 +1,14 @@
 import { vi } from "vitest";
 import { Row } from "../DataAccessor";
-import { ConfigProperty } from "../ConfigProperties";
 
 export { Row };
 export class DataAccessorMock {
   data_url: string = "";
-  constructor(data_url?: string) {
-    if (data_url === "For List View") {
-      this.data_url = data_url;
-    }
-  }
+  headers = {};
+  params = {};
+  values?: Row;
+
+  constructor() {}
 
   fetchRows = vi.fn().mockImplementation(() => {
     console.log("fetchRows in DataAccessor mock was called");

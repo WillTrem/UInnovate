@@ -66,7 +66,11 @@ class ScriptHandler {
     );
 
     try {
-      await this.accessor.updateTableData(this.new_table_data, this.table);
+      await this.accessor.updateTableData(
+        this.new_table_data,
+        this.table,
+        this.schema_name as string
+      );
     } catch (error) {
       throw new Error("Error updating table data: " + error);
     }
