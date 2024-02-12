@@ -13,7 +13,7 @@ export default {
   }),
   getRowsDataAccessorForOrder: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessorForOrder in VMD mock was called");
-    return new DataAccessorMock("For List View");
+    return new DataAccessorMock();
   }),
   getUpsertDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getUpsertDataAccessor in VMD mock was called");
@@ -22,7 +22,10 @@ export default {
   getSchema: vi.fn().mockImplementation(() => {
     console.log("getSchema in VMD mock was called");
     const mockSchema = new Schema("mock schema name");
-    mockSchema.tables = [new Table("mock table name"), new Table("mock table name 2")]
+    mockSchema.tables = [
+      new Table("mock table name"),
+      new Table("mock table name 2"),
+    ];
     return mockSchema;
   }),
   getSchemas: vi.fn().mockImplementation(() => {

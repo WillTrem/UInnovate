@@ -778,14 +778,14 @@ const TableListView: React.FC<TableListViewProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows?.map((row, rowIdx) => (
+            {sortedRows?.map((row: Row, rowIdx) => (
               <TableRow
                 title="row"
                 key={rowIdx}
                 onClick={() => handleOpenPanel(row)}
                 sx={{ backgroundColor: rowIdx % 2 === 0 ? "#f2f2f2" : "white" }}
               >
-                {Object.values(row.row).map((cell, idx) => (
+                {Object.values(row).map((cell, idx) => (
                   <TableCell key={idx}>
                     <Box sx={{ textAlign: "center" }}>
                       {typeof cell === "boolean"
