@@ -2,9 +2,11 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import { DataAccessorMock } from "../../virtualmodel/__mocks__/DataAccessor";
 import axios from "axios";
+import * as AxiosCustom from "../../api/AxiosCustom";
 import MockAdapter from "axios-mock-adapter";
 
 vi.unmock("../../virtualmodel/DataAccessor");
+vi.mock("./AxiosCustom");
 
 let mock: MockAdapter;
 
@@ -19,17 +21,42 @@ describe("DataAccessor", () => {
     mock.restore();
   });
 
+  it("axios custom is properly imported", async () => {
+    const mockGet = vi.spyOn(AxiosCustom.default, "get");
+    mockGet.mockImplementation(() => Promise.resolve({ data: [] }));
+
+    const dataAccessor = new DataAccessor("", {});
+    await dataAccessor.fetchRows();
+
+    expect(mockGet).toHaveBeenCalled();
+
+    mockGet.mockRestore();
+  });
+
   it("constructor should return an instance of DataAccessor", () => {
     // Mock data for constructor
     const dataUrl = "/api/data";
     const headers = { Authorization: "Bearer token" };
 
+    const params = { key: "value" };
+    const values = new Row({
+      Column1: 1,
+      Column2: "mock row",
+      Column3: "mock description",
+    });
+
     // Create an instance of DataAccessor
     const dataAccessor = new DataAccessor(dataUrl, headers);
+    const dataAccessor2 = new DataAccessor(dataUrl, headers, params, values);
 
     // Assertions
     expect(dataAccessor.data_url).toEqual(dataUrl);
     expect(dataAccessor.headers).toEqual(headers);
+
+    expect(dataAccessor2.data_url).toEqual(dataUrl);
+    expect(dataAccessor2.headers).toEqual(headers);
+    expect(dataAccessor2.params).toEqual(params);
+    expect(dataAccessor2.values).toEqual(values);
   });
 
   it("row constructor should return an instance of Row", () => {
