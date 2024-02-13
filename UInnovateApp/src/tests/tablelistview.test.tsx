@@ -5,10 +5,9 @@ import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
-import { DataAccessorMock } from "../virtualmodel/__mocks__/DataAccessor";
 
 vi.mock("axios");
-vi.mock("DataAccessor");
+vi.mock("../virtualmodel/DataAccessor");
 vi.mock("../contexts/ConfigContext)");
 
 describe("TableListView component", () => {

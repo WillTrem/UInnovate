@@ -76,7 +76,7 @@ describe("DataAccessor", () => {
 
     // Create an instance of DataAccessor
     const dataAccessor = new DataAccessor(dataUrl, headers, params);
-    const mockDataAccessor = new DataAccessorMock();
+    const mockDataAccessor = new DataAccessorMock(dataUrl);
 
     dataAccessor.fetchRows = mockDataAccessor.fetchRows.bind(dataAccessor);
 

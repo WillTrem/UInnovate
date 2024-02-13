@@ -785,7 +785,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                 onClick={() => handleOpenPanel(row)}
                 sx={{ backgroundColor: rowIdx % 2 === 0 ? "#f2f2f2" : "white" }}
               >
-                {Object.values(row).map((cell, idx) => (
+                {Object.values(row.row).map((cell, idx) => (
                   <TableCell key={idx}>
                     <Box sx={{ textAlign: "center" }}>
                       {typeof cell === "boolean"
