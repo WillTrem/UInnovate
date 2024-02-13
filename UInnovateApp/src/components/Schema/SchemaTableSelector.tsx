@@ -1,16 +1,16 @@
-import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
-import React, { useState } from 'react'
+import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent} from "@mui/material";
+import React, { useEffect, useState } from 'react'
 import vmd from '../../virtualmodel/VMD'
 import { LOGIN_BYPASS } from '../../redux/AuthSlice'
 import { useSelector } from 'react-redux'
 import { RootState } from '../../redux/Store'
 import { Nav } from "react-bootstrap";
-import { TableItem } from "../settingsPage/TableConfigTab";
 
 interface SchemaTableSelectorProp{
-    setTable: React.Dispatch<React.SetStateAction<string>>
+    setTable: React.Dispatch<React.SetStateAction<string>>;
+    setSchema: React.Dispatch<React.SetStateAction<string>>;
 }
-const SchemaTableSelector = ({setTable}:SchemaTableSelectorProp) => {
+const SchemaTableSelector = ({setTable, setSchema}:SchemaTableSelectorProp) => {
     const { user, schema_access } = useSelector((state: RootState) => state.auth);
     
     const schemas = [
@@ -24,18 +24,25 @@ const SchemaTableSelector = ({setTable}:SchemaTableSelectorProp) => {
           })),
       ];
 
+
     const initialSelectedSchema = schemas.length === 0 ? "" : schemas[0]
     const [selectedSchema, setSelectedSchema] = useState(initialSelectedSchema);
 
       const handleSchemaChange = (event: SelectChangeEvent) => {
+        setSchema(event.target.value);
         setSelectedSchema(event.target.value);
+        setTable('');
+        console.log(event.target.value);
       };
   // Only show tables of the selected schema
   const tables = vmd.getSchema(selectedSchema)?.tables;
-  const tableItems = tables?.map((table) => (
-    <TableItem key={table.table_name} table={table} />
-  ));
-  
+
+  useEffect(()=>{
+  //initial values of passed functions
+  setSchema(schemas[0]);
+  setTable('');
+  }, [])
+
 const handleClick = (table_name: string): void => {
     setTable(table_name);
     }

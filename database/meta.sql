@@ -442,7 +442,7 @@ GRANT ALL ON meta.i18n_keys TO configurator;
 GRANT ALL ON meta.i18n_values TO configurator;
 GRANT ALL ON meta.view_type TO web_anon;
 GRANT ALL ON meta.additional_view_settings TO web_anon;
-GRANT ALL INSERT ON meta.custom_view_templates TO web_anon;
+GRANT ALL ON meta.custom_view_templates TO web_anon;
 
 -- Views (Only SELECT necessary)
 GRANT SELECT ON meta.schemas TO "user"; 

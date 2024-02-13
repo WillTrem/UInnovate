@@ -1,16 +1,25 @@
-import React from 'react'
-import { Modal , Button} from 'react-bootstrap'
-import AddAdditionalViewForm from './AddAdditionalViewForm';
+import { FormEvent, useState } from 'react'
+import { Modal , Button, Form} from 'react-bootstrap'
+import { ViewTypeEnum } from './ViewTypeEnum';
+import { insertNewView } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 
 interface AdditionalViewModalProp{
+    schemaName: string,
+    tableName: string,
     show: boolean;
     setShow: (v:boolean)=>void;
 }
-const AdditionalViewModal = ({show, setShow}:AdditionalViewModalProp) => {
+
+const AdditionalViewModal = ({schemaName, tableName, show, setShow}:AdditionalViewModalProp) => {
+    const [viewName, setViewName] = useState<string>('');
+    const [viewType, setViewType] = useState<number>(1);
 
     const handleClose = () => setShow(false);
-    const handleSave = ()=>{        
+
+    const handleSave = (e: FormEvent<HTMLFormElement>): void =>{
+        e.preventDefault();
         handleClose();
+        insertNewView(schemaName, tableName, viewName, viewType);
     }
     return (
         <>
@@ -20,7 +29,21 @@ const AdditionalViewModal = ({show, setShow}:AdditionalViewModalProp) => {
             </Modal.Header>
     
             <Modal.Body>
-                <AddAdditionalViewForm saveform={handleSave}/>
+                <Form onSubmit={handleSave}>
+                    <Form.Group className="mb-3" controlId="viewName">
+                        <Form.Label>view name</Form.Label>
+                        <Form.Control name='viewName' type="text" onChange={(e)=>{setViewName(e.target.value)}} placeholder="Enter a view name"/>
+                    </Form.Group>
+                    <Form.Group className="mb-3" controlId="viewType">
+                        <Form.Label>view type</Form.Label>
+                        <Form.Select onChange={(e)=>setViewType(parseInt(e.target.value))}>
+                            <option value={ViewTypeEnum.Calendar}>Calendar</option>
+                            <option value={ViewTypeEnum.Timeline}>Timeline</option>
+                            <option value={ViewTypeEnum.TreeView}>Tree View</option>
+                            <option value={ViewTypeEnum.Custom}>Custom</option>
+                        </Form.Select>
+                    </Form.Group>
+                </Form>
 
             </Modal.Body>
     
@@ -28,7 +51,7 @@ const AdditionalViewModal = ({show, setShow}:AdditionalViewModalProp) => {
                 <Button variant="secondary" onClick={handleClose}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={handleClose}>
+                <Button  variant="primary" onClick={handleSave}>
                     Save Changes
                 </Button>
             </Modal.Footer>

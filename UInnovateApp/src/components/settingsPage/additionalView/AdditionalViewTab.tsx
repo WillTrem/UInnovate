@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import AdditionalViewEditor from './AdditionalViewEditor';
 import { Col, Row, Tab } from 'react-bootstrap';
 import SchemaTableSelector from '../../Schema/SchemaTableSelector';
 
 const AdditionalViewTab = () => {
-    const [table,setTable] = useState('');
+
+    const [table,setTable] = useState<string>('');
+    const [schema,setSchema] = useState<string>('');
 
   return (
     <>
@@ -12,10 +14,10 @@ const AdditionalViewTab = () => {
         <Tab.Content>
         <Row>
             <Col sm='3'>
-                <SchemaTableSelector setTable={setTable}/>
+                <SchemaTableSelector setTable={setTable} setSchema={setSchema}/>
             </Col>
             <Col sm='9'>
-                <AdditionalViewEditor selectedTable={table} />
+                <AdditionalViewEditor selectedSchema={schema} selectedTable={table} />
             </Col>
         </Row>
         </Tab.Content>
