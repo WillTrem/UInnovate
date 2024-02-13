@@ -9,7 +9,7 @@ import axios from "axios";
 import MockAdapter from "axios-mock-adapter";
 
 vi.unmock("../../virtualmodel/VMD");
-vi.unmock("../../virtualmodel/VMD");
+vi.unmock("../../virtualmodel/DataAccessor");
 
 let mock: MockAdapter;
 let originalImplementation: Mock;
@@ -111,5 +111,18 @@ describe("ScriptHandler", () => {
     } catch (error) {
       expect(error).toEqual(new Error("Error fetching data: error"));
     }
+  });
+
+  it("all gets should return the correct values", async () => {
+    const mockedHandler = new ScriptHandlerMock(mockScript);
+
+    expect(mockedHandler.getScript()).toEqual(mockScript);
+    expect(mockedHandler.getTableData()).toEqual(mockedHandler.table_data);
+    expect(mockedHandler.getNewTableData()).toEqual(
+      mockedHandler.new_table_data
+    );
+    expect(mockedHandler.getTable()).toEqual(mockedHandler.table);
+    expect(mockedHandler.getAccessor()).toEqual(mockedHandler.accessor);
+    expect(mockedHandler.getSchemaName()).toEqual(mockedHandler.schema_name);
   });
 });

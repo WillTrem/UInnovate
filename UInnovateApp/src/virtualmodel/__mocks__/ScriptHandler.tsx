@@ -58,4 +58,28 @@ export class ScriptHandlerMock {
   //     console.log(error);
   //     }
   // }
+
+  getScript = vi.fn().mockImplementation(() => {
+    return this.script;
+  });
+
+  getTableData = vi.fn().mockImplementation(() => {
+    return this.table_data;
+  });
+
+  getNewTableData = vi.fn().mockImplementation(() => {
+    return this.new_table_data;
+  });
+
+  getTable = vi.fn().mockImplementation(() => {
+    return this.table;
+  });
+
+  getAccessor = vi.fn().mockImplementation(() => {
+    return this.accessor;
+  });
+
+  getSchemaName = vi.fn().mockImplementation(() => {
+    return this.schema_name;
+  });
 }
