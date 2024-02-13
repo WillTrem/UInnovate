@@ -75,6 +75,31 @@ class ScriptHandler {
       throw new Error("Error updating table data: " + error);
     }
   }
+
+  // Writing get methods for all data members
+  getScript() {
+    return this.script;
+  }
+
+  getTableData() {
+    return this.table_data;
+  }
+
+  getNewTableData() {
+    return this.new_table_data;
+  }
+
+  getTable() {
+    return this.table;
+  }
+
+  getAccessor() {
+    return this.accessor;
+  }
+
+  getSchemaName() {
+    return this.schema_name;
+  }
 }
 
 export default ScriptHandler;

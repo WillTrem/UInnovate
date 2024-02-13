@@ -113,4 +113,35 @@ describe("DataAccessor", () => {
     // Assertions
     expect(rows).toEqual(expectedRows);
   });
+
+  it("addRow should add a row to a table", async () => {
+    // Mock data for addRow method
+    const dataUrl = "/api/data";
+    const headers = { Authorization: "Bearer token" };
+    const values = new Row({
+      Column1: 1,
+      Column2: "mock row",
+      Column3: "mock description",
+    });
+
+    const dataAccessor = new DataAccessor(dataUrl, headers, {}, values);
+    const mockDataAccessor = new DataAccessorMock(dataUrl, headers, values);
+
+    dataAccessor.addRow = mockDataAccessor.addRow.bind(dataAccessor);
+
+    const response = await dataAccessor.addRow();
+
+    expect(response).toEqual({
+      data: {
+        ...values,
+        Column1: 4,
+        Column2: "mock row 4",
+        Column3: "mock description 4",
+      },
+      status: 201,
+      statusText: "Created",
+      headers: {},
+      config: {},
+    });
+  });
 });

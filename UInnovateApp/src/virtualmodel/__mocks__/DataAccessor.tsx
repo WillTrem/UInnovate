@@ -5,12 +5,18 @@ export { Row };
 export class DataAccessorMock {
   data_url: string | undefined = "";
   headers = {};
-  params = {};
+  params: { [key: string]: string } | undefined = {};
   values?: Row;
 
-  constructor(data_url?: string, headers?: any) {
+  constructor(
+    data_url?: string,
+    params?: { [key: string]: string },
+    values?: Row
+  ) {
     this.data_url = data_url;
     this.headers = { Authorization: "Bearer token" };
+    this.params = params;
+    this.values = values;
   }
 
   fetchRows = vi.fn().mockImplementation(() => {
@@ -35,6 +41,31 @@ export class DataAccessorMock {
       ]);
     } else {
       return Promise.resolve([]);
+    }
+  });
+
+  addRow = vi.fn().mockImplementation(() => {
+    console.log("addRow in DataAccessor mock was called");
+    if (this.data_url === "/api/data" && this.values) {
+      return Promise.resolve({
+        data: {
+          ...this.values,
+          Column1: 4,
+          Column2: "mock row 4",
+          Column3: "mock description 4",
+        },
+        status: 201,
+        statusText: "Created",
+        headers: {},
+        config: {},
+      });
+    } else {
+      return Promise.reject({
+        response: {
+          status: 400,
+          data: "Bad request",
+        },
+      });
     }
   });
 
