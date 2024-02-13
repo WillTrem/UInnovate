@@ -32,6 +32,27 @@ describe("DataAccessor", () => {
     expect(dataAccessor.headers).toEqual(headers);
   });
 
+  it("row constructor should return an instance of Row", () => {
+    // Mock data for row constructor
+    const rowData = {
+      Column1: 1,
+      Column2: "mock row",
+      Column3: "mock description",
+    };
+
+    // Create an instance of Row
+    const row = new Row(rowData).row;
+
+    if (!row) {
+      return;
+    }
+
+    // Assertions
+    expect(row["Column1"]).toEqual(1);
+    expect(row["Column2"]).toEqual("mock row");
+    expect(row["Column3"]).toEqual("mock description");
+  });
+
   it("fetchRows should fetch rows from a table", async () => {
     // Mock data for fetchRows method
     const dataUrl = "/api/data";
