@@ -3,7 +3,7 @@ import {Button, skeletonClasses} from "@mui/material"
 import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
-import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams } from '../../virtualmodel/PlatformFunctions';
+import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchFunctionNames } from '../../virtualmodel/PlatformFunctions';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 
@@ -33,15 +33,28 @@ const buttonStyle = {
 export const CronJobsTab = () => {
     const [selectedProc, setSelectedProc] = useState('');
     const [cronSchedule, setCronSchedule] = useState('');
+    const [procedures, setProcedures] = useState<string[]>([]); // list of stored procedures
     const [executionLogs, setExecutionLogs] = useState<ExecutionLogEntry[]>([]);
     const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
 
-    // Dummy data for procedures
-    const procedures = [
-        "Stored Proc 1",
-        "Stored Proc 2",
-        "process_updates"
-    ];
+    const updateProcedureNames = async () => {
+        const schemas = vmd.getSchemas();
+        try {
+            // wait for resolve of fetchFunctionNames promises
+            const promises = schemas.map(schema => fetchFunctionNames(schema.schema_name));
+            const results = await Promise.all(promises);
+
+            const functionNames = [...new Set(results.flat())];
+
+            setProcedures(functionNames); // update state with function names
+
+            if (functionNames.length > 0) {
+                setSelectedProc(functionNames[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching function names:', error);
+        }
+    };
 
     const scheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
@@ -163,6 +176,11 @@ export const CronJobsTab = () => {
         
         setQueuedLogs(newQueuedJobs);
     };
+
+    useEffect(() => {
+        updateProcedureNames();
+    }, []);
+
     useEffect(() => {
         if (procedures.length > 0 && selectedProc === '') {
             const initialProc = procedures[0];
