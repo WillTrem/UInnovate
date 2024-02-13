@@ -38,13 +38,12 @@ export const CronJobsTab = () => {
     const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
 
     const updateProcedureNames = async () => {
-        const schemas = vmd.getSchemas();
+        const schemas = vmd.getApplicationSchemas();
         try {
             // wait for resolve of fetchFunctionNames promises
             const promises = schemas
-            .filter(schema => schema.schema_name !== 'cron' && schema.schema_name !== 'meta')
-            .map(schema => fetchFunctionNames(schema.schema_name));            const results = await Promise.all(promises);
-
+            .map(schema => fetchFunctionNames(schema.schema_name));            
+            const results = await Promise.all(promises);
             const functionNames = [...new Set(results.flat())];
 
             setProcedures(functionNames); // update state with function names
