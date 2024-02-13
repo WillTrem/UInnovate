@@ -30,7 +30,7 @@ td {
   flex-direction: column;
   gap: 5px;
   padding-top: 5px;
-  width: 40%
+  width: 40%;
 }
 
 .title-panel {
@@ -53,15 +53,11 @@ td {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  height:120%
-  
-
-  
+  height: 120%;
 }
-.form-group{
+.form-group {
   display: flex;
   flex-direction: column;
-
 }
 
 input {
@@ -75,4 +71,9 @@ input {
 
 .button-icon {
   font-size: 16px;
+}
+
+.table-container {
+  margin-top: 1em;
+  margin-bottom:2em
 }

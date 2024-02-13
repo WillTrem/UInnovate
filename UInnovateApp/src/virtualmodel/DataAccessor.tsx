@@ -1,4 +1,6 @@
 import axiosCustom from "../api/AxiosCustom";
+import { Table } from "./VMD";
+import vmd from "./VMD";
 
 export class DataAccessor {
   data_url: string;
@@ -81,7 +83,81 @@ export class DataAccessor {
     }
   }
 
-  toggleAuthentication(value: boolean){
+  // Method to delete a row from a table
+  // return type: AxiosResponse
+  async deleteRow() {
+    try {
+      const response = await axiosCustom.delete(this.data_url, {
+        headers: this.headers,
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Could not delete row:", error);
+    }
+  }
+
+  async updateTableData(new_table_data: Row[], table: Table) {
+    let old_row: Row | undefined = {} as Row;
+    let old_table_data = await this.fetchRows();
+
+    const primary_key = table.getPrimaryKey()?.column_name;
+    const schema_name = vmd.getTableSchema(table.table_name)?.schema_name;
+
+    // After fetching rows, change the header from Accept-Profile to Content-Profile
+    this.headers = { "Content-Profile": schema_name as string };
+
+    if (!primary_key) return false;
+
+    try {
+      if (!(typeof new_table_data[Symbol.iterator] === "function")) {
+        throw new Error("new_table_data is not iterable");
+      }
+
+      for (const new_row of new_table_data) {
+        old_row = old_table_data?.find(
+          (r) => r[primary_key] === new_row[primary_key]
+        );
+
+        if (old_row) {
+          for (const key in new_row) {
+            if (old_row[key] !== new_row[key]) {
+              console.log(this);
+              this.values = new_row;
+              this.data_url = `${table.getURL()}?${primary_key}=eq.${new_row[primary_key]}`;
+              await this.updateRow();
+            }
+          }
+        } else {
+          this.values = new_row;
+          this.data_url = table.getURL();
+          await this.addRow();
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching table data:", error);
+      throw error;
+    }
+
+    // If the new data does not contain a row that exists in the old data, delete the row from the table
+    old_table_data = old_table_data?.filter((old_row) => {
+      const existsInNewData = new_table_data.some(
+        (new_row) => new_row[primary_key] === old_row[primary_key]
+      );
+      if (!existsInNewData) {
+        this.data_url = `${table.getURL()}?${primary_key}=eq.${old_row[primary_key]}`;
+        try {
+          this.deleteRow();
+        } catch (error) {
+          console.error("Error updating row:", error);
+          throw error;
+        }
+      }
+      return existsInNewData;
+    });
+  }
+
+  toggleAuthentication(value: boolean) {
     axiosCustom.defaults.withCredentials = value;
   }
 }
