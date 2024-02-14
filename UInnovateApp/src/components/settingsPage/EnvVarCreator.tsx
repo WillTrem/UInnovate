@@ -20,7 +20,7 @@ export const EnvVarCreator = () => {
 
 	useEffect(() => {
 		getEnvVars();
-	});
+	},[]);
 	const handleAddEnvVar = async () => {
 		setShowModal(true);
 	};

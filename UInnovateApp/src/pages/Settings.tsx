@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
 import { LOGIN_BYPASS, Role } from "../redux/AuthSlice";
 import { useNavigate, useParams } from "react-router-dom";
+import AdditionalViewTab from "../components/settingsPage/additionalView/AdditionalViewTab";
 
 export function Settings() {
 	const role = useSelector((state: RootState) => state.auth.role);
@@ -70,6 +71,11 @@ export function Settings() {
 											Internationalization
 										</Nav.Link>
 									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey='additionalviews' onClick={() => handleNavClick('additionalviews')}>
+											Additional Views
+										</Nav.Link>
+									</Nav.Item>
 								</Nav>
 							</Col>
 							<Col sm={9}>
@@ -96,6 +102,9 @@ export function Settings() {
 									)}
 									<Tab.Pane eventKey='internationalization'>
 										<InternationalizationTab />
+									</Tab.Pane>
+									<Tab.Pane eventKey='additionalviews'>
+										<AdditionalViewTab />
 									</Tab.Pane>
 								</Tab.Content>
 							</Col>

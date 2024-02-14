@@ -1,0 +1,17 @@
+.card{
+    margin: 15px 0 15px 0;
+    height: 57px;
+}
+
+.card-header {
+    height: 57px;
+    
+}
+
+.hstack.gap-3 {
+    height: 38px;
+}
+
+.accordion {
+    margin-top: 20px;
+}

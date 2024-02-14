@@ -197,13 +197,74 @@ WHERE
         JOIN meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
     );
 
--- Creating the envronment variables table
+-- Creating the environment variables table
 CREATE TABLE IF NOT EXISTS meta.env_vars (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
     value TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Creating the  view type table
+CREATE TABLE IF NOT EXISTS meta.view_type(
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255)
+);
+-- Creating the additional view setting table
+CREATE TABLE IF NOT EXISTS meta.additional_view_settings (
+  id SERIAL PRIMARY KEY,
+  schemaName VARCHAR(255),
+  tableName VARCHAR(255),
+  viewName VARCHAR(255),
+  viewType INT,
+  FOREIGN KEY (viewType) REFERENCES meta.view_type(id)
+);
+
+-- Creating the custom view template table
+CREATE TABLE IF NOT EXISTS meta.custom_view_templates(
+  id SERIAL PRIMARY KEY,
+  settingId INT,
+  template TEXT,
+  FOREIGN KEY (settingId) REFERENCES meta.additional_view_settings(id)
+);
+
+-- Inserting default view types
+INSERT INTO meta.view_type(name) VALUES
+('calendar'),
+('timeline'),
+('treeview'),
+('custom');
+
+-- CUSTOM VIEW INSERT
+CREATE OR REPLACE FUNCTION meta.insert_custom_view(
+    p_schema_name VARCHAR(255),
+    p_table_name VARCHAR(255),
+    p_view_name VARCHAR(255),
+    p_view_type_id INT,
+    p_template TEXT
+) RETURNS INT AS $$
+DECLARE
+    v_setting_id INT;
+BEGIN
+    -- If the view type doesn't exist, you might want to handle this case appropriately.
+    IF NOT EXISTS (SELECT 1 FROM meta.view_type WHERE id = p_view_type_id) THEN
+        RAISE EXCEPTION 'View type not found: %', p_view_type_id;
+    END IF;
+
+    -- Insert into additional_view_settings table
+    INSERT INTO meta.additional_view_settings (schemaName, tableName, viewName, viewType)
+    VALUES (p_schema_name, p_table_name, p_view_name, p_view_type_id)
+    RETURNING id INTO v_setting_id;
+
+    -- Insert into custom_view_templates table
+    INSERT INTO meta.custom_view_templates (settingId, template)
+    VALUES (v_setting_id, p_template);
+
+    -- Return the setting ID for reference
+    RETURN v_setting_id;
+END;
+$$ LANGUAGE plpgsql;
+
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
@@ -383,6 +444,7 @@ $BODY$;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
+GRANT ALL ON FUNCTION meta.insert_custom_view() TO configurator;
 GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
 GRANT ALL ON FUNCTION meta.export_i18n_to_json() TO configurator;
@@ -410,6 +472,9 @@ GRANT ALL ON meta.scripts TO configurator;
 GRANT ALL ON meta.i18n_languages TO configurator;
 GRANT ALL ON meta.i18n_keys TO configurator;
 GRANT ALL ON meta.i18n_values TO configurator;
+GRANT ALL ON meta.view_type TO web_anon;
+GRANT ALL ON meta.additional_view_settings TO web_anon;
+GRANT ALL ON meta.custom_view_templates TO web_anon;
 
 -- Views (Only SELECT necessary)
 GRANT SELECT ON meta.schemas TO "user"; 
