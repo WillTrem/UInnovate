@@ -46,7 +46,6 @@ const DisplayTab = () => {
       <Tab.Container>
         <Row>
           <Col sm={3}>
-            
               <Box display="flex" gap="1rem" alignItems={"center"} >
                 <h4 style={{ marginBottom: 0 }}>Tables</h4>
                 <FormControl fullWidth disabled={schemas.length === 0}>
@@ -66,7 +65,6 @@ const DisplayTab = () => {
                   </Select>
                 </FormControl>
               </Box>
-              
             <Nav variant="pills" className="flex-column">
               {tables?.map(({ table_name }) => {
                 return (

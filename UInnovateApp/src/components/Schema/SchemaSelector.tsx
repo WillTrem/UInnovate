@@ -12,7 +12,7 @@ interface SchemaSelectorProps {
 }
 
 const SchemaSelector: React.FC<SchemaSelectorProps> = ({
-  displayType = DisplayType.NavDropdown,
+  displayType = DisplayType.NavDropdown
 }: SchemaSelectorProps) => {
   const {user, schema_access} = useSelector((state: RootState) => state.auth);
   const schemas = [
@@ -31,6 +31,7 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
   const selectedSchema: string = useSelector(
     (state: RootState) => state.schema.value
   );
+
   const dispatch = useDispatch();
 
   // If the selected schema is not included in the schema access of the user, set it to the first element
@@ -85,6 +86,24 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
           ))}
         </Nav>
       </Container>
+    );
+
+    if (displayType === DisplayType.StackedPills)
+    return (
+      <>
+        <Nav
+          variant="pills"
+          onSelect={handleSelect}
+          className="flex-column"
+          activeKey={selectedSchema}
+        >
+          {schemas.map((item) => (
+            <Nav.Item title={item} key={item}>
+              <Nav.Link eventKey={item}>{item}</Nav.Link>
+            </Nav.Item>
+          ))}
+        </Nav>
+      </>
     );
 
   if (displayType === DisplayType.Nav)
