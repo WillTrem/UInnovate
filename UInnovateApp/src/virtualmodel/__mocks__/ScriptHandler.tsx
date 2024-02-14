@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 
-import { Table, Schema } from "../VMD";
+import { Table } from "../VMD";
 import { DataAccessor, Row } from "../DataAccessor";
 
 import { DataAccessorMock } from "./DataAccessor";
@@ -44,20 +44,6 @@ export class ScriptHandlerMock {
       throw new Error("Error fetching data: " + error);
     }
   });
-
-  // async executeScript() {
-  //     try {
-  //     const result = await Promise.resolve({
-  //         data: this.new_table_data,
-  //     });
-
-  //     this.new_table_data = result.data;
-
-  //     return this.new_table_data;
-  //     } catch (error) {
-  //     console.log(error);
-  //     }
-  // }
 
   getScript = vi.fn().mockImplementation(() => {
     return this.script;

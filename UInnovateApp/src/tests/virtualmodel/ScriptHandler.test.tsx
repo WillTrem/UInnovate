@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, Mock } from "vitest";
 import ScriptHandler from "../../virtualmodel/ScriptHandler";
-import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import { Row } from "../../virtualmodel/DataAccessor";
 
 import { ScriptHandlerMock } from "../../virtualmodel/__mocks__/ScriptHandler";
 import * as VMDMock from "../../virtualmodel/__mocks__/VMD";
