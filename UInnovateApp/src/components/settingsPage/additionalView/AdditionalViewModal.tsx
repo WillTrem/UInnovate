@@ -8,18 +8,21 @@ interface AdditionalViewModalProp{
     tableName: string,
     show: boolean;
     setShow: (v:boolean)=>void;
+    refreshList:()=>void;
 }
 
-const AdditionalViewModal = ({schemaName, tableName, show, setShow}:AdditionalViewModalProp) => {
+const AdditionalViewModal = ({schemaName, tableName, show, setShow, refreshList: updateList}:AdditionalViewModalProp) => {
     const [viewName, setViewName] = useState<string>('');
     const [viewType, setViewType] = useState<number>(1);
+    const [customCode, setCustomCode] = useState<string>('');
 
     const handleClose = () => setShow(false);
 
     const handleSave = (e: FormEvent<HTMLFormElement>): void =>{
         e.preventDefault();
         handleClose();
-        insertNewView(schemaName, tableName, viewName, viewType);
+        insertNewView(schemaName, tableName, viewName, viewType, customCode);
+        updateList();
     }
     return (
         <>
@@ -43,6 +46,14 @@ const AdditionalViewModal = ({schemaName, tableName, show, setShow}:AdditionalVi
                             <option value={ViewTypeEnum.Custom}>Custom</option>
                         </Form.Select>
                     </Form.Group>
+                    {(viewType === ViewTypeEnum.Custom) &&
+                        (
+                    <Form.Group className="mb-3" controlId="viewType">
+                        <Form.Label>view type</Form.Label>
+                        <textarea onChange={(e)=>setCustomCode(e.target.value)}>
+                        </textarea>
+                    </Form.Group>
+                    )}
                 </Form>
 
             </Modal.Body>

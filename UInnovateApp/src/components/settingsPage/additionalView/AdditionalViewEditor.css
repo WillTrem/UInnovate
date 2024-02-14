@@ -8,6 +8,10 @@
     
 }
 
-.hstack.gap-3{
+.hstack.gap-3 {
     height: 38px;
+}
+
+.accordion {
+    margin-top: 20px;
 }

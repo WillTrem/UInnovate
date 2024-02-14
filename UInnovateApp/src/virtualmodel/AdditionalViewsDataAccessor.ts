@@ -1,26 +1,45 @@
-import { DataAccessor } from "./DataAccessor";
+import { ViewTypeEnum } from "../components/settingsPage/additionalView/ViewTypeEnum.tsx";
+import { DataAccessor, Row } from "./DataAccessor";
+import { FunctionAccessor } from "./FunctionAccessor.tsx";
 import vmd from "./VMD.tsx";
 
 const SETTING_SCHEMA_NAME = 'meta';
 const SETTING_TABLE_NAME = 'additional_view_settings';
 const CUSTOM_VIEW_TABLE_NAME = 'custom_view_templates';
+const RPC_NAME = 'insert_custom_view';
 
-export const getViews = async (setterCallback:(args:any)=>void, p_tableName: string)  => {
+export const getViews = async (setterCallback:(args:any)=>void, p_tableName: string, signal: AbortSignal)  => {
     
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
         SETTING_SCHEMA_NAME,
         SETTING_TABLE_NAME
     );
 
-    const rows = await data_accessor?.fetchRows();
+    const rows = await data_accessor?.fetchRows(signal);
     if(rows){
         setterCallback(rows.filter(r => {if(r.tablename == p_tableName){return r}} ));
     }
 };
 
-export const insertNewView = async (p_schemaName: string, p_tableName: string, p_viewName: string, p_viewType: number, ) => {
+export const getCustomViews = async (setterCallback:(args:any)=>void, signal: AbortSignal)  => {
+    
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+        SETTING_SCHEMA_NAME,
+        CUSTOM_VIEW_TABLE_NAME
+    );
+
+    const rows = await data_accessor?.fetchRows(signal);
+    if(rows){
+		console.log(rows);
+        setterCallback(rows);
+    }
+};
+
+export const insertNewView = async (p_schemaName: string, p_tableName: string, p_viewName: string, p_viewType: number, p_template?: string) => {
 	try {
-		const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
+		
+		if(p_viewType !== ViewTypeEnum.Custom){
+			const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
 			SETTING_SCHEMA_NAME, // schema name
 			SETTING_TABLE_NAME, // table name
 			//new row data:
@@ -34,6 +53,26 @@ export const insertNewView = async (p_schemaName: string, p_tableName: string, p
 
 		// Use data accessor to add the new row woop woop
 		await data_accessor.addRow();
+		}
+		else {
+			const data = {
+				"p_schema_name": p_schemaName,
+				"p_table_name": p_tableName,
+				"p_template": p_template,
+				"p_view_name": p_viewName,
+				"p_view_type_id": p_viewType
+			} as Row;
+			console.log(data);
+			const cstm_view_data_accessor: FunctionAccessor = vmd.getFunctionAccessor(
+				SETTING_SCHEMA_NAME, // schema name
+				RPC_NAME, // remote procedure function name
+				//new row data:
+				data
+			);
+
+			await cstm_view_data_accessor.executeFunction();
+		}
+	
 		// alert("View saved successfully.");
 	} catch (error) {
 		console.error("Error in upserting view:", error);

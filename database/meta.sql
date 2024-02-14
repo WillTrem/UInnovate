@@ -235,6 +235,37 @@ INSERT INTO meta.view_type(name) VALUES
 ('treeview'),
 ('custom');
 
+-- CUSTOM VIEW INSERT
+CREATE OR REPLACE FUNCTION meta.insert_custom_view(
+    p_schema_name VARCHAR(255),
+    p_table_name VARCHAR(255),
+    p_view_name VARCHAR(255),
+    p_view_type_id INT,
+    p_template TEXT
+) RETURNS INT AS $$
+DECLARE
+    v_setting_id INT;
+BEGIN
+    -- If the view type doesn't exist, you might want to handle this case appropriately.
+    IF NOT EXISTS (SELECT 1 FROM meta.view_type WHERE id = p_view_type_id) THEN
+        RAISE EXCEPTION 'View type not found: %', p_view_type_id;
+    END IF;
+
+    -- Insert into additional_view_settings table
+    INSERT INTO meta.additional_view_settings (schemaName, tableName, viewName, viewType)
+    VALUES (p_schema_name, p_table_name, p_view_name, p_view_type_id)
+    RETURNING id INTO v_setting_id;
+
+    -- Insert into custom_view_templates table
+    INSERT INTO meta.custom_view_templates (settingId, template)
+    VALUES (v_setting_id, p_template);
+
+    -- Return the setting ID for reference
+    RETURN v_setting_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
 RETURNS json  -- Specify the return type here
@@ -413,6 +444,7 @@ $BODY$;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
+GRANT ALL ON FUNCTION meta.insert_custom_view() TO configurator;
 GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
 GRANT ALL ON FUNCTION meta.export_i18n_to_json() TO configurator;

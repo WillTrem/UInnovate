@@ -17,7 +17,7 @@ const AdditionalViewTab = () => {
                 <SchemaTableSelector setTable={setTable} setSchema={setSchema}/>
             </Col>
             <Col sm='9'>
-                <AdditionalViewEditor selectedSchema={schema} selectedTable={table} />
+                <AdditionalViewEditor selectedSchema={schema} selectedTable={table} setSelectedTable={setTable}/>
             </Col>
         </Row>
         </Tab.Content>

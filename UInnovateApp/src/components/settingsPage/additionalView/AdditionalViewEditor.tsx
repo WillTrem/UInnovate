@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Accordion, Button, Card, Col, Row, useAccordionButton } from 'react-bootstrap'
 import AdditionalViewModal from './AdditionalViewModal';
-import { deleteView, getViews } from '../../../virtualmodel/AdditionalViewsDataAccessor';
+import { deleteView, getCustomViews, getViews } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
-
+import './AdditionalViewEditor.css';
 
 function CustomToggle({ children, eventKey }) {
     const openOnClick = useAccordionButton(eventKey, () =>
@@ -23,14 +23,17 @@ function CustomToggle({ children, eventKey }) {
 interface editorProp {
     selectedSchema: string;
     selectedTable: string;
+    setSelectedTable: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AdditionalViewEditor = ({
     selectedSchema,
-    selectedTable
+    selectedTable,
+    setSelectedTable
 }: editorProp) => {
 
     const [viewList, setViewList] = useState([]);
+    const [customViews, setCustomViews]= useState([]);
     const [showModal, setShowModal] = useState(false);
 
     const handleClick = ()=>{setShowModal(true)};
@@ -41,11 +44,20 @@ const AdditionalViewEditor = ({
             getViews(setViewList, selectedTable);
         }
     }
+    const refreshList = ()=>{
+        const table = selectedTable.toString();
+        setSelectedTable('');
+        setTimeout( ()=> setSelectedTable(table), 100);
+    }
 
     useEffect(()=>{
+        const ctrl = new AbortController();
+        const signal = ctrl.signal;
         // get data from db
-         getViews(setViewList, selectedTable);
-        console.log(viewList);
+         getViews(setViewList, selectedTable, signal);
+         getCustomViews(setCustomViews, signal)
+
+         return ()=>{ctrl.abort()};
     },[selectedTable])
     
 
@@ -93,16 +105,15 @@ const AdditionalViewEditor = ({
                         (
                             <Accordion.Collapse eventKey={view.viewname}>
                                 <Card.Body>
-                                custom data
+                                <h4>custom code:</h4>
+                                <code>
+                                    {customViews.filter(cv=>{if(cv.settingid === view.id){return cv}})[0].template}
+                                </code>
                                 </Card.Body>
                             </Accordion.Collapse>
                         )
                     }
-                    <Accordion.Collapse eventKey={view.viewname}>
-                        <Card.Body>
-                        custom script detail
-                        </Card.Body>
-                    </Accordion.Collapse>
+                  
                 </Card>
                 )}
                     </Accordion>
@@ -110,7 +121,7 @@ const AdditionalViewEditor = ({
             }
 
         </div>
-        <AdditionalViewModal show={showModal} setShow={setShowModal} tableName={selectedTable} schemaName={selectedSchema} />
+        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} tableName={selectedTable} schemaName={selectedSchema} />
     </>
   )
   else
