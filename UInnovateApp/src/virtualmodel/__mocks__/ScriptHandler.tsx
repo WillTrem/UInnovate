@@ -5,67 +5,76 @@ import { DataAccessor, Row } from "../DataAccessor";
 
 import { DataAccessorMock } from "./DataAccessor";
 import * as VMDMock from "./VMD";
+import ScriptHandler from "../ScriptHandler";
 
 vi.unmock("../DataAccessor");
 
-export class ScriptHandlerMock {
-  public script: Row;
-  public schema_name: string | undefined;
-
-  public table_data: Row[] | undefined = {} as Row[];
-  public new_table_data: Row[] = {} as Row[];
-
-  public table: Table = {} as Table;
-  public accessor: DataAccessor = {} as DataAccessor;
-
+export class ScriptHandlerMock extends ScriptHandler {
   constructor(script: Row) {
-    this.script = script;
-    this.schema_name = VMDMock.default.getTableSchema()?.schema_name;
-    this.accessor = {} as DataAccessor;
+    super(script);
 
-    if (this.schema_name) {
-      this.table = VMDMock.default.getTable("mock table name") as Table;
+    super.setScript(script);
+    super.setSchemaName(
+      VMDMock.default.getTableSchema()?.schema_name as string
+    );
+    super.setAccessor({} as DataAccessor);
+
+    if (super.getSchemaName()) {
+      super.setTable(VMDMock.default.getTable("mock table name") as Table);
     }
   }
 
   init = vi.fn().mockImplementation(async () => {
     console.log("init in ScriptHandler mock was called");
-    if (this.table && this.schema_name) {
-      this.accessor = new DataAccessor("/api/data", {});
+    if (super.getTable() && super.getSchemaName()) {
+      super.setAccessor(new DataAccessor("/api/data", {}));
     }
 
-    const mockDataAccessor = new DataAccessorMock(this.accessor.data_url, {});
+    const mockDataAccessor = new DataAccessorMock(
+      super.getAccessor().data_url,
+      {}
+    );
 
-    this.accessor.fetchRows = mockDataAccessor.fetchRows.bind(this.accessor);
+    super.getAccessor().fetchRows = mockDataAccessor.fetchRows.bind(
+      super.getAccessor()
+    );
 
     try {
-      this.table_data = await this.accessor.fetchRows();
+      super.setTableData((await super.getAccessor().fetchRows()) as Row[]);
     } catch (error) {
       throw new Error("Error fetching data: " + error);
     }
   });
 
+  executeScript = vi.fn().mockImplementation(async () => {
+    console.log("executeScript in ScriptHandler mock was called");
+  });
+
+  updateTableData = vi.fn().mockImplementation(() => {
+    console.log("updateTableData in ScriptHandler mock was called");
+  });
+
   getScript = vi.fn().mockImplementation(() => {
-    return this.script;
+    return super.getScript();
   });
 
   getTableData = vi.fn().mockImplementation(() => {
-    return this.table_data;
+    return super.getTableData();
   });
 
   getNewTableData = vi.fn().mockImplementation(() => {
-    return this.new_table_data;
+    return super.getNewTableData();
   });
 
   getTable = vi.fn().mockImplementation(() => {
-    return this.table;
+    return super.getTable();
   });
 
   getAccessor = vi.fn().mockImplementation(() => {
-    return this.accessor;
+    return super.getAccessor();
   });
 
   getSchemaName = vi.fn().mockImplementation(() => {
-    return this.schema_name;
+    return super.getSchemaName();
   });
 }

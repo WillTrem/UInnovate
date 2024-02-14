@@ -76,7 +76,6 @@ class ScriptHandler {
     }
   }
 
-  // Writing get methods for all data members
   getScript() {
     return this.script;
   }
@@ -99,6 +98,30 @@ class ScriptHandler {
 
   getSchemaName() {
     return this.schema_name;
+  }
+
+  setScript(script: Row) {
+    this.script = script;
+  }
+
+  setTableData(table_data: Row[]) {
+    this.table_data = table_data;
+  }
+
+  setNewTableData(new_table_data: Row[]) {
+    this.new_table_data = new_table_data;
+  }
+
+  setTable(table: Table) {
+    this.table = table;
+  }
+
+  setAccessor(accessor: DataAccessor) {
+    this.accessor = accessor;
+  }
+
+  setSchemaName(schema_name: string) {
+    this.schema_name = schema_name;
   }
 }
 
