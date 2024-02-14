@@ -72,7 +72,7 @@ export function Settings() {
 										</Nav.Link>
 									</Nav.Item>
 									<Nav.Item>
-										<Nav.Link eventKey='additionalViews'>
+										<Nav.Link eventKey='additionalviews' onClick={() => handleNavClick('additionalviews')}>
 											Additional Views
 										</Nav.Link>
 									</Nav.Item>
@@ -103,7 +103,7 @@ export function Settings() {
 									<Tab.Pane eventKey='internationalization'>
 										<InternationalizationTab />
 									</Tab.Pane>
-									<Tab.Pane eventKey='additionalViews'>
+									<Tab.Pane eventKey='additionalviews'>
 										<AdditionalViewTab />
 									</Tab.Pane>
 								</Tab.Content>
