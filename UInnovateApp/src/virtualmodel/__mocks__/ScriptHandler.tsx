@@ -77,4 +77,28 @@ export class ScriptHandlerMock extends ScriptHandler {
   getSchemaName = vi.fn().mockImplementation(() => {
     return super.getSchemaName();
   });
+
+  setScript = vi.fn().mockImplementation((script: Row) => {
+    super.setScript(script);
+  });
+
+  setTableData = vi.fn().mockImplementation((table_data: Row[]) => {
+    super.setTableData(table_data);
+  });
+
+  setNewTableData = vi.fn().mockImplementation((new_table_data: Row[]) => {
+    super.setNewTableData(new_table_data);
+  });
+
+  setTable = vi.fn().mockImplementation((table: Table) => {
+    super.setTable(table);
+  });
+
+  setAccessor = vi.fn().mockImplementation((accessor: DataAccessor) => {
+    super.setAccessor(accessor);
+  });
+
+  setSchemaName = vi.fn().mockImplementation((schema_name: string) => {
+    super.setSchemaName(schema_name);
+  });
 }

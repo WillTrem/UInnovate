@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, Mock } from "vitest";
+import { Table } from "../../virtualmodel/VMD";
 import ScriptHandler from "../../virtualmodel/ScriptHandler";
-import { Row } from "../../virtualmodel/DataAccessor";
+import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 
 import { ScriptHandlerMock } from "../../virtualmodel/__mocks__/ScriptHandler";
 import * as VMDMock from "../../virtualmodel/__mocks__/VMD";
@@ -40,6 +41,13 @@ describe("ScriptHandler", () => {
     table_name: "scripts",
   };
 
+  const wrongMockScript = {
+    id: 1,
+    description: "mock description",
+    content: "mock content",
+    table_name: "wrong scripts",
+  };
+
   it("should return an instance of ScriptHandler", () => {
     // Create an instance of ScriptHandler
     const scriptHandler = new ScriptHandler(mockScript);
@@ -59,7 +67,7 @@ describe("ScriptHandler", () => {
   it("should have an undefined table if schema name is undefined", () => {
     VMDMock.default.getTableSchema = vi.fn().mockReturnValue(undefined);
 
-    const mockedHandler: ScriptHandler = new ScriptHandlerMock(mockScript);
+    const mockedHandler: ScriptHandler = new ScriptHandlerMock(wrongMockScript);
 
     expect(mockedHandler.getTable()).toEqual({});
   });
@@ -94,7 +102,7 @@ describe("ScriptHandler", () => {
   it("should have an empty data accessor if no table or schema name exist", async () => {
     VMDMock.default.getTableSchema = vi.fn().mockReturnValue(undefined);
 
-    const mockedHandler = new ScriptHandlerMock(mockScript);
+    const mockedHandler: ScriptHandler = new ScriptHandlerMock(mockScript);
 
     await mockedHandler.init();
 
@@ -102,7 +110,7 @@ describe("ScriptHandler", () => {
   });
 
   it("init should fail if fetching rows has an error", async () => {
-    const mockedHandler = new ScriptHandlerMock(mockScript);
+    const mockedHandler: ScriptHandler = new ScriptHandlerMock(mockScript);
 
     mockedHandler.getAccessor().fetchRows = vi.fn().mockRejectedValue("error");
 
@@ -113,16 +121,67 @@ describe("ScriptHandler", () => {
     }
   });
 
-  //   it("all gets should return the correct values", async () => {
-  //     const mockedHandler = new ScriptHandlerMock(mockScript);
+  it("all gets should return the correct values", async () => {
+    const mockedHandler = new ScriptHandlerMock(mockScript);
 
-  //     expect(mockedHandler.getScript()).toEqual(mockScript);
-  //     expect(mockedHandler.getTableData()).toEqual(mockedHandler.table_data);
-  //     expect(mockedHandler.getNewTableData()).toEqual(
-  //       mockedHandler.new_table_data
-  //     );
-  //     expect(mockedHandler.getTable()).toEqual(mockedHandler.table);
-  //     expect(mockedHandler.getAccessor()).toEqual(mockedHandler.accessor);
-  //     expect(mockedHandler.getSchemaName()).toEqual(mockedHandler.schema_name);
-  //   });
+    expect(mockedHandler.getScript()).toEqual(mockScript);
+    expect(mockedHandler.getTableData()).toEqual(mockedHandler.getTableData());
+    expect(mockedHandler.getNewTableData()).toEqual(
+      mockedHandler.getNewTableData()
+    );
+    expect(mockedHandler.getTable()).toEqual(mockedHandler.getTable());
+    expect(mockedHandler.getAccessor()).toEqual(mockedHandler.getAccessor());
+    expect(mockedHandler.getSchemaName()).toEqual(
+      mockedHandler.getSchemaName()
+    );
+  });
+
+  it("all sets should set the correct values", async () => {
+    const mockedHandler: ScriptHandler = new ScriptHandlerMock(mockScript);
+
+    const newScript = {
+      id: 2,
+      description: "new mock description",
+      content: "new mock content",
+      table_name: "new scripts",
+    };
+
+    const newTableData = [
+      new Row({
+        Column1: 1,
+        Column2: "new mock row",
+        Column3: "new mock description",
+      }),
+      new Row({
+        Column1: 2,
+        Column2: "new mock row 2",
+        Column3: "new mock description 2",
+      }),
+      new Row({
+        Column1: 3,
+        Column2: "new mock row 3",
+        Column3: "new mock description 3",
+      }),
+    ];
+
+    const newTable = new Table("new mock table name") as Table;
+
+    const newAccessor = new DataAccessor("/api/new-data", {});
+
+    const newSchemaName = "new mock schema name";
+
+    mockedHandler.setScript(newScript);
+    mockedHandler.setTableData(newTableData);
+    mockedHandler.setNewTableData(newTableData);
+    mockedHandler.setTable(newTable);
+    mockedHandler.setAccessor(newAccessor);
+    mockedHandler.setSchemaName(newSchemaName);
+
+    expect(mockedHandler.getScript()).toEqual(newScript);
+    expect(mockedHandler.getTableData()).toEqual(newTableData);
+    expect(mockedHandler.getNewTableData()).toEqual(newTableData);
+    expect(mockedHandler.getTable()).toEqual(newTable);
+    expect(mockedHandler.getAccessor()).toEqual(newAccessor);
+    expect(mockedHandler.getSchemaName()).toEqual(newSchemaName);
+  });
 });
