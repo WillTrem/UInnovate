@@ -7,6 +7,8 @@ import { RootState } from "../../redux/Store";
 import vmd from "../../virtualmodel/VMD";
 import { LOGIN_BYPASS } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
+import { Box, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+
 interface SchemaSelectorProps {
   displayType?: DisplayType;
 }
@@ -54,38 +56,47 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
   if (displayType === DisplayType.NavDropdown)
     return (
       <>
-        <NavDropdown title={selectedSchema} id="collapsible-nav-dropdown">
+       <Box display="flex" gap="1rem" alignItems={"center"} >
+      <FormControl fullWidth disabled={schemas.length === 0}>
+        <InputLabel id="schema-label">Schema</InputLabel>
+        <Select
+          labelId="schema-label"
+          value={selectedSchema}
+          label="Schema"
+          onChange={(event) => {
+            const newSchema = event.target.value as string;
+            dispatch(updateSelectedSchema(newSchema));
+          }}
+        >
           {schemas.map((item) => (
-            <NavDropdown.Item
-              href="#"
-              key={item}
-              onClick={() => {
-                dispatch(updateSelectedSchema(item));
-              }}
-            >
+            <MenuItem key={item} value={item}>
               {item}
-            </NavDropdown.Item>
+            </MenuItem>
           ))}
-        </NavDropdown>
+        </Select>
+      </FormControl>
+    </Box>
+        
       </>
     );
 
   if (displayType === DisplayType.NavPills)
     return (
-      <Container>
-        <Nav
-          variant="pills"
-          onSelect={handleSelect}
-          className="justify-content-left"
-          activeKey={selectedSchema}
-        >
-          {schemas.map((item) => (
-            <Nav.Item title={item} key={item}>
-              <Nav.Link eventKey={item} >{item}</Nav.Link>
-            </Nav.Item>
-          ))}
-        </Nav>
-      </Container>
+        <Container>
+          <Nav
+            variant="pills"
+            onSelect={handleSelect}
+            className="justify-content-left"
+            activeKey={selectedSchema}
+          >
+            {schemas.map((item) => (
+              <Nav.Item title={item} key={item}>
+                <Nav.Link eventKey={item} >{item}</Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
+        </Container>
+
     );
 
     if (displayType === DisplayType.StackedPills)

@@ -6,6 +6,12 @@ import vmd from "../../virtualmodel/VMD";
 import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchFunctionNames } from '../../virtualmodel/PlatformFunctions';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import SchemaSelector from '../Schema/SchemaSelector';
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import Tab from "react-bootstrap/Tab";
+import DisplayType from '../Schema/DisplayType';
+import { Label } from '@mui/icons-material';
 
 interface ExecutionLogEntry {
     id: any; 
@@ -36,20 +42,19 @@ export const CronJobsTab = () => {
     const [procedures, setProcedures] = useState<string[]>([]); // list of stored procedures
     const [executionLogs, setExecutionLogs] = useState<ExecutionLogEntry[]>([]);
     const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
+    const selectedSchema = useSelector((state: RootState) => state.schema.value);
 
     const updateProcedureNames = async () => {
-        const schemas = vmd.getApplicationSchemas();
+        if (!selectedSchema) return
         try {
             // wait for resolve of fetchFunctionNames promises
-            const promises = schemas
-            .map(schema => fetchFunctionNames(schema.schema_name));            
-            const results = await Promise.all(promises);
-            const functionNames = [...new Set(results.flat())];
+            const functionNames = await fetchFunctionNames(selectedSchema);
+            const procedures = [...new Set(functionNames)];
 
-            setProcedures(functionNames); // update state with function names
+            setProcedures(procedures); // update state with function names
 
-            if (functionNames.length > 0) {
-                setSelectedProc(functionNames[0]);
+            if (procedures.length > 0) {
+                setSelectedProc(procedures[0]);
             }
         } catch (error) {
             console.error('Error fetching function names:', error);
@@ -200,9 +205,12 @@ export const CronJobsTab = () => {
     };
 
     return (
-        <Card>
-            <Row>
-                <Col sm={4}>
+        
+        <Tab.Container>
+        <Tab.Content>
+        <Row>
+                <Col sm={3}>
+                <SchemaSelector displayType={DisplayType.NavDropdown}/>
                     {/* list of stored procedures */}
                     <ListGroup>
                         {procedures.map(proc => (
@@ -295,6 +303,7 @@ export const CronJobsTab = () => {
                     </ListGroup>
                 </Col>
             </Row>
-        </Card>
+        </Tab.Content>
+    </Tab.Container>
     );
 };
