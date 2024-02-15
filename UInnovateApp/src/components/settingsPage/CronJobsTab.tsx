@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {Button, skeletonClasses} from "@mui/material"
+import {Button, Typography} from "@mui/material"
 import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
@@ -43,9 +43,10 @@ export const CronJobsTab = () => {
     const [executionLogs, setExecutionLogs] = useState<ExecutionLogEntry[]>([]);
     const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
     const selectedSchema = useSelector((state: RootState) => state.schema.value);
+    const { schema_access } = useSelector((state: RootState) => state.auth);
 
     const updateProcedureNames = async () => {
-        if (!selectedSchema) return
+        if (!selectedSchema || schema_access.length == 0) return
         try {
             // wait for resolve of fetchFunctionNames promises
             const functionNames = await fetchFunctionNames(selectedSchema);
@@ -205,7 +206,8 @@ export const CronJobsTab = () => {
     };
 
     return (
-        
+        <div>
+        {procedures.length !== 0 ?
         <Tab.Container>
         <Tab.Content>
         <Row>
@@ -305,5 +307,8 @@ export const CronJobsTab = () => {
             </Row>
         </Tab.Content>
     </Tab.Container>
+        :
+        <Typography variant="body1">You don't have access to any tables.</Typography>}
+     </div>
     );
 };
