@@ -27,6 +27,7 @@ const ButtonConfigurationSaver: React.FC = () => {
     updateAppConfigValues(configRef.current);
     dispatch(saveUserDataToDB());
     console.log("Saving the configuration in the DB via button.");
+    window.location.reload(); 
   }
 
   return (
