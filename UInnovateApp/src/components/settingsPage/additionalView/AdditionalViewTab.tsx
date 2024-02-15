@@ -10,13 +10,13 @@ const AdditionalViewTab = () => {
 
   return (
     <>
-    <Tab.Container>
-        <Tab.Content>
+    <Tab.Container >
+        <Tab.Content id='AdditionalViewEditor'>
         <Row>
             <Col sm='3'>
                 <SchemaTableSelector setTable={setTable} setSchema={setSchema}/>
             </Col>
-            <Col sm='9'>
+            <Col sm='9' >
                 <AdditionalViewEditor selectedSchema={schema} selectedTable={table} setSelectedTable={setTable}/>
             </Col>
         </Row>
