@@ -20,11 +20,12 @@ export class DataAccessor {
 
   // Method to fetch rows from a table
   // return type: Row[]
-  async fetchRows() {
+  async fetchRows(signal?: AbortSignal | undefined) {
     try {
       const rows: Row[] = [];
 
       const response = await axiosCustom.get(this.data_url, {
+        signal: signal,
         headers: this.headers,
       });
 

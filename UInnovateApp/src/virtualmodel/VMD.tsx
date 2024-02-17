@@ -550,14 +550,22 @@ class VirtualModelDefinition {
   // return type: FunctionAccessor
   getFunctionAccessor(
     schema_name: string,
-    function_name: string
+    function_name: string,
+    data?: Row
   ): FunctionAccessor {
     const schema = this.getSchema(schema_name);
     if (schema) {
       const function_url = API_BASE_URL + "rpc/" + function_name;
+      if(data)
+      {
+          return new FunctionAccessor(function_url, {
+          "Content-Profile": schema.schema_name,
+          },undefined, data);
+      }
       return new FunctionAccessor(function_url, {
         "Content-Profile": schema.schema_name,
       });
+      
     } else {
       throw new Error("Schema does not exist");
     }
