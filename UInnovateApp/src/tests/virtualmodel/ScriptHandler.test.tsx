@@ -184,4 +184,49 @@ describe("ScriptHandler", () => {
     expect(mockedHandler.getAccessor()).toEqual(newAccessor);
     expect(mockedHandler.getSchemaName()).toEqual(newSchemaName);
   });
+
+  it("execute script should set the new table data", async () => {
+    const mockedHandler: ScriptHandler = new ScriptHandlerMock(mockScript);
+
+    const newTableData = {
+      ...mockedHandler.getScript(),
+      Column1: 4,
+      Column2: "mock row 4",
+      Column3: "mock description 4",
+    };
+
+    await mockedHandler.executeScript();
+
+    expect(mockedHandler.getNewTableData()).toEqual(newTableData);
+  });
+
+  it("updateTableData should update the table data", async () => {
+    const mockedHandler: ScriptHandler = new ScriptHandlerMock(mockScript);
+
+    const newTableData: Row[] = [
+      new Row({
+        id: 1,
+        name: "mock row",
+        description: "mock description",
+        content: "mock content",
+      }),
+      new Row({
+        id: 2,
+        name: "mock row 2",
+        description: "mock description 2",
+        content: "mock content 2",
+      }),
+      new Row({
+        id: 3,
+        name: "mock row 3",
+        description: "mock description 3",
+        content: "mock content 3",
+      }),
+    ];
+
+    mockedHandler.setTable(new Table("scripts"));
+    mockedHandler.setNewTableData(newTableData);
+
+    expect(() => mockedHandler.updateTableData()).not.toThrow();
+  });
 });

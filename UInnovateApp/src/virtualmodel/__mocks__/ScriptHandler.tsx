@@ -2,10 +2,11 @@ import { vi } from "vitest";
 
 import { Table } from "../VMD";
 import { DataAccessor, Row } from "../DataAccessor";
+import ScriptHandler from "../ScriptHandler";
 
 import { DataAccessorMock } from "./DataAccessor";
 import * as VMDMock from "./VMD";
-import ScriptHandler from "../ScriptHandler";
+import axios from "axios";
 
 vi.unmock("../DataAccessor");
 
@@ -26,6 +27,7 @@ export class ScriptHandlerMock extends ScriptHandler {
 
   init = vi.fn().mockImplementation(async () => {
     console.log("init in ScriptHandler mock was called");
+
     if (super.getTable() && super.getSchemaName()) {
       super.setAccessor(new DataAccessor("/api/data", {}));
     }
@@ -48,10 +50,37 @@ export class ScriptHandlerMock extends ScriptHandler {
 
   executeScript = vi.fn().mockImplementation(async () => {
     console.log("executeScript in ScriptHandler mock was called");
+    super.executeScript();
+
+    try {
+      const result = await Promise.resolve({
+        input: {
+          script: super.getScript()["content"],
+          table: super.getTable(),
+          primary_key: super.getTable().getPrimaryKey()?.column_name,
+        },
+        data: {
+          ...super.getScript(),
+          Column1: 4,
+          Column2: "mock row 4",
+          Column3: "mock description 4",
+        },
+        status: 201,
+        statusText: "Created",
+        headers: {},
+        config: {},
+      });
+
+      console.log(result.data);
+      this.setNewTableData(result.data);
+      return this.getNewTableData();
+    } catch (error) {
+      console.log(error);
+    }
   });
 
   updateTableData = vi.fn().mockImplementation(() => {
-    console.log("updateTableData in ScriptHandler mock was called");
+    super.updateTableData();
   });
 
   getScript = vi.fn().mockImplementation(() => {
