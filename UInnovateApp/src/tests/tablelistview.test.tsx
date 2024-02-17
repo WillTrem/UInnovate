@@ -5,7 +5,6 @@ import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
-import { DataAccessorMock } from "../virtualmodel/__mocks__/DataAccessor";
 
 vi.mock("axios");
 vi.mock("DataAccessor");
@@ -70,7 +69,7 @@ describe("TableListView component", () => {
       expect(getByText("Some text")).toBeInTheDocument();
     });
   });
-  it("renders the Show Files button", async () => {
+  it("renders the upload button", async () => {
     render(
       <ConfigProvider>
         <MemoryRouter>
@@ -96,13 +95,13 @@ describe("TableListView component", () => {
       rows[0].click();
     });
 
-    const showFilesButton = await screen.findAllByTitle("Show Files Button");
+    // Find the button that uploads files
+    const dropzoneButton = screen.getByTitle("Dropzone");
 
-    // Click the button
-    expect(showFilesButton[0]).toBeInTheDocument();
+    expect(dropzoneButton).toBeInTheDocument();
   });
 
-  it("Verify functionality of Shows file button", async () => {
+  it("Verify existence of upload button", async () => {
     render(
       <ConfigProvider>
         <MemoryRouter>
@@ -118,20 +117,13 @@ describe("TableListView component", () => {
 
     columns[0].setReferenceTable("filegroup");
 
-    const showFilesButton = await screen.findAllByTitle("Show Files Button");
-
-    expect(showFilesButton[0]).toBeInTheDocument();
-
-    // Click the button
-    act(() => showFilesButton[0].click());
-
     // Check if the upload pop is now displayed
-    const uploadPop = await screen.findAllByTitle("Dropzone");
+    const dropzoneButton = screen.getByTitle("Dropzone");
 
-    expect(uploadPop[0]).not.toBeInTheDocument();
+    expect(dropzoneButton).toBeInTheDocument();
   });
 
-  it("Verify functionality of Shows file button", async () => {
+  it("Verify functionality of upload file button", async () => {
     render(
       <ConfigProvider>
         <MemoryRouter>
@@ -147,17 +139,26 @@ describe("TableListView component", () => {
 
     columns[0].setReferenceTable("filegroup");
 
-    const showFilesButton = await screen.findAllByTitle("Show Files Button");
-
-    expect(showFilesButton[0]).toBeInTheDocument();
-
-    // Click the button
-    act(() => showFilesButton[0].click());
-
     // Check if the upload pop is now displayed
-    const uploadPop = await screen.findAllByTitle("Dropzone");
+    const dropzoneButton = screen.getByTitle("Dropzone");
 
-    expect(uploadPop[0]).not.toBeInTheDocument();
+    expect(dropzoneButton).toBeInTheDocument();
+
+    const fileInputField = await screen.findByTitle("Uploader");
+    const event = {
+      target: {
+        files: [
+          new File(["(⌐□_□)"], "chucknorris.png", {
+            type: "image/png",
+          }) as unknown as File,
+        ],
+      },
+    };
+    await act(() => fireEvent.change(fileInputField, event));
+    //TODO: Fix this test to be less hacky, MYKWIM
+    const file_instance = await screen.findByTitle("file-instance");
+    expect(file_instance).toBeInTheDocument();
+
     it("renders the date time picker", () => {
       // Render the component
       render(<TableListView table={table} /* props */ />);

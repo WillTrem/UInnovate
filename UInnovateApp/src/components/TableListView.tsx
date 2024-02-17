@@ -1,5 +1,4 @@
 import "../styles/TableComponent.css";
-import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
@@ -14,7 +13,6 @@ import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
 import {
   Switch,
   Button,
@@ -47,9 +45,9 @@ import {
 } from "mui-tiptap";
 import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
-import axios, { all } from "axios";
+import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Table as Tabless,
   TableBody,
@@ -97,9 +95,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
-  const [fileGroupColumns, setFileGroupColumns] = useState<
-    Column[] | undefined
-  >([]);
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
   const [currentFileGroup, setCurrentFileGroup] = useState<Row[] | undefined>();
   const [inputField, setInputField] =
