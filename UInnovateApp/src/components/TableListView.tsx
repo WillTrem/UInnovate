@@ -24,6 +24,7 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
+  CircularProgress,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -46,7 +47,7 @@ import {
 } from "mui-tiptap";
 import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
-import axios from "axios";
+import axios, { all } from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -96,9 +97,14 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
+  const [fileGroupColumns, setFileGroupColumns] = useState<
+    Column[] | undefined
+  >([]);
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
+  const [currentFileGroup, setCurrentFileGroup] = useState<Row[] | undefined>();
   const [inputField, setInputField] =
     useState<(column: Column) => JSX.Element>();
+  const [renderNumber, setRenderNumber] = useState<number>(0);
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const config_table = vmd.getTable("meta", "appconfig_values");
@@ -303,6 +309,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           )
           .updateRow();
         setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
+        setRenderNumber(0);
       });
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
@@ -340,18 +347,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
     const newItems = allFileGroups?.filter((file) => file.id !== item.id);
     setAllFileGroups(newItems);
+    setRenderNumber(0);
     getRows();
-  };
-
-  const handleShowFiles = (column: Column) => {
-    fileStorageViewDataAccessor.fetchRows().then((response) => {
-      setAllFileGroups(
-        response?.filter(
-          (file) => file.groupid == currentRow.row[column.column_name]
-        )
-      );
-    });
-    setShowFiles(true);
   };
 
   const handleInputChange = (
@@ -416,7 +413,23 @@ const TableListView: React.FC<TableListViewProps> = ({
     setOpenPanel(false);
   };
 
+  const handleShowFiles = (column: Column) => {
+    if (renderNumber < 30) {
+      fileStorageViewDataAccessor.fetchRows().then((response) => {
+        setAllFileGroups(response);
+        setCurrentFileGroup(
+          response?.filter(
+            (file) => file.groupid == currentRow.row[column.column_name]
+          )
+        );
+        setShowFiles(true);
+        setRenderNumber(renderNumber + 1);
+      });
+    }
+  };
+
   const FileInputField = (column: Column) => {
+    handleShowFiles(column);
     if (!appConfigValues) {
       return null;
     }
@@ -435,25 +448,19 @@ const TableListView: React.FC<TableListViewProps> = ({
         currentRow.row[column.column_name] as string
       );
     }
-    return showFiles ? (
+    return showFiles && currentFileGroup ? (
       <div title="Dropzone">
         <Dropzone
           onItemAdded={onItemAdded}
           onItemRemoved={onItemRemoved}
-          items={allFileGroups}
+          items={currentFileGroup}
           currentColumn={column.column_name}
         />
       </div>
     ) : (
-      <Button
-        title="Show Files Button"
-        variant="contained"
-        color="primary"
-        style={{ marginLeft: 15 }}
-        onClick={handleShowFiles.bind(this, column)}
-      >
-        Show Files
-      </Button>
+      <div title="Dropzone">
+        <CircularProgress />
+      </div>
     );
   };
 
@@ -648,8 +655,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentCategory,
     inputValues,
     currentWYSIWYG,
-    allFileGroups,
     showFiles,
+    allFileGroups,
   ]);
   useEffect(() => {
     getRows();
@@ -791,9 +798,11 @@ const TableListView: React.FC<TableListViewProps> = ({
                       {typeof cell === "boolean"
                         ? cell.toString()
                         : columns[idx].references_table === "filegroup"
-                          ? fileGroupsView?.find(
-                              (fileGroup) => fileGroup.id === cell
-                            )?.count
+                          ? (
+                              fileGroupsView?.find(
+                                (fileGroup) => fileGroup.id === cell
+                              )?.count || 0
+                            ).toString() + " file(s)"
                           : (cell as React.ReactNode)}
                     </Box>
                   </TableCell>
@@ -844,6 +853,8 @@ const TableListView: React.FC<TableListViewProps> = ({
           setOpenPanel(false);
           setInputValues({});
           setShowFiles(false);
+          setCurrentFileGroup(undefined);
+          setRenderNumber(0);
         }}
       >
         <div>
@@ -853,18 +864,28 @@ const TableListView: React.FC<TableListViewProps> = ({
             <form>
               <div className={tableStyle}>
                 {columns.map((column, colIdx) => {
-                  return (
-                    <div key={colIdx} className="row-details">
-                      <label key={column.column_name + colIdx}>
-                        {column.column_name}
-                      </label>
-                      {column.references_table == "filegroup" ? (
+                  if (column.references_table != "filegroup") {
+                    return (
+                      <div key={colIdx} className="row-details">
+                        <label key={column.column_name + colIdx}>
+                          {column.column_name}
+                        </label>
+                        {inputField(column)}
+                      </div>
+                    );
+                  }
+                })}
+                {columns.map((column, colIdx) => {
+                  if (column.references_table == "filegroup") {
+                    return (
+                      <div key={colIdx} className="row-details">
+                        <label key={column.column_name + colIdx}>
+                          {column.column_name}
+                        </label>
                         <FileInputField {...column} />
-                      ) : (
-                        inputField(column)
-                      )}
-                    </div>
-                  );
+                      </div>
+                    );
+                  }
                 })}
               </div>
             </form>
@@ -878,6 +899,9 @@ const TableListView: React.FC<TableListViewProps> = ({
                   setCurrentWYSIWYG("");
                   setInputValues({});
                   setOpenPanel(false);
+                  setRenderNumber(0);
+                  setShowFiles(false);
+                  setCurrentFileGroup(undefined);
                 }}
               >
                 close
