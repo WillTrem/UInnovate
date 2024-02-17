@@ -1,20 +1,18 @@
 import "../styles/TableComponent.css";
-import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
+import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
 import StarterKit from "@tiptap/starter-kit";
-import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
 import {
   Switch,
   Button,
@@ -24,12 +22,16 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
+  createTheme,
+  ThemeProvider,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
 import {
+  DatePicker,
+  DateTimePicker,
   LocalizationProvider,
   StaticDateTimePicker,
 } from "@mui/x-date-pickers";
@@ -68,6 +70,18 @@ const buttonStyle = {
   backgroundColor: "#404040",
   width: "fit-content",
 };
+
+const theme = createTheme({
+  components: {
+    MuiPickersPopper: {
+      styleOverrides: {
+        root: {
+          zIndex: 19000,
+        },
+      },
+    },
+  },
+});
 
 const TableListView: React.FC<TableListViewProps> = ({
   table,
@@ -534,29 +548,33 @@ const TableListView: React.FC<TableListViewProps> = ({
       } else if (columnDisplayType.value == "date") {
         return (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticDatePicker
-              value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) =>
-                handleInputChange(date, column.column_name, "date")
-              }
-              name={column.column_name}
-              className="date-time-picker"
-              readOnly={column.is_editable === false ? true : false}
-            />
+            <ThemeProvider theme={theme}>
+              <DatePicker
+                value={dayjs(currentRow.row[column.column_name])}
+                onChange={(date) =>
+                  handleInputChange(date, column.column_name, "date")
+                }
+                name={column.column_name}
+                className="date-time-picker"
+                readOnly={column.is_editable === false ? true : false}
+              />
+            </ThemeProvider>
           </LocalizationProvider>
         );
       } else if (columnDisplayType.value == "datetime") {
         return (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticDateTimePicker
-              value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) =>
-                handleInputChange(date, column.column_name, "date")
-              }
-              name={column.column_name}
-              className="date-time-picker"
-              readOnly={column.is_editable === false ? true : false}
-            />
+            <ThemeProvider theme={theme}>
+              <DateTimePicker
+                value={dayjs(currentRow.row[column.column_name])}
+                onChange={(date) =>
+                  handleInputChange(date, column.column_name, "date")
+                }
+                name={column.column_name}
+                className="date-time-picker"
+                readOnly={column.is_editable === false ? true : false}
+              />
+            </ThemeProvider>
           </LocalizationProvider>
         );
       } else if (columnDisplayType.value == "categories") {
@@ -847,75 +865,77 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          {table.stand_alone_details_view ? <NavBar /> : <div></div>}
-          <div className="form-panel-container">
-            <Typography variant="h5">Details</Typography>
-            <form>
-              <div className={tableStyle}>
-                {columns.map((column, colIdx) => {
-                  return (
-                    <div key={colIdx} className="row-details">
-                      <label key={column.column_name + colIdx}>
-                        {column.column_name}
-                      </label>
-                      {column.references_table == "filegroup" ? (
-                        <FileInputField {...column} />
-                      ) : (
-                        inputField(column)
-                      )}
-                    </div>
-                  );
-                })}
+          <div>
+            {table.stand_alone_details_view ? <NavBar /> : <div></div>}
+            <div className="form-panel-container">
+              <Typography variant="h5">Details</Typography>
+              <form>
+                <div className={tableStyle}>
+                  {columns.map((column, colIdx) => {
+                    return (
+                      <div key={colIdx} className="row-details">
+                        <label key={column.column_name + colIdx}>
+                          {column.column_name}
+                        </label>
+                        {column.references_table == "filegroup" ? (
+                          <FileInputField {...column} />
+                        ) : (
+                          inputField(column)
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </form>
+              <div>
+                <Button
+                  variant="contained"
+                  style={buttonStyle}
+                  onClick={() => {
+                    setCurrentPhone("");
+                    setCurrentCategory("");
+                    setCurrentWYSIWYG("");
+                    setInputValues({});
+                    setOpenPanel(false);
+                  }}
+                >
+                  close
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    marginTop: 20,
+                    backgroundColor: "#403eb5",
+                    width: "fit-content",
+                    marginLeft: 10,
+                  }}
+                  onClick={handleFormSubmit}
+                >
+                  Save
+                </Button>
               </div>
-            </form>
-            <div>
-              <Button
-                variant="contained"
-                style={buttonStyle}
-                onClick={() => {
-                  setCurrentPhone("");
-                  setCurrentCategory("");
-                  setCurrentWYSIWYG("");
-                  setInputValues({});
-                  setOpenPanel(false);
-                }}
-              >
-                close
-              </Button>
-              <Button
-                variant="contained"
-                style={{
-                  marginTop: 20,
-                  backgroundColor: "#403eb5",
-                  width: "fit-content",
-                  marginLeft: 10,
-                }}
-                onClick={handleFormSubmit}
-              >
-                Save
-              </Button>
             </div>
           </div>
-        </div>
-        <div style={{ paddingBottom: "2em" }}>
-          {table.lookup_tables == "null" ? (
-            <div></div>
-          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
-            <div></div>
-          ) : showTable ? (
-            <div style={{ paddingBottom: "2em" }}>
-              <LookUpTableDetails table={table} />
-            </div>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginLeft: 15 }}
-              onClick={() => setShowTable(true)}
-            >
-              Show Look Up Table
-            </Button>
-          )}
+          <div style={{ paddingBottom: "2em" }}>
+            {table.lookup_tables == "null" ? (
+              <div></div>
+            ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+              <div></div>
+            ) : showTable ? (
+              <div style={{ paddingBottom: "2em" }}>
+                <LookUpTableDetails table={table} />
+              </div>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ marginLeft: 15 }}
+                onClick={() => setShowTable(true)}
+              >
+                Show Look Up Table
+              </Button>
+            )}
+          </div>
         </div>
       </SlidingPanel>
     </div>
