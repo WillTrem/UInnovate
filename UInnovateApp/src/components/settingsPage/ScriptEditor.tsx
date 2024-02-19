@@ -127,6 +127,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
                 </IconButton>
               </div>
               <AceEditor
+                data-testid="ace-editor"
                 mode="javascript"
                 theme="github"
                 value={content}
