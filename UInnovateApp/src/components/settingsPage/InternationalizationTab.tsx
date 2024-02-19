@@ -228,6 +228,7 @@ const InternationalizationTab = () => {
                         onClick={handleDropdownLanguages}
                         variant="outlined"
                         label="Default Language"
+                        defaultValue=""
                     >
                         {languages.map(language => (
                             <MenuItem key={language} value={language}>{language}</MenuItem>
@@ -253,6 +254,7 @@ const InternationalizationTab = () => {
                             if (translation) {
                                 return (
                                     <TranslationTableRow
+                                        getTranslations={getTranslations}
                                         key={idx}
                                         keyCode={translation["key_code"] as string}
                                         value={translation["value"] as string}
@@ -294,7 +296,7 @@ const InternationalizationTab = () => {
                                 label="Add Language"
                             >
                                 {isoLanguages.getAllNames().map(language => (
-                                    <MenuItem value={language}>{language}</MenuItem>
+                                    <MenuItem key={language} value={language}>{language}</MenuItem>
                                 ))}
                             </Select>
                         </FormControl>
@@ -357,44 +359,16 @@ const InternationalizationTab = () => {
 };
 
 interface TranslationTableRowProps {
-    id?: string,
+    getTranslations: () => void,
     keyCode?: string,
     value?: string,
     is_default?: boolean,
     onEdit: (keyCode: string, newValue: string) => void;
 }
 
-const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, value, is_default, onEdit }) => {
+const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslations, keyCode, value, is_default, onEdit }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedValue, setEditedValue] = useState(value || "");
-
-    const [translations, setTranslations] = useState<Row[]>([]);
-
-    const getTranslations = async () => {
-        try {
-            const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
-                "meta",
-                "i18n_translations"
-            );
-
-            const rows = await data_accessor.fetchRows();
-            
-            if (rows) {
-                console.log("Fetched rows:", rows);
-                const translationsWithIsDefault = rows.map(row => ({
-                    ...row,
-                    is_default: row.is_default || false,
-                }));
-
-                setTranslations(translationsWithIsDefault);
-            }
-        } catch (error) {
-            console.error('Error fetching translations:', error);
-        }
-    };
-
-    useEffect(() => {
-    }, []);
 
     const handleDoubleClick = () => {
         if (!is_default) {
