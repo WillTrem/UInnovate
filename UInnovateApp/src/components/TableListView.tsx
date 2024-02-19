@@ -695,23 +695,31 @@ const TableListView: React.FC<TableListViewProps> = ({
   }, [openPanel]);
 
 /////////////////////////////////////////
-const [anchorEl, setAnchorEl] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
-const [checked, setChecked] = useState<string[]>([]);
+const [MenuPopUp, setMenuPopUp] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
+const [checkedList, setcheckedList] = useState<{ [key: string]: string[] }>({});
 
 const handleClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-  const newAnchorEl = [...anchorEl];
-  newAnchorEl[index] = event.currentTarget;
-  setAnchorEl(newAnchorEl);
+  const newPopup = [...MenuPopUp];
+  newPopup[index] = event.currentTarget;
+  setMenuPopUp(newPopup);
 };
 
 const handleClose = (index: number) => {
-  const newAnchorEl = [...anchorEl];
-  newAnchorEl[index] = null;
-  setAnchorEl(newAnchorEl);
+  const newPopup = [...MenuPopUp];
+  newPopup[index] = null;
+  setMenuPopUp(newPopup);
 };
-const handleToggle = (value: string) => () => {
-  const currentIndex = checked.indexOf(value);
-  const newChecked = [...checked];
+useEffect(() => {
+  const firstChecked = columns.reduce((acc, column) => {
+    acc[column.column_name] = [];
+    return acc;
+  }, {} as { [key: string]: string[] });
+
+  setcheckedList(firstChecked);
+}, [columns]);
+const handleToggle = (value: string, columnName: string) => () => {
+  const currentIndex = checkedList[columnName]?.indexOf(value) ?? -1;
+  const newChecked = [...(checkedList[columnName] || [])];
 
   if (currentIndex === -1) {
     newChecked.push(value);
@@ -719,26 +727,23 @@ const handleToggle = (value: string) => () => {
     newChecked.splice(currentIndex, 1);
   }
 
-  setChecked(newChecked);
+  setcheckedList({ ...checkedList, [columnName]: newChecked });
 };
 
+console.log(checkedList);
+
+const Reset = () => {
+  const resetChecked: { [key: string]: string[] } = {};
+  columns.forEach((column) => {
+    resetChecked[column.column_name] = [];
+  });
+  setcheckedList(resetChecked);
+};
 ///////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   return (
     <div>
+      <button onClick={Reset}> Reset Filters</button>
       <div
         style={{
           display: "flex",
@@ -820,24 +825,29 @@ const handleToggle = (value: string) => () => {
                 <button onClick={(event) => handleClick(event, index)}>Filter</button>
                 <Menu
                   id={`simple-menu-${index}`}
-                  anchorEl={anchorEl[index]}
+                  anchorEl={MenuPopUp[index]}
                   keepMounted
-                  open={Boolean(anchorEl[index])}
+                  open={Boolean(MenuPopUp[index])}
                   onClose={() => handleClose(index)}
                 >
-                  {[...new Set(sortedRows?.map((row) => row.row[column.column_name].toString()))].map((value) => (
-                    <MenuItem key={value}>
-                      <Checkbox
-                        edge="start"
-                        checked={checked.indexOf(value) !== -1}
-                        tabIndex={-1}
-                        disableRipple
-                        inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
-                        onClick={handleToggle(value)}
-                      />
-                      {value}
-                    </MenuItem>
-                  ))}
+                  {[...new Set(sortedRows?.map((row) => row.row[column.column_name]))].map((value) => {
+                    if (value === true || value === false) {
+                      value = value.toString();
+                    }
+                    return (
+                      <MenuItem key={value}>
+                        <Checkbox
+                          edge="start"
+                          checked={checkedList[column.column_name]?.indexOf(value) !== -1}
+                          tabIndex={-1}
+                          disableRipple
+                          inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
+                          onClick={handleToggle(value, column.column_name)}
+                        />
+                        {value}
+                      </MenuItem>
+                    );
+                  })}
                 </Menu>
               </TableCell>
             ))}
