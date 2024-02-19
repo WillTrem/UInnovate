@@ -24,6 +24,8 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
+  Menu,
+  Checkbox,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -673,8 +675,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -692,6 +693,49 @@ const TableListView: React.FC<TableListViewProps> = ({
       }, 1000);
     }
   }, [openPanel]);
+
+/////////////////////////////////////////
+const [anchorEl, setAnchorEl] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
+const [checked, setChecked] = useState<string[]>([]);
+
+const handleClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
+  const newAnchorEl = [...anchorEl];
+  newAnchorEl[index] = event.currentTarget;
+  setAnchorEl(newAnchorEl);
+};
+
+const handleClose = (index: number) => {
+  const newAnchorEl = [...anchorEl];
+  newAnchorEl[index] = null;
+  setAnchorEl(newAnchorEl);
+};
+const handleToggle = (value: string) => () => {
+  const currentIndex = checked.indexOf(value);
+  const newChecked = [...checked];
+
+  if (currentIndex === -1) {
+    newChecked.push(value);
+  } else {
+    newChecked.splice(currentIndex, 1);
+  }
+
+  setChecked(newChecked);
+};
+
+///////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div>
@@ -762,21 +806,43 @@ const TableListView: React.FC<TableListViewProps> = ({
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
         >
-          <TableHead>
-            <TableRow>
-              {columns.map((column, index) => (
-                <TableCell key={index} style={{ textAlign: "center" }}>
-                  <TableSortLabel
-                    active={orderBy === column.column_name}
-                    direction={sortOrder as "asc" | "desc" | undefined}
-                    onClick={() => handleSort(column.column_name)}
-                  >
-                    {column.column_name}
-                  </TableSortLabel>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
+         <TableHead>
+          <TableRow>
+            {columns.map((column, index) => (
+              <TableCell key={index} style={{ textAlign: "center" }}>
+                <TableSortLabel
+                  active={orderBy === column.column_name}
+                  direction={sortOrder as "asc" | "desc" | undefined}
+                  onClick={() => handleSort(column.column_name)}
+                >
+                  {column.column_name}
+                </TableSortLabel>
+                <button onClick={(event) => handleClick(event, index)}>Filter</button>
+                <Menu
+                  id={`simple-menu-${index}`}
+                  anchorEl={anchorEl[index]}
+                  keepMounted
+                  open={Boolean(anchorEl[index])}
+                  onClose={() => handleClose(index)}
+                >
+                  {[...new Set(sortedRows?.map((row) => row.row[column.column_name].toString()))].map((value) => (
+                    <MenuItem key={value}>
+                      <Checkbox
+                        edge="start"
+                        checked={checked.indexOf(value) !== -1}
+                        tabIndex={-1}
+                        disableRipple
+                        inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
+                        onClick={handleToggle(value)}
+                      />
+                      {value}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
           <TableBody>
             {sortedRows?.map((row, rowIdx) => (
               <TableRow
@@ -792,8 +858,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                         ? cell.toString()
                         : columns[idx].references_table === "filegroup"
                           ? fileGroupsView?.find(
-                              (fileGroup) => fileGroup.id === cell
-                            )?.count
+                            (fileGroup) => fileGroup.id === cell
+                          )?.count
                           : (cell as React.ReactNode)}
                     </Box>
                   </TableCell>
@@ -817,7 +883,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             <CCol sm={2} className="ml-auto" style={{ textAlign: "right" }}>
               <FormControl size="small">
                 <Select
-                  value={PaginationValue}
+                  value={PaginationValue.toString()}
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
