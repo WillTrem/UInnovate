@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
 import { Modal, Form } from "react-bootstrap";
-import { Button } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
 import { IoLockClosed } from "react-icons/io5";
 import { IoMdAddCircle } from "react-icons/io"; 
 import { PiNotePencilBold } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import "../../styles/InternationalizationTab.css";
+import isoLanguages from 'iso-639-1';
 
 const buttonStyle = {
     marginRight: 10,
@@ -23,14 +26,13 @@ const addLabelButtonStyle = {
     
 };
 
-
 const InternationalizationTab = () => {
     const [showModalAddLanguage, setshowModalAddLanguage] = useState<boolean>(false);
     const [showModalAddLabel, setshowModalAddLabel] = useState<boolean>(false);
     const [translations, setTranslations] = useState<Row[]>([]);
     const [newLanguageCode, setNewLanguageCode] = useState('');
     const [newLanguageName, setNewLanguageName] = useState('');
-    const [languages, setLanguages] = useState<string[]>([]);
+    const [languages, setLanguages] = useState<string[]>([]); 
 
     const [newLabelName, setNewLabelName] = useState<string>(''); 
     
@@ -40,7 +42,6 @@ const InternationalizationTab = () => {
                 "meta",
                 "i18n_translations"
             );
-
             const rows = await data_accessor.fetchRows();
             if (rows) {
                 console.log("Fetched rows:", rows);
@@ -57,8 +58,27 @@ const InternationalizationTab = () => {
         }
     };
 
+    const getLanguages = async () => {
+        try {
+            const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+                "meta",
+                "i18n_languages"
+            );
+
+            // Fetch the list of language names for the dropdown
+            const rows = await data_accessor.fetchRows();
+            if (rows) {
+                const languageCodes = rows.map(row => row.language_code as string);
+                setLanguages(languageCodes);
+            }
+        } catch (error) {
+            console.error('Error fetching languages:', error);
+        }
+    }
+
     useEffect(() => {
         getTranslations();
+        getLanguages();
     }, []);
 
     const handleAddLanguage = () => {
@@ -68,15 +88,13 @@ const InternationalizationTab = () => {
     const handleClose = () => {
         setshowModalAddLanguage(false);
         setshowModalAddLabel(false);
+        resetNewLanguage();
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.name === 'language_code') {
-            setNewLanguageCode(e.target.value);
-        } else if (e.target.name === 'language_name') {
-            setNewLanguageName(e.target.value);
-        }
-    }
+    const resetNewLanguage = () => {
+        setNewLanguageCode('');
+        setNewLanguageName('');
+    };
 
     const handleSaveLanguage = async () => {
         if (newLanguageCode && newLanguageName) {
@@ -104,6 +122,7 @@ const InternationalizationTab = () => {
                 });
 
                 await data_accessor?.addRow();
+                resetNewLanguage();
 
             } catch (error) {
                 console.error('Error adding language:', error);
@@ -169,6 +188,15 @@ const InternationalizationTab = () => {
         }
     };
 
+    const handleDropdownLanguages = async () => {
+        await getLanguages();
+    };
+
+    const handleLanguageChange = (event: SelectChangeEvent<string>) => {
+        setNewLanguageName(event.target.value as string);
+        setNewLanguageCode(isoLanguages.getCode(event.target.value as string));
+    };
+
     return (
         <div>
             <div>
@@ -189,14 +217,35 @@ const InternationalizationTab = () => {
                 </Button>
             </div>
 
+            <div className="default-language-input">
+
+                <FormControl fullWidth>
+                    <InputLabel id="default-language-label">Default Language</InputLabel>
+                    <Select
+                        labelId="default-language-label"
+                        name="Default Language"
+                        // onChange={() => handleDefaultLanguageChange()}
+                        onClick={handleDropdownLanguages}
+                        variant="outlined"
+                        label="Default Language"
+                    >
+                        {languages.map(language => (
+                            <MenuItem key={language} value={language}>{language}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </div>
+
             <div style={{ maxHeight: '700px', overflowY: 'auto' }}> {/* Set max height and enable vertical scrolling */}
                 <TableComponent bordered data-testid="table-component">
                     <thead>
                         <tr>
                             <th>Label</th>
-                            {languages.map(language => (
+                            {/* TODO: Fix the default language, the comments will be left for now*/}
+                            <th>{`LANG:${languages[0]}`}</th>
+                            {/* {languages.map(language => (
                                 <th key={language}>{`LANG:${language}`}</th>
-                            ))}
+                            ))} */}
                         </tr>
                     </thead>
                     <tbody>
@@ -235,22 +284,20 @@ const InternationalizationTab = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        Language Name
-                        <Form.Control
-                            type="text"
-                            placeholder="Language Name (e.g. English)"
-                            name="language_name"
-                            value={newLanguageName}
-                            onChange={handleInputChange}
-                        />
-                        Associated Language Code
-                        <Form.Control
-                            type="text"
-                            placeholder="Language Code (e.g. ENG)"
-                            name="language_code"
-                            value={newLanguageCode}
-                            onChange={handleInputChange}
-                        />
+                        <FormControl fullWidth>
+                        <InputLabel id="add-language">Choose language</InputLabel>
+                            <Select
+                                labelId="add-language"
+                                value={newLanguageName}
+                                onChange={handleLanguageChange}
+                                variant="outlined"
+                                label="Add Language"
+                            >
+                                {isoLanguages.getAllNames().map(language => (
+                                    <MenuItem value={language}>{language}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -334,7 +381,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
             
             if (rows) {
                 console.log("Fetched rows:", rows);
-
                 const translationsWithIsDefault = rows.map(row => ({
                     ...row,
                     is_default: row.is_default || false,
@@ -348,7 +394,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
     };
 
     useEffect(() => {
-        getTranslations();
     }, []);
 
     const handleDoubleClick = () => {
@@ -419,20 +464,20 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
         }
     };
 
-        // TODO: Implement save changes functionality
-        const saveChanges = async () => {
-            try {
-                if (value !== editedValue) {
-
-                    // Console log the changes
-                    console.log(`Changes detected: ${value} -> ${editedValue}`);
-                    onEdit(keyCode || "", editedValue);
-                }
-            } catch (error) {
-                console.error('Error saving changes:', error);
+    const saveChanges = async () => {
+        try {
+            if (value !== editedValue) {
+                // Console log the changes
+                console.log(`Changes detected: ${value} -> ${editedValue}`);
+                onEdit(keyCode || "", editedValue);
             }
-        };
-    
+
+        } catch (error) {
+            console.error('Error saving changes:', error);
+        }
+
+    };
+
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -442,7 +487,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
 
     return (
         <tr>
-            <td onDoubleClick={handleDoubleClick} >
+            <td onDoubleClick={handleDoubleClick} className="container-labels">
                 <input
                     value={isEditing ? editedValue : keyCode}
                     onChange={handleChange}
@@ -456,7 +501,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
                         borderRadius: '4px',
                     }}
                 />
-                {is_default ? <IoLockClosed /> : (
+                {is_default ? <IoLockClosed className="icon-lock" /> : (
                     <>
                         <PiNotePencilBold
                             style={{ marginLeft: 5, cursor: 'pointer' }}
