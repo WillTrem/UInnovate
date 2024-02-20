@@ -26,6 +26,9 @@ const addLabelButtonStyle = {
     
 };
 
+const language_code_column_name = "language_code";
+const order_by_column = "translation_id";
+
 const InternationalizationTab = () => {
     const [showModalAddLanguage, setshowModalAddLanguage] = useState<boolean>(false);
     const [showModalAddLabel, setshowModalAddLabel] = useState<boolean>(false);
@@ -35,6 +38,8 @@ const InternationalizationTab = () => {
     const [languages, setLanguages] = useState<string[]>([]); 
 
     const [newLabelName, setNewLabelName] = useState<string>(''); 
+
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
     
     const getTranslations = async () => {
         try {
@@ -42,7 +47,7 @@ const InternationalizationTab = () => {
                 "meta",
                 "i18n_translations"
             );
-            const rows = await data_accessor.fetchRows();
+            const rows = await data_accessor.fetchRowsByColumnValues(language_code_column_name, selectedLanguage, order_by_column);
             if (rows) {
                 console.log("Fetched rows:", rows);
 
@@ -81,7 +86,7 @@ const InternationalizationTab = () => {
         getLanguages();
     }, []);
 
-    const handleAddLanguage = () => {
+    const showAddLanguage = () => {
         setshowModalAddLanguage(true);
     };
 
@@ -192,9 +197,13 @@ const InternationalizationTab = () => {
         await getLanguages();
     };
 
-    const handleLanguageChange = (event: SelectChangeEvent<string>) => {
+    const handleSelectedNewLanguage = (event: SelectChangeEvent<string>) => {
         setNewLanguageName(event.target.value as string);
         setNewLanguageCode(isoLanguages.getCode(event.target.value as string));
+    };
+
+    const handleSelectedLanguage = (event: SelectChangeEvent<string>) => {
+        setSelectedLanguage(event.target.value as string);
     };
 
     return (
@@ -202,7 +211,7 @@ const InternationalizationTab = () => {
             <div>
             <Button
                 data-testid="add-language-button" 
-                onClick={handleAddLanguage}
+                onClick={showAddLanguage}
                 style={buttonStyle}
                 variant="contained"
             >
@@ -224,11 +233,11 @@ const InternationalizationTab = () => {
                     <Select
                         labelId="default-language-label"
                         name="Default Language"
-                        // onChange={() => handleDefaultLanguageChange()}
+                        onChange={handleSelectedLanguage}
                         onClick={handleDropdownLanguages}
                         variant="outlined"
                         label="Default Language"
-                        defaultValue=""
+                        defaultValue=''
                     >
                         {languages.map(language => (
                             <MenuItem key={language} value={language}>{language}</MenuItem>
@@ -242,11 +251,7 @@ const InternationalizationTab = () => {
                     <thead>
                         <tr>
                             <th>Label</th>
-                            {/* TODO: Fix the default language, the comments will be left for now*/}
-                            <th>{`LANG:${languages[0]}`}</th>
-                            {/* {languages.map(language => (
-                                <th key={language}>{`LANG:${language}`}</th>
-                            ))} */}
+                            <th>{`LANG:${selectedLanguage}`}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -291,7 +296,7 @@ const InternationalizationTab = () => {
                             <Select
                                 labelId="add-language"
                                 value={newLanguageName}
-                                onChange={handleLanguageChange}
+                                onChange={handleSelectedNewLanguage}
                                 variant="outlined"
                                 label="Add Language"
                             >
