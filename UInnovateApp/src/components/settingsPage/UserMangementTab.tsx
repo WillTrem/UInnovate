@@ -9,11 +9,12 @@ import AddUserModal from "./AddUserModal";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { Role } from "../../redux/AuthSlice";
+import { Role, updateSchemaAccess } from "../../redux/AuthSlice";
 import UnauthorizedScreen from "../UnauthorizedScreen";
 import MultiSelect from "./MultiSelect";
 import  { setUserData, updateUserData } from "../../redux/UserDataSlice";
 
+import {isEqual} from 'lodash';
 
 
 // Component containing the Users Management tab of the Settings page
@@ -114,6 +115,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 	const [schemaAccessList, setSchemaAccessList] = useState(schemaAccess);
 	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const dispatch = useDispatch();
+	const {user: current_user, schema_access} = useSelector((state: RootState) => state.auth)
 
 	function handleActiveToggle(event: React.ChangeEvent<HTMLInputElement>, checked: boolean ) {
 		// TODO: Implement the active toggle function
@@ -129,6 +131,10 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 	// Updates the global user data state with new user data 
 	useEffect(() => {
 		dispatch(updateUserData(userData))
+		// If the current user is the one being modified, update the schema access list state directly (only if modified)
+		if(current_user === userData.email && !isEqual(new Set(schema_access), new Set(userData.schema_access))){
+			dispatch(updateSchemaAccess(userData.schema_access as string[]));
+		}
 	}, [userData]);
 
 
