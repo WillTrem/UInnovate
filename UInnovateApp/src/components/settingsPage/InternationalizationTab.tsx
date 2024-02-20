@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
 import { Modal, Form } from "react-bootstrap";
-import { Button } from "@mui/material";
+import { Button, SelectChangeEvent } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
 import { IoLockClosed } from "react-icons/io5";
 import { IoMdAddCircle } from "react-icons/io"; 
 import { PiNotePencilBold } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
+import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import "../../styles/InternationalizationTab.css";
+import isoLanguages from 'iso-639-1';
 
 const buttonStyle = {
     marginRight: 10,
@@ -23,6 +26,8 @@ const addLabelButtonStyle = {
     
 };
 
+const language_code_column_name = "language_code";
+const order_by_column = "translation_id";
 
 const InternationalizationTab = () => {
     const [showModalAddLanguage, setshowModalAddLanguage] = useState<boolean>(false);
@@ -30,9 +35,11 @@ const InternationalizationTab = () => {
     const [translations, setTranslations] = useState<Row[]>([]);
     const [newLanguageCode, setNewLanguageCode] = useState('');
     const [newLanguageName, setNewLanguageName] = useState('');
-    const [languages, setLanguages] = useState<string[]>([]);
+    const [languages, setLanguages] = useState<string[]>([]); 
 
     const [newLabelName, setNewLabelName] = useState<string>(''); 
+
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
     
     const getTranslations = async () => {
         try {
@@ -40,8 +47,7 @@ const InternationalizationTab = () => {
                 "meta",
                 "i18n_translations"
             );
-
-            const rows = await data_accessor.fetchRows();
+            const rows = await data_accessor.fetchRowsByColumnValues(language_code_column_name, selectedLanguage, order_by_column);
             if (rows) {
                 console.log("Fetched rows:", rows);
 
@@ -57,26 +63,43 @@ const InternationalizationTab = () => {
         }
     };
 
+    const getLanguages = async () => {
+        try {
+            const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+                "meta",
+                "i18n_languages"
+            );
+
+            // Fetch the list of language names for the dropdown
+            const rows = await data_accessor.fetchRows();
+            if (rows) {
+                const languageCodes = rows.map(row => row.language_code as string);
+                setLanguages(languageCodes);
+            }
+        } catch (error) {
+            console.error('Error fetching languages:', error);
+        }
+    }
+
     useEffect(() => {
         getTranslations();
+        getLanguages();
     }, []);
 
-    const handleAddLanguage = () => {
+    const showAddLanguage = () => {
         setshowModalAddLanguage(true);
     };
 
     const handleClose = () => {
         setshowModalAddLanguage(false);
         setshowModalAddLabel(false);
+        resetNewLanguage();
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.name === 'language_code') {
-            setNewLanguageCode(e.target.value);
-        } else if (e.target.name === 'language_name') {
-            setNewLanguageName(e.target.value);
-        }
-    }
+    const resetNewLanguage = () => {
+        setNewLanguageCode('');
+        setNewLanguageName('');
+    };
 
     const handleSaveLanguage = async () => {
         if (newLanguageCode && newLanguageName) {
@@ -104,6 +127,7 @@ const InternationalizationTab = () => {
                 });
 
                 await data_accessor?.addRow();
+                resetNewLanguage();
 
             } catch (error) {
                 console.error('Error adding language:', error);
@@ -169,12 +193,25 @@ const InternationalizationTab = () => {
         }
     };
 
+    const handleDropdownLanguages = async () => {
+        await getLanguages();
+    };
+
+    const handleSelectedNewLanguage = (event: SelectChangeEvent<string>) => {
+        setNewLanguageName(event.target.value as string);
+        setNewLanguageCode(isoLanguages.getCode(event.target.value as string));
+    };
+
+    const handleSelectedLanguage = (event: SelectChangeEvent<string>) => {
+        setSelectedLanguage(event.target.value as string);
+    };
+
     return (
         <div>
             <div>
             <Button
                 data-testid="add-language-button" 
-                onClick={handleAddLanguage}
+                onClick={showAddLanguage}
                 style={buttonStyle}
                 variant="contained"
             >
@@ -189,14 +226,32 @@ const InternationalizationTab = () => {
                 </Button>
             </div>
 
+            <div className="default-language-input">
+
+                <FormControl fullWidth>
+                    <InputLabel id="default-language-label">Default Language</InputLabel>
+                    <Select
+                        labelId="default-language-label"
+                        name="Default Language"
+                        onChange={handleSelectedLanguage}
+                        onClick={handleDropdownLanguages}
+                        variant="outlined"
+                        label="Default Language"
+                        defaultValue=''
+                    >
+                        {languages.map(language => (
+                            <MenuItem key={language} value={language}>{language}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </div>
+
             <div style={{ maxHeight: '700px', overflowY: 'auto' }}> {/* Set max height and enable vertical scrolling */}
                 <TableComponent bordered data-testid="table-component">
                     <thead>
                         <tr>
                             <th>Label</th>
-                            {languages.map(language => (
-                                <th key={language}>{`LANG:${language}`}</th>
-                            ))}
+                            <th>{`LANG:${selectedLanguage}`}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -204,6 +259,7 @@ const InternationalizationTab = () => {
                             if (translation) {
                                 return (
                                     <TranslationTableRow
+                                        getTranslations={getTranslations}
                                         key={idx}
                                         keyCode={translation["key_code"] as string}
                                         value={translation["value"] as string}
@@ -235,22 +291,20 @@ const InternationalizationTab = () => {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        Language Name
-                        <Form.Control
-                            type="text"
-                            placeholder="Language Name (e.g. English)"
-                            name="language_name"
-                            value={newLanguageName}
-                            onChange={handleInputChange}
-                        />
-                        Associated Language Code
-                        <Form.Control
-                            type="text"
-                            placeholder="Language Code (e.g. ENG)"
-                            name="language_code"
-                            value={newLanguageCode}
-                            onChange={handleInputChange}
-                        />
+                        <FormControl fullWidth>
+                        <InputLabel id="add-language">Choose language</InputLabel>
+                            <Select
+                                labelId="add-language"
+                                value={newLanguageName}
+                                onChange={handleSelectedNewLanguage}
+                                variant="outlined"
+                                label="Add Language"
+                            >
+                                {isoLanguages.getAllNames().map(language => (
+                                    <MenuItem key={language} value={language}>{language}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -310,46 +364,16 @@ const InternationalizationTab = () => {
 };
 
 interface TranslationTableRowProps {
-    id?: string,
+    getTranslations: () => void,
     keyCode?: string,
     value?: string,
     is_default?: boolean,
     onEdit: (keyCode: string, newValue: string) => void;
 }
 
-const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, value, is_default, onEdit }) => {
+const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslations, keyCode, value, is_default, onEdit }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedValue, setEditedValue] = useState(value || "");
-
-    const [translations, setTranslations] = useState<Row[]>([]);
-
-    const getTranslations = async () => {
-        try {
-            const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
-                "meta",
-                "i18n_translations"
-            );
-
-            const rows = await data_accessor.fetchRows();
-            
-            if (rows) {
-                console.log("Fetched rows:", rows);
-
-                const translationsWithIsDefault = rows.map(row => ({
-                    ...row,
-                    is_default: row.is_default || false,
-                }));
-
-                setTranslations(translationsWithIsDefault);
-            }
-        } catch (error) {
-            console.error('Error fetching translations:', error);
-        }
-    };
-
-    useEffect(() => {
-        getTranslations();
-    }, []);
 
     const handleDoubleClick = () => {
         if (!is_default) {
@@ -419,20 +443,20 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
         }
     };
 
-        // TODO: Implement save changes functionality
-        const saveChanges = async () => {
-            try {
-                if (value !== editedValue) {
-
-                    // Console log the changes
-                    console.log(`Changes detected: ${value} -> ${editedValue}`);
-                    onEdit(keyCode || "", editedValue);
-                }
-            } catch (error) {
-                console.error('Error saving changes:', error);
+    const saveChanges = async () => {
+        try {
+            if (value !== editedValue) {
+                // Console log the changes
+                console.log(`Changes detected: ${value} -> ${editedValue}`);
+                onEdit(keyCode || "", editedValue);
             }
-        };
-    
+
+        } catch (error) {
+            console.error('Error saving changes:', error);
+        }
+
+    };
+
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
         return () => {
@@ -442,7 +466,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
 
     return (
         <tr>
-            <td onDoubleClick={handleDoubleClick} >
+            <td onDoubleClick={handleDoubleClick} className="container-labels">
                 <input
                     value={isEditing ? editedValue : keyCode}
                     onChange={handleChange}
@@ -456,7 +480,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ id, keyCode, 
                         borderRadius: '4px',
                     }}
                 />
-                {is_default ? <IoLockClosed /> : (
+                {is_default ? <IoLockClosed className="icon-lock" /> : (
                     <>
                         <PiNotePencilBold
                             style={{ marginLeft: 5, cursor: 'pointer' }}
