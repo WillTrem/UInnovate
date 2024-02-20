@@ -69,6 +69,11 @@ export class DataAccessorMock {
     }
   });
 
+  updateRow = vi.fn().mockImplementation(() => {
+    console.log("updateRow in DataAccessor mock was called");
+    return Promise.resolve();
+  });
+
   upsert = vi.fn().mockImplementation(() => {
     console.log("upsert in DataAccessor mock was called");
     return Promise.resolve();

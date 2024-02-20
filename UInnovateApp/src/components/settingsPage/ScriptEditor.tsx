@@ -44,6 +44,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
         updatedScript = { ...updateScript, content: event.target.value };
         break;
       case "btn_name":
+        console.log("You're changing the button's name!", event.target.value);
         updatedScript = { ...updateScript, btn_name: event.target.value };
         break;
       case "description":
@@ -99,7 +100,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
           <div className="d-flex flex-column align-items-start mb-5">
             <h6>Description</h6>
             <TextField
-              multiline
+              data-testid="description-field"
               fullWidth
               defaultValue={script["description"]}
               onChange={(event) =>

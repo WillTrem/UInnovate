@@ -15,6 +15,10 @@ export default {
     console.log("getRowsDataAccessorForOrder in VMD mock was called");
     return new DataAccessorMock("/api/data");
   }),
+  getUpdateRowDataAccessor: vi.fn().mockImplementation(() => {
+    console.log("getUpdateRowDataAccessor in VMD mock was called");
+    return new DataAccessorMock();
+  }),
   getUpsertDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getUpsertDataAccessor in VMD mock was called");
     return new DataAccessorMock();
