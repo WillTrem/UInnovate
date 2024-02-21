@@ -1,4 +1,5 @@
 import axiosCustom from "../api/AxiosCustom";
+import { Role } from "../redux/AuthSlice";
 import { DataAccessor, Row } from "./DataAccessor";
 import { FunctionAccessor } from "./FunctionAccessor";
 
@@ -879,7 +880,7 @@ export interface UserData {
   email: string;
   first_name?: string;
   last_name?: string;
-  role?: string;
+  role?: Role;
   is_active?: boolean;
   schema_access?: string[];
 }

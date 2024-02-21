@@ -1,20 +1,21 @@
 import { Tab, Tabs } from "react-bootstrap";
-import { Button, FormControl, Select, Switch, MenuItem, Chip, Stack } from "@mui/material"
+import { Button, Switch } from "@mui/material"
 import TableComponent from "react-bootstrap/Table";
-import "../../styles/TableComponent.css";
-import "../../styles/UserManagementTab.css";
-import vmd, { UserData } from "../../virtualmodel/VMD";
+import "../../../styles/TableComponent.css";
+import "../../../styles/UserManagementTab.css";
+import vmd, { UserData } from "../../../virtualmodel/VMD";
 import React, { useEffect, useState } from "react";
 import AddUserModal from "./AddUserModal";
-import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import { DataAccessor, Row } from "../../../virtualmodel/DataAccessor";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/Store";
-import { Role, updateSchemaAccess } from "../../redux/AuthSlice";
-import UnauthorizedScreen from "../UnauthorizedScreen";
-import MultiSelect from "./MultiSelect";
-import  { setUserData, updateUserData } from "../../redux/UserDataSlice";
+import { RootState } from "../../../redux/Store";
+import { Role, updateSchemaAccess } from "../../../redux/AuthSlice";
+import UnauthorizedScreen from "../../UnauthorizedScreen";
+import MultiSelect from "../MultiSelect";
+import  { setUserData, updateUserData } from "../../../redux/UserDataSlice";
 
 import {isEqual} from 'lodash';
+import RolesTab from "./RolesTab";
 
 
 // Component containing the Users Management tab of the Settings page
@@ -80,7 +81,7 @@ const UserManagementTab = () => {
 											firstName={user["first_name"] as string}
 											lastName={user["last_name"] as string}
 											emailAddress={user["email"] as string}
-											role={user["role"] as string}
+											role={user["role"] as Role}
 											active={user["is_active"] as boolean}
 											schemaAccess={user["schema_access"]} />
 									}
@@ -91,8 +92,8 @@ const UserManagementTab = () => {
 						</TableComponent>
 					</div>
 				</Tab>
-				<Tab eventKey="roles" title="Roles" disabled>
-
+				<Tab eventKey="roles" title="Roles">
+					<RolesTab/>
 				</Tab>
 
 			</Tabs>
@@ -106,7 +107,7 @@ interface UserTableRowProps {
 	firstName?: string,
 	lastName?: string,
 	emailAddress: string,
-	role: string,
+	role: Role,
 	active: boolean,
 	schemaAccess: string[]
 }
