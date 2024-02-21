@@ -5,7 +5,6 @@ import {
   waitFor,
   act,
   within,
-  fireEvent,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect } from "vitest";
@@ -101,22 +100,5 @@ describe("ScriptEditor component", () => {
     await waitFor(() => {
       expect(aceEditor.getValue()).toBe("New content");
     });
-  });
-
-  it("changes the table name when selecting a new table from the dropdown", async () => {
-    render(<ScriptEditor script={mockScript} />);
-
-    const tableSelect = screen.getByTestId("table-select");
-    const divUnderTableSelect = within(tableSelect).getByRole("combobox");
-
-    act(() => {
-      fireEvent.click(divUnderTableSelect);
-    });
-
-    console.log("divUnderTableSelect", divUnderTableSelect);
-
-    // await waitFor(() => {
-    //   expect(screen.getByDisplayValue("mock2")).toBeInTheDocument();
-    // });
   });
 });
