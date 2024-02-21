@@ -851,7 +851,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
       </div>
       <Button
-        style={{ ...buttonStyle, marginTop: ""}}
+        style={{ ...buttonStyle, marginTop: "", backgroundColor:  Object.values(checkedList).every(value => value.length === 0)?  "#404040" : "black"}}
         variant="contained"
         onClick={Reset}>
         Reset Filters</Button>
