@@ -15,6 +15,8 @@ import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
+import { IoIosArrowUp } from "react-icons/io";
+
 import {
   Switch,
   Button,
@@ -270,7 +272,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   });
 
-  //For when pagination limitm changes
+  //For when pagination limit changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
     setPaginationValue(event.target.value as number);
     setPageNumber(1);
@@ -732,21 +734,22 @@ const TableListView: React.FC<TableListViewProps> = ({
     const newPopup = [...MenuPopUp];
     newPopup[index] = null;
     setMenuPopUp(newPopup);
+    let Filter = "";
     const checkedColumns = Object.entries(checkedList).map(([key, value]) => {
-      let Filter = "";
+
       if (value.length > 0) {
         Filter += `&or=(${value.map((val) => `${key}.eq.${val}`).join(",")}) `;
         setConditionFilter(Filter);
 
       }
-   
-      console.log(Filter)
+
+
 
     });
-     if( Object.values(checkedList).every(value => value.length === 0)){
+    if (Object.values(checkedList).every(value => value.length === 0)) {
       setConditionFilter("");
     }
-
+    console.log(Filter)
     getRows();
 
   };
@@ -784,7 +787,6 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   return (
     <div>
-      <button onClick={Reset}> Reset Filters</button>
       <div
         style={{
           display: "flex",
@@ -800,6 +802,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           >
             Add {table.table_name}
           </Button>
+
           {isPopupVisible && (
             <AddRowPopup
               onClose={() => setIsPopupVisible(false)}
@@ -808,6 +811,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
+
         <div className="d-flex flex-column">
           {(scripts || []).length > 0 && <h6>Scripts</h6>}
           {scripts?.map((script) => {
@@ -844,8 +848,13 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-      </div>
 
+      </div>
+      <Button
+        style={{ ...buttonStyle, marginTop: ""}}
+        variant="contained"
+        onClick={Reset}>
+        Reset Filters</Button>
       <TableContainer>
         <Tabless
           className="table-container"
@@ -855,7 +864,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <TableCell key={index} style={{ textAlign: "center" }}>
+                <TableCell key={index} style={{ textAlign: "center"}}>
                   <TableSortLabel
                     active={orderBy === column.column_name}
                     direction={sortOrder as "asc" | "desc" | undefined}
@@ -863,7 +872,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   >
                     {column.column_name}
                   </TableSortLabel>
-                  <button onClick={(event) => handleClick(event, index)}>Filter</button>
+                  <Button size="small" style={{color: 'black', maxWidth: '30px', minWidth: '30px'}} onClick={(event) => handleClick(event, index)}><IoIosArrowUp /></Button>
                   <Menu
                     id={`simple-menu-${index}`}
                     anchorEl={MenuPopUp[index]}
@@ -871,12 +880,15 @@ const TableListView: React.FC<TableListViewProps> = ({
                     open={Boolean(MenuPopUp[index])}
                     onClose={() => handleClose(index)}
                   >
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }} >
+                      
                     {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
                       if (value === true || value === false) {
                         value = value.toString();
                       }
                       return (
-                        <MenuItem key={value}>
+                        <MenuItem key={value} >
                           <Checkbox
                             edge="start"
                             checked={checkedList[column.column_name]?.indexOf(value) !== -1}
@@ -891,10 +903,11 @@ const TableListView: React.FC<TableListViewProps> = ({
 
                       );
                     })}
-                    <Button variant="text" style={{ color: 'blue' }} onClick={() => handleClose(index)}>
+                    
+                    </div>
+                    <Button variant="text"  style={{ ...buttonStyle, textAlign:'center', color:'white', margin:'0px 10px 10px 10px' }} onClick={() => handleClose(index)}>
                       Confirm
                     </Button>
-
                   </Menu>
                 </TableCell>
               ))}
@@ -944,6 +957,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
+  <MenuItem value={7}>1 per page</MenuItem>
+
                   <MenuItem value={10}>10 per page</MenuItem>
                   <MenuItem value={20}>20 per page</MenuItem>
                   <MenuItem value={50}>50 per page</MenuItem>
