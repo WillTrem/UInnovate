@@ -38,13 +38,13 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
 
     switch (changed_property) {
       case "table_name":
+        console.log("you changed the table name", event.target.value);
         updatedScript = { ...updateScript, table_name: event.target.value };
         break;
       case "content":
         updatedScript = { ...updateScript, content: event.target.value };
         break;
       case "btn_name":
-        console.log("You're changing the button's name!", event.target.value);
         updatedScript = { ...updateScript, btn_name: event.target.value };
         break;
       case "description":
@@ -81,6 +81,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
             <FormControl size="small">
               <h6>Script Table</h6>
               <Select
+                data-testid="table-select"
                 value={updateScript["table_name"]}
                 onChange={(event) => handleChange(event, "table_name")}
               >

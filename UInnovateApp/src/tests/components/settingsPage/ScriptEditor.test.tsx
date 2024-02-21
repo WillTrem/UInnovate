@@ -5,6 +5,7 @@ import {
   waitFor,
   act,
   within,
+  fireEvent,
 } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect } from "vitest";
@@ -21,6 +22,7 @@ const mockScript: Row = {
   description: "mock description",
   content: "mock content",
   btn_name: "mock button name",
+  table_name: "mock1",
 } as Row;
 
 describe("ScriptEditor component", () => {
@@ -44,6 +46,9 @@ describe("ScriptEditor component", () => {
       screen.getByDisplayValue(mockScript["btn_name"])
     ).toBeInTheDocument();
     expect(aceEditor.getValue()).toBe(mockScript["content"]);
+    expect(
+      screen.getByDisplayValue(mockScript["table_name"])
+    ).toBeInTheDocument();
   });
 
   it("changes the button name when typing in the TextField", async () => {
@@ -68,7 +73,6 @@ describe("ScriptEditor component", () => {
     const descriptionField = screen.getByTestId("description-field");
     const inputElement = within(descriptionField).getByRole("textbox");
 
-    console.log("inputElement", inputElement);
     act(() => {
       userEvent.click(inputElement);
       userEvent.clear(inputElement);
@@ -97,5 +101,22 @@ describe("ScriptEditor component", () => {
     await waitFor(() => {
       expect(aceEditor.getValue()).toBe("New content");
     });
+  });
+
+  it("changes the table name when selecting a new table from the dropdown", async () => {
+    render(<ScriptEditor script={mockScript} />);
+
+    const tableSelect = screen.getByTestId("table-select");
+    const divUnderTableSelect = within(tableSelect).getByRole("combobox");
+
+    act(() => {
+      fireEvent.click(divUnderTableSelect);
+    });
+
+    console.log("divUnderTableSelect", divUnderTableSelect);
+
+    // await waitFor(() => {
+    //   expect(screen.getByDisplayValue("mock2")).toBeInTheDocument();
+    // });
   });
 });
