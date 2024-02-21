@@ -79,6 +79,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const navigate = useNavigate();
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
+  const [rowsFilter, setRowsFilter] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [isScriptPopupVisible, setIsScriptPopupVisible] =
     useState<boolean>(false);
@@ -116,6 +117,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [showTable, setShowTable] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(defaultOrderValue);
+  const [conditionFilter, setConditionFilter] = useState<string>("");
+
+
+
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
     const schemas = vmd.getTableSchema(table.table_name);
@@ -130,7 +135,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       orderBy,
       sortOrder,
       PaginationValue,
-      PageNumber
+      PageNumber,
+      conditionFilter
     );
 
     const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
@@ -139,6 +145,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
     const count = await countAccessor.fetchRows();
     const lines = await data_accessor.fetchRows();
+    console.log(data_accessor)
 
     // Filter the rows to only include the visible columns
     const filteredRows = lines?.map((row) => {
@@ -148,14 +155,23 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
       return new Row(filteredRowData);
     });
+    const FilteredRowsCount = count?.map((row) => {
+      const filteredRowData: { [key: string]: string | number | boolean } = {};
+      attributes.forEach((column) => {
+        filteredRowData[column.column_name] = row[column.column_name];
+      });
+      return new Row(filteredRowData);
+    });
     setLength(count?.length || 0);
     setColumns(attributes);
     setRows(filteredRows);
+    setRowsFilter(FilteredRowsCount);
+
   };
 
   useEffect(() => {
     getRows();
-  }, [table, orderBy, PageNumber, PaginationValue, sortOrder]);
+  }, [table, orderBy, PageNumber, PaginationValue, sortOrder, conditionFilter]);
 
   const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
     "filemanager",
@@ -694,52 +710,77 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   }, [openPanel]);
 
-/////////////////////////////////////////
-const [MenuPopUp, setMenuPopUp] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
-const [checkedList, setcheckedList] = useState<{ [key: string]: string[] }>({});
+  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-const handleClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-  const newPopup = [...MenuPopUp];
-  newPopup[index] = event.currentTarget;
-  setMenuPopUp(newPopup);
-};
 
-const handleClose = (index: number) => {
-  const newPopup = [...MenuPopUp];
-  newPopup[index] = null;
-  setMenuPopUp(newPopup);
-};
-useEffect(() => {
-  const firstChecked = columns.reduce((acc, column) => {
-    acc[column.column_name] = [];
-    return acc;
-  }, {} as { [key: string]: string[] });
+  const [MenuPopUp, setMenuPopUp] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
+  const [checkedList, setcheckedList] = useState<{ [key: string]: string[] }>(() => {
+    const initialCheckedState = table.columns.reduce((acc, column) => {
+      acc[column.column_name] = [];
+      return acc;
+    }, {} as { [key: string]: string[] });
 
-  setcheckedList(firstChecked);
-}, [columns]);
-const handleToggle = (value: string, columnName: string) => () => {
-  const currentIndex = checkedList[columnName]?.indexOf(value) ?? -1;
-  const newChecked = [...(checkedList[columnName] || [])];
-
-  if (currentIndex === -1) {
-    newChecked.push(value);
-  } else {
-    newChecked.splice(currentIndex, 1);
-  }
-
-  setcheckedList({ ...checkedList, [columnName]: newChecked });
-};
-
-console.log(checkedList);
-
-const Reset = () => {
-  const resetChecked: { [key: string]: string[] } = {};
-  columns.forEach((column) => {
-    resetChecked[column.column_name] = [];
+    return initialCheckedState;
   });
-  setcheckedList(resetChecked);
-};
-///////////////////////////////////////
+  const handleClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
+    const newPopup = [...MenuPopUp];
+    newPopup[index] = event.currentTarget;
+    setMenuPopUp(newPopup);
+  };
+
+  const handleClose = (index: number) => {
+    const newPopup = [...MenuPopUp];
+    newPopup[index] = null;
+    setMenuPopUp(newPopup);
+    const checkedColumns = Object.entries(checkedList).map(([key, value]) => {
+      let Filter = "";
+      if (value.length > 0) {
+        Filter += `&or=(${value.map((val) => `${key}.eq.${val}`).join(",")}) `;
+        setConditionFilter(Filter);
+
+      }
+   
+      console.log(Filter)
+
+    });
+     if( Object.values(checkedList).every(value => value.length === 0)){
+      setConditionFilter("");
+    }
+
+    getRows();
+
+  };
+
+  const handleToggle = (value: string, columnName: string) => () => {
+    const currentIndex = checkedList[columnName]?.indexOf(value) ?? -1;
+    const newChecked = [...(checkedList[columnName] || [])];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setcheckedList({ ...checkedList, [columnName]: newChecked });
+  };
+
+  console.log(checkedList);
+
+
+
+  // console.log(checkedColumns);
+
+  const Reset = () => {
+    const resetChecked: { [key: string]: string[] } = {};
+    columns.forEach((column) => {
+      resetChecked[column.column_name] = [];
+    });
+    setcheckedList(resetChecked);
+    setConditionFilter("");
+    getRows();
+  };
+  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
   return (
     <div>
@@ -811,48 +852,54 @@ const Reset = () => {
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
         >
-         <TableHead>
-          <TableRow>
-            {columns.map((column, index) => (
-              <TableCell key={index} style={{ textAlign: "center" }}>
-                <TableSortLabel
-                  active={orderBy === column.column_name}
-                  direction={sortOrder as "asc" | "desc" | undefined}
-                  onClick={() => handleSort(column.column_name)}
-                >
-                  {column.column_name}
-                </TableSortLabel>
-                <button onClick={(event) => handleClick(event, index)}>Filter</button>
-                <Menu
-                  id={`simple-menu-${index}`}
-                  anchorEl={MenuPopUp[index]}
-                  keepMounted
-                  open={Boolean(MenuPopUp[index])}
-                  onClose={() => handleClose(index)}
-                >
-                  {[...new Set(sortedRows?.map((row) => row.row[column.column_name]))].map((value) => {
-                    if (value === true || value === false) {
-                      value = value.toString();
-                    }
-                    return (
-                      <MenuItem key={value}>
-                        <Checkbox
-                          edge="start"
-                          checked={checkedList[column.column_name]?.indexOf(value) !== -1}
-                          tabIndex={-1}
-                          disableRipple
-                          inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
-                          onClick={handleToggle(value, column.column_name)}
-                        />
-                        {value}
-                      </MenuItem>
-                    );
-                  })}
-                </Menu>
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
+          <TableHead>
+            <TableRow>
+              {columns.map((column, index) => (
+                <TableCell key={index} style={{ textAlign: "center" }}>
+                  <TableSortLabel
+                    active={orderBy === column.column_name}
+                    direction={sortOrder as "asc" | "desc" | undefined}
+                    onClick={() => handleSort(column.column_name)}
+                  >
+                    {column.column_name}
+                  </TableSortLabel>
+                  <button onClick={(event) => handleClick(event, index)}>Filter</button>
+                  <Menu
+                    id={`simple-menu-${index}`}
+                    anchorEl={MenuPopUp[index]}
+                    keepMounted
+                    open={Boolean(MenuPopUp[index])}
+                    onClose={() => handleClose(index)}
+                  >
+                    {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
+                      if (value === true || value === false) {
+                        value = value.toString();
+                      }
+                      return (
+                        <MenuItem key={value}>
+                          <Checkbox
+                            edge="start"
+                            checked={checkedList[column.column_name]?.indexOf(value) !== -1}
+                            tabIndex={-1}
+                            disableRipple
+                            inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
+                            onClick={handleToggle(value, column.column_name)}
+                            size="small"
+                          />
+                          {value}
+                        </MenuItem>
+
+                      );
+                    })}
+                    <Button variant="text" style={{ color: 'blue' }} onClick={() => handleClose(index)}>
+                      Confirm
+                    </Button>
+
+                  </Menu>
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
           <TableBody>
             {sortedRows?.map((row, rowIdx) => (
               <TableRow
@@ -966,7 +1013,7 @@ const Reset = () => {
                   width: "fit-content",
                   marginLeft: 10,
                 }}
-                onClick={handleFormSubmit}
+                onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleFormSubmit(event)}
               >
                 Save
               </Button>

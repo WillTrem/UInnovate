@@ -359,7 +359,8 @@ class VirtualModelDefinition {
     order_by: string,
     sortOrder: string,
     Limit: number,
-    Page: number
+    Page: number,
+    Filter:string,
   ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
@@ -375,7 +376,8 @@ class VirtualModelDefinition {
           "&limit=" +
           limit +
           "&offset=" +
-          page,
+          page +
+          Filter,
         {
           "Accept-Profile": schema.schema_name,
         }
