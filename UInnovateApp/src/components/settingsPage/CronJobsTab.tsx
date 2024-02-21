@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import {Button, Typography} from "@mui/material"
-import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
+import { ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
-import vmd from "../../virtualmodel/VMD";
 import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchFunctionNames } from '../../virtualmodel/PlatformFunctions';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
@@ -11,7 +10,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import Tab from "react-bootstrap/Tab";
 import DisplayType from '../Schema/DisplayType';
-import { Label } from '@mui/icons-material';
 
 interface ExecutionLogEntry {
     id: any; 
