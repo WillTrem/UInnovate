@@ -164,10 +164,15 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
       return new Row(filteredRowData);
     });
-    setLength(count?.length || 0);
     setColumns(attributes);
     setRows(filteredRows);
     setRowsFilter(FilteredRowsCount);
+    if (conditionFilter === "") {
+      setLength(count?.length || 0);
+    }
+    else {
+      setLength(lines?.length || 0);
+    }
 
   };
 
@@ -738,9 +743,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     const checkedColumns = Object.entries(checkedList).map(([key, value]) => {
 
       if (value.length > 0) {
-        Filter += `&or=(${value.map((val) => `${key}.eq.${val}`).join(",")}) `;
+        Filter += `&${key}=in.(${value.map((val) => `"${val}"`).join(",")}) `;
         setConditionFilter(Filter);
-
       }
 
 
@@ -750,7 +754,6 @@ const TableListView: React.FC<TableListViewProps> = ({
       setConditionFilter("");
     }
     console.log(Filter)
-    getRows();
 
   };
 
@@ -957,7 +960,6 @@ const TableListView: React.FC<TableListViewProps> = ({
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
-  <MenuItem value={7}>1 per page</MenuItem>
 
                   <MenuItem value={10}>10 per page</MenuItem>
                   <MenuItem value={20}>20 per page</MenuItem>
