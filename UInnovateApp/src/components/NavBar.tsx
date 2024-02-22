@@ -15,6 +15,7 @@ import {Tooltip, Zoom} from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { setLoading } from '../redux/LoadingSlice';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
@@ -27,8 +28,10 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const handleClose = () => setShowSignupModal(false);
   const handleShow = () => setShowSignupModal(true);
   const handleLogout = () => {
+    dispatch(setLoading(true));
     dispatch(logOut());
     navigate('/');
+    dispatch(setLoading(false));
   }
 
 

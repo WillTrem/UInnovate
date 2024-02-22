@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff, Check, Close, NavigateNext, NavigateBefore } from '@mui/icons-material';
 import { green, grey } from '@mui/material/colors';
 import { ErrMsg } from "../../enums/ErrMsg";
+import { setLoading } from "../../redux/LoadingSlice";
 
 const LENGTH_REGEX = new RegExp(/.{8,}$/);
 const UPPERCASE_REGEX = new RegExp(/.*[A-Z]/);
@@ -157,13 +158,15 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 			loginFunctionAccessor.executeFunction({ withCredentials: true })
 				// Logs in the user
 				.then(async (response) => {
+					dispatch(setLoading(true));
 					const token = response.data.token;
 					dispatch(logIn(token));
+					navigate('/');
 					await vmd.refetchSchemas();
 					// Closes the form
 					const dummyEvent = document.createEvent('MouseEvents');
 					handleCancel(dummyEvent as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
-					navigate('/');
+					dispatch(setLoading(false));
 				})
 				.catch(() => {
 					setPasswordError(ErrMsg.WRONG_PASSWORD);

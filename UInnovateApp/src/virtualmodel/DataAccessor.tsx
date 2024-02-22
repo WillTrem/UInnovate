@@ -108,6 +108,23 @@ export class DataAccessor {
     }
   }
 
+
+  /**Method to upsert a SINGLE ROW in a table
+   * @returns AxiosResponse
+   */
+  async put(){
+    try {
+      const response = await axiosCustom.put(this.data_url, this.values, {
+        params: this.params,
+        headers: this.headers,
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Could not update or insert row:", error);
+    }
+  }
+
   // Method to delete a row from a table
   // return type: AxiosResponse
   async deleteRow() {

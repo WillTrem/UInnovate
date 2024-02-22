@@ -61,7 +61,7 @@ export function Settings() {
 										
 										<Nav.Link eventKey='envvar' onClick={() => handleNavClick('envvar')}>Environment Variables</Nav.Link>
 									</Nav.Item>
-									{(role === Role.ADMIN || LOGIN_BYPASS) && (
+									{(role === Role.ADMIN || LOGIN_BYPASS && role === null) && (
 										<Nav.Item>
 											<Nav.Link eventKey='users' onClick={() => handleNavClick('users')} >Users</Nav.Link>
 										</Nav.Item>
@@ -95,7 +95,7 @@ export function Settings() {
 									<Tab.Pane eventKey='envvar'>
 										<EnvVarCreator />
 									</Tab.Pane>
-									{(role === Role.ADMIN || role === null) && (
+									{(role === Role.ADMIN || LOGIN_BYPASS && role === null) && (
 										<Tab.Pane eventKey='users'>
 											<UserManagementTab />
 										</Tab.Pane>

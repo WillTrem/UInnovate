@@ -369,14 +369,14 @@ class VirtualModelDefinition {
     if (schema && table) {
       return new DataAccessor(
         table.url +
-          "?order=" +
-          order_by +
-          "." +
-          sortOrder +
-          "&limit=" +
-          limit +
-          "&offset=" +
-          page,
+        "?order=" +
+        order_by +
+        "." +
+        sortOrder +
+        "&limit=" +
+        limit +
+        "&offset=" +
+        page,
         {
           "Accept-Profile": schema.schema_name,
         }
@@ -506,6 +506,39 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to upsert a SINGLE ROW in a table
+  // return type : DataAccessor
+  getUpsertRowDataAccessor(
+    schema_name: string,
+    table_name: string,
+    primary_keys: string[],
+    params: { [key: string]: string },
+    row: Row
+  ) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    // Gets the primary key values from the Row, format them for a PUT operation and turns it into an objecct
+    const primary_keys_as_params = primary_keys.reduce<Record<string, string>>((obj, key) => {
+      obj[key] = `eq.${row[key]}`;
+      return obj;
+    }, {})
+
+    console.log(primary_keys_as_params);
+    if (schema && table) {
+      return new DataAccessor(
+        table.url,
+        {
+          "Content-Type": "application/json",
+          "Content-Profile": schema_name,
+        },
+        { ...params, ...primary_keys_as_params },
+        row
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
   // Method to return a data accessor to get all the rows from a view of a given schema
   // return type: DataAccessor
   getViewRowsDataAccessor(
@@ -557,16 +590,15 @@ class VirtualModelDefinition {
     const schema = this.getSchema(schema_name);
     if (schema) {
       const function_url = API_BASE_URL + "rpc/" + function_name;
-      if(data)
-      {
-          return new FunctionAccessor(function_url, {
+      if (data) {
+        return new FunctionAccessor(function_url, {
           "Content-Profile": schema.schema_name,
-          },undefined, data);
+        }, undefined, data);
       }
       return new FunctionAccessor(function_url, {
         "Content-Profile": schema.schema_name,
       });
-      
+
     } else {
       throw new Error("Schema does not exist");
     }
