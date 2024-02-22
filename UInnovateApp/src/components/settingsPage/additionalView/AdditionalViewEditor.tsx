@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Accordion, Button, Card, Col, Row, useAccordionButton } from 'react-bootstrap'
+import React, { useEffect, useState } from 'react'
+import { Accordion, Button, Card, useAccordionButton } from 'react-bootstrap'
 import AdditionalViewModal from './AdditionalViewModal';
-import { deleteView, getCustomViews, getViews } from '../../../virtualmodel/AdditionalViewsDataAccessor';
+import { AdditionalViews, deleteView, getCustomViews, getViewsBySchema } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
 import './AdditionalViewEditor.css';
 
@@ -22,17 +22,15 @@ function CustomToggle({ children, eventKey }) {
   
 interface editorProp {
     selectedSchema: string;
-    selectedTable: string;
-    setSelectedTable: React.Dispatch<React.SetStateAction<string>>;
+    setSelectedSchema: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AdditionalViewEditor = ({
     selectedSchema,
-    selectedTable,
-    setSelectedTable
+    setSelectedSchema
 }: editorProp) => {
 
-    const [viewList, setViewList] = useState([]);
+    const [viewList, setViewList] = useState<AdditionalViews[]>([]);
     const [customViews, setCustomViews]= useState([]);
     const [showModal, setShowModal] = useState(false);
 
@@ -41,32 +39,31 @@ const AdditionalViewEditor = ({
         var res = deleteView(id, isCustom);
         if(await res){
             console.log('updating list')
-            getViews(setViewList, selectedTable);
+            getViewsBySchema(setViewList, selectedTable);
         }
     }
     const refreshList = ()=>{
-        const table = selectedTable.toString();
-        setSelectedTable('');
-        setTimeout( ()=> setSelectedTable(table), 100);
+        setSelectedSchema('');
+        setTimeout( ()=> setSelectedSchema(selectedSchema), 100);
     }
 
     useEffect(()=>{
         const ctrl = new AbortController();
         const signal = ctrl.signal;
         // get data from db
-         getViews(setViewList, selectedTable, signal);
+         getViewsBySchema(setViewList, selectedSchema, signal);
          getCustomViews(setCustomViews, signal)
 
          return ()=>{ctrl.abort()};
-    },[selectedTable])
+    },[selectedSchema])
     
 
-    if(selectedTable != '')
+    if(selectedSchema != '')
   return (
     <>
         <div className='row'>
             <div className='col-md-12'>
-                <h4>{selectedTable} Views</h4>
+                <h4> Views</h4>
                 <Button className='btn btn-md centered' onClick={handleClick}>add view</Button>
             </div>
         </div>
@@ -81,14 +78,15 @@ const AdditionalViewEditor = ({
             }
             {viewList.length > 0 &&
             (<>
-                <Accordion>
-                    
-                {viewList.map( view =>
+            <Accordion>
+                {viewList.map( (view: AdditionalViews) =>
                 <Card key={view.id}>
                     <Card.Header>
                         <div>
                             <div className='hstack gap-3'>
                                 <div>{view.viewname}</div>
+                                <div className="vr"></div>
+                                <div>target table: {view.tablename}</div>
                                 <div className="vr"></div>
                                 <div>{getViewTypeEnum(view.viewtype)}</div>
                                 
@@ -116,12 +114,12 @@ const AdditionalViewEditor = ({
                   
                 </Card>
                 )}
-                    </Accordion>
+            </Accordion>
             </>)
             }
 
         </div>
-        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} tableName={selectedTable} schemaName={selectedSchema} />
+        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} schemaName={selectedSchema} />
     </>
   )
   else

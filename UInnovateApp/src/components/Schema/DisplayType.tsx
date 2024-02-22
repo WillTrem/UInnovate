@@ -3,6 +3,7 @@ enum DisplayType {
   NavPills,
   StackedPills,
   Nav,
+  MuiDropDown,
 }
 
 export default DisplayType;
