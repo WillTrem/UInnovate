@@ -16,6 +16,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { setLoading } from '../redux/LoadingSlice';
+import vmd from '../virtualmodel/VMD';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
@@ -30,8 +31,10 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const handleLogout = () => {
     dispatch(setLoading(true));
     dispatch(logOut());
+    vmd.refetchSchemas().then(() => {
+      dispatch(setLoading(false));
+    })
     navigate('/');
-    dispatch(setLoading(false));
   }
 
 

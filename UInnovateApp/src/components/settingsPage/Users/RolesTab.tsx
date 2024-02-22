@@ -41,11 +41,16 @@ interface RolesTableRowProps extends Omit<TableRowProps, 'children'> {
 }
 
 interface SchemaRoles {
-	[key: string]: Role;
+	[key: string]: Role | '';
 }
 
 const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, ...props }) => {
-	const [schemaRoles, setSchemaRoles] = useState<SchemaRoles>({})
+	const initialSchemaRoles = schemas.reduce((roles, schema) => {
+		roles[schema] = '';
+		return roles;
+	  }, {} as SchemaRoles);
+
+	const [schemaRoles, setSchemaRoles] = useState<SchemaRoles>(initialSchemaRoles)
 	const [defaultRole, setDefaultRole] = useState(user.role)
 
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
@@ -85,11 +90,13 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, ...props }
 				<FormControl fullWidth>
 					<Select
 						name="role"
+						value={schemaRoles[schema] || ''}
 						onChange={(event) => handleRoleChange(event, schema)}
 						variant="outlined"
 						size="small"
 						disabled={defaultRole === Role.ADMIN}
 					>
+						<MenuItem value=''/>
 						<MenuItem value={Role.USER}>User</MenuItem>
 						<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
 						{/* <MenuItem value={Role.ADMIN}>Admin</MenuItem> */}
