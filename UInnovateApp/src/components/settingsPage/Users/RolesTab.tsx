@@ -1,7 +1,7 @@
 import "../../../styles/TableComponent.css"
 import { useEffect, useState } from "react";
 import vmd, { UserData } from "../../../virtualmodel/VMD";
-import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableRowProps, fabClasses } from "@mui/material";
+import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableRowProps, Typography, fabClasses } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
 import { Role } from "../../../redux/AuthSlice";
@@ -16,6 +16,7 @@ interface SchemaRolesPerUser {
 
 const RolesTab: React.FC = () => {
 	const [schemaRolesPerUser, setSchemaRolesPerUser] = useState<SchemaRolesPerUser>();
+	const [infoMessage, setInfoMessage] = useState('')
 	const users = useSelector((state: RootState) => state.userData.users)
 	const schemas: string[] = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	// const schemas: string[] = ["Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1"]
@@ -41,7 +42,8 @@ const RolesTab: React.FC = () => {
 		getSchemaRoles();
 	}, []);
 
-	return <Box display="flex" justifyContent="center" paddingTop={2}  >
+	return <Box display="flex" flexDirection="column" gap={"1rem"} alignItems="center" paddingTop={2}  >
+		{infoMessage !== '' && <Typography>{infoMessage}</Typography>}
 		{schemaRolesPerUser ?
 			<Box sx={{ display: "inline-block", overflow: "auto", maxWidth: "100%", alignItems: "center" }}>
 				<TableContainer sx={{ display: "block", border: "thin solid grey" }} component={Box}>
@@ -63,6 +65,7 @@ const RolesTab: React.FC = () => {
 									schemas={schemas}
 									schemaRoles={schemaRolesPerUser[user.email]}
 									getSchemaRoles={getSchemaRoles}
+									setInfoMessage={setInfoMessage}
 								/>
 							})}
 						</TableBody>
@@ -79,16 +82,24 @@ interface RolesTableRowProps extends Omit<TableRowProps, 'children'> {
 	user: UserData,
 	schemas: string[],
 	schemaRoles: SchemaRoles,
-	getSchemaRoles: () => Promise<void>
+	getSchemaRoles: () => Promise<void>,
+	setInfoMessage: React.Dispatch<React.SetStateAction<string>>
 }
 
 
 
-const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRoles = {}, getSchemaRoles, ...props }) => {
-	const [defaultRole, setDefaultRole] = useState(user.role)
-
+const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRoles = {}, getSchemaRoles, setInfoMessage, ...props }) => {
+	const [defaultRole, setDefaultRole] = useState(user.role);
+	const currentUser = useSelector((state:RootState) => state.auth.user);
+	
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
-		setDefaultRole(event.target.value as Role)
+		const newRole = event.target.value;
+		setDefaultRole(newRole as Role);
+		const updateDefaultRoleFA = vmd.getFunctionAccessor('meta', 'update_default_role', {email:user.email, role:newRole});
+		updateDefaultRoleFA.executeFunction();
+		if(currentUser && user.email === currentUser){
+			setInfoMessage('It seems that you changed your own default role. To make your changes take effect, please reload the page.')
+		}
 	}
 
 	function handleRoleChange(event: SelectChangeEvent<unknown>, schema: string) {

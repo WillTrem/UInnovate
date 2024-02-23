@@ -1,7 +1,7 @@
 -- SCHEMA AND TABLES CREATION
 CREATE SCHEMA IF NOT EXISTS authentication;
 
-DROP TABLE IF EXISTS authentication.users;
+-- DROP TABLE IF EXISTS authentication.users;
 CREATE TABLE IF NOT EXISTS authentication.users (
 	email text PRIMARY KEY CHECK (email ~* '^.+@.+\..+$'),
 	first_name text,
@@ -41,7 +41,7 @@ INSERT
 UPDATE ON authentication.users FOR each ROW EXECUTE PROCEDURE authentication.check_role_exists();
 
 -- TABLE storing the role per schema of users
-DROP TABLE IF EXISTS meta.roles_per_schema CASCADE;
+-- DROP TABLE IF EXISTS meta.roles_per_schema CASCADE;
 CREATE TABLE IF NOT EXISTS meta.role_per_schema(
 	"user" text REFERENCES authentication.users(email),
 	schema text,
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS meta.role_per_schema(
 );
 
 -- TABLE assigning the hierarchy of the roles to numbers
-DROP TABLE IF EXISTS authentication.role_hierarchy CASCADE;
+-- DROP TABLE IF EXISTS authentication.role_hierarchy CASCADE;
 CREATE TABLE IF NOT EXISTS authentication.role_hierarchy(
 	rank int PRIMARY KEY, 
 	role name UNIQUE
@@ -383,7 +383,6 @@ BEGIN
 	SET 
 		first_name = newud.first_name,
 		last_name = newud.last_name,
-		role = newud.role,
 		is_active = newud.is_active,
 		schema_access = newud.schema_access
 	FROM (SELECT * FROM json_populate_recordset(null::user_data, users)) as newud
@@ -392,6 +391,25 @@ BEGIN
 END;
 $$ language plpgsql SECURITY DEFINER;
 
+-- FUNCTION to update the default role of a user
+CREATE OR REPLACE FUNCTION meta.update_default_role (
+	email text,
+	role name
+)RETURNS setof integer AS $$ BEGIN -- 	Verify if the user exists
+	IF NOT EXISTS (
+		SELECT users.email
+		FROM authentication.users
+		WHERE users.email = update_default_role.email
+	) THEN raise exception USING message = format(
+		'User %L was not found',
+		signup.email);
+ELSE -- 		Verify if the user has a password (i.e. if it already signed up)
+UPDATE authentication.users
+SET role = update_default_role.role
+WHERE users.email = update_default_role.email;
+END IF;
+RETURN;
+END $$ language plpgsql SECURITY DEFINER;
 
 -- ROLES ----------------------------------------------------------------
 
@@ -418,36 +436,19 @@ END LOOP;
 END LOOP;
 END $$ LANGUAGE plpgsql;
 
--- GRANT USAGE ON SCHEMA meta TO "user";
--- GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
--- GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
--- GRANT SELECT ON TABLE meta.appconfig_values TO "user";
--- GRANT SELECT ON TABLE meta.scripts TO "user";
--- GRANT SELECT ON TABLE meta.schemas TO "user";
--- GRANT SELECT ON TABLE meta.tables TO "user";
--- GRANT SELECT ON TABLE meta.columns TO "user";
--- GRANT SELECT ON TABLE meta.constraints TO "user";
--- GRANT SELECT ON TABLE meta.user_schema_access TO "user";
-GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 
+GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
+GRANT SELECT ON TABLE meta.role_per_schema TO "user";
 -- Configurator role
 
--- GRANT ALL ON SCHEMA meta TO configurator;
--- GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
--- GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
--- GRANT ALL ON TABLE meta.appconfig_values TO configurator;
--- GRANT ALL ON TABLE meta.scripts TO configurator;
--- GRANT ALL ON TABLE meta.schemas TO configurator;
--- GRANT ALL ON TABLE meta.tables TO configurator;
--- GRANT ALL ON TABLE meta.columns TO configurator;
--- GRANT ALL ON TABLE meta.constraints TO configurator;
--- GRANT ALL ON TABLE meta.user_schema_access TO configurator;
 
 -- Administrator role
 
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO administrator;
 GRANT SELECT ON TABLE meta.user_info TO administrator;
 GRANT ALL ON TABLE meta.role_per_schema TO administrator;
+GRANT EXECUTE ON FUNCTION meta.update_default_role(text, name) TO administrator;
+
 
 GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
