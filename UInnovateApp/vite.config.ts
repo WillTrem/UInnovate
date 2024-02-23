@@ -7,7 +7,12 @@ import istanbul from "vite-plugin-istanbul";
 export default defineConfig({
   base: "/",
   plugins: [
-    react(),
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin'],
+      },
+    }),
     eslintPlugin({
       cache: false,
       include: ["./src/**/*.js", "./src/**/*.jsx"],
