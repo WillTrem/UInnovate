@@ -173,7 +173,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     });
     setColumns(attributes);
     setRows(filteredRows);
-    
+
     if (conditionFilter === "") {
       setRowsFilter(FilteredRowsCount);
       setLength(count?.length || 0);
@@ -503,7 +503,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     setFilterCheckedList(resetChecked);
     setConditionFilter("");
   };
-//End of Filter Function
+  //End of Filter Function
 
   const FileInputField = (column: Column) => {
     if (!appConfigValues) {
@@ -850,7 +850,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       <Button
         style={{
           ...buttonStyle, marginTop: "",
-          backgroundColor: conditionFilter==="" ? "#404040" : "#1976d2"
+          backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2"
         }}
         variant="contained"
         onClick={ResetFilter}
@@ -861,7 +861,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           className="table-container"
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
-          style={{padding:'10px'}}
+          style={{ padding: '10px' }}
           data-testid="table"
         >
           <TableHead>
@@ -876,9 +876,9 @@ const TableListView: React.FC<TableListViewProps> = ({
                   >
                     {column.column_name}
                   </TableSortLabel >
-                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }} 
-                  onClick={(event) => handleFilterClick(event, index)}
-                  data-testid="Button-Filtering"
+                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }}
+                    onClick={(event) => handleFilterClick(event, index)}
+                    data-testid="Button-Filtering"
                   >
                     <IoIosArrowUp /></Button>
                   <Menu
@@ -888,8 +888,24 @@ const TableListView: React.FC<TableListViewProps> = ({
                     open={Boolean(FilterMenu[index])}
                     onClose={() => handleFilterClose(index)}
                     data-testid="filter-menu"
-                    sx={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px'}}
+                    sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }}
                   >
+                    <Button variant="text"
+                      style={{
+                        ...buttonStyle,
+                        backgroundColor: 'black',
+                        textAlign: 'center',
+                        color: 'white',
+                        margin: '0px 10px 10px 10px',
+                        position: 'sticky',
+                        top: '10px',
+                        cursor: 'pointer',
+                        zIndex: 1
+                      }}
+                      onClick={() => handleFilterClose(index)}
+                      data-testid="filter-confirm-button">
+                      Confirm
+                    </Button>
 
                     <div  >
 
@@ -915,12 +931,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                       })}
 
                     </div>
-                    <Button variant="text" 
-                    style={{ ...buttonStyle, textAlign: 'center', color: 'white', margin: '0px 10px 10px 10px' }} 
-                    onClick={() => handleFilterClose(index)}
-                    data-testid="filter-confirm-button">
-                      Confirm
-                    </Button>
+
                   </Menu>
                 </TableCell>
               ))}
