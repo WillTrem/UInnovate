@@ -184,7 +184,7 @@ export const CronJobsTab = () => {
 
     useEffect(() => {
         updateProcedureNames();
-    }, []);
+    }, [selectedSchema]);
 
     useEffect(() => {
         if (procedures.length > 0 && selectedProc === '') {
@@ -211,7 +211,6 @@ export const CronJobsTab = () => {
         <Tab.Content>
         <Row>
                 <Col sm={3}>
-                <SchemaSelector displayType={DisplayType.NavDropdown}/>
                     {/* list of stored procedures */}
                     <ListGroup>
                         {procedures.map(proc => (

@@ -64,7 +64,7 @@ export const ExecuteProcedures = () => {
     };
     useEffect(() => {
         updateProcedureNames();
-    }, []);
+    }, [selectedSchema]);
     return (
         <div>
         {procedures.length !== 0 ?
@@ -75,7 +75,7 @@ export const ExecuteProcedures = () => {
 <Card>
     <Card.Body>
         <Card.Title className="mb-3">Procedure: {selectedProc}</Card.Title>
-        <SchemaSelector displayType={DisplayType.NavDropdown}/>
+
         {/* dropdown list of stored procedures */}
         <Select
             value={selectedProc}
