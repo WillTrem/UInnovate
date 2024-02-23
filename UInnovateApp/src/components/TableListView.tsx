@@ -173,11 +173,13 @@ const TableListView: React.FC<TableListViewProps> = ({
     });
     setColumns(attributes);
     setRows(filteredRows);
-    setRowsFilter(FilteredRowsCount);
+    
     if (conditionFilter === "") {
+      setRowsFilter(FilteredRowsCount);
       setLength(count?.length || 0);
     }
     else {
+      setRowsFilter(filteredRows);
       setLength(lines?.length || 0);
     }
 
@@ -886,9 +888,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                     open={Boolean(FilterMenu[index])}
                     onClose={() => handleFilterClose(index)}
                     data-testid="filter-menu"
+                    sx={{display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px'}}
                   >
 
-                    <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }} >
+                    <div  >
 
                       {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
                         if (value === true || value === false) {
