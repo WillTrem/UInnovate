@@ -25,17 +25,22 @@ import { updateSelectedSchema } from "../redux/SchemaSlice";
 
 export function Settings() {
 	const dispatch = useDispatch();
-	const { user, schema_access, role } = useSelector((state: RootState) => state.auth);
+	const { user, schema_access, dbRole, defaultRole, schemaRoles } = useSelector((state: RootState) => state.auth);
 	const schemas = [
 		...new Set(vmd.getApplicationSchemas()
 			.map((schema) => schema.schema_name)
 			.filter((schema_name) => {
 				// Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
-				if ((LOGIN_BYPASS && user === null) || schema_access.includes(schema_name)) {
+				if ((LOGIN_BYPASS && user === null) // Include if LOGIN_BYPASS enabled with no user logged in
+					|| (schema_access.includes(schema_name)) // Schema must be in schema_access list
+					&& (schemaRoles[schema_name] === Role.CONFIG // User must have role configurator for schema in schema roles
+						|| (!schemaRoles[schema_name] && defaultRole === Role.CONFIG) // OR User doesn't have any role set for schema and its default role is configurator
+					)) {
 					return schema_name;
 				}
 			})),
 	];
+	console.log(schemas);
 	// Prevents error when schema_access has a length of 0
 	const initialSelectedSchema = schemas.length === 0 ? "" : schemas[0]
 	const [selectedSchema, setSelectedSchema] = useState(initialSelectedSchema);
@@ -47,7 +52,7 @@ export function Settings() {
 
 	const handleSchemaChange = (event: SelectChangeEvent) => {
 		setSelectedSchema(event.target.value);
-	  };
+	};
 
 
 	const navigate = useNavigate();
@@ -64,12 +69,12 @@ export function Settings() {
 	return (
 		<>
 			<NavBar />
-			{role === Role.USER || (role === null && !LOGIN_BYPASS) ? (
+			{dbRole === Role.USER || (dbRole === null && !LOGIN_BYPASS) ? (
 				<UnauthorizedScreen />
 			) : (
 				<div className='page-container'>
 					<div className='save-config-container'>
-						<Box display="flex" gap={"1rem"} alignItems={"center"}>
+						<Box display="flex" gap={"2rem"} alignItems={"center"}>
 							<h1 className='title'>Settings</h1>
 							<FormControl fullWidth disabled={schemas.length === 0}>
 								<InputLabel id="schema-label">Schema</InputLabel>
@@ -108,7 +113,7 @@ export function Settings() {
 
 										<Nav.Link eventKey='envvar' onClick={() => handleNavClick('envvar')}>Environment Variables</Nav.Link>
 									</Nav.Item>
-									{(role === Role.ADMIN || LOGIN_BYPASS && role === null) && (
+									{(dbRole === Role.ADMIN || LOGIN_BYPASS && dbRole === null) && (
 										<Nav.Item>
 											<Nav.Link eventKey='users' onClick={() => handleNavClick('users')} >Users</Nav.Link>
 										</Nav.Item>
@@ -142,7 +147,7 @@ export function Settings() {
 									<Tab.Pane eventKey='envvar'>
 										<EnvVarCreator />
 									</Tab.Pane>
-									{(role === Role.ADMIN || LOGIN_BYPASS && role === null) && (
+									{(dbRole === Role.ADMIN || LOGIN_BYPASS && dbRole === null) && (
 										<Tab.Pane eventKey='users'>
 											<UserManagementTab />
 										</Tab.Pane>

@@ -23,11 +23,11 @@ const UserManagementTab = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [users, setUsers] = useState<Row[]>([]);
 
-	const role = useSelector((state: RootState) => state.auth.role);
+	const dbRole = useSelector((state: RootState) => state.auth.dbRole);
 	const dispatch = useDispatch();
 
 	// Hides the menu for non-admin roles (except for anonymous)
-	if (!(role === Role.ADMIN || role === null)) {
+	if (!(dbRole === Role.ADMIN || dbRole === null)) {
 		return <UnauthorizedScreen />
 	}
 
@@ -81,7 +81,6 @@ const UserManagementTab = () => {
 											firstName={user["first_name"] as string}
 											lastName={user["last_name"] as string}
 											emailAddress={user["email"] as string}
-											role={user["role"] as Role}
 											active={user["is_active"] as boolean}
 											schemaAccess={user["schema_access"]} />
 									}
@@ -107,12 +106,11 @@ interface UserTableRowProps {
 	firstName?: string,
 	lastName?: string,
 	emailAddress: string,
-	role: Role,
 	active: boolean,
 	schemaAccess: string[]
 }
-const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, role, active, schemaAccess }) => {
-	const [userData, setUserData] = useState<UserData>({first_name: firstName, last_name: lastName, email: emailAddress, role, is_active: active, schema_access: schemaAccess})
+const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, active, schemaAccess }) => {
+	const [userData, setUserData] = useState<UserData>({first_name: firstName, last_name: lastName, email: emailAddress, is_active: active, schema_access: schemaAccess})
 	const [schemaAccessList, setSchemaAccessList] = useState(schemaAccess);
 	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const dispatch = useDispatch();
@@ -143,7 +141,6 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 		<td>{emailAddress}</td>
 		<td>{firstName || "-"}</td>
 		<td>{lastName || "-"}</td>
-		<td>{role}</td>
 		<td>
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
 		</td>

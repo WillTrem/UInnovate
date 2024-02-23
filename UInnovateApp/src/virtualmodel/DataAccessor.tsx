@@ -29,6 +29,7 @@ export class DataAccessor {
       const response = await axiosCustom.get(this.data_url, {
         signal: signal,
         headers: this.headers,
+        params: this.params
       });
 
       response.data.forEach((row: Row) => {

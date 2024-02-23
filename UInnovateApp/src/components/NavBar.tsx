@@ -23,7 +23,7 @@ interface NavBarProps {
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
-  const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) => state.auth);
+  const {user: loggedInUser, dbRole }: AuthState = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleClose = () => setShowSignupModal(false);
@@ -70,7 +70,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             {( LOGIN_BYPASS || loggedInUser ) &&
             <>
             {/* Hides the Settings page link for user role */}
-            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}>
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={dbRole === Role.USER}>
               Settings
             </Nav.Link></>
             }

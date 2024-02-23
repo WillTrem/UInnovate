@@ -539,6 +539,29 @@ class VirtualModelDefinition {
     }
   }
 
+// Method to return a data accessor to get rows from a view of a given schema filtered by the search_key(s)
+  // return type: DataAccessor
+  getViewRowDataAccessor(
+    schema_name: string,
+    view_name: string,
+    search_key: string[],
+    search_key_value: string[]
+  ): DataAccessor {
+    const schema = this.getSchema(schema_name);
+    const view = schema?.getView(view_name);
+    if (schema && view) {
+      const searchKeyAsParams = search_key.reduce<Record<string, string>>((obj, key, i) => {
+        obj[key] = `eq.${search_key_value[i]}`;
+        return obj;
+      }, {})
+      return new DataAccessor(view.url, {
+        "Accept-Profile": schema.schema_name,
+      }, searchKeyAsParams);
+    } else {
+      throw new Error("Schema or view does not exist");
+    }
+  }
+
   // Method to return a data accessor to get all the rows from a view of a given schema
   // return type: DataAccessor
   getViewRowsDataAccessor(
@@ -923,7 +946,7 @@ export interface UserData {
   email: string;
   first_name?: string;
   last_name?: string;
-  role?: Role;
+  role?: Role; // Default role
   is_active?: boolean;
   schema_access?: string[];
 }

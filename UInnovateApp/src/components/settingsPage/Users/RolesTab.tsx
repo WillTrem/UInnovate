@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
 import { Role } from "../../../redux/AuthSlice";
 
-interface SchemaRoles {
+export interface SchemaRoles {
 	[key: string]: Role | '';
 }
 
@@ -33,7 +33,7 @@ const RolesTab: React.FC = () => {
 				obj[user][schema] = role;
 				return obj;
 			}, {});
-			console.log(reducedSchemaRoles);
+			// console.log(reducedSchemaRoles);
 			setSchemaRolesPerUser(reducedSchemaRoles);
 		}
 	}
@@ -90,14 +90,15 @@ interface RolesTableRowProps extends Omit<TableRowProps, 'children'> {
 
 const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRoles = {}, getSchemaRoles, setInfoMessage, ...props }) => {
 	const [defaultRole, setDefaultRole] = useState(user.role);
-	const currentUser = useSelector((state:RootState) => state.auth.user);
-	
+	const currentUser = useSelector((state: RootState) => state.auth.user);
+
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
 		const newRole = event.target.value;
 		setDefaultRole(newRole as Role);
-		const updateDefaultRoleFA = vmd.getFunctionAccessor('meta', 'update_default_role', {email:user.email, role:newRole});
+		const updateDefaultRoleFA = vmd.getFunctionAccessor('meta', 'update_default_role', { email: user.email, role: newRole });
 		updateDefaultRoleFA.executeFunction();
-		if(currentUser && user.email === currentUser){
+		
+		if (currentUser && user.email === currentUser) {
 			setInfoMessage('It seems that you changed your own default role. To make your changes take effect, please reload the page.')
 		}
 	}
@@ -114,7 +115,7 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 				.catch(() => console.log("Error while updating the schema role"));
 
 		}
-		else { 
+		else {
 			const primKeys = ['user', 'schema'];
 			const newRow = { user: user.email, schema, role: event.target.value as Role }
 			const upsertRoleDataAcc = vmd.getUpsertRowDataAccessor('meta', 'role_per_schema', primKeys, {}, newRow);
@@ -166,6 +167,44 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 			</TableCell>
 		})}
 	</TableRow>
+}
+/**
+ * Function that obtains the schema roles for a given user
+ * @returns SchemaRoles
+ */
+export async function getSchemaRoles(user: string): Promise<SchemaRoles>
+{
+	const rolePerSchemaDA = vmd.getRowDataAccessor('meta', 'role_per_schema', 'user', user);
+	const rolePerSchemaResponse = await rolePerSchemaDA.fetchRows();
+	console.log(rolePerSchemaResponse);
+	if (rolePerSchemaResponse) {
+		const reducedRolePerSchema = rolePerSchemaResponse.reduce((obj, { schema, role }) => {
+			obj[schema] = role;
+			return obj;
+		}, {});
+		return reducedRolePerSchema
+	}else{
+		console.log('Failed to obtain the schema roles of user ' + user)
+		return {};
+	}
+}
+
+/**
+ * Function that obtains the default role for a given user
+ * @returns Role
+ */
+export async function getDefaultRole(user: string): Promise<Role|null>
+{
+	const defaultRoleDA = vmd.getViewRowDataAccessor('meta', 'user_info', ['email'],[ user]);
+	const response = await defaultRoleDA.fetchRows();
+	if (response) {
+		console.log(response);
+		const defaultRole = response[0]['role']
+		return defaultRole as Role;
+	}else{
+		console.log('Failed to obtain the default role of user ' + user);
+		return null;
+	}
 }
 
 export default RolesTab;

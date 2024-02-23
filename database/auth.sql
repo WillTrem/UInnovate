@@ -439,13 +439,13 @@ END $$ LANGUAGE plpgsql;
 
 GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 GRANT SELECT ON TABLE meta.role_per_schema TO "user";
+GRANT SELECT ON TABLE meta.user_info TO "user";
 -- Configurator role
 
 
 -- Administrator role
 
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO administrator;
-GRANT SELECT ON TABLE meta.user_info TO administrator;
 GRANT ALL ON TABLE meta.role_per_schema TO administrator;
 GRANT EXECUTE ON FUNCTION meta.update_default_role(text, name) TO administrator;
 
