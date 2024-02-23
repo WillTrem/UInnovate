@@ -29,6 +29,7 @@ export class DataAccessor {
       const response = await axiosCustom.get(this.data_url, {
         signal: signal,
         headers: this.headers,
+        params: this.params
       });
 
       response.data.forEach((row: Row) => {
@@ -108,12 +109,31 @@ export class DataAccessor {
     }
   }
 
+
+  /**Method to upsert a SINGLE ROW in a table
+   * @returns AxiosResponse
+   */
+  async put(){
+    try {
+      const response = await axiosCustom.put(this.data_url, this.values, {
+        params: this.params,
+        headers: this.headers,
+      });
+
+      return response;
+    } catch (error) {
+      console.error("Could not update or insert row:", error);
+      throw error;
+    }
+  }
+
   // Method to delete a row from a table
   // return type: AxiosResponse
   async deleteRow() {
     try {
       const response = await axiosCustom.delete(this.data_url, {
         headers: this.headers,
+        params: this.params
       });
 
       return response;

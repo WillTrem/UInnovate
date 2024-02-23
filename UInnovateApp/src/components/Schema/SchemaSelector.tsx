@@ -36,12 +36,6 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
 
   const dispatch = useDispatch();
 
-  // If the selected schema is not included in the schema access of the user, set it to the first element
-  // MIGHT HAVE TO REMOVE LATER ON
-  if(schema_access && schema_access.length !== 0  && selectedSchema && !((schema_access as string[]).includes(selectedSchema))){
-    dispatch(updateSelectedSchema(schema_access[0]))
-  }
-
   const handleSelect = (
     eventKey: string | null,
     e: React.SyntheticEvent<unknown, Event>

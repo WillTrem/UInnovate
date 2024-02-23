@@ -1,4 +1,5 @@
 import axiosCustom from "../api/AxiosCustom";
+import { Role } from "../redux/AuthSlice";
 import { DataAccessor, Row } from "./DataAccessor";
 import { FunctionAccessor } from "./FunctionAccessor";
 
@@ -359,7 +360,8 @@ class VirtualModelDefinition {
     order_by: string,
     sortOrder: string,
     Limit: number,
-    Page: number
+    Page: number,
+    Filter: string
   ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
@@ -375,7 +377,8 @@ class VirtualModelDefinition {
           "&limit=" +
           limit +
           "&offset=" +
-          page,
+          page +
+          Filter,
         {
           "Accept-Profile": schema.schema_name,
         }
@@ -505,6 +508,72 @@ class VirtualModelDefinition {
     }
   }
 
+  // Method to return a data accessor object to upsert a SINGLE ROW in a table
+  // return type : DataAccessor
+  getUpsertRowDataAccessor(
+    schema_name: string,
+    table_name: string,
+    primary_keys: string[],
+    params: { [key: string]: string },
+    row: Row
+  ) {
+    const schema = this.getSchema(schema_name);
+    const table = this.getTable(schema_name, table_name);
+    // Gets the primary key values from the Row, format them for a PUT operation and turns it into an objecct
+    const primary_keys_as_params = primary_keys.reduce<Record<string, string>>(
+      (obj, key) => {
+        obj[key] = `eq.${row[key]}`;
+        return obj;
+      },
+      {}
+    );
+
+    console.log(primary_keys_as_params);
+    if (schema && table) {
+      return new DataAccessor(
+        table.url,
+        {
+          "Content-Type": "application/json",
+          "Content-Profile": schema_name,
+        },
+        { ...params, ...primary_keys_as_params },
+        row
+      );
+    } else {
+      throw new Error("Schema or table does not exist");
+    }
+  }
+
+  // Method to return a data accessor to get rows from a view of a given schema filtered by the search_key(s)
+  // return type: DataAccessor
+  getViewRowDataAccessor(
+    schema_name: string,
+    view_name: string,
+    search_key: string[],
+    search_key_value: string[]
+  ): DataAccessor {
+    const schema = this.getSchema(schema_name);
+    const view = schema?.getView(view_name);
+    if (schema && view) {
+      const searchKeyAsParams = search_key.reduce<Record<string, string>>(
+        (obj, key, i) => {
+          obj[key] = `eq.${search_key_value[i]}`;
+          return obj;
+        },
+        {}
+      );
+      return new DataAccessor(
+        view.url,
+        {
+          "Accept-Profile": schema.schema_name,
+        },
+        searchKeyAsParams
+      );
+    } else {
+      throw new Error("Schema or view does not exist");
+    }
+  }
+
   // Method to return a data accessor to get all the rows from a view of a given schema
   // return type: DataAccessor
   getViewRowsDataAccessor(
@@ -528,19 +597,36 @@ class VirtualModelDefinition {
   getRemoveRowAccessor(
     schema_name: string,
     table_name: string,
-    primary_key: string,
-    primary_key_value: string
+    primary_key: string | string[],
+    primary_key_value: string | string[]
   ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
-      return new DataAccessor(
-        `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
-        {
-          "Content-Profile": schema_name,
-        }
-      );
+      if (typeof primary_key === "string") {
+        return new DataAccessor(
+          `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
+          {
+            "Content-Profile": schema_name,
+          }
+        );
+      } else {
+        //Accounts if the table has more than 1 primary key
+        const primary_keys_as_params = primary_key.reduce<
+          Record<string, string>
+        >((obj, key, i) => {
+          obj[key] = `eq.${primary_key_value[i]}`;
+          return obj;
+        }, {});
+        return new DataAccessor(
+          table.url,
+          {
+            "Content-Profile": schema_name,
+          },
+          primary_keys_as_params
+        );
+      }
     } else {
       throw new Error("Schema or table does not exist");
     }
@@ -556,16 +642,19 @@ class VirtualModelDefinition {
     const schema = this.getSchema(schema_name);
     if (schema) {
       const function_url = API_BASE_URL + "rpc/" + function_name;
-      if(data)
-      {
-          return new FunctionAccessor(function_url, {
-          "Content-Profile": schema.schema_name,
-          },undefined, data);
+      if (data) {
+        return new FunctionAccessor(
+          function_url,
+          {
+            "Content-Profile": schema.schema_name,
+          },
+          undefined,
+          data
+        );
       }
       return new FunctionAccessor(function_url, {
         "Content-Profile": schema.schema_name,
       });
-      
     } else {
       throw new Error("Schema does not exist");
     }
@@ -879,7 +968,7 @@ export interface UserData {
   email: string;
   first_name?: string;
   last_name?: string;
-  role?: string;
+  role?: Role; // Default role
   is_active?: boolean;
   schema_access?: string[];
 }

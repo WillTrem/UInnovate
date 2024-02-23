@@ -6,11 +6,13 @@ import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor";
 import vmd from "../../virtualmodel/VMD";
 import validator from 'validator';
 import { useDispatch, useSelector } from "react-redux";
-import { logIn } from "../../redux/AuthSlice";
+import { logIn, updateDefaultRole, updateSchemaRoles } from "../../redux/AuthSlice";
 import { useNavigate } from "react-router-dom";
 import { Visibility, VisibilityOff, Check, Close, NavigateNext, NavigateBefore } from '@mui/icons-material';
 import { green, grey } from '@mui/material/colors';
 import { ErrMsg } from "../../enums/ErrMsg";
+import { setLoading } from "../../redux/LoadingSlice";
+import { getDefaultRole, getSchemaRoles } from "../../helper/RolesHelpers";
 
 const LENGTH_REGEX = new RegExp(/.{8,}$/);
 const UPPERCASE_REGEX = new RegExp(/.*[A-Z]/);
@@ -61,7 +63,7 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 	// Reset the inputValues state's values
 	const resetValues = () => setInputValues({});
 
-	function resetErrorMessages(){
+	function resetErrorMessages() {
 		//Reset Error Message states
 		setEmailError("");
 		setPasswordError("");
@@ -157,13 +159,21 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 			loginFunctionAccessor.executeFunction({ withCredentials: true })
 				// Logs in the user
 				.then(async (response) => {
+					dispatch(setLoading(true));
 					const token = response.data.token;
 					dispatch(logIn(token));
+					navigate('/');
 					await vmd.refetchSchemas();
+					const schemaRoles = await getSchemaRoles(inputValues.email);
+					dispatch(updateSchemaRoles(schemaRoles));
+					
+					const defaultRole = await getDefaultRole(inputValues.email);
+					dispatch(updateDefaultRole(defaultRole));
+
 					// Closes the form
 					const dummyEvent = document.createEvent('MouseEvents');
 					handleCancel(dummyEvent as unknown as React.MouseEvent<HTMLButtonElement, MouseEvent>);
-					navigate('/');
+					dispatch(setLoading(false));
 				})
 				.catch(() => {
 					setPasswordError(ErrMsg.WRONG_PASSWORD);
