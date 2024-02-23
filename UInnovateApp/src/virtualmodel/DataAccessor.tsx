@@ -122,6 +122,7 @@ export class DataAccessor {
       return response;
     } catch (error) {
       console.error("Could not update or insert row:", error);
+      throw error;
     }
   }
 
@@ -131,6 +132,7 @@ export class DataAccessor {
     try {
       const response = await axiosCustom.delete(this.data_url, {
         headers: this.headers,
+        params: this.params
       });
 
       return response;

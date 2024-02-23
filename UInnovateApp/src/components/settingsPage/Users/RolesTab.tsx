@@ -1,56 +1,90 @@
 import "../../../styles/TableComponent.css"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import vmd, { UserData } from "../../../virtualmodel/VMD";
-import { Box, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableRowProps, fabClasses } from "@mui/material";
+import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableRowProps, fabClasses } from "@mui/material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
 import { Role } from "../../../redux/AuthSlice";
-const RolesTab: React.FC = () => {
-	const users = useSelector((state: RootState) => state.userData.users)
-	const schemas: string[] = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
-	// const schemas: string[] = ["Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1"]
-
-
-	return <Box display="flex" justifyContent="center" paddingTop={2}  >
-		<Box sx={{ display: "inline-block", overflow: "auto", maxWidth: "100%", alignItems: "center" }}>
-			<TableContainer sx={{ display: "block", border: "thin solid grey" }} component={Box}>
-				<Table sx={{ minWidth: "max-content", borderCollapse: "separate", border: "none" }}>
-					<TableHead >
-						<TableRow>
-							<TableCell className="sticky-column-left" sx={{ maxWidth: "15rem", borderRight: "thin solid #e0e0e0", fontWeight: "Bold" }}>Users</TableCell>
-							<TableCell sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>Default </TableCell>
-							{schemas.map((schema) => {
-								return <TableCell key={schema} sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>{schema}</TableCell>
-							})}
-						</TableRow>
-					</TableHead>
-					<TableBody>
-						{users.map((user: UserData) => {
-							return <RolesTableRow user={user} schemas={schemas} />
-						})}
-					</TableBody>
-				</Table>
-			</TableContainer>
-		</Box>
-	</Box>
-}
-
-interface RolesTableRowProps extends Omit<TableRowProps, 'children'> {
-	user: UserData,
-	schemas: string[]
-}
 
 interface SchemaRoles {
 	[key: string]: Role | '';
 }
 
-const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, ...props }) => {
-	const initialSchemaRoles = schemas.reduce((roles, schema) => {
-		roles[schema] = '';
-		return roles;
-	  }, {} as SchemaRoles);
+interface SchemaRolesPerUser {
+	[key: string]: SchemaRoles;
+}
 
-	const [schemaRoles, setSchemaRoles] = useState<SchemaRoles>(initialSchemaRoles)
+const RolesTab: React.FC = () => {
+	const [schemaRolesPerUser, setSchemaRolesPerUser] = useState<SchemaRolesPerUser>();
+	const users = useSelector((state: RootState) => state.userData.users)
+	const schemas: string[] = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
+	// const schemas: string[] = ["Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1", "Schema1"]
+	async function getSchemaRoles() {
+		const da = vmd.getRowsDataAccessor('meta', 'role_per_schema');
+		const schemaRoles = await da.fetchRows();
+		if (schemaRoles) {
+			console.log(schemaRoles)
+			// Transforms the array of {user, role, schema} objects into an object of {user: {schema1: role, schema2: role},...}
+			const reducedSchemaRoles = schemaRoles.reduce((obj, { user, schema, role }) => {
+				if (!obj[user]) {
+					obj[user] = {}
+				}
+				obj[user][schema] = role;
+				return obj;
+			}, {});
+			console.log(reducedSchemaRoles);
+			setSchemaRolesPerUser(reducedSchemaRoles);
+		}
+	}
+
+	useEffect(() => {
+		getSchemaRoles();
+	}, []);
+
+	return <Box display="flex" justifyContent="center" paddingTop={2}  >
+		{schemaRolesPerUser ?
+			<Box sx={{ display: "inline-block", overflow: "auto", maxWidth: "100%", alignItems: "center" }}>
+				<TableContainer sx={{ display: "block", border: "thin solid grey" }} component={Box}>
+					<Table sx={{ minWidth: "max-content", borderCollapse: "separate", border: "none" }}>
+						<TableHead >
+							<TableRow>
+								<TableCell className="sticky-column-left" sx={{ maxWidth: "15rem", borderRight: "thin solid #e0e0e0", fontWeight: "Bold" }}>Users</TableCell>
+								<TableCell sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>Default </TableCell>
+								{schemas.map((schema) => {
+									return <TableCell key={schema} sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>{schema}</TableCell>
+								})}
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{users.map((user: UserData) => {
+								return <RolesTableRow
+									key={user.email}
+									user={user}
+									schemas={schemas}
+									schemaRoles={schemaRolesPerUser[user.email]}
+									getSchemaRoles={getSchemaRoles}
+								/>
+							})}
+						</TableBody>
+					</Table>
+				</TableContainer>
+			</Box>
+			:
+			<CircularProgress disableShrink sx={{ color: "#404040" }} size={"5vw"} />
+		}
+	</Box>
+}
+
+interface RolesTableRowProps extends Omit<TableRowProps, 'children'> {
+	user: UserData,
+	schemas: string[],
+	schemaRoles: SchemaRoles,
+	getSchemaRoles: () => Promise<void>
+}
+
+
+
+const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRoles = {}, getSchemaRoles, ...props }) => {
 	const [defaultRole, setDefaultRole] = useState(user.role)
 
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
@@ -58,13 +92,28 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, ...props }
 	}
 
 	function handleRoleChange(event: SelectChangeEvent<unknown>, schema: string) {
-		setSchemaRoles({ ...schemaRoles, [schema]: event.target.value as Role })
-		const primKeys = ['user', 'schema'];
-		const newRow = {user: user.email, schema, role: event.target.value as Role}
-		const upsertRoleDataAcc = vmd.getUpsertRowDataAccessor('meta', 'role_per_schema', primKeys, {}, newRow );
-		upsertRoleDataAcc.put()
-		.then(() => console.log("Schema role updated successfully."))
-		.catch(() => console.log("Error while updating the schema role"));
+		// If selecting the empty choice, removes the line from the table
+		if (event.target.value === '') {
+			// event.preventDefault;
+			const deleteRowDataAccessor = vmd.getRemoveRowAccessor('meta', 'role_per_schema', ['user', 'schema'], [user.email, schema]);
+			deleteRowDataAccessor.deleteRow().then(() => {
+				console.log("Schema role updated successfully.")
+				getSchemaRoles();
+			})
+				.catch(() => console.log("Error while updating the schema role"));
+
+		}
+		else { 
+			const primKeys = ['user', 'schema'];
+			const newRow = { user: user.email, schema, role: event.target.value as Role }
+			const upsertRoleDataAcc = vmd.getUpsertRowDataAccessor('meta', 'role_per_schema', primKeys, {}, newRow);
+			upsertRoleDataAcc.put()
+				.then(() => {
+					console.log("Schema role updated successfully.")
+					getSchemaRoles();
+				})
+				.catch(() => console.log("Error while updating the schema role"));
+		}
 	}
 
 	return <TableRow {...props}>
@@ -95,8 +144,9 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, ...props }
 						variant="outlined"
 						size="small"
 						disabled={defaultRole === Role.ADMIN}
+						defaultValue={schemaRoles[schema]}
 					>
-						<MenuItem value=''/>
+						<MenuItem value='' />
 						<MenuItem value={Role.USER}>User</MenuItem>
 						<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
 						{/* <MenuItem value={Role.ADMIN}>Admin</MenuItem> */}

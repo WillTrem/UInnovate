@@ -562,19 +562,30 @@ class VirtualModelDefinition {
   getRemoveRowAccessor(
     schema_name: string,
     table_name: string,
-    primary_key: string,
-    primary_key_value: string
+    primary_key: string | string[],
+    primary_key_value: string | string[]
   ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
-      return new DataAccessor(
-        `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
-        {
+      if(typeof primary_key === 'string'){
+        return new DataAccessor(
+          `${table.url}?${primary_key}=eq.${primary_key_value}`, // PostgREST URL for removing a row from its id
+          {
+            "Content-Profile": schema_name,
+          }
+        );
+      }
+      else{//Accounts if the table has more than 1 primary key
+        const primary_keys_as_params = primary_key.reduce<Record<string, string>>((obj, key, i) => {
+          obj[key] = `eq.${primary_key_value[i]}`;
+          return obj;
+        }, {})
+        return new DataAccessor(table.url, {
           "Content-Profile": schema_name,
-        }
-      );
+        }, primary_keys_as_params)
+      }
     } else {
       throw new Error("Schema or table does not exist");
     }
