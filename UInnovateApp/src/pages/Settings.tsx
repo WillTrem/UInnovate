@@ -2,8 +2,8 @@ import { NavBar } from "../components/NavBar";
 import { GeneralTab } from "../components/settingsPage/GeneralTab";
 import { CronJobsTab } from "../components/settingsPage/CronJobsTab";
 import DisplayTab from "../components/settingsPage/DisplayTab";
-import { ScriptingTab } from "../components/settingsPage/ScriptingTab";
 import { EnvVarCreator } from "../components/settingsPage/EnvVarCreator";
+import Scripting from "../components/settingsPage/Scripting";
 import Tab from "react-bootstrap/Tab";
 import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
@@ -107,12 +107,7 @@ export function Settings() {
 										<Nav.Link eventKey='display' onClick={() => handleNavClick('display')}>Display</Nav.Link>
 									</Nav.Item>
 									<Nav.Item>
-										<Nav.Link eventKey='schedule' onClick={() => handleNavClick('schedule')}>
-											Scheduled Activities
-										</Nav.Link>
-										<Nav.Link eventKey='scripting' onClick={() => handleNavClick('scripting')}>Scripting</Nav.Link>
-
-										<Nav.Link eventKey='envvar' onClick={() => handleNavClick('envvar')}>Environment Variables</Nav.Link>
+										<Nav.Link eventKey='scripting'onClick={() => handleNavClick('scripting')}>Scripting</Nav.Link>
 									</Nav.Item>
 									{(dbRole === Role.ADMIN || LOGIN_BYPASS && dbRole === null) && (
 										<Nav.Item>
@@ -143,7 +138,7 @@ export function Settings() {
 										<CronJobsTab />
 									</Tab.Pane>
 									<Tab.Pane eventKey='scripting'>
-										<ScriptingTab />
+										<Scripting />
 									</Tab.Pane>
 									<Tab.Pane eventKey='envvar'>
 										<EnvVarCreator />

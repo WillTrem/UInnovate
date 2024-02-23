@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
-import {Button, skeletonClasses} from "@mui/material"
-import { Card, ListGroup, Form, Table, Row, Col } from "react-bootstrap";
+import {Button, Typography} from "@mui/material"
+import { ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
-import vmd from "../../virtualmodel/VMD";
-import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams } from '../../virtualmodel/PlatformFunctions';
+import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchFunctionNames } from '../../virtualmodel/PlatformFunctions';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import SchemaSelector from '../Schema/SchemaSelector';
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import Tab from "react-bootstrap/Tab";
+import DisplayType from '../Schema/DisplayType';
 
 interface ExecutionLogEntry {
     id: any; 
@@ -33,15 +37,28 @@ const buttonStyle = {
 export const CronJobsTab = () => {
     const [selectedProc, setSelectedProc] = useState('');
     const [cronSchedule, setCronSchedule] = useState('');
+    const [procedures, setProcedures] = useState<string[]>([]); // list of stored procedures
     const [executionLogs, setExecutionLogs] = useState<ExecutionLogEntry[]>([]);
     const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
+    const selectedSchema = useSelector((state: RootState) => state.schema.value);
+    const { schema_access } = useSelector((state: RootState) => state.auth);
 
-    // Dummy data for procedures
-    const procedures = [
-        "Stored Proc 1",
-        "Stored Proc 2",
-        "process_updates"
-    ];
+    const updateProcedureNames = async () => {
+        if (!selectedSchema || schema_access.length == 0) return
+        try {
+            // wait for resolve of fetchFunctionNames promises
+            const functionNames = await fetchFunctionNames(selectedSchema);
+            const procedures = [...new Set(functionNames)];
+
+            setProcedures(procedures); // update state with function names
+
+            if (procedures.length > 0) {
+                setSelectedProc(procedures[0]);
+            }
+        } catch (error) {
+            console.error('Error fetching function names:', error);
+        }
+    };
 
     const scheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
@@ -163,6 +180,11 @@ export const CronJobsTab = () => {
         
         setQueuedLogs(newQueuedJobs);
     };
+
+    useEffect(() => {
+        updateProcedureNames();
+    }, []);
+
     useEffect(() => {
         if (procedures.length > 0 && selectedProc === '') {
             const initialProc = procedures[0];
@@ -182,9 +204,13 @@ export const CronJobsTab = () => {
     };
 
     return (
-        <Card>
-            <Row>
-                <Col sm={4}>
+        <div>
+        {procedures.length !== 0 ?
+        <Tab.Container>
+        <Tab.Content>
+        <Row>
+                <Col sm={3}>
+                <SchemaSelector displayType={DisplayType.NavDropdown}/>
                     {/* list of stored procedures */}
                     <ListGroup>
                         {procedures.map(proc => (
@@ -277,6 +303,10 @@ export const CronJobsTab = () => {
                     </ListGroup>
                 </Col>
             </Row>
-        </Card>
+        </Tab.Content>
+    </Tab.Container>
+        :
+        <Typography variant="body1">You don't have access to any tables.</Typography>}
+     </div>
     );
 };
