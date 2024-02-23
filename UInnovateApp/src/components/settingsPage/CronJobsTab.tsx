@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import Tab from "react-bootstrap/Tab";
 import DisplayType from '../Schema/DisplayType';
+import vmd from "../../virtualmodel/VMD";
 
 interface ExecutionLogEntry {
     id: any; 

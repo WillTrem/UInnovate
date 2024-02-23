@@ -441,6 +441,28 @@ BEGIN
     END LOOP;
 END;
 $BODY$;
+
+-- Fetch Functions Source Code
+
+CREATE OR REPLACE FUNCTION meta.get_function_source_code_and_arg_count(p_schema_name text, p_function_name text)
+RETURNS TABLE(source_code text, arg_count integer) AS $$
+DECLARE
+    v_function_source text;
+    v_arg_count integer;
+BEGIN
+    SELECT prosrc, pronargs INTO v_function_source, v_arg_count
+    FROM pg_proc
+    INNER JOIN pg_namespace ns ON pg_proc.pronamespace = ns.oid
+    WHERE ns.nspname = p_schema_name
+    AND pg_proc.proname = p_function_name;
+
+    source_code := v_function_source;
+    arg_count := v_arg_count;
+EXCEPTION WHEN others THEN
+    source_code := 'Function not found or you do not have permission to view it';
+    arg_count := NULL;
+END;
+$$ LANGUAGE plpgsql STABLE;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
