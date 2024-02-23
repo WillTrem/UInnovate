@@ -12,7 +12,7 @@ import { Visibility, VisibilityOff, Check, Close, NavigateNext, NavigateBefore }
 import { green, grey } from '@mui/material/colors';
 import { ErrMsg } from "../../enums/ErrMsg";
 import { setLoading } from "../../redux/LoadingSlice";
-import { getDefaultRole, getSchemaRoles } from "./Users/RolesTab";
+import { getDefaultRole, getSchemaRoles } from "../../helper/RolesHelpers";
 
 const LENGTH_REGEX = new RegExp(/.{8,}$/);
 const UPPERCASE_REGEX = new RegExp(/.*[A-Z]/);

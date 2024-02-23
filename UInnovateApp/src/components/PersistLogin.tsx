@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { DecodedToken, logIn, updateDefaultRole, updateSchemaRoles } from "../redux/AuthSlice";
 import vmd from "../virtualmodel/VMD";
 import { setLoading } from "../redux/LoadingSlice";
-import { getDefaultRole, getSchemaRoles } from "./settingsPage/Users/RolesTab";
+import { getDefaultRole, getSchemaRoles } from "../helper/RolesHelpers";
 import { jwtDecode } from "jwt-decode";
 
 const PersistLogin: React.FC = () => {

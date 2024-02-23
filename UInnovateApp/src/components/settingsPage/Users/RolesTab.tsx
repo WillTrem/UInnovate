@@ -148,7 +148,8 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 		</TableCell>
 		{schemas.map((schema) => {
 			return <TableCell key={schema}>
-				<FormControl fullWidth>
+				{user.schema_access && user.schema_access.includes(schema)
+				?<FormControl fullWidth>
 					<Select
 						name="role"
 						value={schemaRoles[schema] || ''}
@@ -164,47 +165,9 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 						{/* <MenuItem value={Role.ADMIN}>Admin</MenuItem> */}
 					</Select>
 				</FormControl>
+				:<Typography color={"grey"}>No Access</Typography>}
 			</TableCell>
 		})}
 	</TableRow>
 }
-/**
- * Function that obtains the schema roles for a given user
- * @returns SchemaRoles
- */
-export async function getSchemaRoles(user: string): Promise<SchemaRoles>
-{
-	const rolePerSchemaDA = vmd.getRowDataAccessor('meta', 'role_per_schema', 'user', user);
-	const rolePerSchemaResponse = await rolePerSchemaDA.fetchRows();
-	console.log(rolePerSchemaResponse);
-	if (rolePerSchemaResponse) {
-		const reducedRolePerSchema = rolePerSchemaResponse.reduce((obj, { schema, role }) => {
-			obj[schema] = role;
-			return obj;
-		}, {});
-		return reducedRolePerSchema
-	}else{
-		console.log('Failed to obtain the schema roles of user ' + user)
-		return {};
-	}
-}
-
-/**
- * Function that obtains the default role for a given user
- * @returns Role
- */
-export async function getDefaultRole(user: string): Promise<Role|null>
-{
-	const defaultRoleDA = vmd.getViewRowDataAccessor('meta', 'user_info', ['email'],[ user]);
-	const response = await defaultRoleDA.fetchRows();
-	if (response) {
-		console.log(response);
-		const defaultRole = response[0]['role']
-		return defaultRole as Role;
-	}else{
-		console.log('Failed to obtain the default role of user ' + user);
-		return null;
-	}
-}
-
 export default RolesTab;

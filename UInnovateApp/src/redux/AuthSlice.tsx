@@ -10,7 +10,7 @@ import { SchemaRoles } from "../components/settingsPage/Users/RolesTab";
 export interface AuthState {
 	user: string | null;
 	token: string | null;
-	dbRole: string | null; // Default role
+	dbRole: string | null; // Database role, i.e. the role giving you db permissiosn
 	defaultRole: string | null; // Default role
 	schema_access: string[];
 	schemaRoles: SchemaRoles;

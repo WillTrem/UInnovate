@@ -33,9 +33,10 @@ export function Settings() {
 				// Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
 				if ((LOGIN_BYPASS && user === null) // Include if LOGIN_BYPASS enabled with no user logged in
 					|| (schema_access.includes(schema_name)) // Schema must be in schema_access list
-					&& (schemaRoles[schema_name] === Role.CONFIG // User must have role configurator for schema in schema roles
-						|| (!schemaRoles[schema_name] && defaultRole === Role.CONFIG) // OR User doesn't have any role set for schema and its default role is configurator
-					)) {
+					&& (dbRole === Role.ADMIN // AND User must be an admin
+						||(schemaRoles[schema_name] === Role.CONFIG // OR User must have role configurator for schema in schema roles
+							|| (!schemaRoles[schema_name] && defaultRole === Role.CONFIG) // OR User doesn't have any role set for schema and its default role is configurator
+						))) {
 					return schema_name;
 				}
 			})),

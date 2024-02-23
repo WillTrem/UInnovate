@@ -81,15 +81,22 @@ CREATE OR REPLACE VIEW authentication.db_role AS(
 		users.email,
 		MIN(LEAST(default_hierarchy.rank, schema_hierarchy.rank)) as highest_rank
 	FROM authentication.users
-	FULL JOIN meta.role_per_schema
-		ON users.email = role_per_schema.user
+	FULL JOIN ( SELECT role_per_schema.user,
+			   	role_per_schema.schema,
+			   role_per_schema.role
+			   FROM meta.role_per_schema 
+			   LEFT JOIN authentication.users
+			  ON role_per_schema.user = users.email
+			  WHERE ARRAY[role_per_schema.schema] <@ users.schema_access) as filtered_schemas
+		ON users.email = filtered_schemas.user
 	LEFT JOIN authentication.role_hierarchy as default_hierarchy
 		ON users.role = default_hierarchy.role
 	LEFT JOIN authentication.role_hierarchy as schema_hierarchy
-		ON role_per_schema.role = schema_hierarchy.role
+		ON filtered_schemas.role = schema_hierarchy.role
 	GROUP BY users.email) as db_role_rank
 	ON role_hierarchy.rank = db_role_rank.highest_rank
 );
+
 
 -- TRIGGER to ensure the schemas from user_schema_access are existing schemas
 CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
