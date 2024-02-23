@@ -155,7 +155,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
     const count = await countAccessor.fetchRows();
     const lines = await data_accessor.fetchRows();
-    console.log(data_accessor)
 
     // Filter the rows to only include the visible columns
     const filteredRows = lines?.map((row) => {
@@ -476,7 +475,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (Object.values(FilterCheckedList).every(value => value.length === 0)) {
       setConditionFilter("");
     }
-    console.log(Filter)
 
   };
 
@@ -502,7 +500,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     });
     setFilterCheckedList(resetChecked);
     setConditionFilter("");
-    getRows();
   };
 //End of Filter Function
 
