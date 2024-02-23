@@ -41,6 +41,30 @@ export class DataAccessor {
     }
   }
 
+  // Method to fetch rows from a table or view by column values
+  // return type: Row[]
+  async fetchRowsByColumnValues(column_name: string, column_value: string, order_by_column: string | undefined, signal?: AbortSignal | undefined) {
+    try {
+      const rows: Row[] = [];
+      this.data_url = this.data_url + `?${column_name}=eq.${column_value}`;
+      if (order_by_column) {
+        this.data_url = this.data_url + `&order=${order_by_column}.asc`;
+      }
+      const response = await axiosCustom.get(this.data_url, {
+        signal: signal,
+        headers: this.headers,
+      });
+
+      response.data.forEach((row: Row) => {
+        rows.push(row);
+      });
+
+      return rows;
+    } catch (error) {
+      console.error("Could not fetch data:", error);
+    }
+  }
+
   // Method to add a row to a table
   // return type: AxiosResponse
   async addRow() {

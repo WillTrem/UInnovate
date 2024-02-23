@@ -53,9 +53,13 @@ const authSlice = createSlice({
 			const logoutFuncAccessor = vmd.getFunctionAccessor("meta", "logout");
 			logoutFuncAccessor.executeFunction({ withCredentials: true });
 		},
+		updateSchemaAccess: (state: AuthState, action: PayloadAction<string[]>) => {
+			const newSchemaAccess = action.payload;
+			state.schema_access = newSchemaAccess;
+		}
 	},
 });
 
-export const { logIn, logOut } = authSlice.actions;
+export const { logIn, logOut, updateSchemaAccess } = authSlice.actions;
 
 export default authSlice.reducer;
