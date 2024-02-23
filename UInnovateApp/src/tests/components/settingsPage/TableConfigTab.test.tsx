@@ -34,14 +34,14 @@ describe("TableItem component", () => {
       );
 
       // Act - toggle the visibility off
-      const checkbox = await screen.findByTestId("visibility-switch");
+      const checkbox = (await screen.findAllByTestId("visibility-switch"))[0];
       fireEvent.click(checkbox);
 
       // Assert
       await waitFor(() => {
-        const updatedToggle = screen.getByTestId(
+        const updatedToggle = screen.getAllByTestId(
           "visibility-switch"
-        ) as HTMLInputElement;
+        )[0] as HTMLInputElement;
         expect(updatedToggle.checked).toBeFalsy();
       });
     }),

@@ -138,7 +138,7 @@ export const ScriptingTab = () => {
                 const script_name = script["name"];
                 return (
                   <Tab.Pane key={script_name} eventKey={script_name}>
-                    <ScriptEditor script={script} />
+                    <ScriptEditor data-testid="script-editor" script={script} />
                   </Tab.Pane>
                 );
               })}

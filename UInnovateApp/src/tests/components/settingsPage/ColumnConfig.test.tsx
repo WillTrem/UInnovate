@@ -7,7 +7,7 @@ import VMD from "../../../virtualmodel/__mocks__/VMD";
 describe("ColumnConfig component", () => {
   const column = new VMD.Column("Column1");
   const table = new VMD.Table("Table1");
-  table.addColumn(column);
+  table.addColumn(column, "", false, "");
 
   it("renders the component", () => {
     render(
@@ -25,7 +25,7 @@ describe("ColumnConfig component", () => {
       );
 
       // Act - toggle the visibility off for the first column
-      fireEvent.click(screen.getByTestId("visibility-switch"));
+      fireEvent.click(screen.getAllByTestId("visibility-switch")[0]);
 
       // Assert
       await waitFor(() => {

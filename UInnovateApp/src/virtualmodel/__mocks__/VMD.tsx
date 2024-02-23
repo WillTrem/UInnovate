@@ -3,13 +3,11 @@ import { DataAccessorMock } from "./DataAccessor";
 import { FunctionAccessorMock } from "./FunctionAccessor.tsx";
 import VMD, { Table, Schema, Column, TableDisplayType, View } from "../VMD";
 
-export { Table, Schema, Column };
-
 export default {
   ...VMD,
   getRowsDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessor in VMD mock was called");
-    return new DataAccessorMock();
+    return new DataAccessorMock("/api/data");
   }),
   getRowsDataAccessorForOrder: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessorForOrder in VMD mock was called");
@@ -69,7 +67,17 @@ export default {
     console.log("getViewRowsDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
-  Table: Table,
+  Table: class extends Table {
+    getColumns = vi.fn().mockImplementation(() => {
+      console.log("getColumns in Table mock was called");
+      return [
+        new Column("Column1"),
+        new Column("Column2"),
+        new Column("Column3"),
+        new Column("name"),
+      ];
+    });
+  },
   Column: Column,
   TableDisplayType: TableDisplayType,
   View: View,

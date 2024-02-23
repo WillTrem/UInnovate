@@ -78,21 +78,24 @@ describe("ScriptHandler", () => {
     await mockedHandler.init();
 
     const expectedRows = [
-      new Row({
+      {
         Column1: 1,
         Column2: "mock row",
         Column3: "mock description",
-      }),
-      new Row({
+        name: "mock name",
+      } as Row,
+      {
         Column1: 2,
         Column2: "mock row 2",
         Column3: "mock description 2",
-      }),
-      new Row({
+        name: "mock name 2",
+      } as Row,
+      {
         Column1: 3,
         Column2: "mock row 3",
         Column3: "mock description 3",
-      }),
+        name: "mock name 3",
+      } as Row,
     ];
 
     expect(mockedHandler.getAccessor().data_url).toEqual("/api/data");

@@ -25,7 +25,6 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
   const [originalColumns, setOriginalColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
-  
 
   useEffect(() => {
     const fetchData = async () => {
