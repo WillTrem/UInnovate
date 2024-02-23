@@ -1,5 +1,4 @@
 import "../styles/TableComponent.css";
-import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
@@ -14,7 +13,6 @@ import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
 import { IoIosArrowUp } from "react-icons/io";
 
 import {
@@ -52,7 +50,7 @@ import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Table as Tabless,
   TableBody,
@@ -113,6 +111,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
+
+  //These are all the Usestate which is used for Pagination, Sorting and Filtering for the List view of the table
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
@@ -120,7 +120,15 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(defaultOrderValue);
   const [conditionFilter, setConditionFilter] = useState<string>("");
+  const [FilterMenu, setFilterMenu] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
+  const [FilterCheckedList, setFilterCheckedList] = useState<{ [key: string]: string[] }>(() => {
+    const initialCheckedState = table.columns.reduce((acc, column) => {
+      acc[column.column_name] = [];
+      return acc;
+    }, {} as { [key: string]: string[] });
 
+    return initialCheckedState;
+  });
 
 
   const getRows = async () => {
@@ -279,12 +287,12 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   //For when pagination limit changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
-    setPaginationValue(event.target.value as number);
+    setPaginationValue(event.target.value as unknown as number);
     setPageNumber(1);
   };
 
   //For when page number changes
-  const handlePageChange = (event, value) => {
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -410,7 +418,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
-      [eventName]: eventValue,
+      [eventName as string]: eventValue,
     }));
   };
 
@@ -440,6 +448,63 @@ const TableListView: React.FC<TableListViewProps> = ({
     setInputValues({});
     setOpenPanel(false);
   };
+
+  //Filter Functions
+  //Handle when you click on the filter button
+  const handleFilterClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
+    const newPopup = [...FilterMenu];
+    newPopup[index] = event.currentTarget;
+    setFilterMenu(newPopup);
+  };
+
+  //handle when you press off the pop up or when you click confirm
+  const handleFilterClose = (index: number) => {
+    const newPopup = [...FilterMenu];
+    newPopup[index] = null;
+    setFilterMenu(newPopup);
+    let Filter = "";
+    Object.entries(FilterCheckedList).map(([key, value]) => {
+
+      if (value.length > 0) {
+        Filter += `&${key}=in.(${value.map((val) => `"${val}"`).join(",")}) `;
+        setConditionFilter(Filter);
+      }
+
+
+
+    });
+    if (Object.values(FilterCheckedList).every(value => value.length === 0)) {
+      setConditionFilter("");
+    }
+    console.log(Filter)
+
+  };
+
+  //When a check is selected on the pop up
+  const handleFilterToggle = (value: string, columnName: string) => () => {
+    const currentIndex = FilterCheckedList[columnName]?.indexOf(value) ?? -1;
+    const newChecked = [...(FilterCheckedList[columnName] || [])];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setFilterCheckedList({ ...FilterCheckedList, [columnName]: newChecked });
+  };
+
+  //when we click on Reset Filter
+  const ResetFilter = () => {
+    const resetChecked: { [key: string]: string[] } = {};
+    columns.forEach((column) => {
+      resetChecked[column.column_name] = [];
+    });
+    setFilterCheckedList(resetChecked);
+    setConditionFilter("");
+    getRows();
+  };
+//End of Filter Function
 
   const FileInputField = (column: Column) => {
     if (!appConfigValues) {
@@ -717,76 +782,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   }, [openPanel]);
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  const [MenuPopUp, setMenuPopUp] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
-  const [checkedList, setcheckedList] = useState<{ [key: string]: string[] }>(() => {
-    const initialCheckedState = table.columns.reduce((acc, column) => {
-      acc[column.column_name] = [];
-      return acc;
-    }, {} as { [key: string]: string[] });
-
-    return initialCheckedState;
-  });
-  const handleClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
-    const newPopup = [...MenuPopUp];
-    newPopup[index] = event.currentTarget;
-    setMenuPopUp(newPopup);
-  };
-
-  const handleClose = (index: number) => {
-    const newPopup = [...MenuPopUp];
-    newPopup[index] = null;
-    setMenuPopUp(newPopup);
-    let Filter = "";
-    const checkedColumns = Object.entries(checkedList).map(([key, value]) => {
-
-      if (value.length > 0) {
-        Filter += `&${key}=in.(${value.map((val) => `"${val}"`).join(",")}) `;
-        setConditionFilter(Filter);
-      }
-
-
-
-    });
-    if (Object.values(checkedList).every(value => value.length === 0)) {
-      setConditionFilter("");
-    }
-    console.log(Filter)
-
-  };
-
-  const handleToggle = (value: string, columnName: string) => () => {
-    const currentIndex = checkedList[columnName]?.indexOf(value) ?? -1;
-    const newChecked = [...(checkedList[columnName] || [])];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setcheckedList({ ...checkedList, [columnName]: newChecked });
-  };
-
-  console.log(checkedList);
-
-
-
-  // console.log(checkedColumns);
-
-  const Reset = () => {
-    const resetChecked: { [key: string]: string[] } = {};
-    columns.forEach((column) => {
-      resetChecked[column.column_name] = [];
-    });
-    setcheckedList(resetChecked);
-    setConditionFilter("");
-    getRows();
-  };
-  /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
   return (
     <div>
@@ -854,20 +849,24 @@ const TableListView: React.FC<TableListViewProps> = ({
 
       </div>
       <Button
-        style={{ ...buttonStyle, marginTop: "", backgroundColor:  Object.values(checkedList).every(value => value.length === 0)?  "#404040" : "black"}}
+        style={{
+          ...buttonStyle, marginTop: "",
+          backgroundColor: conditionFilter==="" ? "#404040" : "#1976d2"
+        }}
         variant="contained"
-        onClick={Reset}>
+        onClick={ResetFilter}>
         Reset Filters</Button>
       <TableContainer>
         <Tabless
           className="table-container"
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
+          style={{padding:'10px'}}
         >
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <TableCell key={index} style={{ textAlign: "center"}}>
+                <TableCell key={index} style={{ textAlign: "center", whiteSpace: 'nowrap' }}>
                   <TableSortLabel
                     active={orderBy === column.column_name}
                     direction={sortOrder as "asc" | "desc" | undefined}
@@ -875,40 +874,40 @@ const TableListView: React.FC<TableListViewProps> = ({
                   >
                     {column.column_name}
                   </TableSortLabel>
-                  <Button size="small" style={{color: 'black', maxWidth: '30px', minWidth: '30px'}} onClick={(event) => handleClick(event, index)}><IoIosArrowUp /></Button>
+                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }} onClick={(event) => handleFilterClick(event, index)}><IoIosArrowUp /></Button>
                   <Menu
                     id={`simple-menu-${index}`}
-                    anchorEl={MenuPopUp[index]}
+                    anchorEl={FilterMenu[index]}
                     keepMounted
-                    open={Boolean(MenuPopUp[index])}
-                    onClose={() => handleClose(index)}
+                    open={Boolean(FilterMenu[index])}
+                    onClose={() => handleFilterClose(index)}
                   >
-                    
-                    <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }} >
-                      
-                    {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
-                      if (value === true || value === false) {
-                        value = value.toString();
-                      }
-                      return (
-                        <MenuItem key={value} >
-                          <Checkbox
-                            edge="start"
-                            checked={checkedList[column.column_name]?.indexOf(value) !== -1}
-                            tabIndex={-1}
-                            disableRipple
-                            inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
-                            onClick={handleToggle(value, column.column_name)}
-                            size="small"
-                          />
-                          {value}
-                        </MenuItem>
 
-                      );
-                    })}
-                    
+                    <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }} >
+
+                      {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
+                        if (value === true || value === false) {
+                          value = value.toString();
+                        }
+                        return (
+                          <MenuItem key={value} >
+                            <Checkbox
+                              edge="start"
+                              checked={FilterCheckedList[column.column_name]?.indexOf(value) !== -1}
+                              tabIndex={-1}
+                              disableRipple
+                              inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
+                              onClick={handleFilterToggle(value, column.column_name)}
+                              size="small"
+                            />
+                            {value}
+                          </MenuItem>
+
+                        );
+                      })}
+
                     </div>
-                    <Button variant="text"  style={{ ...buttonStyle, textAlign:'center', color:'white', margin:'0px 10px 10px 10px' }} onClick={() => handleClose(index)}>
+                    <Button variant="text" style={{ ...buttonStyle, textAlign: 'center', color: 'white', margin: '0px 10px 10px 10px' }} onClick={() => handleFilterClose(index)}>
                       Confirm
                     </Button>
                   </Menu>
