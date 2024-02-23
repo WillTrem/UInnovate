@@ -1,5 +1,4 @@
 import "../styles/TableComponent.css";
-import TableComponent from "react-bootstrap/Table";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
@@ -14,7 +13,8 @@ import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
-import { DataGrid } from "@mui/x-data-grid";
+import { IoIosArrowUp } from "react-icons/io";
+
 import {
   Switch,
   Button,
@@ -24,6 +24,8 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
+  Menu,
+  Checkbox,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -48,9 +50,9 @@ import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
-  Table as Tabless,
+  Table as MUITable,
   TableBody,
   TableCell,
   TableContainer,
@@ -77,6 +79,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   const navigate = useNavigate();
   const [columns, setColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
+  const [rowsFilter, setRowsFilter] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [isScriptPopupVisible, setIsScriptPopupVisible] =
     useState<boolean>(false);
@@ -108,12 +111,26 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
+
+  //These are all the Usestate which is used for Pagination, Sorting and Filtering for the List view of the table
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(defaultOrderValue);
+  const [conditionFilter, setConditionFilter] = useState<string>("");
+  const [FilterMenu, setFilterMenu] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
+  const [FilterCheckedList, setFilterCheckedList] = useState<{ [key: string]: string[] }>(() => {
+    const initialCheckedState = table.columns.reduce((acc, column) => {
+      acc[column.column_name] = [];
+      return acc;
+    }, {} as { [key: string]: string[] });
+
+    return initialCheckedState;
+  });
+
+
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
     const schemas = vmd.getTableSchema(table.table_name);
@@ -128,7 +145,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       orderBy,
       sortOrder,
       PaginationValue,
-      PageNumber
+      PageNumber,
+      conditionFilter
     );
 
     const countAccessor: DataAccessor = vmd.getRowsDataAccessor(
@@ -146,14 +164,30 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
       return new Row(filteredRowData);
     });
-    setLength(count?.length || 0);
+    const FilteredRowsCount = count?.map((row) => {
+      const filteredRowData: { [key: string]: string | number | boolean } = {};
+      attributes.forEach((column) => {
+        filteredRowData[column.column_name] = row[column.column_name];
+      });
+      return new Row(filteredRowData);
+    });
     setColumns(attributes);
     setRows(filteredRows);
+
+    if (conditionFilter === "") {
+      setRowsFilter(FilteredRowsCount);
+      setLength(count?.length || 0);
+    }
+    else {
+      setRowsFilter(filteredRows);
+      setLength(lines?.length || 0);
+    }
+
   };
 
   useEffect(() => {
     getRows();
-  }, [table, orderBy, PageNumber, PaginationValue, sortOrder]);
+  }, [table, orderBy, PageNumber, PaginationValue, sortOrder, conditionFilter]);
 
   const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
     "filemanager",
@@ -252,14 +286,14 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   });
 
-  //For when pagination limitm changes
+  //For when pagination limit changes
   const handlePaginationchange = (event: SelectChangeEvent) => {
-    setPaginationValue(event.target.value as number);
+    setPaginationValue(event.target.value as unknown as number);
     setPageNumber(1);
   };
 
   //For when page number changes
-  const handlePageChange = (event, value) => {
+  const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
 
@@ -385,7 +419,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     setInputValues((prevInputValues) => ({
       ...prevInputValues,
-      [eventName]: eventValue,
+      [eventName as string]: eventValue,
     }));
   };
 
@@ -415,6 +449,61 @@ const TableListView: React.FC<TableListViewProps> = ({
     setInputValues({});
     setOpenPanel(false);
   };
+
+  //Filter Functions
+  //Handle when you click on the filter button
+  const handleFilterClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
+    const newPopup = [...FilterMenu];
+    newPopup[index] = event.currentTarget;
+    setFilterMenu(newPopup);
+  };
+
+  //handle when you press off the pop up or when you click confirm
+  const handleFilterClose = (index: number) => {
+    const newPopup = [...FilterMenu];
+    newPopup[index] = null;
+    setFilterMenu(newPopup);
+    let Filter = "";
+    Object.entries(FilterCheckedList).map(([key, value]) => {
+
+      if (value.length > 0) {
+        Filter += `&${key}=in.(${value.map((val) => `"${val}"`).join(",")}) `;
+        setConditionFilter(Filter);
+      }
+
+
+
+    });
+    if (Object.values(FilterCheckedList).every(value => value.length === 0)) {
+      setConditionFilter("");
+    }
+
+  };
+
+  //When a check is selected on the pop up
+  const handleFilterToggle = (value: string, columnName: string) => () => {
+    const currentIndex = FilterCheckedList[columnName]?.indexOf(value) ?? -1;
+    const newChecked = [...(FilterCheckedList[columnName] || [])];
+
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
+    }
+
+    setFilterCheckedList({ ...FilterCheckedList, [columnName]: newChecked });
+  };
+
+  //when we click on Reset Filter
+  const ResetFilter = () => {
+    const resetChecked: { [key: string]: string[] } = {};
+    columns.forEach((column) => {
+      resetChecked[column.column_name] = [];
+    });
+    setFilterCheckedList(resetChecked);
+    setConditionFilter("");
+  };
+  //End of Filter Function
 
   const FileInputField = (column: Column) => {
     if (!appConfigValues) {
@@ -673,8 +762,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -693,6 +781,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   }, [openPanel]);
 
+
   return (
     <div>
       <div
@@ -710,6 +799,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           >
             Add {table.table_name}
           </Button>
+
           {isPopupVisible && (
             <AddRowPopup
               onClose={() => setIsPopupVisible(false)}
@@ -718,6 +808,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
+
         <div className="d-flex flex-column">
           {(scripts || []).length > 0 && <h6>Scripts</h6>}
           {scripts?.map((script) => {
@@ -754,25 +845,94 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-      </div>
 
+      </div>
+      <Button
+        style={{
+          ...buttonStyle, marginTop: "",
+          backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2"
+        }}
+        variant="contained"
+        onClick={ResetFilter}
+        data-testid="reset-filter-button">
+        Reset Filters</Button>
       <TableContainer>
-        <Tabless
+        <MUITable
           className="table-container"
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
+          style={{ padding: '10px' }}
+          data-testid="table"
         >
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <TableCell key={index} style={{ textAlign: "center" }}>
+                <TableCell key={index} style={{ textAlign: "center", whiteSpace: 'nowrap' }}
+                >
                   <TableSortLabel
                     active={orderBy === column.column_name}
                     direction={sortOrder as "asc" | "desc" | undefined}
                     onClick={() => handleSort(column.column_name)}
                   >
                     {column.column_name}
-                  </TableSortLabel>
+                  </TableSortLabel >
+                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }}
+                    onClick={(event) => handleFilterClick(event, index)}
+                    data-testid="Button-Filtering"
+                  >
+                    <IoIosArrowUp /></Button>
+                  <Menu
+                    id={`simple-menu-${index}`}
+                    anchorEl={FilterMenu[index]}
+                    keepMounted
+                    open={Boolean(FilterMenu[index])}
+                    onClose={() => handleFilterClose(index)}
+                    data-testid="filter-menu"
+                    sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }}
+                  >
+                    <Button variant="text"
+                      style={{
+                        ...buttonStyle,
+                        backgroundColor: 'black',
+                        textAlign: 'center',
+                        color: 'white',
+                        margin: '0px 10px 10px 10px',
+                        position: 'sticky',
+                        top: '10px',
+                        cursor: 'pointer',
+                        zIndex: 1
+                      }}
+                      onClick={() => handleFilterClose(index)}
+                      data-testid="filter-confirm-button">
+                      Confirm
+                    </Button>
+
+                    <div  >
+
+                      {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
+                        if (value === true || value === false) {
+                          value = value.toString();
+                        }
+                        return (
+                          <MenuItem key={value} >
+                            <Checkbox
+                              edge="start"
+                              checked={FilterCheckedList[column.column_name]?.indexOf(value) !== -1}
+                              tabIndex={-1}
+                              disableRipple
+                              inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
+                              onClick={handleFilterToggle(value, column.column_name)}
+                              size="small"
+                            />
+                            {value}
+                          </MenuItem>
+
+                        );
+                      })}
+
+                    </div>
+
+                  </Menu>
                 </TableCell>
               ))}
             </TableRow>
@@ -792,8 +952,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                         ? cell.toString()
                         : columns[idx].references_table === "filegroup"
                           ? fileGroupsView?.find(
-                              (fileGroup) => fileGroup.id === cell
-                            )?.count
+                            (fileGroup) => fileGroup.id === cell
+                          )?.count
                           : (cell as React.ReactNode)}
                     </Box>
                   </TableCell>
@@ -801,7 +961,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               </TableRow>
             ))}
           </TableBody>
-        </Tabless>
+        </MUITable>
       </TableContainer>
 
       <div>
@@ -817,10 +977,11 @@ const TableListView: React.FC<TableListViewProps> = ({
             <CCol sm={2} className="ml-auto" style={{ textAlign: "right" }}>
               <FormControl size="small">
                 <Select
-                  value={PaginationValue}
+                  value={PaginationValue.toString()}
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
+
                   <MenuItem value={10}>10 per page</MenuItem>
                   <MenuItem value={20}>20 per page</MenuItem>
                   <MenuItem value={50}>50 per page</MenuItem>
@@ -890,7 +1051,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   width: "fit-content",
                   marginLeft: 10,
                 }}
-                onClick={handleFormSubmit}
+                onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleFormSubmit(event)}
               >
                 Save
               </Button>

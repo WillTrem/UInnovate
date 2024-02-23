@@ -1,5 +1,8 @@
 import vmd from "./VMD";
 import { Row } from "./DataAccessor";
+import axiosCustom from "../api/AxiosCustom";
+
+const API_BASE_URL = 'http://localhost:3000/'; // Base URL of your PostgREST API
 
 export interface ProcedureSchedulingParams {
     functionName: string;
@@ -7,6 +10,23 @@ export interface ProcedureSchedulingParams {
     cron_schedule?: string;
 }
 
+export async function fetchFunctionNames(schema: string) {
+    try {
+      const response = await axiosCustom.get(`${API_BASE_URL}`, {
+        headers: { "Accept-Profile": `${schema}` },
+      });
+      const swaggerDoc = response.data;
+  
+      const rpcFunctions = Object.keys(swaggerDoc.paths)
+        .filter(path => path.startsWith('/rpc/'))
+        .map(path => path.substring(5)); // Removes '/rpc/' to get the function name
+  
+      return rpcFunctions;
+    } catch (error) {
+      console.error('Error fetching or parsing Swagger documentation:', error);
+      return [];
+    }
+  }
 
 export async function scheduleProcedure(params: ProcedureSchedulingParams): Promise<void> {
     // TODO: 
