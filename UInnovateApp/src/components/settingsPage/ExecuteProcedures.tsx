@@ -27,8 +27,15 @@ export const ExecuteProcedures = () => {
             functionName: selectedProc,
             schema: selectedSchema
         };
-        callProcedure(params);
-    }
+        callProcedure(params)
+            .then(() => {
+                alert(selectedProc + ' executed successfully');
+            })
+            .catch(error => {
+                console.error('Error executing procedure:', error);
+                alert('Error executing procedure: ' + error.message);
+            });
+    };
     const updateProcedureNames = async () => {
         if (!selectedSchema || schema_access.length == 0) return
         try {
