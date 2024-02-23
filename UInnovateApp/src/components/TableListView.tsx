@@ -52,7 +52,7 @@ import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import { useNavigate } from "react-router-dom";
 import {
-  Table as Tabless,
+  Table as MUITable,
   TableBody,
   TableCell,
   TableContainer,
@@ -854,33 +854,41 @@ const TableListView: React.FC<TableListViewProps> = ({
           backgroundColor: conditionFilter==="" ? "#404040" : "#1976d2"
         }}
         variant="contained"
-        onClick={ResetFilter}>
+        onClick={ResetFilter}
+        data-testid="reset-filter-button">
         Reset Filters</Button>
       <TableContainer>
-        <Tabless
+        <MUITable
           className="table-container"
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
           style={{padding:'10px'}}
+          data-testid="table"
         >
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <TableCell key={index} style={{ textAlign: "center", whiteSpace: 'nowrap' }}>
+                <TableCell key={index} style={{ textAlign: "center", whiteSpace: 'nowrap' }}
+                >
                   <TableSortLabel
                     active={orderBy === column.column_name}
                     direction={sortOrder as "asc" | "desc" | undefined}
                     onClick={() => handleSort(column.column_name)}
                   >
                     {column.column_name}
-                  </TableSortLabel>
-                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }} onClick={(event) => handleFilterClick(event, index)}><IoIosArrowUp /></Button>
+                  </TableSortLabel >
+                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }} 
+                  onClick={(event) => handleFilterClick(event, index)}
+                  data-testid="Button-Filtering"
+                  >
+                    <IoIosArrowUp /></Button>
                   <Menu
                     id={`simple-menu-${index}`}
                     anchorEl={FilterMenu[index]}
                     keepMounted
                     open={Boolean(FilterMenu[index])}
                     onClose={() => handleFilterClose(index)}
+                    data-testid="filter-menu"
                   >
 
                     <div style={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }} >
@@ -907,7 +915,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                       })}
 
                     </div>
-                    <Button variant="text" style={{ ...buttonStyle, textAlign: 'center', color: 'white', margin: '0px 10px 10px 10px' }} onClick={() => handleFilterClose(index)}>
+                    <Button variant="text" 
+                    style={{ ...buttonStyle, textAlign: 'center', color: 'white', margin: '0px 10px 10px 10px' }} 
+                    onClick={() => handleFilterClose(index)}
+                    data-testid="filter-confirm-button">
                       Confirm
                     </Button>
                   </Menu>
@@ -939,7 +950,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               </TableRow>
             ))}
           </TableBody>
-        </Tabless>
+        </MUITable>
       </TableContainer>
 
       <div>
