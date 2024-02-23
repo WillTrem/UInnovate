@@ -1,5 +1,6 @@
 export enum ViewTypeEnum {
-    Calendar = 1,
+    Default = 0,
+    Calendar,
     Timeline,
     TreeView,
     Custom,

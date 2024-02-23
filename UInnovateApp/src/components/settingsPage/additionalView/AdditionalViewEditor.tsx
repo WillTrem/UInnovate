@@ -3,7 +3,7 @@ import { Accordion, Button, Card, useAccordionButton } from 'react-bootstrap'
 import AdditionalViewModal from './AdditionalViewModal';
 import { AdditionalViews, deleteView, getCustomViews, getViewsBySchema } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
-import './AdditionalViewEditor.css';
+import '../../../styles/AdditionalViewEditor.css';
 
 function CustomToggle({ children, eventKey }) {
     const openOnClick = useAccordionButton(eventKey, () =>
