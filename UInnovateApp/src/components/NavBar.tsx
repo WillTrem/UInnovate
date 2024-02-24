@@ -15,19 +15,25 @@ import {Tooltip, Zoom} from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { setLoading } from '../redux/LoadingSlice';
+import vmd from '../virtualmodel/VMD';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
-  const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) => state.auth);
+  const {user: loggedInUser, dbRole }: AuthState = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleClose = () => setShowSignupModal(false);
   const handleShow = () => setShowSignupModal(true);
   const handleLogout = () => {
+    dispatch(setLoading(true));
     dispatch(logOut());
+    vmd.refetchSchemas().then(() => {
+      dispatch(setLoading(false));
+    })
     navigate('/');
   }
 
@@ -64,7 +70,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             {( LOGIN_BYPASS || loggedInUser ) &&
             <>
             {/* Hides the Settings page link for user role */}
-            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}>
+            <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={dbRole === Role.USER}>
               Settings
             </Nav.Link></>
             }

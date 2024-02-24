@@ -35,13 +35,13 @@ export function ObjectMenu() {
   useEffect(() => {
     dispatch(updateSelectedSchema(schema ?? ""));
   }, [schema]);
-  const user = useSelector((state: RootState) => state.auth.user);
+  const {user, schema_access} = useSelector((state: RootState) => state.auth);
 
 
   return (
     <>
       <NavBar />
-      {(user === null && !LOGIN_BYPASS) ?
+      {(user === null && !LOGIN_BYPASS) || (user !== null && schema && !schema_access.includes(schema)) ?
         <UnauthorizedScreen />
         :
         <div className="page-container">

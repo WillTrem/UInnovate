@@ -75,6 +75,9 @@ INSERT INTO meta.i18n_keys (key_code, is_default)
 SELECT DISTINCT "schema", true
 FROM meta.schemas;
 
+-- Insert the default language into the i18n_languages table
+INSERT INTO meta.i18n_languages (language_code, language_name) 
+VALUES ('en', 'English');
 
 
 
