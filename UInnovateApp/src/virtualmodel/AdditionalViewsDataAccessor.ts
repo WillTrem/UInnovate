@@ -8,8 +8,17 @@ const SETTING_TABLE_NAME = 'additional_view_settings';
 const CUSTOM_VIEW_TABLE_NAME = 'custom_view_templates';
 const RPC_NAME = 'insert_custom_view';
 
-export const getViews = async (setterCallback:(args:any)=>void, p_tableName: string, signal: AbortSignal)  => {
-    
+export interface AdditionalViews{
+	id: number;
+	viewname: string;
+	schemaname: string;
+	tablename: string;
+	viewtype:number;
+	template?: string;
+}
+
+export const getViewsBySchema = async (setterCallback:(args:any)=>void, p_schemaName: string, signal: AbortSignal)  => {
+
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
         SETTING_SCHEMA_NAME,
         SETTING_TABLE_NAME
@@ -17,12 +26,13 @@ export const getViews = async (setterCallback:(args:any)=>void, p_tableName: str
 
     const rows = await data_accessor?.fetchRows(signal);
     if(rows){
-        setterCallback(rows.filter(r => {if(r.tablename == p_tableName){return r}} ));
+		console.log(rows);
+        setterCallback(rows.filter(r => {if(r.schemaname == p_schemaName){return r}} ));
     }
 };
 
 export const getCustomViews = async (setterCallback:(args:any)=>void, signal: AbortSignal)  => {
-    
+
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
         SETTING_SCHEMA_NAME,
         CUSTOM_VIEW_TABLE_NAME
@@ -37,7 +47,7 @@ export const getCustomViews = async (setterCallback:(args:any)=>void, signal: Ab
 
 export const insertNewView = async (p_schemaName: string, p_tableName: string, p_viewName: string, p_viewType: number, p_template?: string) => {
 	try {
-		
+
 		if(p_viewType !== ViewTypeEnum.Custom){
 			const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
 			SETTING_SCHEMA_NAME, // schema name
@@ -72,8 +82,7 @@ export const insertNewView = async (p_schemaName: string, p_tableName: string, p
 
 			await cstm_view_data_accessor.executeFunction();
 		}
-	
-		// alert("View saved successfully.");
+
 	} catch (error) {
 		console.error("Error in upserting view:", error);
 		alert("Failed to save view.");

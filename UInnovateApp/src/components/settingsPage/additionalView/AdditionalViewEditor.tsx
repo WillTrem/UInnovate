@@ -1,73 +1,81 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { Accordion, Button, Card, Col, Row, useAccordionButton } from 'react-bootstrap'
+import React, { useEffect, useState } from 'react'
+import { Button } from "@mui/material";
+import { Badge, Accordion, Card, useAccordionButton } from 'react-bootstrap'
 import AdditionalViewModal from './AdditionalViewModal';
-import { deleteView, getCustomViews, getViews } from '../../../virtualmodel/AdditionalViewsDataAccessor';
+import { AdditionalViews, deleteView, getCustomViews, getViewsBySchema } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
-import './AdditionalViewEditor.css';
+import '../../../styles/AdditionalViewEditor.css';
+import { KeyboardArrowDown, KeyboardArrowUp, Delete } from '@mui/icons-material';
 
 function CustomToggle({ children, eventKey }) {
+    const [isOpen, setIsOpen] = useState<Boolean>(false);
+    
     const openOnClick = useAccordionButton(eventKey, () =>
-      console.log('open custom!'),
-    );
+    {
+        setIsOpen(!isOpen)
+        console.log('open custom!')
+    });
   
     return (
       <Button
-        variant="dark"
+        variant="contained"
+        className='buttonStyle'
         onClick={openOnClick}
       >
-        {children}
+        {/* {children} */}
+        {isOpen ? (<KeyboardArrowUp />) : (<KeyboardArrowDown />)}
       </Button>
     );
   }
   
 interface editorProp {
     selectedSchema: string;
-    selectedTable: string;
-    setSelectedTable: React.Dispatch<React.SetStateAction<string>>;
+    setSelectedSchema: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const AdditionalViewEditor = ({
     selectedSchema,
-    selectedTable,
-    setSelectedTable
+    setSelectedSchema
 }: editorProp) => {
 
-    const [viewList, setViewList] = useState([]);
+    const [viewList, setViewList] = useState<AdditionalViews[]>([]);
     const [customViews, setCustomViews]= useState([]);
     const [showModal, setShowModal] = useState(false);
 
     const handleClick = ()=>{setShowModal(true)};
     const handleDelete = async (id:string , isCustom: boolean)=>{
-        var res = deleteView(id, isCustom);
+        const res = deleteView(id, isCustom);
         if(await res){
+            const ctrl = new AbortController();
+            const signal = ctrl.signal;
             console.log('updating list')
-            getViews(setViewList, selectedTable);
+            getViewsBySchema(setViewList, selectedSchema, signal);
         }
     }
     const refreshList = ()=>{
-        const table = selectedTable.toString();
-        setSelectedTable('');
-        setTimeout( ()=> setSelectedTable(table), 100);
+        setSelectedSchema('');
+        setTimeout( ()=> setSelectedSchema(selectedSchema), 100);
     }
 
     useEffect(()=>{
+        if(selectedSchema){
         const ctrl = new AbortController();
         const signal = ctrl.signal;
         // get data from db
-         getViews(setViewList, selectedTable, signal);
+         getViewsBySchema(setViewList, selectedSchema, signal);
          getCustomViews(setCustomViews, signal)
 
          return ()=>{ctrl.abort()};
-    },[selectedTable])
+        }
+    },[selectedSchema])
     
 
-    if(selectedTable != '')
+    if(selectedSchema != '')
   return (
     <>
         <div className='row'>
             <div className='col-md-12'>
-                <h4>{selectedTable} Views</h4>
-                <Button className='btn btn-md centered' onClick={handleClick}>add view</Button>
+                <Button className='buttonStyle' variant="contained" onClick={handleClick}>ADD VIEW</Button>
             </div>
         </div>
         <div className='row'>
@@ -81,22 +89,27 @@ const AdditionalViewEditor = ({
             }
             {viewList.length > 0 &&
             (<>
-                <Accordion>
-                    
-                {viewList.map( view =>
+            <Accordion>
+                {viewList && viewList.map( (view: AdditionalViews) =>
                 <Card key={view.id}>
                     <Card.Header>
                         <div>
                             <div className='hstack gap-3'>
                                 <div>{view.viewname}</div>
                                 <div className="vr"></div>
-                                <div>{getViewTypeEnum(view.viewtype)}</div>
+                                <div>target table: {view.tablename}</div>
+                                <div className="vr"></div>
+                                <Badge pill bg="dark">
+                                {getViewTypeEnum(view.viewtype)}
+                                </Badge>
                                 
                                 <div className='ms-auto'>
                                 { view.viewtype === ViewTypeEnum.Custom && (
                                     <CustomToggle eventKey={view.viewname}>open</CustomToggle>
                                     )}
-                                    <Button variant='danger' onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>delete</Button>
+                                    <Button variant='contained' color="error" onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>
+                                        <Delete />
+                                    </Button>
                                 </div>
                             </div>
                         </div>
@@ -116,12 +129,12 @@ const AdditionalViewEditor = ({
                   
                 </Card>
                 )}
-                    </Accordion>
+            </Accordion>
             </>)
             }
 
         </div>
-        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} tableName={selectedTable} schemaName={selectedSchema} />
+        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} />
     </>
   )
   else

@@ -1,0 +1,31 @@
+#AdditionalViewEditor .card {
+    margin: 15px 0 15px 0;
+    height: 57px;
+    display: contents;
+}
+
+#AdditionalViewEditor .card-header {
+    height: 57px;
+    background-color: rgb(255 255 255 / 85%);
+    
+    border-radius: 5px;
+}
+#AdditionalViewEditor .card-body {
+
+background-color: rgba(255 255 255);
+}
+#AdditionalViewEditor .hstack.gap-3 {
+    height: 38px;
+}
+
+#AdditionalViewEditor .accordion {
+    margin-top: 10px;
+    background-color: rgba(192 192 192/ 20%);
+    padding: 15px;
+    border-radius: 10px;
+}
+
+#AdditionalViewModal .buttonStyle, #AdditionalViewEditor .buttonStyle {
+    margin: 10px;
+    background-color: #404040;
+};

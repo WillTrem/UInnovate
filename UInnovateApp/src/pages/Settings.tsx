@@ -22,6 +22,8 @@ import { Box, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } fro
 import vmd from "../virtualmodel/VMD";
 import { useEffect, useState } from "react";
 import { updateSelectedSchema } from "../redux/SchemaSlice";
+import SchemaSelector from "../components/Schema/SchemaSelector";
+import DisplayType from "../components/Schema/DisplayType";
 
 export function Settings() {
 	const dispatch = useDispatch();
@@ -46,15 +48,9 @@ export function Settings() {
 	const initialSelectedSchema = schemas.length === 0 ? "" : schemas[0]
 	const [selectedSchema, setSelectedSchema] = useState(initialSelectedSchema);
 
-
 	useEffect(() => {
 		dispatch(updateSelectedSchema(selectedSchema));
 	}, [selectedSchema])
-
-	const handleSchemaChange = (event: SelectChangeEvent) => {
-		setSelectedSchema(event.target.value);
-	};
-
 
 	const navigate = useNavigate();
 	const { option } = useParams();
@@ -77,22 +73,12 @@ export function Settings() {
 					<div className='save-config-container'>
 						<Box display="flex" gap={"2rem"} alignItems={"center"}>
 							<h1 className='title'>Settings</h1>
-							<FormControl fullWidth disabled={schemas.length === 0}>
-								<InputLabel id="schema-label">Schema</InputLabel>
-								<Select
-									labelId="schema-label"
-									name="schema"
-									value={selectedSchema}
-									onChange={(event) => handleSchemaChange(event)}
-									variant="outlined"
-									label="Schema"
-									size="small"
-								>
-									{schemas.map((schema) => {
-										return <MenuItem key={schema} value={schema}>{schema}</MenuItem>
-									})};
-								</Select>
-							</FormControl>
+							<SchemaSelector
+								displayType={DisplayType.MuiDropDown}
+								schemas={schemas}
+								selectedSchema={selectedSchema}
+								setSelectedSchema={setSelectedSchema}
+							/>
 						</Box>
 						<ButtonConfigurationSaver />
 					</div>
@@ -152,7 +138,7 @@ export function Settings() {
 										<InternationalizationTab />
 									</Tab.Pane>
 									<Tab.Pane eventKey='additionalviews'>
-										<AdditionalViewTab />
+										<AdditionalViewTab schema={selectedSchema} setSchema={(schema:string)=>{setSelectedSchema(schema)}} />
 									</Tab.Pane>
 								</Tab.Content>
 							</Col>

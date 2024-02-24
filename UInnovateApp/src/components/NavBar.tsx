@@ -3,8 +3,6 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { BsFillWrenchAdjustableCircleFill } from "react-icons/bs";
-import SchemaSelector from "./Schema/SchemaSelector";
-import DisplayType from "./Schema/DisplayType";
 import { useState } from 'react';
 import SignupModal from './settingsPage/SignupModal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,6 +15,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { setLoading } from '../redux/LoadingSlice';
 import vmd from '../virtualmodel/VMD';
+import MenuSchemaSelector from './Schema/MenuSchemaSelector';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
@@ -62,9 +61,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
                 : "d-none"
             }
           >
-            <SchemaSelector
-              displayType={DisplayType.Nav} //DisplayType = NavDropdown | NavPills | Nav
-            ></SchemaSelector>
+            <MenuSchemaSelector />
           </Nav>}
           <Nav className="justify-content-end flex-grow-1 pe-3">
             {( LOGIN_BYPASS || loggedInUser ) &&

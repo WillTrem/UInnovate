@@ -11,6 +11,7 @@ import UnauthorizedScreen from "../components/UnauthorizedScreen";
 import { LOGIN_BYPASS } from "../redux/AuthSlice";
 import { useNavigate, useParams } from "react-router-dom";
 import { updateSelectedSchema } from "../redux/SchemaSlice";
+import AdditionalViewNavBar from "../components/AdditionalViewNavBar";
 
 export function ObjectMenu() {
   const selectedSchema: string = useSelector(
@@ -44,44 +45,48 @@ export function ObjectMenu() {
       {(user === null && !LOGIN_BYPASS) || (user !== null && schema && !schema_access.includes(schema)) ?
         <UnauthorizedScreen />
         :
-        <div className="page-container">
-          <h1 className="title">Tables</h1>
-          <Tab.Container activeKey={tableName}>
-            <Row>
-              <Col sm={3}>
-                <Nav variant="pills" className="flex-column">
-                  {tables?.map((table: Table) => {
-                    return (
-                      <Nav.Item key={table.table_name}>
-                        <Nav.Link
-                          eventKey={table.table_name}
-                          onClick={() => handleTableSelect(table)}
-                        >
-                          {table.table_name}
-                        </Nav.Link>
-                      </Nav.Item>
-                    );
-                  })}
-                </Nav>
-              </Col>
-              <Col sm={9}>
-                <Tab.Content>
-                  {tables?.map((table: Table) => (
-                    <Tab.Pane key={table.table_name} eventKey={table.table_name}>
-                      {tableName === table.table_name ? (
-                        table.table_display_type === "list" ? (
-                          <TableListView table={table}></TableListView>
-                        ) : table.table_display_type === "enum" ? (
-                          <TableEnumView table={table}></TableEnumView>
-                        ) : null
-                      ) : null}
-                    </Tab.Pane>
-                  ))}
-                </Tab.Content>
-              </Col>
-            </Row>
-          </Tab.Container>
-        </div>}
+        <>
+          <AdditionalViewNavBar selectedSchema={selectedSchema} selectedTable={activeTable} />
+          <div className="page-container">
+            <h1 className="title">Tables</h1>
+            <Tab.Container activeKey={tableName}>
+              <Row>
+                <Col sm={3}>
+                  <Nav variant="pills" className="flex-column">
+                    {tables?.map((table: Table) => {
+                      return (
+                        <Nav.Item key={table.table_name}>
+                          <Nav.Link
+                            eventKey={table.table_name}
+                            onClick={() => handleTableSelect(table)}
+                          >
+                            {table.table_name}
+                          </Nav.Link>
+                        </Nav.Item>
+                      );
+                    })}
+                  </Nav>
+                </Col>
+                <Col sm={9}>
+                  <Tab.Content>
+                    {tables?.map((table: Table) => (
+                      <Tab.Pane key={table.table_name} eventKey={table.table_name}>
+                        {tableName === table.table_name ? (
+                          table.table_display_type === "list" ? (
+                            <TableListView table={table}></TableListView>
+                          ) : table.table_display_type === "enum" ? (
+                            <TableEnumView table={table}></TableEnumView>
+                          ) : null
+                        ) : null}
+                      </Tab.Pane>
+                    ))}
+                  </Tab.Content>
+                </Col>
+              </Row>
+            </Tab.Container>
+          </div>
+        </>
+      }
     </>
   );
 }
