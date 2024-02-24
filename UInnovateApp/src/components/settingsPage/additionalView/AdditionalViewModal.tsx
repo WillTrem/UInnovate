@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Modal , Button, Form} from 'react-bootstrap'
+import { Button } from "@mui/material";
+import { Modal , Form} from 'react-bootstrap'
 import { ViewTypeEnum } from './ViewTypeEnum';
 import { insertNewView } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import vmd, { Table } from '../../../virtualmodel/VMD';
@@ -37,7 +38,7 @@ const AdditionalViewModal = ({show, setShow, refreshList: updateList}:Additional
     }
     return (
         <>
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={show} onHide={handleClose} id='AdditionalViewModal'>
             <Modal.Header closeButton>
               <Modal.Title>Add a new view</Modal.Title>
             </Modal.Header>
@@ -78,10 +79,10 @@ const AdditionalViewModal = ({show, setShow, refreshList: updateList}:Additional
             </Modal.Body>
 
             <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+                <Button className="buttonStyle" variant="contained" onClick={handleClose}>
                     Close
                 </Button>
-                <Button  variant="primary" onClick={handleSave}>
+                <Button variant="contained" onClick={handleSave}>
                     Save Changes
                 </Button>
             </Modal.Footer>

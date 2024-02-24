@@ -19,12 +19,13 @@ background-color: rgba(255 255 255);
 }
 
 #AdditionalViewEditor .accordion {
-    margin-top: 20px;
+    margin-top: 10px;
     background-color: rgba(192 192 192/ 20%);
     padding: 15px;
     border-radius: 10px;
 }
 
-#AdditionalViewEditor .btn.btn-dark{
-    margin-right: 5px;
-}
+#AdditionalViewModal .buttonStyle, #AdditionalViewEditor .buttonStyle {
+    margin: 10px;
+    background-color: #404040;
+};

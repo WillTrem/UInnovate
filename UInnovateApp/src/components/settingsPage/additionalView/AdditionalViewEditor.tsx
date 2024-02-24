@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Badge, Accordion, Button, Card, useAccordionButton } from 'react-bootstrap'
+import { Button } from "@mui/material";
+import { Badge, Accordion, Card, useAccordionButton } from 'react-bootstrap'
 import AdditionalViewModal from './AdditionalViewModal';
 import { AdditionalViews, deleteView, getCustomViews, getViewsBySchema } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
@@ -12,7 +13,8 @@ function CustomToggle({ children, eventKey }) {
   
     return (
       <Button
-        variant="dark"
+        variant="contained"
+        className='buttonStyle'
         onClick={openOnClick}
       >
         {children}
@@ -67,8 +69,7 @@ const AdditionalViewEditor = ({
     <>
         <div className='row'>
             <div className='col-md-12'>
-                <h4> Views</h4>
-                <Button className='btn btn-md centered' onClick={handleClick}>add view</Button>
+                <Button className='buttonStyle' variant="contained" onClick={handleClick}>ADD VIEW</Button>
             </div>
         </div>
         <div className='row'>
@@ -100,7 +101,7 @@ const AdditionalViewEditor = ({
                                 { view.viewtype === ViewTypeEnum.Custom && (
                                     <CustomToggle eventKey={view.viewname}>open</CustomToggle>
                                     )}
-                                    <Button variant='danger' onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>delete</Button>
+                                    <Button variant='contained' color="error" onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>delete</Button>
                                 </div>
                             </div>
                         </div>
