@@ -32,11 +32,32 @@ OR CFP.name = 'visible' OR CFP.name = 'metadata_view' OR CFP.name = 'details_vie
 -- Insert a default script for the scripts table
 INSERT INTO meta.scripts (name, description, content, table_name)
 VALUES
-    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts');
+    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts'),
+    ('remove_first_object', 'Removes the first object in a table', 'try {
+    removeRow(1, table_data);
+    console.log("Successfully removed a row.");
+} catch (e) {
+    console.log(e);
+}
 
--- Inser the new column to visually flag the default values
-ALTER TABLE meta.i18n_keys
-ADD COLUMN is_default BOOLEAN DEFAULT false;
+', 'scripts'),
+    ('add_script_object', 'Add a dummy script object to the scripts table.', 'try {
+    addRow({
+        id: 5,
+        name: "dummy_script",
+        description: "this is just a dummy script",
+        content: "console.log(Adding a dummy script);"
+    });
+} catch (e) {
+    console.log(e);
+}', 'scripts'),
+    ('update_script_object', 'Updates an existing row.', 'try {
+    updateRow(3, {
+        name: "new_script_object"
+    })
+} catch (e) {
+    console.log(e);
+}', 'scripts');
 
 -- Insert the tables names, columns names, schema tables into the i18n_keys table
 -- Insert unique column names into i18n_keys

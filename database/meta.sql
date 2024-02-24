@@ -155,9 +155,9 @@ CREATE TABLE IF NOT EXISTS meta.i18n_languages (
 -- Creating the keys table
 CREATE TABLE IF NOT EXISTS meta.i18n_keys (
     id SERIAL PRIMARY KEY,
-    key_code VARCHAR(255) UNIQUE NOT NULL
+    key_code VARCHAR(255) UNIQUE NOT NULL,
+    is_default BOOLEAN DEFAULT false  -- Add the is_default column here
 );
-
 -- Creating the values table
 CREATE TABLE IF NOT EXISTS meta.i18n_values (
     id SERIAL PRIMARY KEY,
@@ -167,13 +167,14 @@ CREATE TABLE IF NOT EXISTS meta.i18n_values (
     CONSTRAINT unique_translation UNIQUE (language_id, key_id)
 );
 
--- Creating the translation view (combines the languages, keys and values tables)
+-- Creating the translation view (combines the languages, keys, and values tables)
 CREATE OR REPLACE VIEW meta.i18n_translations AS
 SELECT
     k.id AS translation_id,
     l.language_code,
     k.key_code,
-    COALESCE(v.value, '') AS value
+    COALESCE(v.value, '') AS value,
+    k.is_default  -- Adding the is_default attribute
 FROM
     meta.i18n_languages l
 CROSS JOIN
@@ -185,7 +186,8 @@ SELECT
     k.id AS translation_id,
     NULL AS language_code,
     k.key_code,
-    '' AS value
+    '' AS value,
+    k.is_default  -- Adding the is_default attribute
 FROM
     meta.i18n_keys k
 WHERE
@@ -195,13 +197,74 @@ WHERE
         JOIN meta.i18n_values v ON l.id = v.language_id AND k.id = v.key_id
     );
 
--- Creating the envronment variables table
+-- Creating the environment variables table
 CREATE TABLE IF NOT EXISTS meta.env_vars (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL,
     value TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Creating the  view type table
+CREATE TABLE IF NOT EXISTS meta.view_type(
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255)
+);
+-- Creating the additional view setting table
+CREATE TABLE IF NOT EXISTS meta.additional_view_settings (
+  id SERIAL PRIMARY KEY,
+  schemaName VARCHAR(255),
+  tableName VARCHAR(255),
+  viewName VARCHAR(255),
+  viewType INT,
+  FOREIGN KEY (viewType) REFERENCES meta.view_type(id)
+);
+
+-- Creating the custom view template table
+CREATE TABLE IF NOT EXISTS meta.custom_view_templates(
+  id SERIAL PRIMARY KEY,
+  settingId INT,
+  template TEXT,
+  FOREIGN KEY (settingId) REFERENCES meta.additional_view_settings(id)
+);
+
+-- Inserting default view types
+INSERT INTO meta.view_type(name) VALUES
+('calendar'),
+('timeline'),
+('treeview'),
+('custom');
+
+-- CUSTOM VIEW INSERT
+CREATE OR REPLACE FUNCTION meta.insert_custom_view(
+    p_schema_name VARCHAR(255),
+    p_table_name VARCHAR(255),
+    p_view_name VARCHAR(255),
+    p_view_type_id INT,
+    p_template TEXT
+) RETURNS INT AS $$
+DECLARE
+    v_setting_id INT;
+BEGIN
+    -- If the view type doesn't exist, you might want to handle this case appropriately.
+    IF NOT EXISTS (SELECT 1 FROM meta.view_type WHERE id = p_view_type_id) THEN
+        RAISE EXCEPTION 'View type not found: %', p_view_type_id;
+    END IF;
+
+    -- Insert into additional_view_settings table
+    INSERT INTO meta.additional_view_settings (schemaName, tableName, viewName, viewType)
+    VALUES (p_schema_name, p_table_name, p_view_name, p_view_type_id)
+    RETURNING id INTO v_setting_id;
+
+    -- Insert into custom_view_templates table
+    INSERT INTO meta.custom_view_templates (settingId, template)
+    VALUES (v_setting_id, p_template);
+
+    -- Return the setting ID for reference
+    RETURN v_setting_id;
+END;
+$$ LANGUAGE plpgsql;
+
 
 -- EXPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.export_appconfig_to_json()
@@ -237,6 +300,42 @@ BEGIN
 END;
 $BODY$;
 
+-- EXPORT FUNCTIONALITY FOR i18n Configurations such as languages, keys, and values
+CREATE OR REPLACE FUNCTION meta.export_i18n_to_json()
+RETURNS json
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    i18n_languages_json json;
+    i18n_keys_json json;
+    i18n_values_json json;
+BEGIN
+    SELECT COALESCE(json_agg(row_to_json(lang)), '[]') INTO i18n_languages_json
+    FROM (
+        SELECT id, language_code, language_name
+        FROM meta.i18n_languages
+    ) lang;
+
+    SELECT COALESCE(json_agg(row_to_json(keys)), '[]') INTO i18n_keys_json
+    FROM (
+        SELECT id, key_code, is_default
+        FROM meta.i18n_keys
+    ) keys;
+
+    SELECT COALESCE(json_agg(row_to_json(values)), '[]') INTO i18n_values_json
+    FROM (
+        SELECT id, language_id, key_id, value
+        FROM meta.i18n_values
+    ) values;
+
+    RETURN json_build_object(
+        'languages', i18n_languages_json,
+        'keys', i18n_keys_json,
+        'values', i18n_values_json
+    );
+END;
+$BODY$;
+
 -- IMPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.import_appconfig_from_json(json)
 RETURNS void
@@ -265,11 +364,93 @@ BEGIN
 END;
 $BODY$;
 
+-- IMPORT FUNCTIONALITY FOR i18n configurations such as languages, keys, and values
+CREATE OR REPLACE FUNCTION meta.import_i18n_from_json(json)
+RETURNS void
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    i18n_data json;
+    i18n_languages_data json;
+    i18n_keys_data json;
+    i18n_values_data json;
+BEGIN
+    -- Extract data for i18n_languages and insert into meta.i18n_languages
+    i18n_data = $1;
+    i18n_languages_data = i18n_data->'languages';
+    i18n_keys_data = i18n_data->'keys';
+    i18n_values_data = i18n_data->'values';
+    DELETE FROM meta.i18n_languages;
+    INSERT INTO meta.i18n_languages (id, language_code, language_name)
+    SELECT (lang_row->>'id')::int, lang_row->>'language_code', lang_row->>'language_name'
+    FROM json_array_elements(i18n_languages_data) AS lang_row;
+    DELETE FROM meta.i18n_keys;
+    INSERT INTO meta.i18n_keys (id, key_code, is_default)
+    SELECT (key_row->>'id')::int, key_row->>'key_code', (key_row->>'is_default')::boolean
+    FROM json_array_elements(i18n_keys_data) AS key_row;
+    DELETE FROM meta.i18n_values;
+    INSERT INTO meta.i18n_values (id, language_id, key_id, value)
+    SELECT (val_row->>'id')::int, (val_row->>'language_id')::int, (val_row->>'key_id')::int, val_row->>'value'
+    FROM json_array_elements(i18n_values_data) AS val_row;
+END;
+$BODY$;
+
+
+-- Env Variables --
+
+-- Export for environment variables
+CREATE OR REPLACE FUNCTION meta.export_env_vars_to_json()
+RETURNS json
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    env_vars_json json;
+BEGIN
+    SELECT COALESCE(json_agg(row_to_json(c)), '[]') INTO env_vars_json
+    FROM (
+        SELECT id, name, value
+        FROM meta.env_vars
+    ) c;
+
+    RETURN env_vars_json;
+END;
+$BODY$;
+
+-- Import for environment variables
+CREATE OR REPLACE FUNCTION meta.import_env_vars_from_json(json)
+RETURNS void
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    env_vars_data json; 
+    env_vars_row json;   
+BEGIN
+    env_vars_data := $1; -- Assign the passed JSON to env_vars_data
+
+    -- Assuming you want to clear the existing cron jobs and replace with new ones
+    DELETE FROM meta.env_vars;
+
+    -- Iterate through each element in the JSON array
+    FOR env_vars_row IN SELECT * FROM json_array_elements(env_vars_data)
+    LOOP
+        -- Insert each cron job into the cron_jobs table
+        INSERT INTO meta.env_vars (id, name, value)
+        VALUES ((env_vars_row->>'id')::int, 
+                env_vars_row->>'name', 
+                env_vars_row->>'value' );
+    END LOOP;
+END;
+$BODY$;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
+GRANT ALL ON FUNCTION meta.insert_custom_view() TO configurator;
 GRANT ALL ON FUNCTION meta.export_appconfig_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_appconfig_from_json(json) TO configurator;
+GRANT ALL ON FUNCTION meta.export_i18n_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_i18n_from_json(json) TO configurator;
+GRANT ALL ON FUNCTION meta.export_env_vars_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_env_vars_from_json(json) TO configurator;
 GRANT USAGE ON SCHEMA information_schema TO "user";
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
 GRANT SELECT ON information_schema.referential_constraints TO "user";
@@ -291,6 +472,9 @@ GRANT ALL ON meta.scripts TO configurator;
 GRANT ALL ON meta.i18n_languages TO configurator;
 GRANT ALL ON meta.i18n_keys TO configurator;
 GRANT ALL ON meta.i18n_values TO configurator;
+GRANT ALL ON meta.view_type TO web_anon;
+GRANT ALL ON meta.additional_view_settings TO web_anon;
+GRANT ALL ON meta.custom_view_templates TO web_anon;
 
 -- Views (Only SELECT necessary)
 GRANT SELECT ON meta.schemas TO "user"; 

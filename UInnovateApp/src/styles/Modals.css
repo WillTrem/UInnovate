@@ -46,7 +46,7 @@ input{
     display:flex;
     flex-direction: column;
     margin: 8px 4px;
-    align-items: start;
+    /* align-items: start; */
     gap: 24px;
 }
 .modal-content-center{
@@ -54,7 +54,7 @@ input{
     flex-direction: column;
     margin: 8px 0px;
     align-items: center;
-    gap: 48px;
+    gap: 24px;
 }
 
 .form{

@@ -22,30 +22,30 @@ INSERT INTO app_rentals.tool_type (type_name, type_category) VALUES
     ('Table Saw', 'Power Tools');
 
 -- Sample data for tool table
-INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description, tool_qty_available) VALUES
-    (1, 'Cordless Drill', 99.99, 'Powerful cordless drill for various applications', 15),
-    (2, 'Claw Hammer', 12.99, 'Sturdy hammer for carpentry work', 20),
-    (3, 'Circular Saw', 149.99, 'High-performance circular saw with laser guide', 10),
-    (4, 'Adjustable Wrench', 8.99, 'Versatile adjustable wrench for various tasks', 18),
-    (5, 'Phillips Screwdriver', 4.99, 'Durable Phillips screwdriver for screwing tasks', 25),
-    (6, 'Power Washer', 199.99, 'Heavy-duty power washer for cleaning tasks', 12),
-    (7, 'Pliers', 6.99, 'Multi-functional pliers for gripping and cutting', 22),
-    (8, 'Chisel', 5.99, 'Sharp chisel for woodworking', 15),
-    (9, 'Jigsaw', 129.99, 'Precision jigsaw for intricate cutting', 8),
-    (10, 'Tape Measure', 7.99, 'Retractable tape measure for accurate measurements', 30),
-    (11, 'Angle Grinder', 79.99, 'Versatile angle grinder for cutting and grinding', 10),
-    (12, 'Screw Gun', 49.99, 'Automatic screw gun for efficient screwing', 18),
-    (13, 'Ratchet', 14.99, 'Handheld ratchet for tightening and loosening bolts', 20),
-    (14, 'Impact Driver', 89.99, 'High-torque impact driver for heavy-duty tasks', 12),
-    (15, 'Utility Knife', 3.99, 'Compact utility knife for cutting various materials', 25),
-    (16, 'Reciprocating Saw', 119.99, 'Reciprocating saw for cutting through tough materials', 10),
-    (17, 'Hand Saw', 9.99, 'Traditional hand saw for woodworking', 15),
-    (18, 'Bolt Cutter', 17.99, 'Heavy-duty bolt cutter for cutting bolts and chains', 8),
-    (19, 'Table Saw', 199.99, 'Large table saw for precise woodworking', 5),
-    (20, 'Sledgehammer', 24.99, 'Powerful sledgehammer for heavy demolition work', 7);
+INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description, tool_qty_available, attachments) VALUES
+    (1, 'Cordless Drill', 99.99, 'Powerful cordless drill for various applications', 15, null),
+    (2, 'Claw Hammer', 12.99, 'Sturdy hammer for carpentry work', 20, null),
+    (3, 'Circular Saw', 149.99, 'High-performance circular saw with laser guide', 10, null),
+    (4, 'Adjustable Wrench', 8.99, 'Versatile adjustable wrench for various tasks', 18, null),
+    (5, 'Phillips Screwdriver', 4.99, 'Durable Phillips screwdriver for screwing tasks', 25, null),
+    (6, 'Power Washer', 199.99, 'Heavy-duty power washer for cleaning tasks', 12, null),
+    (7, 'Pliers', 6.99, 'Multi-functional pliers for gripping and cutting', 22, null),
+    (8, 'Chisel', 5.99, 'Sharp chisel for woodworking', 15, null),
+    (9, 'Jigsaw', 129.99, 'Precision jigsaw for intricate cutting', 8, null),
+    (10, 'Tape Measure', 7.99, 'Retractable tape measure for accurate measurements', 30, null),
+    (11, 'Angle Grinder', 79.99, 'Versatile angle grinder for cutting and grinding', 10, null),
+    (12, 'Screw Gun', 49.99, 'Automatic screw gun for efficient screwing', 18, null),
+    (13, 'Ratchet', 14.99, 'Handheld ratchet for tightening and loosening bolts', 20, null),
+    (14, 'Impact Driver', 89.99, 'High-torque impact driver for heavy-duty tasks', 12, null),
+    (15, 'Utility Knife', 3.99, 'Compact utility knife for cutting various materials', 25, null),
+    (16, 'Reciprocating Saw', 119.99, 'Reciprocating saw for cutting through tough materials', 10, null),
+    (17, 'Hand Saw', 9.99, 'Traditional hand saw for woodworking', 15, null),
+    (18, 'Bolt Cutter', 17.99, 'Heavy-duty bolt cutter for cutting bolts and chains', 8, null),
+    (19, 'Table Saw', 199.99, 'Large table saw for precise woodworking', 5, null),
+    (20, 'Sledgehammer', 24.99, 'Powerful sledgehammer for heavy demolition work', 7, null);
 
 -- Sample data for unit table
-INSERT INTO app_rentals.unit (tool_id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES
+INSERT INTO app_rentals.unit (id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES
     (1, 1, 'SN123456', 10.0, 15.0, 'Good', true, '2023-11-01', '2023-11-01', NULL),
     (2, 2, 'SN789012', 5.0, 10.0, 'Excellent', true, '2023-11-02', '2023-11-02', NULL),
     (3, 3, 'SN345678', 7.0, 12.0, 'Fair', true, '2023-11-03', '2023-11-03', NULL),
@@ -159,7 +159,7 @@ INSERT INTO app_rentals.quotation (quotation_date, tools_quoted_qty, totalprice)
     ('2023-11-20', 34, 1020.00);
 
 -- Sample data for quotation_line_item table
-INSERT INTO app_rentals.quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price) VALUES
+INSERT INTO app_rentals.quotation_line_item (quotation_id, id, tool_quoted_qty, tool_price) VALUES
     (1, 1, 2, 30.00),
     (1, 2, 1, 40.00),
     (2, 3, 3, 30.00),
@@ -205,7 +205,7 @@ INSERT INTO app_rentals.purchase_order (quotation_id, company_id, order_date, to
     (20, 20, '2023-11-20', 34, 1020.00);
 
 -- Sample data for purchase_order_line_item table
-INSERT INTO app_rentals.purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
+INSERT INTO app_rentals.purchase_order_line_item (purchase_order_id, id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
     (1, 1, NULL, 2, 30.00),
     (1, 2, NULL, 1, 40.00),
     (2, 3, NULL, 3, 30.00),
@@ -281,7 +281,7 @@ UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 19 WHERE pu
 UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 20 WHERE purchase_order_id = 20;
 
 -- Sample data for tool_restock_request table
-INSERT INTO app_rentals.tool_restock_request (tool_id, notice_date, restock_notice_author, qty_requested) VALUES
+INSERT INTO app_rentals.tool_restock_request (id, notice_date, restock_notice_author, qty_requested) VALUES
     (1, '2023-11-01', 'Author1', 5),
     (2, '2023-11-02', 'Author2', 8),
     (3, '2023-11-03', 'Author3', 10),
@@ -452,3 +452,22 @@ UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_
 UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 18 WHERE unit_recalibration_schedule_id = 18;
 UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 19 WHERE unit_recalibration_schedule_id = 19;
 UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_id = 20 WHERE unit_recalibration_schedule_id = 20;
+
+-- sample view
+INSERT INTO meta.additional_view_settings(schemaName, tableName, viewName, viewType) VALUES
+('app_rentals', 'unit_scheduler', 'unit_scheduler_timeline_view', 1),
+('app_rentals', 'unit_recalibration_schedule', 'unit_recalibration_schedule_calendar_view', 2),
+('app_rentals', 'purchase_order', 'purchase_order_treeview_view', 3),
+('app_rentals', 'company', 'unit_scheduler_custom_view', 4);
+
+-- sample custom view 
+INSERT INTO meta.custom_view_templates(settingId, template) VALUES
+(4, 'import React from ''react''
+
+const HelloWorld = () => {
+  return (
+    <div>HelloWorld</div>
+  )
+}
+
+export default HelloWorld')

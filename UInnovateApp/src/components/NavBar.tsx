@@ -24,7 +24,6 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const handleClose = () => setShowSignupModal(false);
   const handleShow = () => setShowSignupModal(true);
   const handleLogout = () => {
@@ -63,9 +62,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
           </Nav>}
           <Nav className="justify-content-end flex-grow-1 pe-3">
             {( LOGIN_BYPASS || loggedInUser ) &&
-            <><Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}>
-              ObjectMenu
-            </Nav.Link>
+            <>
             {/* Hides the Settings page link for user role */}
             <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}>
               Settings

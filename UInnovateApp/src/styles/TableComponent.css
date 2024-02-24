@@ -21,8 +21,7 @@ td {
 
 .panel-container {
   background-color: #f1f1f1;
-  padding-top: 20px;
-  padding-left: 20px;
+
   z-index: 0;
 }
 
@@ -31,7 +30,7 @@ td {
   flex-direction: column;
   gap: 5px;
   padding-top: 5px;
-  width: 40%
+  width: 40%;
 }
 
 .title-panel {
@@ -41,6 +40,8 @@ td {
 }
 
 .form-panel-container {
+  margin-top: 20px;
+  margin-left: 20px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -52,15 +53,11 @@ td {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  height:120%
-  
-
-  
+  height: 120%;
 }
-.form-group{
+.form-group {
   display: flex;
   flex-direction: column;
-
 }
 
 input {
@@ -74,4 +71,9 @@ input {
 
 .button-icon {
   font-size: 16px;
+}
+
+.table-container {
+  margin-top: 1em;
+  margin-bottom:2em
 }
