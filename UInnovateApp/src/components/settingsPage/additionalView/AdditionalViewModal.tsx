@@ -95,8 +95,6 @@ const AdditionalViewModal = ({show, setShow, refreshList: updateList}:Additional
                     (
                     <Form.Group className="mb-3" controlId="viewCustomCode">
                         <Form.Label>view custom code</Form.Label>
-                        {/* <textarea name="viewCustomCode" onChange={(e)=>setCustomCode(e.target.value)}>
-                        </textarea> */}
                         <Form.Control type="file" accept='.ts, .tsx, ,js, .jsx, .txt' onChange={(e)=>handleFileChange(e)} />
                     </Form.Group>
                     )}

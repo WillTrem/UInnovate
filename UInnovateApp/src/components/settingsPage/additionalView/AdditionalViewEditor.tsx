@@ -19,6 +19,7 @@ function CustomToggle({ children, eventKey }) {
     return (
       <Button
         variant="contained"
+        size="medium"
         className='buttonStyle'
         onClick={openOnClick}
       >
@@ -71,7 +72,7 @@ const AdditionalViewEditor = ({
     
 
     if(selectedSchema != '')
-  return (
+    return (
     <>
         <div className='row'>
             <div className='col-md-12'>
@@ -107,8 +108,8 @@ const AdditionalViewEditor = ({
                                 { view.viewtype === ViewTypeEnum.Custom && (
                                     <CustomToggle eventKey={view.viewname}>open</CustomToggle>
                                     )}
-                                    <Button variant='contained' color="error" onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>
-                                        <Delete />
+                                    <Button variant='contained' color="error" size="large" onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>
+                                        <Delete fontSize="small"/>
                                     </Button>
                                 </div>
                             </div>
@@ -132,7 +133,6 @@ const AdditionalViewEditor = ({
             </Accordion>
             </>)
             }
-
         </div>
         <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} />
     </>
@@ -140,9 +140,9 @@ const AdditionalViewEditor = ({
   else
   return(
 <>
-<div>select a table</div>
+    loading...
 </>
-    )
+)
 }
 
 export default AdditionalViewEditor
