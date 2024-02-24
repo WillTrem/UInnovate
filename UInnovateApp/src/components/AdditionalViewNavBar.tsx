@@ -3,6 +3,7 @@ import { Container, Nav, Navbar } from 'react-bootstrap'
 import { AdditionalViews, getCustomViews,  getViewsBySchema } from '../virtualmodel/AdditionalViewsDataAccessor';
 import { Table } from "../virtualmodel/VMD";
 import { ViewTypeEnum } from './settingsPage/additionalView/ViewTypeEnum';
+import e from 'express';
 
 interface AdditionalViewNavBarProp{
     selectedSchema: string;
@@ -45,7 +46,7 @@ const AdditionalTableViewSelector = ({views, selectedTable}: AdditionalTableViSe
         });
          setFilteredViews(filteredViews);
 
-    },[activeView, selectedTable]);
+    },[selectedTable]);
 
     if(filteredViews.length == 0){
         return (
@@ -55,17 +56,13 @@ const AdditionalTableViewSelector = ({views, selectedTable}: AdditionalTableViSe
     }
 
     const handleActiveView = (viewtype:ViewTypeEnum)=>{
-        console.log(activeView);
-        const links = document.querySelectorAll('.viewSelectionNav .nav-link.active')
-        for(var i = 0; i < links.length; i++){
-            links[i].classList.remove('active');
-        }
+        console.log(viewtype);
         setActiveView(viewtype);
     }
 
     const navLink = (viewName:string, viewtype:ViewTypeEnum, linkText:string) =>{
        
-        return (<Nav.Link key={viewName} href="#" className={activeView === viewtype ? 'active': ''} onClick={()=>{handleActiveView(viewtype)}} >{linkText}</Nav.Link>);
+        return (<Nav.Item><Nav.Link key={viewName} eventKey={viewName} href="#" onClick={(e)=>{handleActiveView(viewtype)}} >{linkText}</Nav.Link> </Nav.Item>);
     }
 
 
@@ -74,9 +71,7 @@ const AdditionalTableViewSelector = ({views, selectedTable}: AdditionalTableViSe
             <Container>
                 <h4>views</h4>
             <Nav className="d-flex justify-content-evenly" variant='underline'>
-                <Nav.Item>
                     {navLink("default", ViewTypeEnum.Default, "Default")}
-                </Nav.Item>
                 {
                     filteredViews.length > 0 && filteredViews.map((view: AdditionalViews)=>{
                         if(view){
