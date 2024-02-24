@@ -1,20 +1,23 @@
-import {Typography} from "@mui/material"
-import { ListGroup, Row, Col } from "react-bootstrap";
-import SchemaSelector from '../Schema/SchemaSelector';
-import Tab from "react-bootstrap/Tab";
-import Select from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import DisplayType from '../Schema/DisplayType';
+import { Col, Row as Line, Tab, Nav } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { fetchFunctionNames, callProcedure, ProcedureSchedulingParams, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
-import AceEditor from "react-ace";
-import { Card } from "react-bootstrap";
-import {FormControl, FormHelperText, TextField  } from "@mui/material";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
+import vmd from "../../virtualmodel/VMD";
+import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import { Modal, Form } from "react-bootstrap";
+import { Button } from "@mui/material";
+import { IoMdAddCircle } from "react-icons/io";
+import { FunctionViewer } from "./FunctionViewer";
+
+const buttonStyle = {
+    marginRight: 10,
+    backgroundColor: "#404040",
+  };
+  
 export const ExecuteProcedures = () => {
     const [procedures, setProcedures] = useState<string[]>([]);
     const selectedSchema = useSelector((state: RootState) => state.schema.value);
@@ -22,6 +25,51 @@ export const ExecuteProcedures = () => {
     const [selectedProc, setSelectedProc] = useState('');
     const [procedureSource, setProcedureSource] = useState('');
     const [numArgs, setNumArgs] = useState(0); //this could be cool but we dont need it right now, leaving it in for now.
+    const schema = vmd.getSchema("meta");
+    const function_table = vmd.getTable("meta", "function_map");
+  
+    const [functions, setFunctions] = useState<Row[] | undefined>([]);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [newFunction, setNewFunction] = useState<Row>({
+      procedure: procedures[0],
+    });  
+    const getFunctions = async () => {
+      if (!schema || !function_table) {
+        return;
+      }
+  
+      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+        schema?.schema_name,
+        function_table?.table_name
+      );
+  
+      const function_rows = await data_accessor?.fetchRows();
+      setFunctions(function_rows);
+    };
+  
+    useEffect(() => {
+      getFunctions();
+    }, []);
+  
+    const handleAddFunction = async () => {
+      setShowModal(true);
+    };
+  
+    const handleClose = () => {
+      setShowModal(false);
+    };
+  
+    const handleSave = async () => {
+      const data_accessor = vmd.getAddRowDataAccessor(
+        "meta",
+        "function_map",
+        { ...newFunction, schema: selectedSchema }
+      );
+
+      await data_accessor?.addRow();
+      getFunctions();
+      setShowModal(false);
+    };
     const execProcedure = () => {
         const params: ProcedureSchedulingParams = {
             functionName: selectedProc,
@@ -66,72 +114,114 @@ export const ExecuteProcedures = () => {
         updateProcedureNames();
     }, [selectedSchema]);
     return (
-        <div>
-        {procedures.length !== 0 ?
-        <Tab.Container>
-            <Tab.Content>
-                <Row>                                
-                    <Col sm={8}>
-<Card>
-    <Card.Body>
-        <Card.Title className="mb-3">Procedure: {selectedProc}</Card.Title>
+<div>
+      <Tab.Container>
+        <Line>
+          <Col sm={3}>
+            <h4>Functions</h4>
+            <Modal show={showModal} onHide={handleClose}>
+              <Modal.Header>
+                <Modal.Title>Add New Functions</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  <Form.Group>
+                    <Form.Label>Procedure</Form.Label>
+                    <Form.Select
+                      onChange={(e) =>
+                        setNewFunction({
+                          ...newFunction,
+                          procedure: e.target.value,
+                        })
+                      }
+                    >
+                      {procedures.map((proc) => (
+                        <option key={proc} value={proc}>
+                          {proc}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Form.Group>
 
-        {/* dropdown list of stored procedures */}
-        <Select
-            value={selectedProc}
-            onChange={(event) => handleProcSelection(event.target.value as string)}
-            style={{ fontSize: '1.25rem', width: '100%', marginBottom: '20px' }}
-        >
-            {procedures.map(proc => (
-                <MenuItem key={proc} value={proc}>
-                    {proc}
-                </MenuItem>
-            ))}
-        </Select>
-        <div className="config-pane mt-3">
-            <div className="d-flex flex-column align-items-start mb-3">
-                <h6>Button Name</h6>
-                <TextField defaultValue={""}></TextField>
-            </div>
-            <div className="d-flex flex-column align-items-start mb-3">
-                <h6>Description</h6>
-                <TextField multiline fullWidth defaultValue={""}></TextField>
-            </div>
-            <FormControl size="small" className="mb-3">
-                <h6>View</h6>
-                <FormHelperText>
-                    The View that this will be applied to.
-                </FormHelperText>
-            </FormControl>
-            <div className="d-flex flex-column align-items-start mb-3">
-                <button onClick={execProcedure}>Test Execution</button>
-            </div>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", marginTop: "20px" }}>
-            <h6>Content</h6>
-            <div style={{ display: "flex", flexDirection: "row", marginTop: "10px" }}>
-                <AceEditor
-                    mode="sql"
-                    theme="github"
-                    value={procedureSource}
-                    onChange={(value) => {
-                        handleProcSelection(value);
-                    }}
-                    name="script-editor"
-                    readOnly={true}
-                    editorProps={{ $blockScrolling: true }}
-                    style={{ width: "100%" }}
-                />
-            </div>
-        </div>
-    </Card.Body>
-</Card>
-                    </Col>
-                </Row>
+                  <Form.Group>
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={newFunction.name || ""}
+                      onChange={(e) =>
+                        setNewFunction({
+                          ...newFunction,
+                          name: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.Label>Description</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={newFunction.description || ""}
+                      onChange={(e) =>
+                        setNewFunction({
+                          ...newFunction,
+                          description: e.target.value,
+                        })
+                      }
+                    />
+                  </Form.Group>
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  onClick={handleClose}
+                  style={buttonStyle}
+                  variant="contained"
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  style={buttonStyle}
+                  variant="contained"
+                >
+                  Add Function
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Nav variant="pills" className="flex-column">
+              {functions?.map((funct) => {
+                const function_name = funct["name"];
+                return (
+                  <Nav.Item key={function_name}>
+                    <Nav.Link eventKey={function_name}>{function_name}</Nav.Link>
+                  </Nav.Item>
+                );
+              })}
+            </Nav>
+
+            <Button
+              onClick={handleAddFunction}
+              style={buttonStyle}
+              variant="contained"
+            >
+              <IoMdAddCircle className="button-icon" />
+            </Button>
+          </Col>
+          <Col sm={9}>
+            <Tab.Content>
+              {functions?.map((funct: Row) => {
+                const function_name = funct["name"];
+                return (
+                  <Tab.Pane key={function_name} eventKey={function_name}>
+                      <FunctionViewer func={funct} />
+                  </Tab.Pane>
+                );
+              })}
             </Tab.Content>
-        </Tab.Container>
-        :
-        <Typography variant="body1">You don't have access to any tables.</Typography>}
+          </Col>
+        </Line>
+      </Tab.Container>
     </div>
     )
 };

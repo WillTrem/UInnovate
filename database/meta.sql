@@ -137,6 +137,19 @@ CREATE TABLE IF NOT EXISTS meta.scripts (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Creating the fucntion mapping table
+
+CREATE TABLE IF NOT EXISTS meta.function_map (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    schema TEXT NOT NULL DEFAULT 'meta',
+    procedure TEXT NOT NULL,
+    table_name TEXT DEFAULT 'function_map',
+    btn_name TEXT DEFAULT 'Do a magic trick!',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Creating the envronment variables table
 CREATE TABLE IF NOT EXISTS meta.env_vars (
     id SERIAL PRIMARY KEY,
@@ -477,12 +490,15 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
 GRANT SELECT ON meta.appconfig_properties TO "user";
 GRANT SELECT ON meta.appconfig_values TO "user";
 GRANT SELECT ON meta.scripts TO "user";
+GRANT SELECT ON meta.function_map TO "user";
+
 GRANT SELECT ON meta.i18n_languages TO "user";
 GRANT SELECT ON meta.i18n_keys TO "user";
 GRANT SELECT ON meta.i18n_values TO "user";
 GRANT ALL ON meta.appconfig_properties TO configurator;
 GRANT ALL ON meta.appconfig_values TO configurator;
 GRANT ALL ON meta.scripts TO configurator;
+GRANT ALL ON meta.function_map TO configurator;  
 GRANT ALL ON meta.i18n_languages TO configurator;
 GRANT ALL ON meta.i18n_keys TO configurator;
 GRANT ALL ON meta.i18n_values TO configurator;
@@ -511,12 +527,14 @@ GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
 GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
+GRANT SELECT, UPDATE, INSERT ON meta.function_map TO web_anon;  
 GRANT SELECT, UPDATE, INSERT ON meta.env_vars TO web_anon;
 
 GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
 GRANT ALL ON meta.appconfig_properties TO web_anon;
 GRANT ALL ON meta.appconfig_values TO web_anon;
 GRANT ALL on meta.scripts TO web_anon;
+GRANT ALL on meta.function_map TO web_anon;
 GRANT ALL on meta.env_vars TO web_anon;
 
 -- Granting necessary permissions for meta.i18n schema tables
