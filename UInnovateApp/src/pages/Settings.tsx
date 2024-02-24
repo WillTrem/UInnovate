@@ -48,15 +48,9 @@ export function Settings() {
 	const initialSelectedSchema = schemas.length === 0 ? "" : schemas[0]
 	const [selectedSchema, setSelectedSchema] = useState(initialSelectedSchema);
 
-
 	useEffect(() => {
 		dispatch(updateSelectedSchema(selectedSchema));
 	}, [selectedSchema])
-
-	// const handleSchemaChange = (event: SelectChangeEvent) => {
-	// 	setSelectedSchema(event.target.value);
-	// };
-
 
 	const navigate = useNavigate();
 	const { option } = useParams();
@@ -79,22 +73,6 @@ export function Settings() {
 					<div className='save-config-container'>
 						<Box display="flex" gap={"2rem"} alignItems={"center"}>
 							<h1 className='title'>Settings</h1>
-							{/* <FormControl fullWidth disabled={schemas.length === 0}>
-								<InputLabel id="schema-label">Schema</InputLabel>
-								<Select
-									labelId="schema-label"
-									name="schema"
-									value={selectedSchema}
-									onChange={(event) => handleSchemaChange(event)}
-									variant="outlined"
-									label="Schema"
-									size="small"
-								>
-									{schemas.map((schema) => {
-										return <MenuItem key={schema} value={schema}>{schema}</MenuItem>
-									})};
-								</Select>
-							</FormControl> */}
 							<SchemaSelector
 								displayType={DisplayType.MuiDropDown}
 								schemas={schemas}

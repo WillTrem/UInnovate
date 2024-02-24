@@ -83,7 +83,6 @@ export const insertNewView = async (p_schemaName: string, p_tableName: string, p
 			await cstm_view_data_accessor.executeFunction();
 		}
 
-		// alert("View saved successfully.");
 	} catch (error) {
 		console.error("Error in upserting view:", error);
 		alert("Failed to save view.");
