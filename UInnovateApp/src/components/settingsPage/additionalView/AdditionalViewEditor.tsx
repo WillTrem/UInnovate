@@ -5,11 +5,16 @@ import AdditionalViewModal from './AdditionalViewModal';
 import { AdditionalViews, deleteView, getCustomViews, getViewsBySchema } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
 import '../../../styles/AdditionalViewEditor.css';
+import { KeyboardArrowDown, KeyboardArrowUp, Delete } from '@mui/icons-material';
 
 function CustomToggle({ children, eventKey }) {
+    const [isOpen, setIsOpen] = useState<Boolean>(false);
+    
     const openOnClick = useAccordionButton(eventKey, () =>
-      console.log('open custom!'),
-    );
+    {
+        setIsOpen(!isOpen)
+        console.log('open custom!')
+    });
   
     return (
       <Button
@@ -17,7 +22,8 @@ function CustomToggle({ children, eventKey }) {
         className='buttonStyle'
         onClick={openOnClick}
       >
-        {children}
+        {/* {children} */}
+        {isOpen ? (<KeyboardArrowUp />) : (<KeyboardArrowDown />)}
       </Button>
     );
   }
@@ -101,7 +107,9 @@ const AdditionalViewEditor = ({
                                 { view.viewtype === ViewTypeEnum.Custom && (
                                     <CustomToggle eventKey={view.viewname}>open</CustomToggle>
                                     )}
-                                    <Button variant='contained' color="error" onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>delete</Button>
+                                    <Button variant='contained' color="error" onClick={(e)=> handleDelete(`${view.id}`, view.viewtype === ViewTypeEnum.Custom)}>
+                                        <Delete />
+                                    </Button>
                                 </div>
                             </div>
                         </div>
