@@ -28,13 +28,39 @@ const AdditionalViewModal = ({show, setShow, refreshList: updateList}:Additional
         setTableList(tables);
     }, [schemaName]);
 
-    const handleClose = () => setShow(false);
+    const resetForm = ()=>{
+        setViewName('');
+        setViewType(1);
+        setTableName('');
+        const form = document.getElementById('AdditionalViewModalForm');
+        form && form.reset();
+    }
+    const handleClose = () => {
+        setShow(false);
+        resetForm();
+    };
 
     const handleSave = (e): void =>{
         e.preventDefault();
-        handleClose();
         insertNewView(schemaName, tableName, viewName, viewType, customCode);
+        handleClose();
         updateList();
+    }
+
+    const handleFileChange = (e):void =>{
+        const [file] = e.target.files;
+        const reader = new FileReader();
+        reader.addEventListener(
+            "load",
+            () => {
+                const text = reader.result;
+                setCustomCode(text);
+            },
+            false
+          );
+        if (file) {
+            reader.readAsText(file);
+        }
     }
     return (
         <>
@@ -42,9 +68,8 @@ const AdditionalViewModal = ({show, setShow, refreshList: updateList}:Additional
             <Modal.Header closeButton>
               <Modal.Title>Add a new view</Modal.Title>
             </Modal.Header>
-
             <Modal.Body>
-                <Form onSubmit={handleSave}>
+                <Form onSubmit={handleSave} id='AdditionalViewModalForm'>
                     <Form.Group className="mb-3" controlId="viewName">
                         <Form.Label>view name</Form.Label>
                         <Form.Control name='viewName' type="text" onChange={(e)=>{setViewName(e.target.value)}} placeholder="Enter a view name"/>
@@ -70,8 +95,9 @@ const AdditionalViewModal = ({show, setShow, refreshList: updateList}:Additional
                     (
                     <Form.Group className="mb-3" controlId="viewCustomCode">
                         <Form.Label>view custom code</Form.Label>
-                        <textarea name="viewCustomCode" onChange={(e)=>setCustomCode(e.target.value)}>
-                        </textarea>
+                        {/* <textarea name="viewCustomCode" onChange={(e)=>setCustomCode(e.target.value)}>
+                        </textarea> */}
+                        <Form.Control type="file" accept='.ts, .tsx, ,js, .jsx, .txt' onChange={(e)=>handleFileChange(e)} />
                     </Form.Group>
                     )}
                 </Form>
