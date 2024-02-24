@@ -184,7 +184,7 @@ export const CronJobsTab = () => {
 
     useEffect(() => {
         updateProcedureNames();
-    }, [selectedSchema]);
+    }, []);
 
     useEffect(() => {
         if (procedures.length > 0 && selectedProc === '') {
@@ -206,107 +206,103 @@ export const CronJobsTab = () => {
 
     return (
         <div>
-        {procedures.length !== 0 ?
-        <Tab.Container>
-        <Tab.Content>
-        <Row>
-                <Col sm={3}>
-                    {/* list of stored procedures */}
-                    <ListGroup>
-                        {procedures.map(proc => (
-                            <ListGroup.Item
-                                key={proc}
-                                action
-                                active={proc === selectedProc}
-                                onClick={() => handleProcSelection(proc)}
-                                style={{ fontSize: '1.25rem' }}
-                            >
-                                {proc}
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
-                </Col>
-                <Col sm={8}>
-                    <ListGroup variant='flush'>
-                        {/* set cron schedule for the selected procedure */}
-                        <ListGroup.Item>
-                        <Form.Group controlId="cronSchedule">
-                            <Form.Label>
-                                Cron Schedule for {selectedProc}
-                            </Form.Label>
-                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
-                                <Form.Control
-                                    type="text"
-                                    placeholder="* * * * *"
-                                    value={cronSchedule}
-                                    onChange={e => setCronSchedule(e.target.value)}
-                                    style={{ flexGrow: 1, marginRight: '5px' }} // Ensure the input field takes up available space
-                                />
-                                <Tooltip title="Use cron syntax: '* * * * *', Format: 'Minute Hour Day Month Weekday'. Each field can be a number or '*', which means every. Example: '0 5 * * *' runs daily at 5 AM. For detailed syntax, check https://crontab.guru/">
-                                    <InfoIcon />
-                                </Tooltip>
-                            </div>
-                            <div style={containerStyle}>
-                                <Button variant="contained" style={buttonStyle} onClick={() => scheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Schedule Job</Button>                                    
-                                <Button variant="contained" style={buttonStyle} onClick={() => unscheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Unschedule Job</Button>
-                            </div>
-                        </Form.Group>
-                        </ListGroup.Item>
+            {procedures.length !== 0 ? (
+                <Tab.Container>
+                    <Tab.Content>
+                        <Row>
+                            <Col sm={8}>
+                                <ListGroup variant='flush'>
+                                <ListGroup.Item>
 
-                        <ListGroup.Item>
-                            <div>CRON Schedule for {selectedProc}</div>
-                            <Table striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Schedule</th>
-                                        <th>Active</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {queuedLogs.map(log => (
-                                        <tr key={log.id}>
-                                            <td>{log.name}</td>
-                                            <td>{log.schedule}</td>
-                                            <td>{log.active}</td>
-                                        </tr>
-                                    ))} 
-                                </tbody>
-                            </Table>
-                        </ListGroup.Item>
+                                <Form.Select aria-label="Default select example" onChange={e => handleProcSelection(e.target.value)}>
+                                    <option>Select a procedure</option>
+                                    {procedures.map(proc => (
+                                        <option key={proc} value={proc}>
+                                            {proc}
+                                        </option>
+                                    ))}
+                                </Form.Select>
+                                </ListGroup.Item>
 
+                                    {/* Set cron schedule for the selected procedure */}
+                                     {/* list of stored procedures */}
+                                    <ListGroup.Item>
+                                        <Form.Group controlId="cronSchedule">
+                                            <Form.Label>
+                                                Cron Schedule for {selectedProc}
+                                            </Form.Label>
+                                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '5px' }}>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="* * * * *"
+                                                    value={cronSchedule}
+                                                    onChange={e => setCronSchedule(e.target.value)}
+                                                    style={{ flexGrow: 1, marginRight: '5px' }} // Ensure the input field takes up available space
+                                                />
+                                                <Tooltip title="Use cron syntax: '* * * * *', Format: 'Minute Hour Day Month Weekday'. Each field can be a number or '*', which means every. Example: '0 5 * * *' runs daily at 5 AM. For detailed syntax, check https://crontab.guru/">
+                                                    <InfoIcon />
+                                                </Tooltip>
+                                            </div>
+                                            <div style={containerStyle}>
+                                                <Button variant="contained" style={buttonStyle} onClick={() => scheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Schedule Job</Button>
+                                                <Button variant="contained" style={buttonStyle} onClick={() => unscheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Unschedule Job</Button>
+                                            </div>
+                                        </Form.Group>
+                                    </ListGroup.Item>
 
+                                    <ListGroup.Item>
+                                        <div>CRON Schedule for {selectedProc}</div>
+                                        <Table striped bordered hover>
+                                            <thead>
+                                                <tr>
+                                                    <th>Name</th>
+                                                    <th>Schedule</th>
+                                                    <th>Active</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {queuedLogs.map(log => (
+                                                    <tr key={log.id}>
+                                                        <td>{log.name}</td>
+                                                        <td>{log.schedule}</td>
+                                                        <td>{log.active}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </ListGroup.Item>
 
-                        {/* Table for execution logs */}
-                        
-                        <ListGroup.Item>
-                            <div>Execution Logs for {selectedProc}</div>
-                            <Table striped bordered hover>
-                                <thead>
-                                    <tr>
-                                        <th>Datetime</th>
-                                        <th>Duration</th>
-                                        <th>Result</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {executionLogs.map(log => (
-                                        <tr key={log.id}>
-                                            <td>{log.datetime}</td>
-                                            <td>{log.duration}</td>
-                                            <td>{log.result}</td>
-                                        </tr>
-                                    ))} 
-                                </tbody>
-                            </Table>
-                        </ListGroup.Item>
-                    </ListGroup>
-                </Col>
-            </Row>
-        </Tab.Content>
-    </Tab.Container>
-        :
-        <Typography variant="body1">You don't have access to any tables.</Typography>}
-     </div>
+                                    {/* Table for execution logs */}
+                                    <ListGroup.Item>
+                                        <div>Execution Logs for {selectedProc}</div>
+                                        <Table striped bordered hover>
+                                            <thead>
+                                                <tr>
+                                                    <th>Datetime</th>
+                                                    <th>Duration</th>
+                                                    <th>Result</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {executionLogs.map(log => (
+                                                    <tr key={log.id}>
+                                                        <td>{log.datetime}</td>
+                                                        <td>{log.duration}</td>
+                                                        <td>{log.result}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </ListGroup.Item>
+                                </ListGroup>
+                            </Col>
+                        </Row>
+                    </Tab.Content>
+                </Tab.Container>
+            ) : (
+                <Typography variant="body1">You don't have access to any tables.</Typography>
+            )}
+        </div>
     );
+    
 };
