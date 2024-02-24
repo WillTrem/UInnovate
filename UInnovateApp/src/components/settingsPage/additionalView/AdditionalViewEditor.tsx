@@ -121,7 +121,7 @@ const AdditionalViewEditor = ({
                                 <Card.Body>
                                 <h4>custom code:</h4>
                                 <code>
-                                    {customViews.filter(cv=>{if(cv.settingid === view.id){return cv}})[0].template}
+                                    {customViews && customViews.filter(cv=>{if(cv.settingid === view.id){return cv}})[0]?.template}
                                 </code>
                                 </Card.Body>
                             </Accordion.Collapse>
