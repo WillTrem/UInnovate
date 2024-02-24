@@ -38,12 +38,12 @@ const AdditionalTableViewSelector = ({views, selectedTable}: AdditionalTableViSe
     const [activeView, setActiveView] = useState(0);
     useEffect(()=>{
         console.log(views);
-        const v = views.filter((view:AdditionalViews)=>{
+        const filteredViews = views.filter((view:AdditionalViews)=>{
             if(view.tablename === selectedTable)
                 return true;
             return false;
         });
-         setFilteredViews(v);
+         setFilteredViews(filteredViews);
 
     },[activeView, selectedTable]);
 

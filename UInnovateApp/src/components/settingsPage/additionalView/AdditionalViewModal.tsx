@@ -3,20 +3,23 @@ import { Modal , Button, Form} from 'react-bootstrap'
 import { ViewTypeEnum } from './ViewTypeEnum';
 import { insertNewView } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import vmd, { Table } from '../../../virtualmodel/VMD';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/Store';
 
 interface AdditionalViewModalProp{
-    schemaName: string,
     show: boolean;
     setShow: (v:boolean)=>void;
     refreshList:()=>void;
 }
 
-const AdditionalViewModal = ({schemaName, show, setShow, refreshList: updateList}:AdditionalViewModalProp) => {
+const AdditionalViewModal = ({show, setShow, refreshList: updateList}:AdditionalViewModalProp) => {
     const [viewName, setViewName] = useState<string>('');
     const [viewType, setViewType] = useState<number>(1);
     const [tableName, setTableName] = useState<string>('');
     const [customCode, setCustomCode] = useState<string>('');
     const [tableList, setTableList]= useState<Table[]>([]);
+
+     const schemaName = useSelector((state: RootState) => state.schema.value);
 
     useEffect(()=>{
         // Only show tables of the selected schema
@@ -57,8 +60,8 @@ const AdditionalViewModal = ({schemaName, show, setShow, refreshList: updateList
                     <Form.Group className="mb-3" controlId="viewTable">
                         <Form.Label>tables</Form.Label>
                         <Form.Select onChange={(e)=>setTableName(e.target.value)}>
-                            {tableList.map((table)=>
-                                <option value={table.table_name}>{table.table_name}</option>
+                            {tableList && tableList.map((table)=>
+                                <option key={table.table_name} value={table.table_name}>{table.table_name}</option>
                             )}
                         </Form.Select>
                     </Form.Group>
@@ -88,4 +91,4 @@ const AdditionalViewModal = ({schemaName, show, setShow, refreshList: updateList
     );
 }
 
-export default AdditionalViewModal
+export default AdditionalViewModal;

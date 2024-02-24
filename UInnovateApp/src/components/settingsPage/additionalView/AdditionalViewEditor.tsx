@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Accordion, Button, Card, useAccordionButton } from 'react-bootstrap'
+import { Badge, Accordion, Button, Card, useAccordionButton } from 'react-bootstrap'
 import AdditionalViewModal from './AdditionalViewModal';
 import { AdditionalViews, deleteView, getCustomViews, getViewsBySchema } from '../../../virtualmodel/AdditionalViewsDataAccessor';
 import { ViewTypeEnum, getViewTypeEnum } from './ViewTypeEnum';
@@ -36,10 +36,12 @@ const AdditionalViewEditor = ({
 
     const handleClick = ()=>{setShowModal(true)};
     const handleDelete = async (id:string , isCustom: boolean)=>{
-        var res = deleteView(id, isCustom);
+        const res = deleteView(id, isCustom);
         if(await res){
+            const ctrl = new AbortController();
+            const signal = ctrl.signal;
             console.log('updating list')
-            getViewsBySchema(setViewList, selectedTable);
+            getViewsBySchema(setViewList, selectedSchema, signal);
         }
     }
     const refreshList = ()=>{
@@ -48,6 +50,7 @@ const AdditionalViewEditor = ({
     }
 
     useEffect(()=>{
+        if(selectedSchema){
         const ctrl = new AbortController();
         const signal = ctrl.signal;
         // get data from db
@@ -55,6 +58,7 @@ const AdditionalViewEditor = ({
          getCustomViews(setCustomViews, signal)
 
          return ()=>{ctrl.abort()};
+        }
     },[selectedSchema])
     
 
@@ -79,7 +83,7 @@ const AdditionalViewEditor = ({
             {viewList.length > 0 &&
             (<>
             <Accordion>
-                {viewList.map( (view: AdditionalViews) =>
+                {viewList && viewList.map( (view: AdditionalViews) =>
                 <Card key={view.id}>
                     <Card.Header>
                         <div>
@@ -88,7 +92,9 @@ const AdditionalViewEditor = ({
                                 <div className="vr"></div>
                                 <div>target table: {view.tablename}</div>
                                 <div className="vr"></div>
-                                <div>{getViewTypeEnum(view.viewtype)}</div>
+                                <Badge pill bg="dark">
+                                {getViewTypeEnum(view.viewtype)}
+                                </Badge>
                                 
                                 <div className='ms-auto'>
                                 { view.viewtype === ViewTypeEnum.Custom && (
@@ -119,7 +125,7 @@ const AdditionalViewEditor = ({
             }
 
         </div>
-        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} schemaName={selectedSchema} />
+        <AdditionalViewModal show={showModal} setShow={setShowModal} refreshList={refreshList} />
     </>
   )
   else
