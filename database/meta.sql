@@ -524,27 +524,3 @@ GRANT SELECT ON meta.columns TO web_anon;
 GRANT SELECT ON meta.views TO web_anon;
 
 NOTIFY pgrst, 'reload schema'
--- GRANT SELECT, UPDATE, INSERT ON meta.schemas TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.tables TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.columns TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.appconfig_properties TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.appconfig_values TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.scripts TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.function_map TO web_anon;  
-GRANT SELECT, UPDATE, INSERT ON meta.env_vars TO web_anon;
-
--- GRANT EXPORT ON meta.export_appconfig_to_json TO web_anon;
--- GRANT ALL ON meta.appconfig_properties TO web_anon;
--- GRANT ALL ON meta.appconfig_values TO web_anon;
--- GRANT ALL on meta.scripts TO web_anon;
--- GRANT ALL on meta.function_map TO web_anon;
-GRANT ALL on meta.env_vars TO web_anon;
-
--- -- Granting necessary permissions for meta.i18n schema tables
--- GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA meta TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.i18n_languages TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.i18n_keys TO web_anon;
--- GRANT SELECT, UPDATE, INSERT ON meta.i18n_values TO web_anon;
--- GRANT ALL ON meta.i18n_translations TO web_anon;
-
--- NOTIFY pgrst, 'reload schema'
