@@ -10,6 +10,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import Tab from "react-bootstrap/Tab";
 import DisplayType from '../Schema/DisplayType';
+import vmd from '../../virtualmodel/VMD';
 
 interface ExecutionLogEntry {
     id: any; 
@@ -210,7 +211,7 @@ export const CronJobsTab = () => {
         <Tab.Content>
         <Row>
                 <Col sm={3}>
-                <SchemaSelector displayType={DisplayType.NavDropdown}/>
+                {/* <SchemaSelector displayType={DisplayType.NavDropdown}/> */}
                     {/* list of stored procedures */}
                     <ListGroup>
                         {procedures.map(proc => (
