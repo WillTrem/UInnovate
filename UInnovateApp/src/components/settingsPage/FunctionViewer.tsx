@@ -26,11 +26,10 @@ interface FunctionViewerProps {
 
 export const FunctionViewer: React.FC<FunctionViewerProps> = ({ func }) => {
   const function_name = func["name"];
-  const tables = vmd.getAllTables();
+  const tables = vmd.getSchema(func["schema"])?.tables || []; 
 
   const [updateScript, setUpdateScript] = useState<Row>(func);
   const [procedure, setProcedure] = useState<string>(func["procedure"] || "");
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [procedureSourceCode, setProcedureSourceCode] = useState<string>("");
 
   useEffect(() => {

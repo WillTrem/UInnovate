@@ -48,12 +48,8 @@ class FunctionHandler {
         schema: this.functions["schema"]
     };
     callProcedure(params)
-        .then(() => {
-            alert(this.functions["procedure"] + ' executed successfully');
-        })
         .catch(error => {
             console.error('Error executing procedure:', error);
-            alert('Error executing procedure: ' + error.message);
         });
 };
 }
