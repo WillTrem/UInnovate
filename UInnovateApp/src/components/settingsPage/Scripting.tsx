@@ -2,6 +2,7 @@ import { Tab, Nav, Col, Row } from 'react-bootstrap';
 import { CronJobsTab } from "./CronJobsTab";
 import { ScriptingTab } from "./ScriptingTab";
 import { EnvVarCreator } from "./EnvVarCreator";
+import { ExecuteProcedures } from "./ExecuteProcedures";
 
 const Scripting = () => {
     return (
@@ -18,6 +19,9 @@ const Scripting = () => {
                     <Nav.Item>
                         <Nav.Link eventKey="envVariables">Environment Variables</Nav.Link>
                     </Nav.Item>
+                    <Nav.Item>
+                        <Nav.Link eventKey="exProcedures">Execute Procedures</Nav.Link>
+                    </Nav.Item>
                 </Nav>
             </Col>
             <Col sm={9}>
@@ -31,10 +35,14 @@ const Scripting = () => {
                     <Tab.Pane eventKey="envVariables">
                         <EnvVarCreator />
                     </Tab.Pane>
+                    <Tab.Pane eventKey="exProcedures">
+                        <ExecuteProcedures />
+                    </Tab.Pane>
                 </Tab.Content>
             </Col>
         </Row>
     </Tab.Container>
+    
     );
 };
 
