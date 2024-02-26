@@ -13,13 +13,15 @@ import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
 
 vi.mock("axios");
-vi.mock("../virtualmodel/DataAccessor");
-vi.mock("../contexts/ConfigContext)");
+
+vi.unmock("../virtualmodel/VMD");
+vi.unmock("../virtualmodel/DataAccessor");
 
 describe("TableListView component", () => {
   // Sample data for testing
   // Making a mock single mock table
   const table = new Table("Table1");
+
   // Making a mock column array of three columns
   const columns = [
     new Column("Column1"),
