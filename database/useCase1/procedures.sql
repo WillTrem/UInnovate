@@ -140,7 +140,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: AddToolToQuotation
-CREATE OR REPLACE FUNCTION app_rentals.AddToolToQuotation(
+CREATE OR REPLACE PROCEDURE app_rentals.AddToolToQuotation(
     quotation_id_param INT,
     id_param INT,
     tool_quoted_qty_param INT,
@@ -166,7 +166,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Stored Procedure: CheckRecalibrationStatus
-CREATE OR REPLACE FUNCTION app_rentals.CheckRecalibrationStatus()
+CREATE OR REPLACE PROCEDURE app_rentals.CheckRecalibrationStatus()
 RETURNS VOID AS $$
 DECLARE
     current_date TIMESTAMP := CURRENT_TIMESTAMP;

@@ -11,18 +11,15 @@ import { useNavigate } from 'react-router-dom';
 
 const MenuSchemaSelector: React.FC = () => {
   const dispatch = useDispatch();
-	const { user, schema_access, dbRole, defaultRole, schemaRoles } = useSelector((state: RootState) => state.auth);
+	const { user, schema_access } = useSelector((state: RootState) => state.auth);
 	const schemas = [
 		...new Set(vmd.getApplicationSchemas()
 			.map((schema) => schema.schema_name)
 			.filter((schema_name) => {
 				// Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
 				if ((LOGIN_BYPASS && user === null) // Include if LOGIN_BYPASS enabled with no user logged in
-					|| (schema_access.includes(schema_name)) // Schema must be in schema_access list
-					&& (dbRole === Role.ADMIN // AND User must be an admin
-						||(schemaRoles[schema_name] === Role.CONFIG // OR User must have role configurator for schema in schema roles
-							|| (!schemaRoles[schema_name] && defaultRole === Role.CONFIG) // OR User doesn't have any role set for schema and its default role is configurator
-						))) {
+            || (schema_access.includes(schema_name)) // Schema must be in schema_access list
+            ) {
 					return schema_name;
 				}
 			})),

@@ -53,6 +53,7 @@ import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
+import FunctionLoadPopup from "./FunctionLoadPopup";
 import { useNavigate } from "react-router-dom";
 import {
   Table as MUITable,
@@ -98,6 +99,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [isScriptPopupVisible, setIsScriptPopupVisible] =
     useState<boolean>(false);
+  const [isFunctionPopupVisible, setIsFunctionPopupVisible] =
+    useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
@@ -109,8 +112,14 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
   const [showFiles, setShowFiles] = useState<boolean>(false);
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
+  const [functions, setFunctions] = useState<Row[] | undefined>([]);
+
   const [scriptDescription, setScriptDescription] = useState<string | null>("");
+  const [functionDescription, setFunctionDescription] = useState<string | null>("");
+
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
+  const [selectedFunction, setSelectedFunction] = useState<Row | null>(null);
+
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
@@ -119,6 +128,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     useState<(column: Column) => JSX.Element>();
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
+  const function_table = vmd.getTable("meta", "function_map");
+
   const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
@@ -236,7 +247,23 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     setScripts(filteredScripts);
   };
+const getFunctions = async () => {
+  if (!meta_schema || !function_table) {
+    throw new Error("Schema or table not found");
+  }
 
+  const functions_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+    meta_schema?.schema_name,
+    function_table?.table_name
+  );
+
+  const functions_rows = await functions_data_accessor?.fetchRows();
+  const filteredFunctions = functions_rows?.filter(
+    (func) => func.table_name === table.table_name
+  );
+
+  setFunctions(filteredFunctions);
+};
   const handleScriptHover = async (description: string) => {
     setScriptDescription(description);
   };
@@ -244,16 +271,31 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleScriptHoverExit = () => {
     setScriptDescription(null);
   };
+  const handleFunctionHover = async (description: string) => {
+    setFunctionDescription(description);
+  };
+
+  const handleFunctionHoverExit = () => {
+    setFunctionDescription(null);
+  };
 
   const handleConfirmForm = () => {
     setIsScriptPopupVisible(true);
   };
-
+  const handleFunctionConfirmForm = () => {
+    setIsFunctionPopupVisible(true);
+  };
   useEffect(() => {
     if (selectedScript) {
       handleConfirmForm();
     }
   }, [selectedScript]);
+
+  useEffect(() => {
+    if (selectedFunction) {
+      handleFunctionConfirmForm();
+    }
+  }, [selectedFunction]);
 
   const getConfigs = async () => {
     if (!meta_schema || !config_table) {
@@ -273,6 +315,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   useEffect(() => {
     getScripts();
     getConfigs();
+    getFunctions();
     getFileGroupsView();
   }, [inputValues]);
 
@@ -864,7 +907,41 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-
+        <div className="d-flex flex-column">
+          {(functions || []).length > 0 && <h6>Functions</h6>}
+          {functions?.map((func) => {
+            return (
+              <Tooltip
+                key={func["id"]}
+                title={func["description"]}
+                open={functionDescription === func["description"]}
+                placement="right"
+              >
+                <Button
+                  key={func["id"]}
+                  style={buttonStyle}
+                  variant="contained"
+                  onClick={() => {
+                    setSelectedFunction(func);
+                  }}
+                  onMouseEnter={() => handleFunctionHover(func["description"])}
+                  onMouseLeave={handleFunctionHoverExit}
+                >
+                  {func["btn_name"]}
+                </Button>
+              </Tooltip>
+            );
+          })}
+          {isFunctionPopupVisible && selectedFunction && (
+            <FunctionLoadPopup
+              onClose={() => {
+                setIsFunctionPopupVisible(false);
+                setSelectedFunction(null);
+              }}
+              function={selectedFunction}
+            />
+          )}
+        </div>
       </div>
       <Button
         style={{

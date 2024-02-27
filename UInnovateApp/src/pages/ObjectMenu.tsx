@@ -35,6 +35,7 @@ export function ObjectMenu() {
   
   useEffect(() => {
     dispatch(updateSelectedSchema(schema ?? ""));
+    setActiveTable(null);
   }, [schema]);
   const {user, schema_access} = useSelector((state: RootState) => state.auth);
 
