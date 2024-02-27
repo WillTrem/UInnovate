@@ -69,7 +69,6 @@ const UserManagementTab = () => {
 									<th>Email Address</th>
 									<th>First Name</th>
 									<th>Last Name</th>
-									<th>Role</th>
 									<th>Active</th>
 									<th>Schema Access</th>
 								</tr>
