@@ -439,6 +439,15 @@ VALUES (
 		TRUE,
 		'user',
 		'{app_rentals, app_service_support}'
+	),
+	(
+		'api_testing@test.com',
+		'test',
+		'admin',
+		'user123',
+		TRUE,
+		'user',
+		'{}'
 	) ON CONFLICT (email) DO NOTHING;
 -- If you change anything here after they've been created once in the database, it won't have any effect. You need to remove them first from the database.
 NOTIFY pgrst,
