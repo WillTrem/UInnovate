@@ -111,6 +111,19 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
 	value_type TEXT NOT NULL,
 	default_value TEXT NOT NULL
 );
+
+-- Creating the user logs table
+
+CREATE TABLE IF NOT EXISTS meta.user_logs (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    details TEXT,
+    schema_name VARCHAR(255) NOT NULL,
+    table_name VARCHAR(255) NOT NULL
+);
+
 -- Creating the application config values table
 
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
