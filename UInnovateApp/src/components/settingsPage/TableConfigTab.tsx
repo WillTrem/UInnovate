@@ -7,10 +7,8 @@ import Card from "react-bootstrap/Card";
 import vmd, { ConfigData, Table, TableDisplayType } from "../../virtualmodel/VMD";
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
-import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import LookUpTable from "./LookupSetting";
-import { Menu } from "react-pro-sidebar";
 import { saveConfigToDB } from "../../helper/SettingsHelpers";
 
 interface TableItemProps {
@@ -20,14 +18,11 @@ interface TableItemProps {
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
 
-
-
   if (!schema) {
     throw new Error("Schema not found for table: " + table.table_name);
   }
 
   const displayType = table.getDisplayType();
-  const { updateConfig } = useConfig();
 
   // Updates the local configuration with a table-specific configuration value
   const updateTableConfig = async (property: ConfigProperty, value: string) => {
@@ -37,9 +32,6 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
       value,
     };
     const success = await saveConfigToDB(newConfigValue);
-    if(success){
-      updateConfig(newConfigValue);
-    }
     return success;
   };
 
@@ -47,10 +39,10 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isVisible = table.getVisibility();
     const success = await updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
-    if(success){
+    if (success) {
       table.setVisibility(!isVisible);
     }
-    else{
+    else {
       event.preventDefault();
     }
   };
@@ -58,10 +50,10 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const handleToggleDetails = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isVisible = table.getHasDetailsView();
     const success = await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
-    if(success){
+    if (success) {
       table.setHasDetailsView(!isVisible);
     }
-    else{
+    else {
       event.preventDefault();
     }
   };
@@ -69,10 +61,10 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const handleToggleStandAloneDetails = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isVisible = table.getStandAloneDetailsView();
     const success = await updateTableConfig(ConfigProperty.STAND_ALONE_DETAILS_VIEW, (!isVisible).toString());
-    if(success){
+    if (success) {
       table.setStandAloneDetailsView(!isVisible);
     }
-    else{
+    else {
       event.preventDefault();
     }
   };
@@ -81,10 +73,10 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const handleDisplayTypeSelect = async (event: SelectChangeEvent<string>) => {
     const newDisplayType = event.target.value;
     const success = await updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
-    if(success){
+    if (success) {
       table.setDisplayType(newDisplayType);
     }
-    else{
+    else {
       event.preventDefault();
     }
   };

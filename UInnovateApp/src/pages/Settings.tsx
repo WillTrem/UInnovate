@@ -80,7 +80,7 @@ export function Settings() {
 								setSelectedSchema={setSelectedSchema}
 							/>
 						</Box>
-						<ButtonConfigurationSaver />
+						{/* <ButtonConfigurationSaver /> */}
 					</div>
 					<Tab.Container activeKey={option} id='left-tabs-example' >
 						<Row>
