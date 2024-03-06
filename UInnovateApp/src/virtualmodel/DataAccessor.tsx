@@ -106,6 +106,7 @@ export class DataAccessor {
       return response;
     } catch (error) {
       console.error("Could not update or insert row:", error);
+      throw error;
     }
   }
 
