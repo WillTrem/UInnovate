@@ -10,6 +10,7 @@ import buttonStyle from '../TableEnumView'
 import { Row } from '../../virtualmodel/DataAccessor';
 import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
 import { ConfigValueType, useConfig } from '../../contexts/ConfigContext';
+import { saveConfigToDB } from '../../helper/SettingsHelpers';
 
 
 type LookUpTableProps = {
@@ -21,16 +22,16 @@ type DefaultRow = {
 
 const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
 
-  const { updateConfig } = useConfig();
+  // const { updateConfig } = useConfig();
 
-  const updateTableConfig = (property: ConfigProperty, value: string) => {
-    const newConfigValue: ConfigValueType = {
-      property,
-      table: table.table_name,
-      value,
-    };
-    updateConfig(newConfigValue);
-  };
+  // const updateTableConfig = (property: ConfigProperty, value: string) => {
+  //   const newConfigValue: ConfigValueType = {
+  //     property,
+  //     table: table.table_name,
+  //     value,
+  //   };
+  //   updateConfig(newConfigValue);
+  // };
  
   
   
@@ -111,8 +112,16 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
      
     }, [counter]);
     const setCounterConfig = async () => {
-      table.setLookupCounter(counter.toString())
-      await updateTableConfig(ConfigProperty.LOOKUP_COUNTER, counter.toString());
+      const newConfigValue: ConfigValueType = {
+        property: ConfigProperty.LOOKUP_COUNTER,
+        table: table.table_name,
+        value: counter.toString()
+      };
+      const success = await saveConfigToDB(newConfigValue);
+      if(success){
+        table.setLookupCounter(counter.toString())
+      }
+      // await updateTableConfig(ConfigProperty.LOOKUP_COUNTER, counter.toString());
 
     };
   
@@ -125,8 +134,16 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
     const setSelectInputConfig = async () => {
       const objstring = JSON.stringify(SelectInput);
-      table.setLookupTables(objstring);
-      await updateTableConfig(ConfigProperty.LOOKUP_TABLES, objstring);
+      const newConfigValue: ConfigValueType = {
+        property:ConfigProperty.LOOKUP_TABLES,
+        table: table.table_name,
+        value: objstring,
+      };
+      const success = await saveConfigToDB(newConfigValue);
+      if(success){
+        table.setLookupTables(objstring);
+      }
+      // await updateTableConfig(ConfigProperty.LOOKUP_TABLES, objstring);
 
     };
   

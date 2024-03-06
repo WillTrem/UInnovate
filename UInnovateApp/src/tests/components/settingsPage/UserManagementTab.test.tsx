@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import UserManagementTab from "../../../components/settingsPage/Users/UserMangementTab"
+import UserManagementTab from "../../../components/settingsPage/Users/UserManagementTab"
 import { describe, expect } from "vitest";
 import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";

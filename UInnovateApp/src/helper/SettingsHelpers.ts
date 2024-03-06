@@ -1,5 +1,5 @@
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
-import vmd, { ConfigData } from "../virtualmodel/VMD";
+import vmd, { ConfigData, UserData } from "../virtualmodel/VMD";
 import store from "../redux/Store";
 
 /**
@@ -24,22 +24,19 @@ export async function saveConfigToDB(newConfig: ConfigData) {
       //Displays a success notification
       const action = {
         type: "notification/displayNotification",
-        payload:
-          "Sucessfully updated the configuration.",
+        payload: "Sucessfully updated the configuration.",
       };
       store.dispatch(action);
 
       console.log(
         "Sucessfully updated appconfig_values database table with new configuration."
       );
-	  
     })
     .catch((error) => {
       //Displays an error notification
       const action = {
         type: "notification/displayError",
-        payload:
-          "A problem occured while updating the configuration.",
+        payload: "A problem occured while updating the configuration.",
       };
       store.dispatch(action);
 
@@ -47,8 +44,39 @@ export async function saveConfigToDB(newConfig: ConfigData) {
         "ERROR: An error has occured when attempting to update the appconfig_values database table. Reason: "
       );
       console.log(error);
-	  return false;
+      return false;
     });
 
-	return true;
+  return true;
+}
+
+export async function saveUserDataToDB(user: UserData) {
+  const updateUserDataFA = vmd.getFunctionAccessor("meta", "update_user_data");
+  updateUserDataFA.setBody({ user });
+  updateUserDataFA
+  .executeFunction()
+  .then(() => {
+    //Displays a success notification
+    const action = {
+      type: "notification/displayNotification",
+      payload: "Sucessfully updated user data.",
+    };
+    store.dispatch(action);
+  })
+  .catch((error) => {
+    //Displays an error notification
+    const action = {
+      type: "notification/displayError",
+      payload: "A problem occured while updating the user data.",
+    };
+    store.dispatch(action);
+
+    console.log(
+      "ERROR: An error has occured when attempting to update the user data. Reason: "
+    );
+    console.log(error);
+    return false;
+  });
+
+return true;
 }

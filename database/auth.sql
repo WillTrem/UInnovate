@@ -382,18 +382,17 @@ CREATE TYPE user_data AS (
 
 );
 
--- FUNCTION Updates the user's data in bulk from an array of new user data
-CREATE OR REPLACE FUNCTION meta.update_user_data(users json)
+-- FUNCTION Updates a single user's data 
+CREATE OR REPLACE FUNCTION meta.update_user_data("user" user_data)
 RETURNS VOID AS $$
 BEGIN 
 	UPDATE authentication.users AS oldud
 	SET 
-		first_name = newud.first_name,
-		last_name = newud.last_name,
-		is_active = newud.is_active,
-		schema_access = newud.schema_access
-	FROM (SELECT * FROM json_populate_recordset(null::user_data, users)) as newud
-	WHERE oldud.email = newud.email;
+		first_name = "user".first_name,
+		last_name = "user".last_name,
+		is_active = "user".is_active,
+		schema_access = "user".schema_access
+	WHERE oldud.email = "user".email;
 
 END;
 $$ language plpgsql SECURITY DEFINER;
