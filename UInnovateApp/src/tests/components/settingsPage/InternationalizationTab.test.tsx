@@ -26,17 +26,21 @@ describe("InternationalizationTab component", () => {
 		);
 	}),
   it("renders the table component", async () => {
+    render(
       <Provider store={store}>
         <InternationalizationTab />
       </Provider>
+    );
     const tableElement = screen.getByTestId('table-component');
     expect(tableElement).toBeInTheDocument();
   }),
 		it("displays the add language modal when the add language button is clicked", async () => {
+			const { getByText } = render(
 				<Provider store={store}>
 					<InternationalizationTab />
 				</Provider>
-			const button = screen.getByText("Add Language");
+      );
+			const button = getByText("Add Language");
 			fireEvent.click(button);
 
 			await waitFor(() => {
@@ -45,9 +49,11 @@ describe("InternationalizationTab component", () => {
 			});
 		}),
 		it("closes the add language modal when the cancel button is clicked", async () => {
+			render(
 				<Provider store={store}>
 					<InternationalizationTab />
 				</Provider>
+      );
 			const button = screen.getByText("Add Language");
 			fireEvent.click(button);
 
@@ -66,9 +72,11 @@ describe("InternationalizationTab component", () => {
 			});
 		}),
     it("When clicking the save button from the add language modal, the language should be saved ", async () => {
+      render(
         <Provider store={store}>
           <InternationalizationTab />
         </Provider>
+      );
       const button = screen.getByText("Add Language");
       fireEvent.click(button);
 
@@ -87,9 +95,11 @@ describe("InternationalizationTab component", () => {
       });
     }),
     it("displays the add label modal when the add label icon button is clicked", async () => {
+      render(
         <Provider store={store}>
           <InternationalizationTab />
         </Provider>
+      );
       const button = screen.getByTestId("add-label-button");  
       fireEvent.click(button);
 
@@ -99,9 +109,11 @@ describe("InternationalizationTab component", () => {
       });
     }),
     it("closes the add label modal when the cancel button is clicked", async () => {
+      render(
         <Provider store={store}>
           <InternationalizationTab />
         </Provider>
+      );
       const button = screen.getByTestId("add-label-button");
       fireEvent.click(button);
 
@@ -120,9 +132,11 @@ describe("InternationalizationTab component", () => {
       });
     }),
     it("When clicking the save button from the add label modal, the label should be saved ", async () => {
+      render(
         <Provider store={store}>
           <InternationalizationTab />
         </Provider>
+      );
       const button = screen.getByTestId("add-label-button");
       fireEvent.click(button);
 
@@ -141,9 +155,11 @@ describe("InternationalizationTab component", () => {
       });
     }),
     it("Refresh button is clickable", async () => {
+      render(
         <Provider store={store}>
           <InternationalizationTab />
         </Provider>
+      );
       const button = screen.getByTestId("refresh-button");
       fireEvent.click(button);
     })
