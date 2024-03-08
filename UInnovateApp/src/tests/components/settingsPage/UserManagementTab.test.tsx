@@ -4,7 +4,6 @@ import { describe, expect } from "vitest";
 import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
-import { ConfigProvider } from "../../../contexts/ConfigContext";
 import { Provider } from "react-redux";
 import { ErrMsg } from "../../../enums/ErrMsg";
 import { MemoryRouter } from "react-router-dom";
@@ -29,21 +28,17 @@ describe("UserManagementTab component", () => {
 		store = mockStore(initialState);
 		render(
 			<MemoryRouter>
-				<ConfigProvider>
-					<Provider store={store}>
-						<UserManagementTab />
-					</Provider>
-				</ConfigProvider>
+				<Provider store={store}>
+					<UserManagementTab />
+				</Provider>
 			</MemoryRouter>
 		);
 	}),
 		it("displays the add user modal when the add user button is clicked", async () => {
 			const { getByText } = render(<MemoryRouter>
-				<ConfigProvider>
-					<Provider store={store}>
-						<UserManagementTab />
-					</Provider>
-				</ConfigProvider>
+				<Provider store={store}>
+					<UserManagementTab />
+				</Provider>
 			</MemoryRouter>);
 			const button = getByText("Add User");
 			fireEvent.click(button);
@@ -55,11 +50,9 @@ describe("UserManagementTab component", () => {
 		}),
 		it("closes the add user modal when the cancel button is clicked", async () => {
 			render(<MemoryRouter>
-				<ConfigProvider>
-					<Provider store={store}>
-						<UserManagementTab />
-					</Provider>
-				</ConfigProvider>
+				<Provider store={store}>
+					<UserManagementTab />
+				</Provider>
 			</MemoryRouter>);
 			const button = screen.getByText("Add User");
 			fireEvent.click(button);
@@ -80,11 +73,9 @@ describe("UserManagementTab component", () => {
 		})
 	it("sends the request upon clicking the add user button", async () => {
 		render(<MemoryRouter>
-			<ConfigProvider>
-				<Provider store={store}>
-					<UserManagementTab />
-				</Provider>
-			</ConfigProvider>
+			<Provider store={store}>
+				<UserManagementTab />
+			</Provider>
 		</MemoryRouter>);
 		const button = screen.getByText("Add User");
 		fireEvent.click(button);
@@ -109,11 +100,9 @@ describe("UserManagementTab component", () => {
 			store = mockStore(initialState);
 			render(
 				<MemoryRouter>
-					<ConfigProvider>
-						<Provider store={store}>
-							<UserManagementTab />
-						</Provider>
-					</ConfigProvider>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
 				</MemoryRouter>
 			);
 			const button = screen.getByText("Add User");

@@ -3,7 +3,6 @@ import { Home } from "./pages/Home";
 import { NavBar } from "./components/NavBar";
 import { ObjectMenu } from "./pages/ObjectMenu";
 import { Settings } from "./pages/Settings";
-import { ConfigProvider } from "./contexts/ConfigContext";
 import vmd from "./virtualmodel/VMD";
 import { useEffect } from "react";
 import PersistLogin from "./components/PersistLogin";
@@ -21,8 +20,7 @@ function App() {
     vmd.printVMD();
   }, []);
   return (
-    //Wrapping routes so that we can use the context in all the pages (eventually?)
-    <ConfigProvider>
+    <>
       <PersistLogin />
       {/* Prevents the app from rendering before authentication has been verified */}
       {loading ?
@@ -42,7 +40,7 @@ function App() {
           <Route path="*" element={<><p>Cannot be Found</p></>} />
         </Routes>}
       <NotificationSnackbar />
-    </ConfigProvider>
+    </>
   );
 }
 

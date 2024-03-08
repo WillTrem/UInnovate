@@ -5,11 +5,10 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem } from '@mui/material';
 import "../../styles/TableItem.css";
-import { Table } from "../../virtualmodel/VMD";
+import { ConfigData, Table } from "../../virtualmodel/VMD";
 import buttonStyle from '../TableEnumView'
 import { Row } from '../../virtualmodel/DataAccessor';
 import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
-import { ConfigValueType, useConfig } from '../../contexts/ConfigContext';
 import { saveConfigToDB } from '../../helper/SettingsHelpers';
 
 
@@ -92,7 +91,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     });
 
     const setCounterConfig = async (counterValue: number) => {
-      const newConfigValue: ConfigValueType = {
+      const newConfigValue: ConfigData = {
         property: ConfigProperty.LOOKUP_COUNTER,
         table: table.table_name,
         value: counterValue.toString()
@@ -105,7 +104,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
     const setSelectInputConfig = async (selectInput: Row) => {
       const objstring = JSON.stringify(selectInput);
-      const newConfigValue: ConfigValueType = {
+      const newConfigValue: ConfigData = {
         property: ConfigProperty.LOOKUP_TABLES,
         table: table.table_name,
         value: objstring,
