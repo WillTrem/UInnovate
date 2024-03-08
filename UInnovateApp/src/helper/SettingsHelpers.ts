@@ -24,7 +24,7 @@ export async function saveConfigToDB(newConfig: ConfigData) {
       //Displays a success notification
       const action = {
         type: "notification/displayNotification",
-        payload: "Sucessfully updated the configuration.",
+        payload: `Sucessfully updated ${newConfig.property.toLocaleUpperCase()} property of ${newConfig.column ? `column "${newConfig.column}" on`: ''} table "${newConfig.table}".`,
       };
       store.dispatch(action);
 
@@ -36,7 +36,7 @@ export async function saveConfigToDB(newConfig: ConfigData) {
       //Displays an error notification
       const action = {
         type: "notification/displayError",
-        payload: "A problem occured while updating the configuration.",
+        payload: `A problem occured while updating the configuration of table "${newConfig.table}".`,
       };
       store.dispatch(action);
 
@@ -59,7 +59,7 @@ export async function saveUserDataToDB(user: UserData) {
     //Displays a success notification
     const action = {
       type: "notification/displayNotification",
-      payload: "Sucessfully updated user data.",
+      payload: `Sucessfully updated user data of "${user.email}".`,
     };
     store.dispatch(action);
   })
@@ -67,7 +67,7 @@ export async function saveUserDataToDB(user: UserData) {
     //Displays an error notification
     const action = {
       type: "notification/displayError",
-      payload: "A problem occured while updating the user data.",
+      payload: `A problem occured while updating the user data of "${user.email}".`,
     };
     store.dispatch(action);
 
