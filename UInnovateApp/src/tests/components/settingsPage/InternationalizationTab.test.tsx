@@ -36,7 +36,7 @@ describe("InternationalizationTab component", () => {
 				<Provider store={store}>
 					<InternationalizationTab />
 				</Provider>
-			const button = getByText("Add Language");
+			const button = screen.getByText("Add Language");
 			fireEvent.click(button);
 
 			await waitFor(() => {
