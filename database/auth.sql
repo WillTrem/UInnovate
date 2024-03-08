@@ -382,6 +382,7 @@ CREATE TYPE user_data AS (
 
 );
 
+DROP FUNCTION IF EXISTS meta.update_user_data;
 -- FUNCTION Updates a single user's data 
 CREATE OR REPLACE FUNCTION meta.update_user_data("user" user_data)
 RETURNS VOID AS $$
