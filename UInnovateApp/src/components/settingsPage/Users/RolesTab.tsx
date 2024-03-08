@@ -2,9 +2,10 @@ import "../../../styles/TableComponent.css"
 import { useEffect, useState } from "react";
 import vmd, { UserData } from "../../../virtualmodel/VMD";
 import { Box, CircularProgress, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TableRowProps, Typography, fabClasses } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
 import { Role } from "../../../redux/AuthSlice";
+import { displayError, displayNotification } from "../../../redux/NotificationSlice";
 
 export interface SchemaRoles {
 	[key: string]: Role | '';
@@ -91,40 +92,67 @@ interface RolesTableRowProps extends Omit<TableRowProps, 'children'> {
 const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRoles = {}, getSchemaRoles, setInfoMessage, ...props }) => {
 	const [defaultRole, setDefaultRole] = useState(user.role);
 	const currentUser = useSelector((state: RootState) => state.auth.user);
+	const dispatch = useDispatch();
 
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
+		const notificationMessage = `Default role updated successfully for user "${user.email}"`;
+		const errorMessage = `A problem occured while updating the default role for user "${user.email}"`;
+
 		const newRole = event.target.value;
 		setDefaultRole(newRole as Role);
 		const updateDefaultRoleFA = vmd.getFunctionAccessor('meta', 'update_default_role', { email: user.email, role: newRole });
-		updateDefaultRoleFA.executeFunction();
-		
+		updateDefaultRoleFA
+			.executeFunction()
+			.then(() => {
+				console.log("Default role updated successfully.");
+				dispatch(displayNotification(notificationMessage));
+				getSchemaRoles();
+			})
+			.catch(() => {
+				console.log("Error while updating the default role");
+				dispatch(displayError(errorMessage));
+			});
+
 		if (currentUser && user.email === currentUser) {
 			setInfoMessage('It seems that you changed your own default role. To make your changes take effect, please reload the page.')
 		}
 	}
 
 	function handleRoleChange(event: SelectChangeEvent<unknown>, schema: string) {
+		const notificationMessage = `Schema role updated successfully for user "${user.email}" on schema "${schema}"`;
+		const errorMessage = `A problem occured while updating the schema role for user "${user.email}"`;
 		// If selecting the empty choice, removes the line from the table
 		if (event.target.value === '') {
 			// event.preventDefault;
 			const deleteRowDataAccessor = vmd.getRemoveRowAccessor('meta', 'role_per_schema', ['user', 'schema'], [user.email, schema]);
-			deleteRowDataAccessor.deleteRow().then(() => {
-				console.log("Schema role updated successfully.")
-				getSchemaRoles();
-			})
-				.catch(() => console.log("Error while updating the schema role"));
+			deleteRowDataAccessor
+				.deleteRow()
+				.then(() => {
+					console.log("Schema role updated successfully.");
+					dispatch(displayNotification(notificationMessage));
+					getSchemaRoles();
+				})
+				.catch(() => {
+					console.log("Error while updating the schema role");
+					dispatch(displayError(errorMessage));
+				});
 
 		}
 		else {
 			const primKeys = ['user', 'schema'];
 			const newRow = { user: user.email, schema, role: event.target.value as Role }
 			const upsertRoleDataAcc = vmd.getUpsertRowDataAccessor('meta', 'role_per_schema', primKeys, {}, newRow);
-			upsertRoleDataAcc.put()
+			upsertRoleDataAcc
+				.put()
 				.then(() => {
-					console.log("Schema role updated successfully.")
+					console.log("Schema role updated successfully.");
+					dispatch(displayNotification(notificationMessage));
 					getSchemaRoles();
 				})
-				.catch(() => console.log("Error while updating the schema role"));
+				.catch(() => {
+					console.log("Error while updating the schema role");
+					dispatch(displayError(errorMessage));
+				});
 		}
 	}
 
@@ -149,23 +177,22 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 		{schemas.map((schema) => {
 			return <TableCell key={schema}>
 				{user.schema_access && user.schema_access.includes(schema)
-				?<FormControl fullWidth>
-					<Select
-						name="role"
-						value={schemaRoles[schema] || ''}
-						onChange={(event) => handleRoleChange(event, schema)}
-						variant="outlined"
-						size="small"
-						disabled={defaultRole === Role.ADMIN}
-						defaultValue={schemaRoles[schema]}
-					>
-						<MenuItem value='' />
-						<MenuItem value={Role.USER}>User</MenuItem>
-						<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
-						{/* <MenuItem value={Role.ADMIN}>Admin</MenuItem> */}
-					</Select>
-				</FormControl>
-				:<Typography color={"grey"}>No Access</Typography>}
+					? <FormControl fullWidth>
+						<Select
+							name="role"
+							value={schemaRoles[schema] || ''}
+							onChange={(event) => handleRoleChange(event, schema)}
+							variant="outlined"
+							size="small"
+							disabled={defaultRole === Role.ADMIN}
+							defaultValue={schemaRoles[schema]}
+						>
+							<MenuItem value='' ><i>Default</i></MenuItem>
+							<MenuItem value={Role.USER}>User</MenuItem>
+							<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
+						</Select>
+					</FormControl>
+					: <Typography color={"grey"}>No Access</Typography>}
 			</TableCell>
 		})}
 	</TableRow>
