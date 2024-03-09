@@ -2,7 +2,6 @@
 import { mount } from "@cypress/react18";
 import { Settings } from "../pages/Settings";
 import { MemoryRouter } from "react-router-dom";
-import { ConfigProvider } from "../contexts/ConfigContext";
 import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
 
@@ -17,9 +16,7 @@ describe("<Settings />", () => {
     mount(
       <MemoryRouter>
         <Provider store={store}>
-          <ConfigProvider>
             <Settings />
-          </ConfigProvider>
         </Provider>
       </MemoryRouter>
     );

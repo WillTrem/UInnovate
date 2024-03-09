@@ -1,0 +1,1053 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="4cc76e31-ac15-4e9e-bc74-7e5261ddf920" activeEnvironment="Default" name="UInnovate" resourceRoot="" soapui-version="5.7.2" abortOnError="false" runType="SEQUENTIAL" defaultScriptLanguage="Groovy" xmlns:con="http://eviware.com/soapui/config"><con:settings/><con:interface xsi:type="con:RestService" id="c09a7bbf-d831-4128-b847-ca9518b48849" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://localhost:3000" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:settings/><con:definitionCache type="TEXT" rootPart=""/><con:endpoints><con:endpoint>http://localhost:3000</con:endpoint></con:endpoints><con:resource name="" path="" id="1423c3b0-52bc-4f36-aa74-53e1a5c69718"><con:settings/><con:parameters><con:parameter><con:name>Content-Profile</con:name><con:value/><con:style>HEADER</con:style><con:default/><con:description xsi:nil="true"/></con:parameter></con:parameters><con:method name="1" id="a60db352-9763-4f1d-9797-feb23f950fd6" method="GET"><con:settings/><con:parameters><con:parameter><con:name>Accept-Profile</con:name><con:value>app_rentals</con:value><con:style>HEADER</con:style><con:default>app_rentals</con:default></con:parameter></con:parameters><con:representation type="RESPONSE"><con:mediaType>application/openapi+json; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element xmlns:loc="http://localhost/">loc:Response</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>200</con:status><con:params/><con:element>Response</con:element></con:representation><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>404 400 401</con:status><con:params/><con:element xmlns:loc="http://localhost/">loc:Fault</con:element></con:representation><con:request name="Base Request app_rentals" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request><con:request name="Base Request app_service_support" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request></con:method><con:method name="2" id="ddc2b06c-86ae-4152-89ad-e76188856813" method="POST"><con:settings/><con:parameters/><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>400 404 409</con:status><con:params/><con:element xmlns:loc="http://localhost/">loc:Fault</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>201</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Base Post Request app_rentals" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request><con:request name="Base Post Request app_service_support" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request></con:method><con:method name="3" id="c97825f3-baa7-41fd-9483-fe90d0f1bc04" method="PATCH"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>400 401 405</con:status><con:params/><con:element xmlns:loc="http://localhost/">loc:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Base Patch Request app_rentals" id="b96680c7-ce1a-4e5f-9440-dd962b31aff1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request><con:request name="Base Patch Request app_service_support" id="b96680c7-ce1a-4e5f-9440-dd962b31aff1" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request></con:method><con:method name="4" id="2fefea6f-06fe-4c42-81db-ed5d6c262ea8" method="DELETE"><con:settings/><con:parameters/><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>404 401</con:status><con:params/><con:element xmlns:loc="http://localhost/">loc:Fault</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:request name="Base Delete Request app_rentals" id="522ad452-8548-4932-b583-005ece8fa1f3" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content_Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request><con:request name="Base Delete Request app_service_support" id="522ad452-8548-4932-b583-005ece8fa1f3" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Content_Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:request></con:method><con:method name="5" id="8847c058-9d54-4e96-8ed4-58c22a7a28f3" method="PUT"><con:settings/><con:parameters/><con:representation type="RESPONSE"><con:mediaType xsi:nil="true"/><con:status>204</con:status><con:params/><con:element>data</con:element></con:representation><con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType><con:params/></con:representation><con:representation type="FAULT"><con:mediaType>application/json; charset=utf-8</con:mediaType><con:status>400 405</con:status><con:params/><con:element xmlns:loc="http://localhost/">loc:Fault</con:element></con:representation><con:request name="Base Put Request app_rentals" id="9582934c-8d48-463a-84a9-d10cf7aaddac" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request><con:request name="Base Put Request app_service_support" id="9582934c-8d48-463a-84a9-d10cf7aaddac" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:request></con:method></con:resource></con:interface><con:testSuite id="8b448354-f58d-4db0-ac52-34d4769a855b" name="http://localhost:3000 TestSuite"><con:description>TestSuite generated for REST Service [http://localhost:3000]</con:description><con:settings/><con:runType>SEQUENTIAL</con:runType><con:testCase id="ff6d2841-5100-443b-91cc-47a31e821caa" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Universal Usecase Test Case" searchProperties="true"><con:description>Test case that will blanket verify that all schemas with the prefix "app_" are accessible.
+Note that authentication happens in the schema fetcher, so all test steps must be run at the same time.
+This test case also checks some basic access level security.</con:description><con:settings/><con:testStep type="restrequest" name="Schema Access Denied with no perms" id="64c7c558-2ded-49e9-a7dd-b03e0cb648af"><con:settings/><con:config service="http://localhost:3000" methodName="1" resourcePath="" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Schema Access Denied with no perms" id="0cb10700-b46c-4193-af91-8f42688a5b80" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:3000/schemas</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="ec781da5-9f3f-40ec-93d5-03f5119556f8" name="Valid HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Simple Contains" id="95dee1c3-afbb-4134-81f3-69335199436b" name="Permission Denied as Reason"><con:configuration><token>permission denied</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="e378d0fa-666a-4718-9549-e90dd9b7e27b" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Accept-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Base Info Exposure" id="ae17c69f-354e-44d6-bb8b-f1f304c166cc"><con:settings/><con:config service="http://localhost:3000" methodName="1" resourcePath="" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Base Info Exposure" id="c35ef657-54d2-4a6b-a0d1-b3fcd27c29de" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;xml-fragment/></con:setting></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Sensitive Information Exposure" id="aad3a078-e618-4768-9618-0fd7712abd46" name="Sensitive Information Exposure" disabled="true"><con:configuration><AssertionSpecificExposureList>authorization###authorization tables</AssertionSpecificExposureList><AssertionSpecificExposureList>password###exposed password auth structure</AssertionSpecificExposureList><AssertionSpecificExposureList>role###Outside users know the role levels</AssertionSpecificExposureList><IncludeProjectSpecific>true</IncludeProjectSpecific><IncludeGlobal>true</IncludeGlobal></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Accept-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters></con:restRequest></con:config></con:testStep><con:testStep type="groovy" name="Schema Fetcher" id="5d8f3ee5-281c-48e9-bab5-e4ccacb8b1d0"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+import static com.eviware.soapui.impl.wsdl.teststeps.registry.HttpRequestStepFactory.HTTPREQUEST_TYPE
+import com.eviware.soapui.support.types.StringToStringMap
+
+//WARNING: running test steps individually will fail due to authentication,
+//make sure to run the whole test case at once for optimal results
+
+// Create the HTTP request
+def httpClient = HttpClients.createDefault()
+// SET THIS TO WHATEVER ENDPOINT YOU ARE USING
+def endpoint = "http://localhost:3000"
+// Do authorization stuff
+def authRequest = new HttpPost("${endpoint}/rpc/login")
+// Set the request body, in our case credentials for the testing account
+def authRequestBody = '{"email": "api_testing@test.com", "password": "user123"}'
+def authRequestEntity = new StringEntity(authRequestBody)
+authRequest.setEntity(authRequestEntity)
+// Set the required headers
+authRequest.setHeader("Content-Type", "application/json")
+authRequest.setHeader("Content-Profile", "meta")
+// Execute the request and get back the token
+def authResponse = httpClient.execute(authRequest)
+def authResponseBody = EntityUtils.toString(authResponse.getEntity())
+def authJson = new JsonSlurper().parseText(authResponseBody)
+def authHeader = "bearer " + authJson.token
+context.setProperty("authHeader", authHeader)
+
+
+// Schema fetching
+def request = new HttpGet("${endpoint}/schemas")
+request.setHeader("Authorization", authHeader)
+request.setHeader("Accept-Profile", "meta")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+
+
+// Get schemas that start with "app_"
+def json = new JsonSlurper().parseText(responseBody)
+def app_json = json.findAll{it.schema?.startsWith("app_")}
+
+// Get the current TestCase
+def currentTestCase = context.testCase
+
+// Iterate over each object in the array and create a test step
+app_json.eachWithIndex { obj, index ->
+    	// Set up the new test step
+    	def schemaName = obj.schema
+    	def newStepName = "REST_test_${schemaName}"
+    	// Check if it already exists
+    	if (!currentTestCase.getTestStepByName(newStepName)) {
+		// Create the new test step
+		def newStep = currentTestCase.addTestStep(HTTPREQUEST_TYPE, newStepName, endpoint, 'GET')
+		def headers = new StringToStringMap()
+		headers.put("Accept-Profile", schemaName)
+		headers.put("Authorization", authHeader)
+		newStep.testRequest.setRequestHeaders(headers)
+
+		// Status Code Assertion
+        	def assertion = newStep.addAssertion("Valid HTTP Status Codes")
+        	assertion.setName("Valid HTTP Status Codes")
+        	assertion.setCodes("200, 201, 202, 203, 204, 205, 206, 207, 208, 209")
+
+        	// Paths Exist Assertion
+        	assertion = newStep.addAssertion("JsonPath Existence Match")
+        	assertion.setName("Has paths from the selected schema")
+        	assertion.setPath("paths")
+        	assertion.setContent("true")
+
+        	// HTTP Scheme Assertion
+        	assertion = newStep.addAssertion("JsonPath Match")
+        	assertion.setName("Scheme is HTTP")
+        	assertion.setPath("schemes")
+        	assertion.setContent("[\"http\"]")
+
+        	// Consume Types Assertion
+        	assertion = newStep.addAssertion("JsonPath Match")
+        	assertion.setName("Consumes JSON, postgrest objects and csv")
+        	assertion.setPath("consumes")
+        	assertion.setContent("[\"application/json\",\"application/vnd.pgrst.object+json;nulls=stripped\",\"application/vnd.pgrst.object+json\",\"text/csv\"]")
+
+        	// Produce Types Assertion
+        	assertion = newStep.addAssertion("JsonPath Match")
+        	assertion.setName("Produces JSON, postgrest objects and csv")
+        	assertion.setPath("produces")
+        	assertion.setContent("[\"application/json\",\"application/vnd.pgrst.object+json;nulls=stripped\",\"application/vnd.pgrst.object+json\",\"text/csv\"]")
+
+        	// Blanket Get Request Assertion
+        	assertion = newStep.addAssertion("Script Assertion")
+        	assertion.setName("Get requesting any table returns table data")
+        	assertion.setScriptText("""
+import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+// Get the response content
+def currentTestStepName = context.currentStep.name
+def baseResponse = context.expand(\'\${\' + currentTestStepName + \'#Response}\')
+// Get the original endpoint from the test step
+def endpoint = messageExchange.endpoint
+// Accessing request header
+def header = messageExchange.getRequestHeaders()[\"Accept-Profile\"][0]
+// Parse the response as JSON
+def json = new JsonSlurper().parseText(baseResponse)
+
+// Create an HttpClient instance
+def httpClient = HttpClients.createDefault()
+
+// Iterate over the subpaths and make API calls
+json.paths.each { subpathName, subpathProperties ->
+	if(subpathName != \"/\" &amp;&amp; !subpathName.contains(\"/rpc/\")){
+		// Create an HttpGet request
+		def httpGet = new HttpGet(endpoint + subpathName.substring(1))
+		httpGet.setHeader(\"Accept-Profile\", header)
+		httpGet.setHeader(\"Authorization\", context.getProperty(\"authHeader\"))
+	
+		// Execute the request
+		def response = httpClient.execute(httpGet)
+
+		// Get the status code
+		def statusCode = response.getStatusLine().getStatusCode()
+		assert statusCode >= 200 &amp;&amp; statusCode &lt; 300, \"Expected status code 2xx, but received \$statusCode\"
+		
+		// Get the response body as a string
+		def responseBody = EntityUtils.toString(response.getEntity())
+
+		// Check if the response is a JSON array
+		def jsonsubpath = new JsonSlurper().parseText(responseBody)
+		assert jsonsubpath instanceof List, \"Response is not a JSON array\"
+	}
+}
+
+// Close the HttpClient
+httpClient.close()
+        	""")
+
+        	// HTTP Scheme Assertion
+        	assertion = newStep.addAssertion("Response SLA")
+        	assertion.setName("Timeout Check")
+        	assertion.setSLA("200")
+
+    	} else{
+		log.info("Test step with name '${newStepName}' already exists.")
+	}
+}
+
+//Clean up
+response.close()
+httpClient.close()</script></con:config></con:testStep><con:properties/><con:securityTest id="ebf5d2ec-a37c-4627-b5bd-0d2a6bded8be" name="user access security test" failOnError="true"><con:settings/><con:testStepSecurityTest><con:testStepId>ae17c69f-354e-44d6-bb8b-f1f304c166cc</con:testStepId><con:testStepSecurityScan type="BoundaryScan" name="Boundary Scan" id="6d411e7b-a7d7-4d38-a464-9563aec5102f" applyForFailedStep="false" disabled="false" runOnlyOnce="true"><con:settings/><con:config xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:testStep xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:checkedParameters xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/><con:executionStrategy xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:strategy>ONE_BY_ONE</con:strategy><con:delay>100</con:delay></con:executionStrategy></con:testStepSecurityScan></con:testStepSecurityTest><con:properties/></con:securityTest></con:testCase><con:testCase id="edec1d50-3aa3-4bb2-81e7-42430178b539" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="app_rentals Test Case" searchProperties="true"><con:description>This test case tests specific functionalities of the app_rentals schema.
+Make sure to run everything in 1 shot, for authentication.</con:description><con:settings/><con:testStep type="groovy" name="Authentication Script" id="1700e161-3f1c-46fc-94c5-c6ed7642a6e6"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+import com.eviware.soapui.support.types.StringToStringMap
+
+// Create the HTTP request
+def httpClient = HttpClients.createDefault()
+// SET THIS TO WHATEVER ENDPOINT YOU ARE USING
+def endpoint = "http://localhost:3000"
+def request = new HttpPost("${endpoint}/rpc/login")
+
+// Set the request body, in our case credentials for the testing account
+def requestBody = '{"email": "api_testing@test.com", "password": "user123"}'
+def requestEntity = new StringEntity(requestBody)
+request.setEntity(requestEntity)
+// Set the required headers
+request.setHeader("Content-Type", "application/json")
+request.setHeader("Content-Profile", "meta")
+// Execute the request and get back the token
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+def authHeader = "bearer " + json.token
+context.setProperty("authHeader", authHeader)
+
+// Set auth token on all prewritten test steps
+def headers = new StringToStringMap()
+headers.put("Authorization", authHeader)
+def testStep = testRunner.testCase.getTestStepByName("Base Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Unit Get all Test with ordering")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Unit Get Test with ID")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Unit Get Test Table Joining and Pagination")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Get Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Get Units Needing Calibration Soon Stored Proc Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Company Insert Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bulk Contact Insert Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Post Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Tool Update Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Patch Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Tool Type Upsert Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Put Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Tool Type Delete Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Delete Request")
+testStep.testRequest.setRequestHeaders(headers)
+
+//Clean up
+response.close()
+httpClient.close()</script></con:config></con:testStep><con:testStep type="restrequest" name="Base Test" id="b7831faa-fb2b-46b2-9bc7-9bc5bac798d0"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Base Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="Sensitive Information Exposure" id="8a3cc0c7-5d95-45e6-ae6b-63ce42eae8f5" name="Sensitive Information Exposure"><con:configuration><IncludeProjectSpecific>true</IncludeProjectSpecific><IncludeGlobal>true</IncludeGlobal></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="Has paths from the selected schema"><con:configuration><path>paths</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Scheme is HTTP"><con:configuration><path>schemes</path><content>["http"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Consumes JSON, postgrest objects and csv"><con:configuration><path>consumes</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Produces JSON, postgrest objects and csv"><con:configuration><path>produces</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /"><con:configuration><path>paths./</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tool_type"><con:configuration><path>paths./tool_type</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tool"><con:configuration><path>paths./tool</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit"><con:configuration><path>paths./unit</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /company"><con:configuration><path>paths./company</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /contact"><con:configuration><path>paths./contact</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /quotation"><con:configuration><path>paths./quotation</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /quotation_line_item"><con:configuration><path>paths./quotation_line_item</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /purchase_order"><con:configuration><path>paths./purchase_order</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /purchase_order_line_item"><con:configuration><path>paths./purchase_order_line_item</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /availability_status"><con:configuration><path>paths./availability_status</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_scheduler"><con:configuration><path>paths./unit_scheduler</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tool_restock_request"><con:configuration><path>paths./tool_restock_request</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_status"><con:configuration><path>paths./unit_recalibration_status</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_flag"><con:configuration><path>paths./unit_recalibration_flag</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_schedule_type"><con:configuration><path>paths./unit_recalibration_schedule_type</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_schedule"><con:configuration><path>paths./unit_recalibration_schedule</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_calibration_certificate"><con:configuration><path>paths./unit_calibration_certificate</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="e8dcaf66-d1bf-4ee0-a01f-d54bb6de136d" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Unit Get all Test with ordering" id="764bf82d-734f-40e8-bc98-8459acd0ec57"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Unit Get all Test with ordering" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/unit?order=unit_weight.asc,unit_last_exited_date.desc</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="b47c840b-586e-466d-8a81-237635340df4" name="Hard Code Checking of &quot;unit_serial_number&quot; format"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.containsKey("unit_serial_number"), "Object does not have the 'created_by' property"
+
+    def serialNumber = obj.unit_serial_number
+    assert serialNumber.startsWith("SN"), "Object's 'created_by' property does not match recognized format, check data or change this assertion'"
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="a06f9211-85b9-4ad4-b7e1-40234d8828a4" name="Elements of the table are ordered properly"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+def array = new JsonSlurper().parseText(responseBody)
+
+// Check if elements are in the expected order
+boolean elementsInOrder = true
+for (int i = 0; i &lt; array.size()-1; i++) {
+    if (array[i].unit_weight > array[i+1].unit_weight ||
+    		(array[i].unit_weight == array[i+1].unit_weight &amp;&amp; array[i].unit_last_exited_date &lt; array[i+1].unit_last_exited_date)) {
+        elementsInOrder = false
+        break
+    } 
+}
+
+assert elementsInOrder, "Elements in this table are not ordered according to the URL"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Unit Get Test with ID" id="6282aa6f-3270-4c6f-a9d4-acec14eabb00"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Unit Get Test with ID" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/unit?select=unit_id,condition:unit_condition&amp;unit_id=eq.2</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is Array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="01f4e6cc-4d34-4907-b95f-eab252540797" name="Only 1 element in array"><con:configuration><path>$.length()</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="046ef1ba-7fbd-4bc5-92b7-e56df5204c2d" name="The value is the one filtered for"><con:configuration><path>[0].unit_id</path><content>2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="933a3779-c6bc-44d4-8715-ecd4bcacda11" name="condition row exists"><con:configuration><path>[0].condition</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="6daa8120-1552-4f2b-a81c-d32476bc6e22" name="unit_condition column doesnt exist"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(response)
+
+assert !jsonResponse[0].containsKey("unit_condition"), "Column 'created_by' should not exist in the response"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Unit Get Test Table Joining and Pagination" id="937d1c82-52ac-4acc-bb3d-0db3ada84399"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Unit Get Test Table Joining and Pagination" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/unit?select=unit_id, serial_num:unit_serial_number, available:unit_available, tool(tool_name,tool_type(type_name))&amp;limit=5&amp;offset=2&amp;order=unit_id</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="25a5c168-1da4-4bc8-b901-94ee38bcaeff" name="Table only has 5 elements"><con:configuration><path>$</path><content>5</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Range is set by the offset"><con:configuration><scriptText>def headers = messageExchange.getResponseHeaders()
+
+// Check if the header exists and contains the expected value
+if (headers.containsKey("Content-Range")) {
+    def headerValue = headers["Content-Range"][0]
+    assert headerValue.contains("2-6"), "Offset is not as expected"
+} else {
+    assert false, "Header Content-Range not found in the response"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Every unit has a tool and tool_type associated"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.tool instanceof Object, "Tool is in the wrong format, or not set up properly"
+    assert obj.tool.tool_type instanceof Object, "Tool is in the wrong format, or not set up properly"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Get Request" id="c2bbcaa1-5d74-4214-b7ee-d8c971bb89bf"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Get Request" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/meta</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid Rejected HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Get Units Needing Calibration Soon Stored Proc Test" id="8f667384-ea95-4379-a453-7fbccb6f1352"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get Units Needing Calibration Soon Stored Proc Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/rpc/getcalibratesoonunits</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Response is an array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Every value in the returned array has &quot;calibration need soon&quot;"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+if (json instanceof List &amp;&amp; !json.isEmpty()) {
+    json.each { obj ->
+        if (obj.containsKey("unit_recalibration_status_name")) {
+            assert obj.unit_recalibration_status_name == "calibration_needed_soon", "unit_recalibration_status_name has an incorrect value for one of the objects"
+        } else {
+            assert false, "unit_recalibration_status_name is missing for one of the objects"
+        }
+    }
+} else {
+    log.info("The JSON array is empty or not present in the response")
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Company Insert Test" id="70f680a7-239c-43fd-95fc-8699e16ac84d"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="2" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Company Insert Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/company</con:endpoint><con:request>{
+	"company_name": "Test Company",
+	"address": "Your house",
+	"primary_contact_id": 19,
+	"is_prev_customer": false,
+	"pricing_rate": 0.25
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="A value in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/company?company_name=eq.Test%20Company")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_rentals")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json[json.size()-1].address == "Your house", "Values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bulk Contact Insert Test" id="306c23e0-7f0a-423d-becc-1eb5c9d7ed1e"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="2" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bulk Contact Insert Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/contact</con:endpoint><con:request>[
+	{
+		"company_id": 3,
+		"first_name": "Kenny",
+		"last_name": "Dao",
+		"contact_position": "Intern",
+		"phone_number": "+6969696969",
+		"email": "Kenny@amazon.com",
+		"active": true
+	},
+	{
+		"company_id": 19,
+		"first_name": "GLaD",
+		"last_name": "OS",
+		"contact_position": "Lead Researcher",
+		"phone_number": "+0000000000",
+		"email": "ihatechel@science.com",
+		"active": false
+	},
+	{
+		"company_id": 20,
+		"first_name": "Heinz",
+		"last_name": "Doofenzchmirtz",
+		"contact_position": "Evil Scientist",
+		"phone_number": "+5318008434",
+		"email": "hdoof@evil.com",
+		"active": true
+	}
+]</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="All 3 values in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request1 = new HttpGet("http://localhost:3000/contact?first_name=eq.Kenny")
+def request2 = new HttpGet("http://localhost:3000/contact?first_name=eq.GLaD")
+def request3 = new HttpGet("http://localhost:3000/contact?first_name=eq.Heinz")
+
+request1.setHeader("Authorization", context.getProperty("authHeader"))
+request1.setHeader("Accept-Profile", "app_rentals")
+def response1 = httpClient.execute(request1)
+def responseBody1 = EntityUtils.toString(response1.getEntity())
+def json = new JsonSlurper().parseText(responseBody1)
+assert json[json.size()-1].phone_number == "+6969696969", "Req 1 values were populated incorrectly"
+
+request2.setHeader("Authorization", context.getProperty("authHeader"))
+request2.setHeader("Accept-Profile", "app_rentals")
+def response2 = httpClient.execute(request2)
+def responseBody2 = EntityUtils.toString(response2.getEntity())
+json = new JsonSlurper().parseText(responseBody2)
+assert json[json.size()-1].phone_number == "+0000000000", "Req 2 values were populated incorrectly"
+
+request3.setHeader("Authorization", context.getProperty("authHeader"))
+request3.setHeader("Accept-Profile", "app_rentals")
+def response3 = httpClient.execute(request3)
+def responseBody3 = EntityUtils.toString(response3.getEntity())
+json = new JsonSlurper().parseText(responseBody3)
+assert json[json.size()-1].phone_number == "+5318008434", "Req 3 values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Post Request" id="1c2892b7-b1bd-4af6-bf90-df49ae1ebe70"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="2" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Post Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/contact</con:endpoint><con:request>{
+	"lol": "what",
+	"are": "you",
+	"looking": "at",
+	"this": "is",
+	"dummy": "data"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Tool Update Test" id="84e4485b-30c7-4a2f-a952-9b96d465200a"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="3" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Tool Update Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/tool?id=eq.4</con:endpoint><con:request>{
+	"tool_name": "Trampoline",
+	"tool_price": 9999.99,
+	"tool_description": "Why do we sell this???"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="A value in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/tool?id=eq.4")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_rentals")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json[0].tool_name == "Trampoline", "Values were populated incorrectly"
+assert json[0].tool_price == "\$9,999.99", "Values were populated incorrectly"
+assert json[0].tool_description == "Why do we sell this???", "Values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Patch Request" id="b488ad1c-553c-4287-8e58-67c4c26e2a63"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="3" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Patch Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/contact</con:endpoint><con:request>{
+	"lol": "what",
+	"are": "you",
+	"looking": "at",
+	"this": "is",
+	"dummy": "data"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Tool Type Upsert Test" id="22ce0b48-29b6-45c8-9a39-324ef73e261a"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="5" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Tool Type Upsert Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/tool_type?type_id=eq.69</con:endpoint><con:request>{
+	"type_id": 69,
+	"type_name": "Nice",
+	"type_category": "Special Tools"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="A value in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/tool_type?type_id=eq.69")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_rentals")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json[0].type_id == 69, "Values were populated incorrectly"
+assert json[0].type_name == "Nice", "Values were populated incorrectly"
+assert json[0].type_category == "Special Tools", "Values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Put Request" id="20a462fc-0525-4e33-a47a-815f2c0d076f"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="5" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Put Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/contact?contact_id=eq.0</con:endpoint><con:request>{
+	"lol": "what",
+	"are": "you",
+	"looking": "at",
+	"this": "is",
+	"dummy": "data"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Tool Type Delete Test" id="e2cf48e9-dd9c-4b7d-a25c-5890ea87bca0"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="4" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Tool Type Delete Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/tool_type?type_id=eq.69</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="The row with type_id 69 no longer exists"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/tool_type?type_id=eq.69")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_rentals")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json.isEmpty(), "The value was not properly deleted"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Delete Request" id="ee0257f5-dfa7-4d60-b851-b295e2cb1a7c"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="4" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Delete Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTg3fQ.jnQZ6gGhoVYXK8K7mN9w-GZtLxbXVf2sgydJYWvX8IQ" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/contact?xd=lt.1</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_rentals" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:properties/></con:testCase><con:testCase id="87f60eb3-c886-4804-9271-e7359d8d2f6c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="app_service_support Test Case" searchProperties="true"><con:description>This test case tests specific functionalities of the app_service_support schema.
+Make sure to run everything in 1 shot, for authentication.</con:description><con:settings/><con:testStep type="groovy" name="Authentication Script" id="1c90e8af-0614-42ec-a12d-5350d28f555a"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+import com.eviware.soapui.support.types.StringToStringMap
+
+// Create the HTTP request
+def httpClient = HttpClients.createDefault()
+// SET THIS TO WHATEVER ENDPOINT YOU ARE USING
+def endpoint = "http://localhost:3000"
+def request = new HttpPost("${endpoint}/rpc/login")
+
+// Set the request body, in our case credentials for the testing account
+def requestBody = '{"email": "api_testing@test.com", "password": "user123"}'
+def requestEntity = new StringEntity(requestBody)
+request.setEntity(requestEntity)
+// Set the required headers
+request.setHeader("Content-Type", "application/json")
+request.setHeader("Content-Profile", "meta")
+// Execute the request and get back the token
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+def authHeader = "bearer " + json.token
+context.setProperty("authHeader", authHeader)
+
+// Set auth token on all prewritten test steps
+def headers = new StringToStringMap()
+headers.put("Authorization", authHeader)
+def testStep = testRunner.testCase.getTestStepByName("Base Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Service Tickets Get all Test with ordering")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Service Tickets Get Test with ID")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Service Tickets Get Test Table Joining and Pagination")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Get Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Get Ticket Comments Stored Proc Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Ticket Assignment Insert Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bulk Ticket Comment Insert Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Post Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple System Log Update Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Patch Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Tag Upsert Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Put Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Simple Tag Delete Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Delete Request")
+testStep.testRequest.setRequestHeaders(headers)
+
+//Clean up
+response.close()
+httpClient.close()</script></con:config></con:testStep><con:testStep type="restrequest" name="Base Test" id="6250081d-b20c-4408-a154-6d8774405dc7"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Base Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="Sensitive Information Exposure" id="8a3cc0c7-5d95-45e6-ae6b-63ce42eae8f5" name="Sensitive Information Exposure"><con:configuration><IncludeProjectSpecific>true</IncludeProjectSpecific><IncludeGlobal>true</IncludeGlobal></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="Has paths from the selected schema"><con:configuration><path>paths</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Scheme is HTTP"><con:configuration><path>schemes</path><content>["http"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Consumes JSON, postgrest objects and csv"><con:configuration><path>consumes</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Produces JSON, postgrest objects and csv"><con:configuration><path>produces</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /"><con:configuration><path>paths./</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_categories"><con:configuration><path>paths./ticket_categories</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_priorities"><con:configuration><path>paths./ticket_priorities</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_status"><con:configuration><path>paths./ticket_status</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /locations"><con:configuration><path>paths./locations</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /service_tickets"><con:configuration><path>paths./service_tickets</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_comments"><con:configuration><path>paths./ticket_comments</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_assignments"><con:configuration><path>paths./ticket_assignments</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /system_logs"><con:configuration><path>paths./system_logs</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tags"><con:configuration><path>paths./tags</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="77c75569-1bab-4af4-bef7-be1b1a8a69dc" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Service Tickets Get all Test with ordering" id="c37e0d0a-498d-4cf8-b6c3-995c35d69176"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Service Tickets Get all Test with ordering" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?order=priority_id.asc,created_by.desc</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="b47c840b-586e-466d-8a81-237635340df4" name="Hard Code Checking of &quot;created_by&quot; format"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.containsKey("created_by"), "Object does not have the 'created_by' property"
+
+    def createdBy = obj.created_by
+    assert createdBy.endsWith(".xyz"), "Object's 'created_by' property does not match recognized format, check data or change this assertion'"
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="a06f9211-85b9-4ad4-b7e1-40234d8828a4" name="Elements of the table are ordered properly"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+def array = new JsonSlurper().parseText(responseBody)
+
+// Check if elements are in the expected order
+boolean elementsInOrder = true
+for (int i = 0; i &lt; array.size()-1; i++) {
+    if (array[i].priority_id > array[i+1].priority_id ||
+    		(array[i].priority_id == array[i+1].priority_id &amp;&amp; array[i].created_by &lt; array[i+1].created_by)) {
+        elementsInOrder = false
+        break
+    } 
+}
+
+assert elementsInOrder, "Elements in this table are not ordered according to the URL"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Service Tickets Get Test with ID" id="6eeeedc5-30b1-49d3-b35f-ede9437e38ad"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Service Tickets Get Test with ID" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?select=ticket_id,author:created_by&amp;ticket_id=eq.2</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is Array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="01f4e6cc-4d34-4907-b95f-eab252540797" name="Only 1 element in array"><con:configuration><path>$.length()</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="046ef1ba-7fbd-4bc5-92b7-e56df5204c2d" name="The value is the one filtered for"><con:configuration><path>[0].ticket_id</path><content>2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="933a3779-c6bc-44d4-8715-ecd4bcacda11" name="author row exists"><con:configuration><path>[0].author</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="6daa8120-1552-4f2b-a81c-d32476bc6e22" name="created_by column doesnt exist"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(response)
+
+assert !jsonResponse[0].containsKey("created_by"), "Column 'created_by' should not exist in the response"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Service Tickets Get Test Table Joining and Pagination" id="18a851c4-2a24-4111-98ce-718721025f4f"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Service Tickets Get Test Table Joining and Pagination" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?select=ticket_id, description, created_by, ticket_tags(tag:tags(tag_name))&amp;limit=5&amp;offset=2&amp;order=ticket_id</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="25a5c168-1da4-4bc8-b901-94ee38bcaeff" name="Table only has 5 elements"><con:configuration><path>$</path><content>5</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Range is set by the offset"><con:configuration><scriptText>def headers = messageExchange.getResponseHeaders()
+
+// Check if the header exists and contains the expected value
+if (headers.containsKey("Content-Range")) {
+    def headerValue = headers["Content-Range"][0]
+    assert headerValue.contains("2-6"), "Offset is not as expected"
+} else {
+    assert false, "Header Content-Range not found in the response"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Every ticket has at least 1 tag"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.ticket_tags instanceof List, "Ticket_tags is in the wrong format, or not set up properly"
+    assert !obj.ticket_tags.isEmpty(), "At least one ticket had no tags"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Get Request" id="a99630ec-c196-4671-af21-0ac9c8d77da7"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Get Request" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/meta</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid Rejected HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Get Ticket Comments Stored Proc Test" id="dd25dee2-05cc-41df-b804-dda5350d3bef"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get Ticket Comments Stored Proc Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/rpc/get_ticket_comments?p_ticket_id=2</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Response is an array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Every value in the returned array has comment text"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+if (json instanceof List &amp;&amp; !json.isEmpty()) {
+    json.each { obj ->
+        if (obj.containsKey("comment_text")) {
+            assert obj.comment_text != null, "comment_text is null for one of the objects"
+        } else {
+            assert false, "comment_text is missing for one of the objects"
+        }
+    }
+} else {
+    log.info("The JSON array is empty or not present in the response")
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Ticket Assignment Insert Test" id="fe7433d9-0fb0-4099-886e-df97a2fb3976"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="2" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Ticket Assignment Insert Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/ticket_assignments</con:endpoint><con:request>{
+	"ticket_id": 8,
+	"assigned_user_id": "test@user.com",
+	"assigned_at": "2024-01-06 19:49:00"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="A value in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/ticket_assignments?assigned_user_id=eq.test@user.com")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_service_support")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json[json.size()-1].ticket_id == 8, "Values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bulk Ticket Comment Insert Test" id="b9978999-5fdf-42b5-a375-74ebcf6c10fc"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="2" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bulk Ticket Comment Insert Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/ticket_comments</con:endpoint><con:request>[
+	{
+		"ticket_id": 6,
+		"user_id": "maria@im.dead",
+		"comment_text": "its max's fault, he didnt test enough",
+		"created_at": "2024-02-14 12:00:00"
+	},
+	{
+		"ticket_id": 8,
+		"user_id": "samy@expert.vmd",
+		"comment_text": "Mo will handle this, inshallah",
+		"created_at": "2024-02-20 19:00:00"
+	},
+	{
+		"ticket_id": 10,
+		"user_id": "dailybot@github.com",
+		"comment_text": "Production is done, all data is lost. In other news, fill out the retro!",
+		"created_at": "2027-01-01 13:00:00"
+	}
+]</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="All 3 values in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request1 = new HttpGet("http://localhost:3000/ticket_comments?user_id=eq.maria@im.dead")
+def request2 = new HttpGet("http://localhost:3000/ticket_comments?user_id=eq.samy@expert.vmd")
+def request3 = new HttpGet("http://localhost:3000/ticket_comments?user_id=eq.dailybot@github.com")
+
+request1.setHeader("Authorization", context.getProperty("authHeader"))
+request1.setHeader("Accept-Profile", "app_service_support")
+def response1 = httpClient.execute(request1)
+def responseBody1 = EntityUtils.toString(response1.getEntity())
+def json = new JsonSlurper().parseText(responseBody1)
+assert json[json.size()-1].ticket_id == 6, "Req 1 values were populated incorrectly"
+
+request2.setHeader("Authorization", context.getProperty("authHeader"))
+request2.setHeader("Accept-Profile", "app_service_support")
+def response2 = httpClient.execute(request2)
+def responseBody2 = EntityUtils.toString(response2.getEntity())
+log.info(responseBody2)
+json = new JsonSlurper().parseText(responseBody2)
+assert json[json.size()-1].ticket_id == 8, "Req 2 values were populated incorrectly"
+
+request3.setHeader("Authorization", context.getProperty("authHeader"))
+request3.setHeader("Accept-Profile", "app_service_support")
+def response3 = httpClient.execute(request3)
+def responseBody3 = EntityUtils.toString(response3.getEntity())
+json = new JsonSlurper().parseText(responseBody3)
+assert json[json.size()-1].ticket_id == 10, "Req 3 values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Post Request" id="0ee73baf-5644-429f-bc45-add112982ffa"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="2" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Post Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets</con:endpoint><con:request>{
+	"lol": "what",
+	"are": "you",
+	"looking": "at",
+	"this": "is",
+	"dummy": "data"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple System Log Update Test" id="ef9e5562-85b9-4234-a849-887fffa1779a"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="3" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple System Log Update Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/system_logs?log_id=eq.4</con:endpoint><con:request>{
+	"action_performed": "Deleted the whole repository by accident",
+	"action_timestamp": "2024-02-29 11:30:00"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="A value in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/system_logs?log_id=eq.4")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_service_support")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json[0].action_performed == "Deleted the whole repository by accident", "Values were populated incorrectly"
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Patch Request" id="63bd28b9-2d27-4c07-bfd4-466ba4ea4b55"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="3" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Patch Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?ticket_id=eq.0</con:endpoint><con:request>{
+	"lol": "what",
+	"are": "you",
+	"looking": "at",
+	"this": "is",
+	"dummy": "data"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Tag Upsert Test" id="b4d7ce43-14df-4505-a18f-c0822af77801"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="5" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Tag Upsert Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/tags?tag_id=eq.13</con:endpoint><con:request>{
+	"tag_id": 13,
+	"tag_name": "Quantum Computing"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="A value in the DB matches what was sent"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/tags?tag_name=eq.Quantum%20Computing")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_service_support")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert !json.isEmpty(), "Values were populated incorrectly"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Put Request" id="d11e22c6-22b6-4b29-85eb-4218d121e0ab"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="5" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Put Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?ticket_id=eq.0</con:endpoint><con:request>{
+	"lol": "what",
+	"are": "you",
+	"looking": "at",
+	"this": "is",
+	"dummy": "data"
+}
+</con:request><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Simple Tag Delete Test" id="41cb3b93-963d-4621-a48b-0d1ded6e1435"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="4" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Simple Tag Delete Test" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/tags?tag_id=eq.13</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="84f022b2-f0d4-47d6-86bd-88596bc9425e" name="The row with type_id 13 no longer exists"><con:configuration><scriptText>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+
+def httpClient = HttpClients.createDefault()
+def request = new HttpGet("http://localhost:3000/tags?tag_id=eq.13")
+
+request.setHeader("Authorization", context.getProperty("authHeader"))
+request.setHeader("Accept-Profile", "app_service_support")
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+assert json.isEmpty(), "The value was not properly deleted"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Delete Request" id="f36d19b5-7a4c-442e-a34c-bd880e28cf88"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="4" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Delete Request" id="7b46c795-18a3-467f-b0d7-166c93374f81" mediaType="application/json" postQueryString="false"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTI2MTkzfQ.7b_QdxmozrS2hUXvDg1_pzrt6tGKCe6Pz6JT3trBHRU" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/system_logs?lmao=gt.5</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="33363cf3-4f9d-4f2f-9f94-b1dabaeed381" name="Valid Bad HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="2b37b1fd-7d5b-4586-ac53-5d689834d59e" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="app_service_support" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:properties/><con:securityTest id="ab02f5ac-1b9b-4428-ba7d-19e2b2e332fe" name="SecurityTest" failOnError="true"><con:settings/><con:properties/></con:securityTest></con:testCase><con:testCase id="da4bedbd-9adb-418d-b9d2-f7e1a2950e5d" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="app_rentals GET ONLY Load Test Case" searchProperties="true"><con:description>This test case tests specific functionalities of the app_rentals schema.
+Specifically for running Load Tests without modifying the database.</con:description><con:settings/><con:testStep type="groovy" name="Authentication Script" id="dc3792cc-a288-4f71-a9b3-2dd7ba8802ec"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+import com.eviware.soapui.support.types.StringToStringMap
+
+// Create the HTTP request
+def httpClient = HttpClients.createDefault()
+// SET THIS TO WHATEVER ENDPOINT YOU ARE USING
+def endpoint = "http://localhost:3000"
+def request = new HttpPost("${endpoint}/rpc/login")
+
+// Set the request body, in our case credentials for the testing account
+def requestBody = '{"email": "api_testing@test.com", "password": "user123"}'
+def requestEntity = new StringEntity(requestBody)
+request.setEntity(requestEntity)
+// Set the required headers
+request.setHeader("Content-Type", "application/json")
+request.setHeader("Content-Profile", "meta")
+// Execute the request and get back the token
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+def authHeader = "bearer " + json.token
+context.setProperty("authHeader", authHeader)
+
+// Set auth token on all prewritten test steps
+def headers = new StringToStringMap()
+headers.put("Authorization", authHeader)
+def testStep = testRunner.testCase.getTestStepByName("Base Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Unit Get all Test with ordering")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Unit Get Test with ID")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Unit Get Test Table Joining and Pagination")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Get Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Get Units Needing Calibration Soon Stored Proc Test")
+testStep.testRequest.setRequestHeaders(headers)
+//testStep = testRunner.testCase.getTestStepByName("Simple Company Post Test")
+//testStep.testRequest.setRequestHeaders(headers)
+
+
+//Clean up
+response.close()
+httpClient.close()</script></con:config></con:testStep><con:testStep type="restrequest" name="Base Test" id="08e24a51-56d1-4a80-9dfe-84cdba51c89e"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Base Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTEwNzQ1fQ.duVn9LX49aI41nUFFmFDXOsydud-cbQyXPRqPrTvWaw" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="Sensitive Information Exposure" id="8a3cc0c7-5d95-45e6-ae6b-63ce42eae8f5" name="Sensitive Information Exposure"><con:configuration><IncludeProjectSpecific>true</IncludeProjectSpecific><IncludeGlobal>true</IncludeGlobal></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="Has paths from the selected schema"><con:configuration><path>paths</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Scheme is HTTP"><con:configuration><path>schemes</path><content>["http"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Consumes JSON, postgrest objects and csv"><con:configuration><path>consumes</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Produces JSON, postgrest objects and csv"><con:configuration><path>produces</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /"><con:configuration><path>paths./</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tool_type"><con:configuration><path>paths./tool_type</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tool"><con:configuration><path>paths./tool</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit"><con:configuration><path>paths./unit</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /company"><con:configuration><path>paths./company</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /contact"><con:configuration><path>paths./contact</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /quotation"><con:configuration><path>paths./quotation</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /quotation_line_item"><con:configuration><path>paths./quotation_line_item</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /purchase_order"><con:configuration><path>paths./purchase_order</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /purchase_order_line_item"><con:configuration><path>paths./purchase_order_line_item</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /availability_status"><con:configuration><path>paths./availability_status</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_scheduler"><con:configuration><path>paths./unit_scheduler</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tool_restock_request"><con:configuration><path>paths./tool_restock_request</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_status"><con:configuration><path>paths./unit_recalibration_status</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_flag"><con:configuration><path>paths./unit_recalibration_flag</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_schedule_type"><con:configuration><path>paths./unit_recalibration_schedule_type</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_recalibration_schedule"><con:configuration><path>paths./unit_recalibration_schedule</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /unit_calibration_certificate"><con:configuration><path>paths./unit_calibration_certificate</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="e8dcaf66-d1bf-4ee0-a01f-d54bb6de136d" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Unit Get all Test with ordering" id="428c3103-4e68-4fba-b051-2fe234e361bc"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Unit Get all Test with ordering" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTEwNzQ1fQ.duVn9LX49aI41nUFFmFDXOsydud-cbQyXPRqPrTvWaw" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/unit?order=unit_weight.asc,unit_last_exited_date.desc</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="b47c840b-586e-466d-8a81-237635340df4" name="Hard Code Checking of &quot;unit_serial_number&quot; format"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.containsKey("unit_serial_number"), "Object does not have the 'created_by' property"
+
+    def serialNumber = obj.unit_serial_number
+    assert serialNumber.startsWith("SN"), "Object's 'created_by' property does not match recognized format, check data or change this assertion'"
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="a06f9211-85b9-4ad4-b7e1-40234d8828a4" name="Elements of the table are ordered properly"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+def array = new JsonSlurper().parseText(responseBody)
+
+// Check if elements are in the expected order
+boolean elementsInOrder = true
+for (int i = 0; i &lt; array.size()-1; i++) {
+    if (array[i].unit_weight > array[i+1].unit_weight ||
+    		(array[i].unit_weight == array[i+1].unit_weight &amp;&amp; array[i].unit_last_exited_date &lt; array[i+1].unit_last_exited_date)) {
+        elementsInOrder = false
+        break
+    } 
+}
+
+assert elementsInOrder, "Elements in this table are not ordered according to the URL"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Unit Get Test with ID" id="ca2f45dc-3663-4e49-8412-0c98a11ea8f1"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Unit Get Test with ID" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTEwNzQ1fQ.duVn9LX49aI41nUFFmFDXOsydud-cbQyXPRqPrTvWaw" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/unit?select=unit_id,condition:unit_condition&amp;unit_id=eq.2</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is Array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="01f4e6cc-4d34-4907-b95f-eab252540797" name="Only 1 element in array"><con:configuration><path>$.length()</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="046ef1ba-7fbd-4bc5-92b7-e56df5204c2d" name="The value is the one filtered for"><con:configuration><path>[0].unit_id</path><content>2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="933a3779-c6bc-44d4-8715-ecd4bcacda11" name="condition row exists"><con:configuration><path>[0].condition</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="6daa8120-1552-4f2b-a81c-d32476bc6e22" name="unit_condition column doesnt exist"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(response)
+
+assert !jsonResponse[0].containsKey("unit_condition"), "Column 'created_by' should not exist in the response"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Unit Get Test Table Joining and Pagination" id="39064ae6-e983-4b38-ad91-2654dd73608c"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Unit Get Test Table Joining and Pagination" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTEwNzQ1fQ.duVn9LX49aI41nUFFmFDXOsydud-cbQyXPRqPrTvWaw" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/unit?select=unit_id, serial_num:unit_serial_number, available:unit_available, tool(tool_name,tool_type(type_name))&amp;limit=5&amp;offset=2&amp;order=unit_id</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="25a5c168-1da4-4bc8-b901-94ee38bcaeff" name="Table only has 5 elements"><con:configuration><path>$</path><content>5</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Range is set by the offset"><con:configuration><scriptText>def headers = messageExchange.getResponseHeaders()
+
+// Check if the header exists and contains the expected value
+if (headers.containsKey("Content-Range")) {
+    def headerValue = headers["Content-Range"][0]
+    assert headerValue.contains("2-6"), "Offset is not as expected"
+} else {
+    assert false, "Header Content-Range not found in the response"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Every unit has a tool and tool_type associated"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.tool instanceof Object, "Tool is in the wrong format, or not set up properly"
+    assert obj.tool.tool_type instanceof Object, "Tool is in the wrong format, or not set up properly"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Get Request" id="8203d555-32ab-4cbd-91a2-483cb8a6aeb7"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Get Request" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTEwNzQ1fQ.duVn9LX49aI41nUFFmFDXOsydud-cbQyXPRqPrTvWaw" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/meta</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid Rejected HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Get Units Needing Calibration Soon Stored Proc Test" id="e138c97e-5499-4cff-9550-ff5951273b14"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get Units Needing Calibration Soon Stored Proc Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTEwNzQ1fQ.duVn9LX49aI41nUFFmFDXOsydud-cbQyXPRqPrTvWaw" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/rpc/getcalibratesoonunits</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Response is an array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Every value in the returned array has &quot;calibration need soon&quot;"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+if (json instanceof List &amp;&amp; !json.isEmpty()) {
+    json.each { obj ->
+        if (obj.containsKey("unit_recalibration_status_name")) {
+            assert obj.unit_recalibration_status_name == "calibration_needed_soon", "unit_recalibration_status_name has an incorrect value for one of the objects"
+        } else {
+            assert false, "unit_recalibration_status_name is missing for one of the objects"
+        }
+    }
+} else {
+    log.info("The JSON array is empty or not present in the response")
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters><entry key="Content-Profile" value="" xmlns="http://eviware.com/soapui/config"/></con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:loadTest id="66a71086-4b9c-4d12-b2e3-5a6b2931e845" name="simple app_rentals load test"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>60</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type><con:config><testDelay>500</testDelay><randomFactor>0.7</randomFactor></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:loadTest id="cbe465c6-348f-4a79-aac0-4b2fc63f7251" name="burst app_rentals load test"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>200</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Burst</con:type><con:config><burstDelay>30000</burstDelay><burstDuration>10000</burstDuration></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:loadTest id="b06e03ae-1f38-4e93-b2fa-ade862c6c1da" name="ramp up app_rentals load test"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>4</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>60</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Thread</con:type><con:config><startThreadCount>1</startThreadCount><endThreadCount>5</endThreadCount></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:properties/></con:testCase><con:testCase id="7a6a1ad7-a82b-427b-b761-fa08f9167dad" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="app_service_support GET ONLY Load Test Case" searchProperties="true"><con:description>This test case tests specific functionalities of the app_service_support schema.
+Specifically for running Load Tests without modifying the database.</con:description><con:settings/><con:testStep type="groovy" name="Authentication Script" id="f1b37aea-dab5-445b-a9b3-d61de1d05308"><con:settings/><con:config><script>import groovy.json.JsonSlurper
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.client.methods.HttpPost
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.util.EntityUtils
+import org.apache.http.entity.StringEntity
+import com.eviware.soapui.support.types.StringToStringMap
+
+// Create the HTTP request
+def httpClient = HttpClients.createDefault()
+// SET THIS TO WHATEVER ENDPOINT YOU ARE USING
+def endpoint = "http://localhost:3000"
+def request = new HttpPost("${endpoint}/rpc/login")
+
+// Set the request body, in our case credentials for the testing account
+def requestBody = '{"email": "api_testing@test.com", "password": "user123"}'
+def requestEntity = new StringEntity(requestBody)
+request.setEntity(requestEntity)
+// Set the required headers
+request.setHeader("Content-Type", "application/json")
+request.setHeader("Content-Profile", "meta")
+// Execute the request and get back the token
+def response = httpClient.execute(request)
+def responseBody = EntityUtils.toString(response.getEntity())
+def json = new JsonSlurper().parseText(responseBody)
+def authHeader = "bearer " + json.token
+context.setProperty("authHeader", authHeader)
+
+// Set auth token on all prewritten test steps
+def headers = new StringToStringMap()
+headers.put("Authorization", authHeader)
+def testStep = testRunner.testCase.getTestStepByName("Base Test")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Service Tickets Get all Test with ordering")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Service Tickets Get Test with ID")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Service Tickets Get Test Table Joining and Pagination")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Bad Get Request")
+testStep.testRequest.setRequestHeaders(headers)
+testStep = testRunner.testCase.getTestStepByName("Get Ticket Comments Stored Proc Test")
+testStep.testRequest.setRequestHeaders(headers)
+//testStep = testRunner.testCase.getTestStepByName("Simple Company Post Test")
+//testStep.testRequest.setRequestHeaders(headers)
+
+
+//Clean up
+response.close()
+httpClient.close()</script></con:config></con:testStep><con:testStep type="restrequest" name="Base Test" id="0263f46c-3275-4089-97f5-0a512ada4c9a"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Base Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTExMTM1fQ.0KIrY4Q8q_zmtwsS56iDqYQpnrfm6JUa3bGjX23up3g" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="Sensitive Information Exposure" id="8a3cc0c7-5d95-45e6-ae6b-63ce42eae8f5" name="Sensitive Information Exposure"><con:configuration><IncludeProjectSpecific>true</IncludeProjectSpecific><IncludeGlobal>true</IncludeGlobal></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="Has paths from the selected schema"><con:configuration><path>paths</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Scheme is HTTP"><con:configuration><path>schemes</path><content>["http"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Consumes JSON, postgrest objects and csv"><con:configuration><path>consumes</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="3e8298e6-2cf1-49b2-b7f2-f02ab61d74ba" name="Produces JSON, postgrest objects and csv"><con:configuration><path>produces</path><content>["application/json","application/vnd.pgrst.object+json;nulls=stripped","application/vnd.pgrst.object+json","text/csv"]</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /"><con:configuration><path>paths./</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_categories"><con:configuration><path>paths./ticket_categories</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_priorities"><con:configuration><path>paths./ticket_priorities</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_status"><con:configuration><path>paths./ticket_status</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /locations"><con:configuration><path>paths./locations</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /service_tickets"><con:configuration><path>paths./service_tickets</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_comments"><con:configuration><path>paths./ticket_comments</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /ticket_assignments"><con:configuration><path>paths./ticket_assignments</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /system_logs"><con:configuration><path>paths./system_logs</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="9a58da0a-d3ec-49bf-84f9-d99fa6357764" name="has /tags"><con:configuration><path>paths./tags</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="77c75569-1bab-4af4-bef7-be1b1a8a69dc" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Service Tickets Get all Test with ordering" id="7c066345-8650-45ed-8b42-19105d16cdf5"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Service Tickets Get all Test with ordering" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTExMTM1fQ.0KIrY4Q8q_zmtwsS56iDqYQpnrfm6JUa3bGjX23up3g" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?order=priority_id.asc,created_by.desc</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="b47c840b-586e-466d-8a81-237635340df4" name="Hard Code Checking of &quot;created_by&quot; format"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.containsKey("created_by"), "Object does not have the 'created_by' property"
+
+    def createdBy = obj.created_by
+    assert createdBy.endsWith(".xyz"), "Object's 'created_by' property does not match recognized format, check data or change this assertion'"
+}</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="a06f9211-85b9-4ad4-b7e1-40234d8828a4" name="Elements of the table are ordered properly"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+def array = new JsonSlurper().parseText(responseBody)
+
+// Check if elements are in the expected order
+boolean elementsInOrder = true
+for (int i = 0; i &lt; array.size()-1; i++) {
+    if (array[i].priority_id > array[i+1].priority_id ||
+    		(array[i].priority_id == array[i+1].priority_id &amp;&amp; array[i].created_by &lt; array[i+1].created_by)) {
+        elementsInOrder = false
+        break
+    } 
+}
+
+assert elementsInOrder, "Elements in this table are not ordered according to the URL"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Service Tickets Get Test with ID" id="3d49b41b-c3cc-43d0-88c5-75e8e708e6ed"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Service Tickets Get Test with ID" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTExMTM1fQ.0KIrY4Q8q_zmtwsS56iDqYQpnrfm6JUa3bGjX23up3g" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?select=ticket_id,author:created_by&amp;ticket_id=eq.2</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="10cf7dc5-0c20-4ecd-85d9-2a1f9322397f" name="Response is Array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"</scriptText></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="01f4e6cc-4d34-4907-b95f-eab252540797" name="Only 1 element in array"><con:configuration><path>$.length()</path><content>1</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Match" id="046ef1ba-7fbd-4bc5-92b7-e56df5204c2d" name="The value is the one filtered for"><con:configuration><path>[0].ticket_id</path><content>2</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="JsonPath Existence Match" id="933a3779-c6bc-44d4-8715-ecd4bcacda11" name="author row exists"><con:configuration><path>[0].author</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="6daa8120-1552-4f2b-a81c-d32476bc6e22" name="created_by column doesnt exist"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(response)
+
+assert !jsonResponse[0].containsKey("created_by"), "Column 'created_by' should not exist in the response"</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Service Tickets Get Test Table Joining and Pagination" id="bd1c2fcc-32d5-4ece-9f54-c1e914966106"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Service Tickets Get Test Table Joining and Pagination" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTExMTM1fQ.0KIrY4Q8q_zmtwsS56iDqYQpnrfm6JUa3bGjX23up3g" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/service_tickets?select=ticket_id, description, created_by, ticket_tags(tag:tags(tag_name))&amp;limit=5&amp;offset=2&amp;order=ticket_id</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="JsonPath Count" id="25a5c168-1da4-4bc8-b901-94ee38bcaeff" name="Table only has 5 elements"><con:configuration><path>$</path><content>5</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Range is set by the offset"><con:configuration><scriptText>def headers = messageExchange.getResponseHeaders()
+
+// Check if the header exists and contains the expected value
+if (headers.containsKey("Content-Range")) {
+    def headerValue = headers["Content-Range"][0]
+    assert headerValue.contains("2-6"), "Offset is not as expected"
+} else {
+    assert false, "Header Content-Range not found in the response"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Every ticket has at least 1 tag"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+json.each { obj ->
+    assert obj.ticket_tags instanceof List, "Ticket_tags is in the wrong format, or not set up properly"
+    assert !obj.ticket_tags.isEmpty(), "At least one ticket had no tags"
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Bad Get Request" id="e3b432b9-9f7c-4de8-8a3d-08407aae9850"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Bad Get Request" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTExMTM1fQ.0KIrY4Q8q_zmtwsS56iDqYQpnrfm6JUa3bGjX23up3g" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/meta</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid Rejected HTTP Status Codes"><con:configuration><codes>400, 401, 402, 403, 404, 405, 406, 407, 408, 409</codes></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:testStep type="restrequest" name="Get Ticket Comments Stored Proc Test" id="9accb771-f2e2-4f4b-9c36-48a2b4a2f9d8"><con:settings/><con:config service="http://localhost:3000" resourcePath="" methodName="1" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:restRequest name="Get Ticket Comments Stored Proc Test" id="4fc1742b-353f-488d-ac01-5e0cf2e21279" mediaType="application/json"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoidXNlciIsImVtYWlsIjoiYXBpX3Rlc3RpbmdAdGVzdC5jb20iLCJzY2hlbWFfYWNjZXNzIjpbXSwiZXhwIjoxNzA5MTExMTM1fQ.0KIrY4Q8q_zmtwsS56iDqYQpnrfm6JUa3bGjX23up3g" xmlns="http://eviware.com/soapui/config"/></con:setting></con:settings><con:endpoint>http://localhost:3000/rpc/get_ticket_comments?p_ticket_id=2</con:endpoint><con:request/><con:originalUri>http://localhost/</con:originalUri><con:assertion type="Valid HTTP Status Codes" id="9ec5c932-5dac-4bfc-86b6-9fcf9632f77e" name="Valid HTTP Status Codes"><con:configuration><codes>200, 201, 202, 203, 204, 205, 206, 207, 208, 209</codes></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="0243dbe9-cdc8-420c-afbd-9f69dd649a7a" name="Response is an array of values"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def responseBody = messageExchange.getResponseContent()
+
+def jsonResponse = new JsonSlurper().parseText(responseBody)
+
+assert jsonResponse instanceof List, "Response body is not a JSON array"
+</scriptText></con:configuration></con:assertion><con:assertion type="GroovyScriptAssertion" id="eedff5df-2ae3-46ab-b2e9-4ef28e2e95eb" name="Every value in the returned array has comment text"><con:configuration><scriptText>import groovy.json.JsonSlurper
+
+def response = messageExchange.getResponseContent()
+def json = new JsonSlurper().parseText(response)
+
+if (json instanceof List &amp;&amp; !json.isEmpty()) {
+    json.each { obj ->
+        if (obj.containsKey("comment_text")) {
+            assert obj.comment_text != null, "comment_text is null for one of the objects"
+        } else {
+            assert false, "comment_text is missing for one of the objects"
+        }
+    }
+} else {
+    log.info("The JSON array is empty or not present in the response")
+}
+</scriptText></con:configuration></con:assertion><con:assertion type="Response SLA Assertion" id="773088f8-dbbe-4701-8c1c-80f8c5e247cf" name="Timeout Test"><con:configuration><SLA>200</SLA></con:configuration></con:assertion><con:credentials><con:authType>No Authorization</con:authType></con:credentials><con:jmsConfig JMSDeliveryMode="PERSISTENT"/><con:jmsPropertyConfig/><con:parameters>
+  <con:entry key="Accept-Profile" value="app_service_support"/>
+  <con:entry key="Content-Profile" value=""/>
+</con:parameters><con:parameterOrder><con:entry>Accept-Profile</con:entry><con:entry>Content-Profile</con:entry></con:parameterOrder></con:restRequest></con:config></con:testStep><con:loadTest id="fbc7a4c1-f6f6-4a79-9fe8-cff414f71f3e" name="simple app_service_support load test"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>60</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Simple</con:type><con:config><testDelay>500</testDelay><randomFactor>0.7</randomFactor></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:loadTest id="f7c6d4a9-593e-489e-89a5-4089b740389c" name="burst app_service_support load test"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>5</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>200</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Burst</con:type><con:config><burstDelay>30000</burstDelay><burstDuration>10000</burstDuration></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:loadTest id="97226ea4-3cf2-46e6-9063-c801f34db8a9" name="ramp up app_service_support load test"><con:settings><con:setting id="HttpSettings@close-connections">false</con:setting></con:settings><con:threadCount>2</con:threadCount><con:startDelay>0</con:startDelay><con:sampleInterval>250</con:sampleInterval><con:calculateTPSOnTimePassed>true</con:calculateTPSOnTimePassed><con:resetStatisticsOnThreadCountChange>true</con:resetStatisticsOnThreadCountChange><con:historyLimit>-1</con:historyLimit><con:testLimit>200</con:testLimit><con:limitType>TIME</con:limitType><con:loadStrategy><con:type>Thread</con:type><con:config><startThreadCount>1</startThreadCount><endThreadCount>5</endThreadCount></con:config></con:loadStrategy><con:assertion type="Step Status" name="Step Status"/><con:maxAssertionErrors>100</con:maxAssertionErrors><con:cancelExcessiveThreads>true</con:cancelExcessiveThreads><con:strategyInterval>500</con:strategyInterval></con:loadTest><con:properties/></con:testCase><con:properties><con:property><con:name>test</con:name><con:value>null</con:value></con:property></con:properties></con:testSuite><con:properties/><con:wssContainer/><con:oAuth2ProfileContainer/><con:oAuth1ProfileContainer/><con:sensitiveInformation/></con:soapui-project>

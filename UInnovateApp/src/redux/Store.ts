@@ -3,6 +3,7 @@ import schemaReducer from "./SchemaSlice";
 import authReducer from './AuthSlice'
 import loadingReducer from './LoadingSlice'
 import userDataReducer from './UserDataSlice';
+import notificationReducer from './NotificationSlice'
 
 // App state store
 const Store = configureStore({
@@ -10,7 +11,8 @@ const Store = configureStore({
     schema: schemaReducer,
     auth: authReducer,
     loading: loadingReducer,
-    userData: userDataReducer
+    userData: userDataReducer,
+    notification: notificationReducer
   },
 });
 

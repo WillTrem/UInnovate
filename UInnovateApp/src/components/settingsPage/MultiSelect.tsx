@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 
 interface MultiSelectProps extends SelectProps{
 	selectedList: string[],
-	setSelectedList: React.Dispatch<React.SetStateAction<string[]>>,
+	setSelectedList: React.Dispatch<React.SetStateAction<string[]>> | ((param: string[]) => void),
 	choiceList: string[],
 	size?: "small" | "medium",
 }

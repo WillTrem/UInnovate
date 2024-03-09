@@ -9,7 +9,7 @@ import Nav from "react-bootstrap/Nav";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import "../styles/settings.css";
-import UserManagementTab from "../components/settingsPage/Users/UserMangementTab";
+import UserManagementTab from "../components/settingsPage/Users/UserManagementTab";
 import ButtonConfigurationSaver from "../components/settingsPage/ButtonConfigurationSaver";
 import InternationalizationTab from "../components/settingsPage/InternationalizationTab";
 import UserLogs from "../components/settingsPage/UserLogs";
@@ -81,7 +81,7 @@ export function Settings() {
 								setSelectedSchema={setSelectedSchema}
 							/>
 						</Box>
-						<ButtonConfigurationSaver />
+						{/* <ButtonConfigurationSaver /> */}
 					</div>
 					<Tab.Container activeKey={option} id='left-tabs-example' >
 						<Row>
