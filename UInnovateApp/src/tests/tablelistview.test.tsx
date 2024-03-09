@@ -176,7 +176,7 @@ describe("TableListView component", () => {
       expect(screen.getByText("SELECT DATE & TIME")).toBeInTheDocument();
     });
 
-    it("renders the date picker", () => {
+    it("renders the date picker ", () => {
       // Render the component
       render(<TableListView table={table} /* props */ />);
 
