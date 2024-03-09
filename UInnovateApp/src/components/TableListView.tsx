@@ -587,7 +587,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       );
     }
 
-    if (column.references_table != null) {
+    if (column.references_table != null ) {
       const string = column.column_name + "L";
       localStorage.setItem(
         string,
@@ -630,7 +630,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
 
       if (column.references_table != null) {
-        const string = column.column_name + "L";
+        const string = column.column_name + "LL";
         localStorage.setItem(
           string,
           currentRow.row[column.column_name] as string
@@ -1205,7 +1205,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               </div>
             </div>
           </div>
-          <div style={{ paddingBottom: "2em" }}>
+          <div style={{ paddingBottom: "2em", paddingLeft:'1.5em'}}>
             {table.lookup_tables == "null" ? (
               <div></div>
             ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
@@ -1223,9 +1223,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   width: "fit-content",
                   marginLeft: 10,
                 }}
-                onClick={(
-                  event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-                ) => handleFormSubmit(event)}
+                onClick={() => setShowTable(true)}
               >
                 Show Look Up Table
               </Button>
