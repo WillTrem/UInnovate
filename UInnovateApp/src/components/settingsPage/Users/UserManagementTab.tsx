@@ -16,6 +16,7 @@ import  { setUserData, updateUserData } from "../../../redux/UserDataSlice";
 
 import {isEqual} from 'lodash';
 import RolesTab from "./RolesTab";
+import { saveUserDataToDB } from "../../../helper/SettingsHelpers";
 
 
 // Component containing the Users Management tab of the Settings page
@@ -115,16 +116,18 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 	const dispatch = useDispatch();
 	const {user: current_user, schema_access} = useSelector((state: RootState) => state.auth)
 
+	function handleSchemaAccessListUpdate(newSchemaAccessList: string[]){
+		setSchemaAccessList(newSchemaAccessList);
+		const newUserData = {...userData, schema_access: newSchemaAccessList}
+		setUserData(newUserData);
+		saveUserDataToDB(newUserData);
+	}
+	
 	function handleActiveToggle(event: React.ChangeEvent<HTMLInputElement>, checked: boolean ) {
-		// TODO: Implement the active toggle function
-		setUserData({...userData, is_active: checked});
-		console.log(checked)
+		const newUserData = {...userData, is_active: checked}
+		setUserData(newUserData);
+		saveUserDataToDB(newUserData);
 	};
-
-	// Updates the local user data state 
-	useEffect(() => {
-		setUserData({...userData, schema_access: schemaAccessList});
-	}, [schemaAccessList])
 
 	// Updates the global user data state with new user data 
 	useEffect(() => {
@@ -144,7 +147,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
 		</td>
 		<td>
-			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} size="small" sx={{
+			<MultiSelect selectedList={schemaAccessList} setSelectedList={handleSchemaAccessListUpdate} choiceList={schemaNames} size="small" sx={{
 				'& .MuiSelect-select': {}, minWidth: 400, maxWidth: 400
 			}} />
 		</td>

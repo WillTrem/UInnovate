@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import TableEnumView from '../components/TableEnumView';
 import { MemoryRouter } from 'react-router-dom';
-import { ConfigProvider } from '../contexts/ConfigContext';
 import { Column, Table } from "../virtualmodel/VMD";
 
 
@@ -27,11 +26,9 @@ describe('TableEnumView', () => {
     });
 
     render(
-      <ConfigProvider>
         <MemoryRouter>
           <TableEnumView table={table} />
         </MemoryRouter>
-      </ConfigProvider>
     );
 });
 });
