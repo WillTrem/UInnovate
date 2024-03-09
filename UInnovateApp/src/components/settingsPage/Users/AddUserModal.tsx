@@ -1,15 +1,15 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Modal, ModalProps, Select, SelectChangeEvent, TextField, Typography } from "@mui/material"
 import React, { ReactNode, useEffect, useState } from "react"
 
-import "../../styles/Modals.css"
-import "../../styles/UserManagementTab.css"
-import vmd from "../../virtualmodel/VMD"
-import { Row } from "../../virtualmodel/DataAccessor"
-import MultiSelect from "./MultiSelect"
-import { FunctionAccessor } from "../../virtualmodel/FunctionAccessor"
-import { Role } from "../../redux/AuthSlice"
+import "../../../styles/Modals.css"
+import "../../../styles/UserManagementTab.css"
+import vmd from "../../../virtualmodel/VMD"
+import { Row } from "../../../virtualmodel/DataAccessor"
+import MultiSelect from "../MultiSelect"
+import { FunctionAccessor } from "../../../virtualmodel/FunctionAccessor"
+import { Role } from "../../../redux/AuthSlice"
 
-import { ErrMsg } from "../../enums/ErrMsg"
+import { ErrMsg } from "../../../enums/ErrMsg"
 import validator from "validator"
 import { AxiosError } from "axios"
 

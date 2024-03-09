@@ -1,29 +1,22 @@
-import React, { useCallback, useState } from 'react'
 import AdditionalViewEditor from './AdditionalViewEditor';
-import { Col, Row, Tab } from 'react-bootstrap';
-import SchemaTableSelector from '../../Schema/SchemaTableSelector';
+import {Row, Tab } from 'react-bootstrap';
 
-const AdditionalViewTab = () => {
-
-    const [table,setTable] = useState<string>('');
-    const [schema,setSchema] = useState<string>('');
-
-  return (
-    <>
-    <Tab.Container>
-        <Tab.Content>
-        <Row>
-            <Col sm='3'>
-                <SchemaTableSelector setTable={setTable} setSchema={setSchema}/>
-            </Col>
-            <Col sm='9'>
-                <AdditionalViewEditor selectedSchema={schema} selectedTable={table} setSelectedTable={setTable}/>
-            </Col>
-        </Row>
-        </Tab.Content>
-    </Tab.Container>
-    </>
-  )
+interface AdditionalViewTabProp{
+    schema: string;
+    setSchema: ()=>void;
+}
+const AdditionalViewTab = ({schema, setSchema}:AdditionalViewTabProp) => {
+    return (
+        <>
+        <Tab.Container >
+            <Tab.Content id='AdditionalViewEditor'>
+            <Row>
+                <AdditionalViewEditor selectedSchema={schema} setSelectedSchema={setSchema}/>
+            </Row>
+            </Tab.Content>
+        </Tab.Container>
+        </>
+    )
 }
 
 export default AdditionalViewTab

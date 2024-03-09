@@ -1,14 +1,12 @@
 import { describe, it, vi } from "vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
-import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
 
 vi.mock("axios");
 vi.mock("DataAccessor");
-vi.mock("../contexts/ConfigContext)");
 
 describe("TableListView component", () => {
   // Sample data for testing
@@ -23,15 +21,13 @@ describe("TableListView component", () => {
 
   // Adding the columns to the table
   columns.forEach((column) => {
-    table.addColumn(column, "something", false);
+    table.addColumn(column, "something", false, "");
   });
 
   render(
-    <ConfigProvider>
       <MemoryRouter>
         <TableListView table={table} />
       </MemoryRouter>
-    </ConfigProvider>
   );
 
   it("renders a table with the specified attributes", async () => {
@@ -71,11 +67,9 @@ describe("TableListView component", () => {
   });
   it("renders the upload button", async () => {
     render(
-      <ConfigProvider>
         <MemoryRouter>
           <TableListView table={table} />
         </MemoryRouter>
-      </ConfigProvider>
     );
 
     // Check for row existence by getting them by title
@@ -100,14 +94,83 @@ describe("TableListView component", () => {
 
     expect(dropzoneButton).toBeInTheDocument();
   });
-
-  it("Verify existence of upload button", async () => {
+  
+  it("Render Reset Filter button", async () => {
     render(
-      <ConfigProvider>
         <MemoryRouter>
           <TableListView table={table} />
         </MemoryRouter>
-      </ConfigProvider>
+    );
+
+    const resetFiltersButton = screen.getByTestId('reset-filter-button');
+
+    // Check if the button is in the document
+    expect(resetFiltersButton).toBeInTheDocument();
+
+    // Simulate a click event on the button
+    fireEvent.click(resetFiltersButton);
+
+  });
+
+  it("render the filter button and simulate a click events", async () => {
+    render(
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+    );
+
+    // Wait for the button to be in the document
+    let filterButtons;
+
+    // Wait for the button to be in the document
+    await waitFor(() => {
+      filterButtons = screen.getAllByTestId("Button-Filtering");
+      expect(filterButtons[0]).toBeInTheDocument(); // Check the first button
+    });
+
+    // Add null check before accessing the elements in the array
+    if (filterButtons) {
+      // Simulate a click event on the button
+      fireEvent.click(filterButtons[0]);
+    }
+
+
+    //check if the filter menu is in the document which should render after pressing the filter button
+    let filtermenu
+    await waitFor(() => {
+      filtermenu = screen.getAllByTestId("filter-menu");
+      expect(filtermenu[0]).toBeInTheDocument(); // Check the first button
+    });
+
+    //The confirm button should also be rendered with the filter menu
+    let filterConfirmButton
+    await waitFor(() => {
+      filterConfirmButton = screen.getAllByTestId("filter-confirm-button");
+      expect(filterConfirmButton[0]).toBeInTheDocument(); // Check the first button
+    });
+
+    if (filterConfirmButton && filtermenu) {
+      fireEvent.click(filterConfirmButton[0]);
+    }
+  });
+
+  it("table UI is rendered", async () => {
+
+    render(
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+    );
+
+    const renderedTable = screen.getByTestId("table");
+    expect(renderedTable).toBeInTheDocument();
+  });
+
+it("Verify existence of upload button", async () => {
+    render(
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
@@ -125,11 +188,9 @@ describe("TableListView component", () => {
 
   it("Verify functionality of upload file button", async () => {
     render(
-      <ConfigProvider>
         <MemoryRouter>
           <TableListView table={table} />
         </MemoryRouter>
-      </ConfigProvider>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");

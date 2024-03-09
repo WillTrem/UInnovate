@@ -1,44 +1,23 @@
 import { Container, Nav } from "react-bootstrap";
-import NavDropdown from "react-bootstrap/NavDropdown";
 import DisplayType from "./DisplayType";
-import { updateSelectedSchema } from "../../redux/SchemaSlice";
-import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/Store";
-import vmd from "../../virtualmodel/VMD";
-import { LOGIN_BYPASS } from "../../redux/AuthSlice";
-import { useNavigate } from "react-router-dom";
+
+import {  Box,FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from "@mui/material";
+
 interface SchemaSelectorProps {
   displayType?: DisplayType;
+  schemas: string[];
+  selectedSchema?: string;
+  setSelectedSchema?: (schema:string)=>void;
 }
 
 const SchemaSelector: React.FC<SchemaSelectorProps> = ({
-  displayType = DisplayType.NavDropdown
+  displayType = DisplayType.NavDropdown,
+  schemas,
+  selectedSchema: p_selectedSchema,
+  setSelectedSchema,
 }: SchemaSelectorProps) => {
-  const {user, schema_access} = useSelector((state: RootState) => state.auth);
-  const schemas = [
-    ...new Set(vmd.getApplicationSchemas()
-      .map((schema) => schema.schema_name)
-      .filter((schema_name) => {
-        // Ensures that on LOGIN_BYPASS without being logged in, all the schemas show
-        if ((LOGIN_BYPASS && user === null) || schema_access.includes(schema_name)) {
-          return schema_name;
-        }
-      })),
-  ];
 
-  const navigate = useNavigate();
-
-  const selectedSchema: string = useSelector(
-    (state: RootState) => state.schema.value
-  );
-
-  const dispatch = useDispatch();
-
-  // If the selected schema is not included in the schema access of the user, set it to the first element
-  // MIGHT HAVE TO REMOVE LATER ON
-  if(schema_access && schema_access.length !== 0  && selectedSchema && !((schema_access as string[]).includes(selectedSchema))){
-    dispatch(updateSelectedSchema(schema_access[0]))
-  }
+  const selectedSchema: string | undefined = p_selectedSchema;
 
   const handleSelect = (
     eventKey: string | null,
@@ -46,46 +25,54 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
   ) => {
     const val = eventKey || "no schema";
     e.preventDefault();
-    navigate(`/${val}`);
+    setSelectedSchema && setSelectedSchema(val);
+  };
 
-    dispatch(updateSelectedSchema(val));
-    
+
+  const handleSchemaChange = (event: SelectChangeEvent) => {
+    setSelectedSchema && setSelectedSchema(event.target.value);
   };
   if (displayType === DisplayType.NavDropdown)
     return (
       <>
-        <NavDropdown title={selectedSchema} id="collapsible-nav-dropdown">
-          {schemas.map((item) => (
-            <NavDropdown.Item
-              href="#"
-              key={item}
-              onClick={() => {
-                dispatch(updateSelectedSchema(item));
-              }}
-            >
-              {item}
-            </NavDropdown.Item>
-          ))}
-        </NavDropdown>
+       <Box display="flex" gap="1rem" alignItems={"center"} >
+       <FormControl fullWidth disabled={!schemas ||schemas.length === 0}>
+								<InputLabel id="schema-label">Schema</InputLabel>
+								<Select
+									labelId="schema-label"
+									name="schema"
+									value={selectedSchema}
+									onChange={(event) => handleSchemaChange(event)}
+									variant="outlined"
+									label="Schema"
+									size="small"
+								>
+									{schemas && schemas.map((schema) => {
+										return <MenuItem key={schema} value={schema}>{schema}</MenuItem>
+									})};
+								</Select>
+							</FormControl>
+    </Box>
+        
       </>
     );
 
   if (displayType === DisplayType.NavPills)
     return (
-      <Container>
-        <Nav
-          variant="pills"
-          onSelect={handleSelect}
-          className="justify-content-left"
-          activeKey={selectedSchema}
-        >
-          {schemas.map((item) => (
-            <Nav.Item title={item} key={item}>
-              <Nav.Link eventKey={item} >{item}</Nav.Link>
-            </Nav.Item>
-          ))}
-        </Nav>
-      </Container>
+        <Container>
+          <Nav
+            variant="pills"
+            onSelect={handleSelect}
+            className="justify-content-left"
+            activeKey={selectedSchema}
+          >
+            {schemas.map((item) => (
+              <Nav.Item title={item} key={item}>
+                <Nav.Link eventKey={item} >{item}</Nav.Link>
+              </Nav.Item>
+            ))}
+          </Nav>
+        </Container>
     );
 
     if (displayType === DisplayType.StackedPills)
@@ -125,6 +112,26 @@ const SchemaSelector: React.FC<SchemaSelectorProps> = ({
         </Nav>
         </Container>
     );
+
+  if(displayType === DisplayType.MuiDropDown)
+    return(<>
+      <FormControl fullWidth disabled={schemas.length === 0}>
+          <InputLabel id="schema-label">Schema</InputLabel>
+          <Select
+            labelId="schema-label"
+            name="schema"
+            value={selectedSchema}
+            onChange={(event) => handleSchemaChange(event)}
+            variant="outlined"
+            label="Schema"
+            size="small"
+            >
+          {schemas.map((schema) => {
+            return <MenuItem key={schema} value={schema}>{schema}</MenuItem>
+          })};
+          </Select>
+      </FormControl>
+    </>);
 };
 
 export default SchemaSelector;

@@ -1,7 +1,7 @@
 -- SCHEMA AND TABLES CREATION
 CREATE SCHEMA IF NOT EXISTS authentication;
 
-DROP TABLE IF EXISTS authentication.users;
+-- DROP TABLE IF EXISTS authentication.users;
 CREATE TABLE IF NOT EXISTS authentication.users (
 	email text PRIMARY KEY CHECK (email ~* '^.+@.+\..+$'),
 	first_name text,
@@ -11,11 +11,6 @@ CREATE TABLE IF NOT EXISTS authentication.users (
 	is_active bool NOT NULL, 
 	schema_access text[] DEFAULT '{}'
 );
-
--- CREATE TABLE IF NOT EXISTS meta.user_schema_access (
--- 	email text REFERENCES authentication.users,
--- 	schema text -- Add trigger to verify if schema exists in schema view
--- );
 
 -- Creates a VIEW that gives the users information (except the passwords)
 CREATE OR REPLACE VIEW meta.user_info AS (
@@ -45,23 +40,81 @@ INSERT
 	OR
 UPDATE ON authentication.users FOR each ROW EXECUTE PROCEDURE authentication.check_role_exists();
 
--- -- TRIGGER to ensure the schemas from user_schema_access are existing schemas
--- CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
--- 		SELECT 1
--- 		FROM meta.schemas AS s
--- 		WHERE s.schema = new.schema
--- 	) THEN raise foreign_key_violation USING message = 'invalid schema : ' || new.role;
--- RETURN NULL;
--- END IF;
--- RETURN new;
--- END $$ language plpgsql;
+-- TABLE storing the role per schema of users
+-- DROP TABLE IF EXISTS meta.roles_per_schema CASCADE;
+CREATE TABLE IF NOT EXISTS meta.role_per_schema(
+	"user" text REFERENCES authentication.users(email),
+	schema text,
+	role name,
+	PRIMARY KEY("user", schema)
+);
 
--- DROP TRIGGER IF EXISTS ensure_schema_exists ON meta.user_schema_access;
--- CREATE CONSTRAINT TRIGGER ensure_schema_exists
--- AFTER
--- INSERT
--- 	OR
--- UPDATE ON meta.user_schema_access FOR each ROW EXECUTE PROCEDURE meta.check_schema_exists();
+-- TABLE assigning the hierarchy of the roles to numbers
+-- DROP TABLE IF EXISTS authentication.role_hierarchy CASCADE;
+CREATE TABLE IF NOT EXISTS authentication.role_hierarchy(
+	rank int PRIMARY KEY, 
+	role name UNIQUE
+);
+INSERT INTO authentication.role_hierarchy(rank, role)
+VALUES 
+(1, 'administrator'),
+(2, 'configurator'),
+(3, 'user')ON CONFLICT DO NOTHING;
+
+DROP TRIGGER IF EXISTS ensure_user_role_exists ON meta.role_per_schema;
+CREATE CONSTRAINT TRIGGER ensure_user_role_exists
+AFTER
+INSERT
+	OR
+UPDATE ON meta.role_per_schema FOR each ROW EXECUTE PROCEDURE authentication.check_role_exists();
+
+
+-- VIEW computing the db role, i.e. the highest rank role between the default role and the schema roles
+DROP VIEW IF EXISTs authentication.db_role;
+CREATE OR REPLACE VIEW authentication.db_role AS(
+	SELECT 
+		db_role_rank.email as "user",
+		role_hierarchy.role
+	FROM authentication.role_hierarchy
+	RIGHT JOIN
+	(SELECT 
+		users.email,
+		MIN(LEAST(default_hierarchy.rank, schema_hierarchy.rank)) as highest_rank
+	FROM authentication.users
+	FULL JOIN ( SELECT role_per_schema.user,
+			   	role_per_schema.schema,
+			   role_per_schema.role
+			   FROM meta.role_per_schema 
+			   LEFT JOIN authentication.users
+			  ON role_per_schema.user = users.email
+			  WHERE ARRAY[role_per_schema.schema] <@ users.schema_access) as filtered_schemas
+		ON users.email = filtered_schemas.user
+	LEFT JOIN authentication.role_hierarchy as default_hierarchy
+		ON users.role = default_hierarchy.role
+	LEFT JOIN authentication.role_hierarchy as schema_hierarchy
+		ON filtered_schemas.role = schema_hierarchy.role
+	GROUP BY users.email) as db_role_rank
+	ON role_hierarchy.rank = db_role_rank.highest_rank
+);
+
+
+-- TRIGGER to ensure the schemas from user_schema_access are existing schemas
+CREATE OR REPLACE FUNCTION meta.check_schema_exists() RETURNS TRIGGER AS $$ BEGIN IF NOT EXISTS(
+		SELECT 1
+		FROM meta.schemas AS s
+		WHERE s.schema = new.schema
+	) THEN raise foreign_key_violation USING message = 'invalid schema : ' || new.schema;
+RETURN NULL;
+END IF;
+RETURN new;
+END $$ language plpgsql;
+
+DROP TRIGGER IF EXISTS ensure_schema_exists ON meta.role_per_schema;
+CREATE CONSTRAINT TRIGGER ensure_schema_exists
+AFTER
+INSERT
+	OR
+UPDATE ON meta.role_per_schema FOR each ROW EXECUTE PROCEDURE meta.check_schema_exists();
 
 -- TRIGGER to keep the passwords encrypted with pgcrypto
 CREATE extension IF NOT EXISTS pgcrypto;
@@ -81,8 +134,10 @@ UPDATE ON authentication.users FOR each ROW EXECUTE PROCEDURE authentication.enc
 
 -- FUNCTION that returns the database role for a user if email and passwords match
 CREATE OR REPLACE FUNCTION authentication.user_role(email text, PASSWORD text) RETURNS name language plpgsql AS $$ BEGIN RETURN (
-		SELECT role
+		SELECT db_role.role
 		FROM authentication.users
+		LEFT JOIN authentication.db_role
+			ON users.email = db_role.user
 		WHERE users.email = user_role.email
 			AND users.password = crypt(user_role.password, users.password)
 	);
@@ -281,13 +336,16 @@ THEN -- Set the "Set-Cookie" header to clear the cookie
     detail = '{"status":400,"headers":{"Set-Cookie":"token=; Max-Age=0;"}}';
 END IF;
 
+-- Selects the db role from the view
+SELECT role FROM authentication.db_role WHERE selected_user.email = db_role.user INTO _role;
+
 -- 	Signs and returns the new access token
 SELECT sign(
 		row_to_json(r),
 		current_setting('custom.jwt_secret')
 	) AS token
 FROM (
-		SELECT selected_user.role AS role,
+		SELECT _role AS role,
 			token_email AS email,
 			selected_user.schema_access as schema_access,
 			extract(
@@ -324,23 +382,41 @@ CREATE TYPE user_data AS (
 
 );
 
--- FUNCTION Updates the user's data in bulk from an array of new user data
-CREATE OR REPLACE FUNCTION meta.update_user_data(users json)
+DROP FUNCTION IF EXISTS meta.update_user_data;
+-- FUNCTION Updates a single user's data 
+CREATE OR REPLACE FUNCTION meta.update_user_data("user" user_data)
 RETURNS VOID AS $$
 BEGIN 
 	UPDATE authentication.users AS oldud
 	SET 
-		first_name = newud.first_name,
-		last_name = newud.last_name,
-		role = newud.role,
-		is_active = newud.is_active,
-		schema_access = newud.schema_access
-	FROM (SELECT * FROM json_populate_recordset(null::user_data, users)) as newud
-	WHERE oldud.email = newud.email;
+		first_name = "user".first_name,
+		last_name = "user".last_name,
+		is_active = "user".is_active,
+		schema_access = "user".schema_access
+	WHERE oldud.email = "user".email;
 
 END;
 $$ language plpgsql SECURITY DEFINER;
 
+-- FUNCTION to update the default role of a user
+CREATE OR REPLACE FUNCTION meta.update_default_role (
+	email text,
+	role name
+)RETURNS setof integer AS $$ BEGIN -- 	Verify if the user exists
+	IF NOT EXISTS (
+		SELECT users.email
+		FROM authentication.users
+		WHERE users.email = update_default_role.email
+	) THEN raise exception USING message = format(
+		'User %L was not found',
+		signup.email);
+ELSE -- 		Verify if the user has a password (i.e. if it already signed up)
+UPDATE authentication.users
+SET role = update_default_role.role
+WHERE users.email = update_default_role.email;
+END IF;
+RETURN;
+END $$ language plpgsql SECURITY DEFINER;
 
 -- ROLES ----------------------------------------------------------------
 
@@ -367,35 +443,19 @@ END LOOP;
 END LOOP;
 END $$ LANGUAGE plpgsql;
 
--- GRANT USAGE ON SCHEMA meta TO "user";
--- GRANT SELECT ON ALL SEQUENCES IN SCHEMA meta TO "user";
--- GRANT SELECT ON TABLE meta.appconfig_properties TO "user";
--- GRANT SELECT ON TABLE meta.appconfig_values TO "user";
--- GRANT SELECT ON TABLE meta.scripts TO "user";
--- GRANT SELECT ON TABLE meta.schemas TO "user";
--- GRANT SELECT ON TABLE meta.tables TO "user";
--- GRANT SELECT ON TABLE meta.columns TO "user";
--- GRANT SELECT ON TABLE meta.constraints TO "user";
--- GRANT SELECT ON TABLE meta.user_schema_access TO "user";
-GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
 
+GRANT EXECUTE ON FUNCTION meta.logout() TO "user";
+GRANT SELECT ON TABLE meta.role_per_schema TO "user";
+GRANT SELECT ON TABLE meta.user_info TO "user";
 -- Configurator role
 
--- GRANT ALL ON SCHEMA meta TO configurator;
--- GRANT USAGE ON ALL SEQUENCES IN SCHEMA meta TO configurator;
--- GRANT ALL ON TABLE meta.appconfig_properties TO configurator;
--- GRANT ALL ON TABLE meta.appconfig_values TO configurator;
--- GRANT ALL ON TABLE meta.scripts TO configurator;
--- GRANT ALL ON TABLE meta.schemas TO configurator;
--- GRANT ALL ON TABLE meta.tables TO configurator;
--- GRANT ALL ON TABLE meta.columns TO configurator;
--- GRANT ALL ON TABLE meta.constraints TO configurator;
--- GRANT ALL ON TABLE meta.user_schema_access TO configurator;
 
 -- Administrator role
 
 GRANT EXECUTE ON FUNCTION meta.create_user(text, name) TO administrator;
-GRANT SELECT ON TABLE meta.user_info TO administrator;
+GRANT ALL ON TABLE meta.role_per_schema TO administrator;
+GRANT EXECUTE ON FUNCTION meta.update_default_role(text, name) TO administrator;
+
 
 GRANT EXECUTE ON FUNCTION meta.login(text, text) TO web_anon;
 GRANT EXECUTE ON FUNCTION meta.signup TO web_anon;
@@ -439,6 +499,15 @@ VALUES (
 		TRUE,
 		'user',
 		'{app_rentals, app_service_support}'
+	),
+	(
+		'api_testing@test.com',
+		'test',
+		'admin',
+		'user123',
+		TRUE,
+		'user',
+		'{}'
 	) ON CONFLICT (email) DO NOTHING;
 -- If you change anything here after they've been created once in the database, it won't have any effect. You need to remove them first from the database.
 NOTIFY pgrst,

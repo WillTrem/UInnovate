@@ -4,14 +4,12 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Card from "react-bootstrap/Card";
-import vmd, { Table, TableDisplayType } from "../../virtualmodel/VMD";
+import vmd, { ConfigData, Table, TableDisplayType } from "../../virtualmodel/VMD";
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
-import { useConfig } from "../../contexts/ConfigContext";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
-import { ConfigValueType } from "../../contexts/ConfigContext";
 import LookUpTable from "./LookupSetting";
-import { Menu } from "react-pro-sidebar";
+import { saveConfigToDB } from "../../helper/SettingsHelpers";
 
 interface TableItemProps {
   table: Table;
@@ -20,49 +18,67 @@ interface TableItemProps {
 export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   const schema = vmd.getTableSchema(table.table_name);
 
-
-
   if (!schema) {
     throw new Error("Schema not found for table: " + table.table_name);
   }
 
   const displayType = table.getDisplayType();
-  const { updateConfig } = useConfig();
 
   // Updates the local configuration with a table-specific configuration value
-  const updateTableConfig = (property: ConfigProperty, value: string) => {
-    const newConfigValue: ConfigValueType = {
+  const updateTableConfig = async (property: ConfigProperty, value: string) => {
+    const newConfigValue: ConfigData = {
       property,
       table: table.table_name,
       value,
     };
-    updateConfig(newConfigValue);
+    const success = await saveConfigToDB(newConfigValue);
+    return success;
   };
 
   // Handle the change event for the toggle switch
-  const handleToggle = async () => {
+  const handleToggle = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isVisible = table.getVisibility();
-    table.setVisibility(!isVisible);
-    await updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
+    const success = await updateTableConfig(ConfigProperty.VISIBLE, (!isVisible).toString());
+    if (success) {
+      table.setVisibility(!isVisible);
+    }
+    else {
+      event.preventDefault();
+    }
   };
 
-  const handleToggleDetails = async () => {
+  const handleToggleDetails = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isVisible = table.getHasDetailsView();
-    table.setHasDetailsView(!isVisible);
-    await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
+    const success = await updateTableConfig(ConfigProperty.DETAILS_VIEW, (!isVisible).toString());
+    if (success) {
+      table.setHasDetailsView(!isVisible);
+    }
+    else {
+      event.preventDefault();
+    }
   };
 
-  const handleToggleStandAloneDetails = async () => {
+  const handleToggleStandAloneDetails = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const isVisible = table.getStandAloneDetailsView();
-    table.setStandAloneDetailsView(!isVisible);
-    await updateTableConfig(ConfigProperty.STAND_ALONE_DETAILS_VIEW, (!isVisible).toString());
+    const success = await updateTableConfig(ConfigProperty.STAND_ALONE_DETAILS_VIEW, (!isVisible).toString());
+    if (success) {
+      table.setStandAloneDetailsView(!isVisible);
+    }
+    else {
+      event.preventDefault();
+    }
   };
 
 
   const handleDisplayTypeSelect = async (event: SelectChangeEvent<string>) => {
     const newDisplayType = event.target.value;
-    table.setDisplayType(newDisplayType);
-    await updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
+    const success = await updateTableConfig(ConfigProperty.TABLE_VIEW, newDisplayType);
+    if (success) {
+      table.setDisplayType(newDisplayType);
+    }
+    else {
+      event.preventDefault();
+    }
   };
 
 
@@ -87,7 +103,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
                 <h6>Display Type</h6>
                 <Select
                   data-testid="display-type-table-config"
-                  value={displayType}
+                  defaultValue={displayType}
                   onChange={handleDisplayTypeSelect}
                   displayEmpty
                 >
@@ -105,7 +121,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
             <div className="details-views">
               <span className="px-1" style={{ width: '180px' }}>Details View</span>
               <Switch
-                checked={table.getHasDetailsView()}
+                defaultChecked={table.getHasDetailsView()}
                 onChange={handleToggleDetails}
                 data-testid="detail-visibility-switch"
               />
@@ -114,7 +130,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
             <div className="details-views">
               <span className="px-1" style={{ width: '180px' }}>Stand Alone Detail view</span>
               <Switch
-                checked={table.getStandAloneDetailsView()}
+                defaultChecked={table.getStandAloneDetailsView()}
                 onChange={handleToggleStandAloneDetails}
                 data-testid="Stand_Alone_detail-visibility-switch"
               />

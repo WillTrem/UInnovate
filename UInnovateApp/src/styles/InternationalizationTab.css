@@ -1,0 +1,16 @@
+div.default-language-input {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+td.container-labels {
+    display: flex;
+    align-items: center;
+}
+
+.icon-lock {
+    color: #C0C0C0;
+}
