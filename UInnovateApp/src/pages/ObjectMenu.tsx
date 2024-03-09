@@ -13,8 +13,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { updateSelectedSchema } from "../redux/SchemaSlice";
 import AdditionalViewNavBar from "../components/AdditionalViewNavBar";
 import { ViewTypeEnum } from "../enums/ViewTypeEnum";
+import { updateSelectedViewList } from "../redux/AdditionalViewSlice";
 
-interface viewSelection {
+export interface viewSelection {
   schema: string;
   tableName: string;
   selectedView: ViewTypeEnum;
@@ -57,12 +58,11 @@ export function ObjectMenu() {
           selectedView: viewType,
         };
 
-        setSelectedViewList([...selectedViewList, view]);
+        dispatch(updateSelectedViewList([...selectedViewList, view]));
       } else {
         //get existing value
         viewType = selection[0].selectedView;
       }
-      console.log(`view type: ${viewType}`);
       setViewType(viewType);
     }
   };
@@ -70,9 +70,9 @@ export function ObjectMenu() {
   const { tableName } = useParams();
   const { schema } = useParams();
 
-  const [selectedViewList, setSelectedViewList] = useState<
-    Array<viewSelection>
-  >([]);
+  const selectedViewList: Array<viewSelection> = useSelector(
+    (state: RootState) => state.selectedViewList.value,
+  );
   const [viewType, setViewType] = useState<ViewTypeEnum>(ViewTypeEnum.Default);
   const selectViewsStorageKey = "objectMenu_selectedViews";
 
@@ -96,26 +96,13 @@ export function ObjectMenu() {
       tableName: p_tableName,
       selectedView: p_viewType,
     };
-    setSelectedViewList([...filteredList, newEntry]);
+    dispatch(updateSelectedViewList([...filteredList, newEntry]));
     setViewType(p_viewType);
   };
 
   useEffect(() => {
     dispatch(updateSelectedSchema(schema ?? ""));
     setActiveTable(null);
-
-    const storedState = localStorage.getItem(selectViewsStorageKey);
-    if (storedState) {
-      setSelectedViewList(JSON.parse(storedState));
-    }
-
-    return () => {
-      // Save your state when navigating away
-      localStorage.setItem(
-        selectViewsStorageKey,
-        JSON.stringify(selectedViewList),
-      );
-    };
   }, [schema]);
   const { user, schema_access } = useSelector((state: RootState) => state.auth);
 

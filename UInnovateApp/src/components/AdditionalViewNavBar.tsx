@@ -52,7 +52,7 @@ const AdditionalViewNavBar = ({
     </>
   );
 };
-interface AdditionalTableViSelector {
+interface AdditionalTableViewSelectorProp {
   views: AdditionalViews[];
   selectedSchema: string;
   selectedTable: string | undefined;
@@ -69,11 +69,12 @@ const AdditionalTableViewSelector = ({
   selectedTable,
   selectedView,
   selectedViewHandler,
-}: AdditionalTableViSelector) => {
-  const [filteredViews, setFilteredViews] = useState([]);
-  const [activeView, setActiveView] = useState(selectedView);
+}: AdditionalTableViewSelectorProp) => {
+  const [filteredViews, setFilteredViews] = useState<AdditionalViews[]>([]);
+  const [activeView, setActiveView] = useState(0);
+
   useEffect(() => {
-    console.log(views);
+    setActiveView(selectedView);
     const filteredViews = views.filter((view: AdditionalViews) => {
       if (view.tablename === selectedTable) return true;
       return false;
@@ -86,7 +87,6 @@ const AdditionalTableViewSelector = ({
   }
 
   const handleActiveView = (viewtype: ViewTypeEnum) => {
-    console.log(viewtype);
     selectedViewHandler(selectedSchema, selectedTable, viewtype);
     setActiveView(viewtype);
   };
@@ -97,9 +97,8 @@ const AdditionalTableViewSelector = ({
     linkText: string,
   ) => {
     return (
-      <Nav.Item>
+      <Nav.Item key={viewName}>
         <Nav.Link
-          key={viewName}
           eventKey={viewName}
           href="#"
           className={viewtype == activeView ? "active" : ""}
