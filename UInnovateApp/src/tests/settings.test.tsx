@@ -2,7 +2,6 @@ import { describe, it, vi } from "vitest";
 import TestRenderer from "react-test-renderer";
 import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
-import { ConfigProvider } from "../contexts/ConfigContext";
 import configureStore from "redux-mock-store";
 import { Provider } from "react-redux";
 import "@testing-library/jest-dom";
@@ -30,11 +29,9 @@ describe("Settings.tsx", () => {
     store = mockStore(initialState);
     const testRenderer = TestRenderer.create(
       <MemoryRouter>
-        <ConfigProvider>
           <Provider store={store}>
             <Settings />
           </Provider>
-        </ConfigProvider>
       </MemoryRouter>
     );
 

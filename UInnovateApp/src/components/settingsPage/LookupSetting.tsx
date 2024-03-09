@@ -5,11 +5,11 @@ import FormHelperText from "@mui/material/FormHelperText";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
 import { MenuItem } from '@mui/material';
 import "../../styles/TableItem.css";
-import { Table } from "../../virtualmodel/VMD";
+import { ConfigData, Table } from "../../virtualmodel/VMD";
 import buttonStyle from '../TableEnumView'
 import { Row } from '../../virtualmodel/DataAccessor';
 import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
-import { ConfigValueType, useConfig } from '../../contexts/ConfigContext';
+import { saveConfigToDB } from '../../helper/SettingsHelpers';
 
 
 type LookUpTableProps = {
@@ -20,20 +20,6 @@ type DefaultRow = {
 };
 
 const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
-
-  const { updateConfig } = useConfig();
-
-  const updateTableConfig = (property: ConfigProperty, value: string) => {
-    const newConfigValue: ConfigValueType = {
-      property,
-      table: table.table_name,
-      value,
-    };
-    updateConfig(newConfigValue);
-  };
- 
-  
-  
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -48,10 +34,10 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     }
   });
   if (count == 0) {
-   
+
 
     return (<div>
-  
+
     </div>)
   }
   else {
@@ -64,35 +50,35 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
 
     const [SelectInput, setSelectInput] = useState<Row>(() => {
-      if(table.lookup_tables=="null"){
+      if (table.lookup_tables == "null") {
         return (defaultRow);
       }
       else {
-         const obj = JSON.parse(table.lookup_tables);
+        const obj = JSON.parse(table.lookup_tables);
         return (obj);
       }
-        
-      }
+
+    }
     )
 
 
-  
+
     const MyButtonComponent = ({ buttonIndex }: { buttonIndex: number }) => {
       return (
-        <div style={{marginTop:'2em'}} >
+        <div style={{ marginTop: '2em' }} >
 
           <FormControl size="small">
             <h6>Lookup Tables</h6>
             <Select onChange={HandleChange(buttonIndex)} value={SelectInput[buttonIndex] == undefined ? "error" : SelectInput[buttonIndex]}>
               <MenuItem value={"none"} >None</MenuItem>
               {referencesTableList.map((ref, index) => (
-                <MenuItem value={ref} key = {index}>
+                <MenuItem value={ref} key={index}>
                   {ref}
                 </MenuItem>
               ))}
             </Select>
             <FormHelperText>
-            To customize the table which will be looked up 
+              To customize the table which will be looked up
             </FormHelperText>
           </FormControl>
         </div>
@@ -104,42 +90,40 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       return parseInt(table.lookup_counter, 10);
     });
 
-
-
-    useEffect(() => {
-      setCounterConfig();
-     
-    }, [counter]);
-    const setCounterConfig = async () => {
-      table.setLookupCounter(counter.toString())
-      await updateTableConfig(ConfigProperty.LOOKUP_COUNTER, counter.toString());
-
+    const setCounterConfig = async (counterValue: number) => {
+      const newConfigValue: ConfigData = {
+        property: ConfigProperty.LOOKUP_COUNTER,
+        table: table.table_name,
+        value: counterValue.toString()
+      };
+      const success = await saveConfigToDB(newConfigValue);
+      if (success) {
+        table.setLookupCounter(counter.toString())
+      }
     };
-  
 
-
-    useEffect(() => {
-      
-      setSelectInputConfig();
-    }, [SelectInput]);
-
-    const setSelectInputConfig = async () => {
-      const objstring = JSON.stringify(SelectInput);
-      table.setLookupTables(objstring);
-      await updateTableConfig(ConfigProperty.LOOKUP_TABLES, objstring);
-
+    const setSelectInputConfig = async (selectInput: Row) => {
+      const objstring = JSON.stringify(selectInput);
+      const newConfigValue: ConfigData = {
+        property: ConfigProperty.LOOKUP_TABLES,
+        table: table.table_name,
+        value: objstring,
+      };
+      const success = await saveConfigToDB(newConfigValue);
+      if (success) {
+        table.setLookupTables(objstring);
+      }
     };
-  
 
 
-    const HandleChange =  (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
-      setSelectInput((prevSelectInput) => ({
-        ...prevSelectInput,
+
+    const HandleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
+      const newSelectInput = {
+        ...SelectInput,
         [index]: event.target.value,
-      }));
-      
-
-
+      }
+      setSelectInput(newSelectInput);
+      setSelectInputConfig(newSelectInput);
     };
 
 
@@ -147,25 +131,32 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       if (count - 1 == counter || count == 0) {
         alert("You can't add more lookup tables")
       }
-      else{
-        setCounter((Counter) => Counter + 1);
+      else {
+        const newCounterValue = counter + 1;
+        setCounter(newCounterValue);
+        setCounterConfig(newCounterValue);
       }
     };
 
     const handleButtonClickDelete = () => {
       if (counter > 0) {
-        setCounter((Counter) => Counter - 1);
+        const newCounterValue = counter - 1;
+        setCounter(newCounterValue);
+        setCounterConfig(newCounterValue);
         handleReset();
       }
       else
         setCounter(0);
+      setCounterConfig(0);
     };
 
     const handleReset = () => {
-      setSelectInput((prevSelectInput) => ({
-        ...prevSelectInput,
-        [counter - 1]: "none",
-      }));
+      const newSelectInput = {
+        ...SelectInput,
+        [counter - 1]: "none"
+      }
+      setSelectInput(newSelectInput);
+      setSelectInputConfig(newSelectInput);
     }
 
 
@@ -179,7 +170,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
             <Select onChange={HandleChange(-1)} value={SelectInput[-1] == undefined ? "error" : SelectInput[-1]}>
               <MenuItem value={"none"} >None</MenuItem>
               {referencesTableList.map((ref, index) => (
-                <MenuItem key= {index} value={ref}>
+                <MenuItem key={index} value={ref}>
                   {ref}
                 </MenuItem>
               ))}
@@ -202,7 +193,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
             -
           </button>
         </div>
-        <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08'}}>
+        <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08' }}>
           {[...Array(counter)].map((_, index) => (
 
             <MyButtonComponent key={index} buttonIndex={index} />

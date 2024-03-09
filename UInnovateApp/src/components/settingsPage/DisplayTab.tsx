@@ -22,7 +22,7 @@ const DisplayTab = () => {
   return (
     <div>
       
-      <ConfigurationSaver />
+      {/* <ConfigurationSaver /> */}
       <Tab.Container>
         <Row>
           <Col sm={3}>

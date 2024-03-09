@@ -2,12 +2,11 @@ import FormControl from "@mui/material/FormControl";
 import Switch from "@mui/material/Switch";
 import "../../styles/TableItem.css";
 import { Select } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";
-import { useConfig } from "../../contexts/ConfigContext";
-import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
+import MenuItem from "@mui/material/MenuItem";import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ColumnDisplayTypes } from "../../virtualmodel/Config";
 import { SelectChangeEvent } from "@mui/material";
 import { Column, Table } from "../../virtualmodel/VMD";
+import { saveConfigToDB } from "../../helper/SettingsHelpers";
 
 interface ColumnConfigProps {
   table: Table;
@@ -41,7 +40,7 @@ export const ColumnConfig: React.FC<ColumnConfigProps> = ({
               <ColumnConfigRow
                 column={attribute}
                 table={table}
-                key={attribute.column_name+index}
+                key={attribute.column_name + index}
               />
             );
           })}
@@ -54,26 +53,37 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
   column,
   table,
 }: ColumnConfigRowProps) => {
-  const { updateConfig } = useConfig();
-
-  function handleVisibilityToggle(event: React.ChangeEvent<HTMLInputElement>) {
-    column.setVisibility(event.target.checked);
-    updateConfig({
+  async function handleVisibilityToggle(event: React.ChangeEvent<HTMLInputElement>) {
+    const newConfigValue = {
       property: ConfigProperty.VISIBLE,
       value: String(event.target.checked),
       column: column.column_name,
       table: table.table_name,
-    });
+    }
+    const success = await saveConfigToDB(newConfigValue);
+    if (success) {
+      column.setVisibility(event.target.checked);
+    }
+    else {
+      event.preventDefault();
+    };
+
   }
 
-  function handleDisplayChange(event: SelectChangeEvent<string>) {
-    column.setType(event.target.value);
-    updateConfig({
+  async function handleDisplayChange(event: SelectChangeEvent<string>) {
+    const newConfigValue = {
       property: ConfigProperty.COLUMN_DISPLAY_TYPE,
       value: event.target.value,
       column: column.column_name,
       table: table.table_name,
-    });
+    }
+    const success = await saveConfigToDB(newConfigValue);
+    if (success) {
+      column.setType(event.target.value);
+    }
+    else {
+      event.preventDefault();
+    };
   }
   return (
     <tr>
@@ -81,13 +91,13 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
       <td>
         <Switch
           data-testid="visibility-switch"
-          checked={column.is_visible}
+          defaultChecked={column.is_visible}
           onChange={handleVisibilityToggle}
         />
       </td>
       <td>
         <FormControl size="small">
-          <Select value={column.column_type} onChange={handleDisplayChange}>
+          <Select defaultValue={column.column_type} onChange={handleDisplayChange}>
             {Object.keys(ColumnDisplayTypes).map((value) => (
               <MenuItem key={value} value={value}>
                 {value}

@@ -957,9 +957,9 @@ interface ViewData {
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
 export interface ConfigData {
-  id: number;
+  id?: number;
   table: string;
-  column: string | null;
+  column?: string | null;
   property: string;
   value: string | boolean;
 }

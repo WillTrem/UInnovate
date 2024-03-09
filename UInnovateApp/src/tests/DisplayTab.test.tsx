@@ -1,7 +1,6 @@
 import { describe, it, vi, expect } from "vitest";
 import DisplayTab from "../components/settingsPage/DisplayTab";
 import { render } from "@testing-library/react";
-import { ConfigProvider } from "../contexts/ConfigContext";
 import { Role } from "../redux/AuthSlice";
 import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";
@@ -19,20 +18,16 @@ describe("DisplayTab component", () => {
 
   it("renders the component", () => {
     render(
-      <ConfigProvider>
         <Provider store={store}>
           <DisplayTab />
         </Provider>
-      </ConfigProvider>
     );
   });
   it("shows the list of tables", () => {
     const { getAllByTestId } = render(
-      <ConfigProvider>
         <Provider store={store}>
           <DisplayTab />
         </Provider>
-      </ConfigProvider>
     );
     const tableNavs = getAllByTestId("table-setting-nav");
 
