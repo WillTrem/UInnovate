@@ -28,6 +28,11 @@ const AddRowPopup = ({
 
   const handleFormSubmit = () => {
     const schema = vmd.getTableSchema(table.table_name);
+    if (!schema) {
+      console.error("Could not find schema for table ", table.table_name);
+      return;
+    }
+
     Logger.logUserAction( 
       loggedInUser || "",
       "Add Row",
@@ -35,10 +40,6 @@ const AddRowPopup = ({
       schema?.schema_name || "",
       table.table_name
     );
-    if (!schema) {
-      console.error("Could not find schema for table ", table.table_name);
-      return;
-    }
 
     const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
       schema?.schema_name,

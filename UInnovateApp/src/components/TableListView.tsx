@@ -12,6 +12,10 @@ import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
+import Logger from "../virtualmodel/Logger";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/Store";
+import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import { IoIosArrowUp } from "react-icons/io";
 import {
@@ -481,6 +485,7 @@ const getFunctions = async () => {
     }));
   };
 
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -489,6 +494,14 @@ const getFunctions = async () => {
       console.error("Schema not found");
       return;
     }
+
+    Logger.logUserAction(
+      loggedInUser || "",
+      "Edited Row",
+      "User has modified a row in the table",
+      schema?.schema_name || "",
+      table.table_name
+    );
 
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
