@@ -1,4 +1,4 @@
-import { ViewTypeEnum } from "../components/settingsPage/additionalView/ViewTypeEnum.tsx";
+import { ViewTypeEnum } from "../enums/ViewTypeEnum.tsx";
 import { DataAccessor, Row } from "./DataAccessor";
 import { FunctionAccessor } from "./FunctionAccessor.tsx";
 import vmd from "./VMD.tsx";
