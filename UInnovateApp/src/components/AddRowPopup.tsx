@@ -36,7 +36,7 @@ const AddRowPopup = ({
     Logger.logUserAction( 
       loggedInUser || "",
       "Add Row",
-      "details",
+      "Added a new row with the following values: " + JSON.stringify(inputValues.row),
       schema?.schema_name || "",
       table.table_name
     );

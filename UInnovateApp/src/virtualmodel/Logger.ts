@@ -1,4 +1,4 @@
-import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
+import { DataAccessor } from "../virtualmodel/DataAccessor";
 import vmd from "./VMD";
 
 export default class Logger {
@@ -12,14 +12,14 @@ export default class Logger {
     const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
       "meta",
       "user_logs",
-      new Row({
+     {
         timestamp: new Date().toISOString(),
         user_id: userID,
         action: action,
         details: details,
         schema_name: schemaName,
         table_name: tableName,
-      })
+      }
     );
     await data_accessor.addRow();
   }

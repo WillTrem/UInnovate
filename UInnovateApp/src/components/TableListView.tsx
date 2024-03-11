@@ -498,7 +498,8 @@ const getFunctions = async () => {
     Logger.logUserAction(
       loggedInUser || "",
       "Edited Row",
-      "User has modified a row in the table",
+      //i want the edited value in the details
+      "User has modified a row in the table: " + JSON.stringify(inputValues),
       schema?.schema_name || "",
       table.table_name
     );
