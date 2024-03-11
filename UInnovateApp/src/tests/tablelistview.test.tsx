@@ -5,13 +5,15 @@ import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 import "@testing-library/jest-dom";
 import { DataAccessorMock } from "../virtualmodel/__mocks__/DataAccessor";
+import store from "../redux/Store";
+import { Provider } from "react-redux";
 
 vi.mock("axios");
 vi.mock("DataAccessor");
 
 describe("TableListView component", () => {
   // Sample data for testing
-  // Making a mock single mock table
+  // Making a mock single mock table 
   const table = new Table("Table1");
   // Making a mock column array of three columns
   const columns = [
@@ -27,7 +29,9 @@ describe("TableListView component", () => {
 
   render(
       <MemoryRouter>
+        <Provider store={store}>
         <TableListView table={table} />
+        </Provider>
       </MemoryRouter>
   );
 
@@ -38,7 +42,9 @@ describe("TableListView component", () => {
 
     it("opens and closes the sliding panel", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<Provider store ={store}>
+        <TableListView table={table} /* props */ />
+        </Provider>);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -51,7 +57,7 @@ describe("TableListView component", () => {
       expect(screen.getByText("Details")).toBeInTheDocument();
     });
     it("renders the Show Look up Table button when showTable is false", () => {
-      const { getByText } = render(<TableListView table={table} />);
+      const { getByText } = render(<Provider store={store}><TableListView table={table} /></Provider>);
 
       expect(getByText("Show Look up Table")).toBeInTheDocument();
     });
@@ -69,7 +75,9 @@ describe("TableListView component", () => {
   it("renders the Show Files button", async () => {
     render(
         <MemoryRouter>
+          <Provider store={store}>
           <TableListView table={table} />
+          </Provider>
         </MemoryRouter>
     );
 
@@ -99,7 +107,9 @@ describe("TableListView component", () => {
   it("Render Reset Filter button", async () => {
     render(
         <MemoryRouter>
+          <Provider store={store}>
           <TableListView table={table} />
+          </Provider>
         </MemoryRouter>
     );
 
@@ -116,7 +126,9 @@ describe("TableListView component", () => {
   it("render the filter button and simulate a click events", async () => {
     render(
         <MemoryRouter>
+          <Provider store={store}>
           <TableListView table={table} />
+          </Provider>
         </MemoryRouter>
     );
 
@@ -159,7 +171,9 @@ describe("TableListView component", () => {
 
     render(
         <MemoryRouter>
+          <Provider store={store}>
           <TableListView table={table} />
+          </Provider>
         </MemoryRouter>
     );
 
@@ -171,7 +185,9 @@ describe("TableListView component", () => {
   it("Verify functionality of Shows file button", async () => {
     render(
         <MemoryRouter>
+          <Provider store={store}>
           <TableListView table={table} />
+          </Provider>
         </MemoryRouter>
     );
     // Check for row existence by getting them by title
@@ -198,7 +214,9 @@ describe("TableListView component", () => {
   it("Verify functionality of Shows file button", async () => {
     render(
         <MemoryRouter>
+          <Provider store={store}>
           <TableListView table={table} />
+          </Provider>
         </MemoryRouter>
     );
     // Check for row existence by getting them by title
@@ -222,7 +240,7 @@ describe("TableListView component", () => {
     expect(uploadPop[0]).not.toBeInTheDocument();
     it("renders the date time picker", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<Provider store={store}><TableListView table={table} /* props */ /></Provider>);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -239,7 +257,7 @@ describe("TableListView component", () => {
 
     it("renders the date picker", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<Provider store={store}><TableListView table={table} /* props */ /></Provider>);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -256,7 +274,7 @@ describe("TableListView component", () => {
 
     it("renders the category selector", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(<Provider store={store}><TableListView table={table} /* props */ /></Provider>);
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
