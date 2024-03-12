@@ -12,6 +12,7 @@ import "../styles/settings.css";
 import UserManagementTab from "../components/settingsPage/Users/UserManagementTab";
 import ButtonConfigurationSaver from "../components/settingsPage/ButtonConfigurationSaver";
 import InternationalizationTab from "../components/settingsPage/InternationalizationTab";
+import UserLogs from "../components/settingsPage/UserLogs";
 import UnauthorizedScreen from "../components/UnauthorizedScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
@@ -110,6 +111,11 @@ export function Settings() {
 											Additional Views
 										</Nav.Link>
 									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey='userlogs' onClick={() => handleNavClick('userlogs')}>
+											User Action Logging and Tracing
+										</Nav.Link>
+									</Nav.Item>
 								</Nav>
 							</Col>
 							<Col sm={9}>
@@ -139,6 +145,9 @@ export function Settings() {
 									</Tab.Pane>
 									<Tab.Pane eventKey='additionalviews'>
 										<AdditionalViewTab schema={selectedSchema} setSchema={(schema:string)=>{setSelectedSchema(schema)}} />
+									</Tab.Pane>
+									<Tab.Pane eventKey='userlogs'>
+										<UserLogs />
 									</Tab.Pane>
 								</Tab.Content>
 							</Col>
