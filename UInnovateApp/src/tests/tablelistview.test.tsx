@@ -167,7 +167,21 @@ describe("TableListView component", () => {
     expect(renderedTable).toBeInTheDocument();
   });
 
+  it("Delete button is rendered", async () => {
 
+    render(
+        <MemoryRouter>
+          <TableListView table={table} />
+        </MemoryRouter>
+    );
+
+    let deleteButton;
+    await waitFor(() => {
+      deleteButton = screen.getAllByTestId("delete-row-button");
+      expect(deleteButton[0]).toBeInTheDocument(); // Check the first button
+    });
+
+  });
   it("Verify functionality of Shows file button", async () => {
     render(
         <MemoryRouter>

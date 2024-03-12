@@ -580,8 +580,9 @@ const getFunctions = async () => {
         console.error("Schema not found");
         return;
       }
+      console.log(schema.schema_name)
       if( column_name && column_value){
-      const data_accessor_delete: DataAccessor = vmd.getRowDataAccessor(
+      const data_accessor_delete: DataAccessor = vmd.getRemoveRowAccessor(
         schema.schema_name,
         table.table_name,
         column_name,
@@ -1100,6 +1101,7 @@ const getFunctions = async () => {
                 <Button
                 size="large"
                 style={{ color: 'black',  }}
+                data-testid="delete-row-button"
                 onClick={(event) => {
                   event.stopPropagation();
                   
