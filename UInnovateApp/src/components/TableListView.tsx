@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
 import { IoIosArrowUp } from "react-icons/io";
+import { IoIosTrash } from "react-icons/io";
+
 import {
   Switch,
   Button,
@@ -64,6 +66,7 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
+import { Delete, Store } from "@mui/icons-material";
 
 interface TableListViewProps {
   table: Table;
@@ -137,7 +140,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
-
   //These are all the Usestate which is used for Pagination, Sorting and Filtering for the List view of the table
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -563,6 +565,42 @@ const getFunctions = async () => {
   };
   //End of Filter Function
 
+  const DeleteRow =  async(row: Row) => {
+    let column_name: string | undefined;
+    let column_value: string | undefined;
+      table.columns.forEach((column) => {
+        if (column.is_editable === false) {
+         // Check if the row contains the key
+          column_name = column.column_name as string
+          column_value = row.row?.[column.column_name] as string;
+        }
+      });
+      const schema = vmd.getTableSchema(table.table_name);
+      if (!schema) {
+        console.error("Schema not found");
+        return;
+      }
+      if( column_name && column_value){
+      const data_accessor_delete: DataAccessor = vmd.getRowDataAccessor(
+        schema.schema_name,
+        table.table_name,
+        column_name,
+        column_value
+      );
+
+      data_accessor_delete.deleteRow().then((res) => {
+        getRows();
+      });
+      console.log(data_accessor_delete)
+    }
+    else{
+      console.error("No Primary Key Found");
+    }
+
+  }
+    // Object.entries(row.row).map(([key, value]) => {
+
+
   const FileInputField = (column: Column) => {
     if (!appConfigValues) {
       return null;
@@ -603,6 +641,11 @@ const getFunctions = async () => {
       </Button>
     );
   };
+
+
+
+
+
 
   useEffect(() => {
     const newInputField = (column: Column) => {
@@ -952,6 +995,8 @@ const getFunctions = async () => {
         onClick={ResetFilter}
         data-testid="reset-filter-button">
         Reset Filters</Button>
+
+        
       <TableContainer>
         <MUITable
           className="table-container"
@@ -1022,12 +1067,9 @@ const getFunctions = async () => {
                             />
                             {value}
                           </MenuItem>
-
                         );
                       })}
-
                     </div>
-
                   </Menu>
                 </TableCell>
               ))}
@@ -1054,8 +1096,26 @@ const getFunctions = async () => {
                     </Box>
                   </TableCell>
                 ))}
-              </TableRow>
+              <TableCell>
+                <Button
+                size="large"
+                style={{ color: 'black',  }}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  
+                DeleteRow(row);
+
+                  
+                }}
+                >
+                  <IoIosTrash size ="1.4em"/>
+                </Button>
+              </TableCell>
+              
+              </TableRow> 
+              
             ))}
+            
           </TableBody>
         </MUITable>
       </TableContainer>
