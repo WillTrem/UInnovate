@@ -40,7 +40,7 @@ export function ObjectMenu() {
 
   const setViewForTable = (
     p_schema: string | undefined,
-    p_tableName: string,
+    p_tableName: string | undefined,
   ) => {
     if (p_schema && p_tableName) {
       //retrieve view selection from list
@@ -74,7 +74,6 @@ export function ObjectMenu() {
     (state: RootState) => state.selectedViewList.value,
   );
   const [viewType, setViewType] = useState<ViewTypeEnum>(ViewTypeEnum.Default);
-  const selectViewsStorageKey = "objectMenu_selectedViews";
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
 
@@ -102,7 +101,9 @@ export function ObjectMenu() {
 
   useEffect(() => {
     dispatch(updateSelectedSchema(schema ?? ""));
-    setActiveTable(null);
+    const table = tables?.filter((t) => t.table_name == tableName)[0];
+    setActiveTable(table || null);
+    setViewForTable(schema, tableName);
   }, [schema]);
   const { user, schema_access } = useSelector((state: RootState) => state.auth);
 
