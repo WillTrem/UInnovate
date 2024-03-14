@@ -1,4 +1,4 @@
-import { describe, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import {
   act,
   fireEvent,
@@ -8,25 +8,25 @@ import {
 } from "@testing-library/react";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
-import { Column, Table } from "../virtualmodel/VMD";
+import { ColumnMock, TableMock } from "../virtualmodel/__mocks__/VMD";
 import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
 
 vi.mock("axios");
 
-vi.unmock("../virtualmodel/VMD");
-vi.unmock("../virtualmodel/DataAccessor");
+// vi.unmock("../virtualmodel/VMD");
+// vi.unmock("../virtualmodel/DataAccessor");
 
 describe("TableListView component", () => {
   // Sample data for testing
   // Making a mock single mock table
-  const table = new Table("Table1");
+  const table = new TableMock("Table1");
 
   // Making a mock column array of three columns
   const columns = [
-    new Column("Column1"),
-    new Column("Column2"),
-    new Column("Column3"),
+    new ColumnMock("Column1"),
+    new ColumnMock("Column2"),
+    new ColumnMock("Column3"),
   ];
 
   // Adding the columns to the table
@@ -41,6 +41,8 @@ describe("TableListView component", () => {
       </MemoryRouter>
     </ConfigProvider>
   );
+
+  console.log(screen.debug(undefined, 20000));
 
   it("renders a table with the specified attributes", async () => {
     // Wait for the table to be rendered
@@ -68,7 +70,7 @@ describe("TableListView component", () => {
     });
     it("renders the LookUpTableDetails component when showTable is true", () => {
       // Mock localStorage
-      Storage.prototype.getItem = jest.fn(() => "mock value");
+      Storage.prototype.getItem = vi.fn(() => "mock value");
 
       const { getByText } = render(<TableListView table={table} />);
       const button = getByText("Show Look up Table");
@@ -77,6 +79,7 @@ describe("TableListView component", () => {
       expect(getByText("Some text")).toBeInTheDocument();
     });
   });
+
   it("renders the Show Files button", async () => {
     render(
       <ConfigProvider>

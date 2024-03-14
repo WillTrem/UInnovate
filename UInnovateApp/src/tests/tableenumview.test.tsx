@@ -1,27 +1,21 @@
 import { render, screen, act } from "@testing-library/react";
-import { vi } from "vitest";
+import { vi, expect } from "vitest";
 import TableEnumView from "../components/TableEnumView";
 import { MemoryRouter } from "react-router-dom";
 import { ConfigProvider } from "../contexts/ConfigContext";
-import { Column, Table } from "../virtualmodel/VMD";
+import { TableMock, ColumnMock } from "../virtualmodel/__mocks__/VMD";
 
 vi.mock("axios");
 
-vi.unmock("../virtualmodel/VMD");
-vi.unmock("../virtualmodel/DataAccessor");
-
 describe("TableEnumView", () => {
   it("renders a table with the specified attributes", async () => {
-    const table = new Table("mock table name");
-    const column = new Column("type");
+    const table = new TableMock("mock table name");
+    const column = new ColumnMock("type");
 
     table.addColumn(column, "", false, "");
     column.setVisibility(true);
 
-    console.log(table.getEnumViewColumn());
-    console.log(column);
-
-    act(() => {
+    await act(async () => {
       render(
         <ConfigProvider>
           <MemoryRouter>
@@ -31,6 +25,6 @@ describe("TableEnumView", () => {
       );
     });
 
-    await expect(screen.getByText("type")).toBeInTheDocument();
+    expect(screen.getByText("type")).toBeInTheDocument();
   });
 });

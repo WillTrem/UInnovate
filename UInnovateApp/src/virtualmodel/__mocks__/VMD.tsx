@@ -75,19 +75,39 @@ export default {
     console.log("getViewRowsDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
-  Column: Column,
   TableDisplayType: TableDisplayType,
   View: View,
 };
 
-class TableMock extends Table {
+export class TableMock extends Table {
+  constructor(name: string) {
+    super(name);
+  }
   getColumns = vi.fn().mockImplementation(() => {
     console.log("getColumns in Table mock was called");
     return [
-      new Column("Column1"),
-      new Column("Column2"),
-      new Column("Column3"),
-      new Column("name"),
+      new ColumnMock("Column1"),
+      new ColumnMock("Column2"),
+      new ColumnMock("Column3"),
+      new ColumnMock("name"),
     ];
+  });
+  getEnumViewColumn = vi.fn().mockImplementation(() => {
+    console.log("getEnumViewColumn in Table mock was called");
+    return new ColumnMock("type");
+  });
+}
+
+export class ColumnMock extends Column {
+  constructor(name: string) {
+    super(name);
+  }
+  getVisibility = vi.fn().mockImplementation(() => {
+    console.log("getVisibility in Column mock was called");
+    return true;
+  });
+  setVisibility = vi.fn().mockImplementation(() => {
+    console.log("setVisibility in Column mock was called");
+    super.setVisibility(true);
   });
 }

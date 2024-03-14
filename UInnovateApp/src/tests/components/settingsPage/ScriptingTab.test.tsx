@@ -53,8 +53,6 @@ describe("ScriptingTab", () => {
       button.click();
     });
 
-    console.log(screen.debug(undefined, 20000));
-
     await waitFor(() => {
       expect(screen.getByText("Add New Script")).toBeInTheDocument();
       expect(screen.getByText("Column1")).toBeInTheDocument();
