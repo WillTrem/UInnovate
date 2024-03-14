@@ -596,6 +596,7 @@ const getFunctions = async () => {
     }
     else{
       console.error("No Primary Key Found");
+
     }
 
   }
@@ -1100,9 +1101,18 @@ const getFunctions = async () => {
               <TableCell>
                 <Button
                 size="large"
-                style={{ color: 'black',  }}
+                style={{ 
+                  color: 'black',
+                  position: 'absolute',
+                  right: '10px',
+                  transform: 'translateY(-50%)',
+                  zIndex: 1,
+                  backgroundColor:'transparent',
+                  minWidth: '35px'
+                  
+                }}
                 data-testid="delete-row-button"
-                onClick={(event) => {
+                onClick={(event) => {  
                   event.stopPropagation();
                   
                 DeleteRow(row);
@@ -1110,7 +1120,7 @@ const getFunctions = async () => {
                   
                 }}
                 >
-                  <IoIosTrash size ="1.4em"/>
+                  <IoIosTrash size ="1.5em"/>
                 </Button>
               </TableCell>
               
