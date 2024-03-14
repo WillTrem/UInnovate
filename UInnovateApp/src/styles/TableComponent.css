@@ -75,5 +75,12 @@ input {
 
 .table-container {
   margin-top: 1em;
-  margin-bottom:2em
+  margin-bottom: 2em;
+}
+
+.sticky-column-left{
+  position: sticky;
+  left:0;
+  background-color: white;
+  z-index: 2;
 }

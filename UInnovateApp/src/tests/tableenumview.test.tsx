@@ -2,7 +2,8 @@ import { render, screen, act } from "@testing-library/react";
 import { vi, expect } from "vitest";
 import TableEnumView from "../components/TableEnumView";
 import { MemoryRouter } from "react-router-dom";
-import { ConfigProvider } from "../contexts/ConfigContext";
+import store from "../redux/Store";
+import { Provider } from "react-redux";
 import { TableMock, ColumnMock } from "../virtualmodel/__mocks__/VMD";
 
 vi.mock("axios");
@@ -17,11 +18,11 @@ describe("TableEnumView", () => {
 
     await act(async () => {
       render(
-        <ConfigProvider>
+        <Provider store={store}>
           <MemoryRouter>
             <TableEnumView table={table} />
           </MemoryRouter>
-        </ConfigProvider>
+        </Provider>
       );
     });
 

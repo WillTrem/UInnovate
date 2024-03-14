@@ -31,14 +31,14 @@ const userDataSlice = createSlice({
 			}
 			state.users = newUserData;
 		},
-		saveUserDataToDB: (state: UserDataState) => {
-			const updateUserDataFA = vmd.getFunctionAccessor('meta', 'update_user_data');
-			updateUserDataFA.setBody(state);
-			updateUserDataFA.executeFunction();
-		}
+		// saveUserDataToDB: (state: UserDataState, action: PayloadAction<UserData>) => {
+		// 	const updateUserDataFA = vmd.getFunctionAccessor('meta', 'update_user_data');
+		// 	updateUserDataFA.setBody({user: action.payload});
+		// 	updateUserDataFA.executeFunction();
+		// }
 	},
 });
 
-export const { setUserData, updateUserData, saveUserDataToDB } = userDataSlice.actions;
+export const { setUserData, updateUserData} = userDataSlice.actions;
 
 export default userDataSlice.reducer;

@@ -305,3 +305,20 @@ GRANT ALL ON app_rentals.unit_recalibration_flag TO "user";
 GRANT ALL ON app_rentals.unit_recalibration_schedule_type TO "user";
 GRANT ALL ON app_rentals.unit_recalibration_schedule TO "user";
 GRANT ALL ON app_rentals.unit_calibration_certificate TO "user";
+
+--sequence permission granting
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.tool_type_type_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.tool_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_unit_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.company_company_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.contact_contact_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.quotation_quotation_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.purchase_order_purchase_order_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.availability_status_availability_status_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_scheduler_unit_scheduled_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.tool_restock_request_tool_restock_request_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_recalibration_status_unit_recalibration_status_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_recalibration_flag_unit_recalibration_flag_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_recalibration_schedule_type_unit_recalibration_schedule_type_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_recalibration_schedule_unit_recalibration_schedule_id_seq TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.unit_calibration_certificate_unit_calibration_certificate_id_seq TO "user";

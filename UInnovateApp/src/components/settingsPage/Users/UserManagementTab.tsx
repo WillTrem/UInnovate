@@ -1,20 +1,22 @@
 import { Tab, Tabs } from "react-bootstrap";
-import { Button, FormControl, Select, Switch, MenuItem, Chip, Stack } from "@mui/material"
+import { Button, Switch } from "@mui/material"
 import TableComponent from "react-bootstrap/Table";
-import "../../styles/TableComponent.css";
-import "../../styles/UserManagementTab.css";
-import vmd, { UserData } from "../../virtualmodel/VMD";
+import "../../../styles/TableComponent.css";
+import "../../../styles/UserManagementTab.css";
+import vmd, { UserData } from "../../../virtualmodel/VMD";
 import React, { useEffect, useState } from "react";
 import AddUserModal from "./AddUserModal";
-import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
+import { DataAccessor, Row } from "../../../virtualmodel/DataAccessor";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "../../redux/Store";
-import { Role, updateSchemaAccess } from "../../redux/AuthSlice";
-import UnauthorizedScreen from "../UnauthorizedScreen";
-import MultiSelect from "./MultiSelect";
-import  { setUserData, updateUserData } from "../../redux/UserDataSlice";
+import { RootState } from "../../../redux/Store";
+import { Role, updateSchemaAccess } from "../../../redux/AuthSlice";
+import UnauthorizedScreen from "../../UnauthorizedScreen";
+import MultiSelect from "../MultiSelect";
+import  { setUserData, updateUserData } from "../../../redux/UserDataSlice";
 
 import {isEqual} from 'lodash';
+import RolesTab from "./RolesTab";
+import { saveUserDataToDB } from "../../../helper/SettingsHelpers";
 
 
 // Component containing the Users Management tab of the Settings page
@@ -22,11 +24,11 @@ const UserManagementTab = () => {
 	const [isModalOpen, setModalOpen] = useState(false);
 	const [users, setUsers] = useState<Row[]>([]);
 
-	const role = useSelector((state: RootState) => state.auth.role);
+	const dbRole = useSelector((state: RootState) => state.auth.dbRole);
 	const dispatch = useDispatch();
 
 	// Hides the menu for non-admin roles (except for anonymous)
-	if (!(role === Role.ADMIN || role === null)) {
+	if (!(dbRole === Role.ADMIN || dbRole === null)) {
 		return <UnauthorizedScreen />
 	}
 
@@ -68,7 +70,6 @@ const UserManagementTab = () => {
 									<th>Email Address</th>
 									<th>First Name</th>
 									<th>Last Name</th>
-									<th>Role</th>
 									<th>Active</th>
 									<th>Schema Access</th>
 								</tr>
@@ -80,7 +81,6 @@ const UserManagementTab = () => {
 											firstName={user["first_name"] as string}
 											lastName={user["last_name"] as string}
 											emailAddress={user["email"] as string}
-											role={user["role"] as string}
 											active={user["is_active"] as boolean}
 											schemaAccess={user["schema_access"]} />
 									}
@@ -91,8 +91,8 @@ const UserManagementTab = () => {
 						</TableComponent>
 					</div>
 				</Tab>
-				<Tab eventKey="roles" title="Roles" disabled>
-
+				<Tab eventKey="roles" title="Roles">
+					<RolesTab/>
 				</Tab>
 
 			</Tabs>
@@ -106,27 +106,28 @@ interface UserTableRowProps {
 	firstName?: string,
 	lastName?: string,
 	emailAddress: string,
-	role: string,
 	active: boolean,
 	schemaAccess: string[]
 }
-const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, role, active, schemaAccess }) => {
-	const [userData, setUserData] = useState<UserData>({first_name: firstName, last_name: lastName, email: emailAddress, role, is_active: active, schema_access: schemaAccess})
+const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailAddress, active, schemaAccess }) => {
+	const [userData, setUserData] = useState<UserData>({first_name: firstName, last_name: lastName, email: emailAddress, is_active: active, schema_access: schemaAccess})
 	const [schemaAccessList, setSchemaAccessList] = useState(schemaAccess);
 	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const dispatch = useDispatch();
 	const {user: current_user, schema_access} = useSelector((state: RootState) => state.auth)
 
+	function handleSchemaAccessListUpdate(newSchemaAccessList: string[]){
+		setSchemaAccessList(newSchemaAccessList);
+		const newUserData = {...userData, schema_access: newSchemaAccessList}
+		setUserData(newUserData);
+		saveUserDataToDB(newUserData);
+	}
+	
 	function handleActiveToggle(event: React.ChangeEvent<HTMLInputElement>, checked: boolean ) {
-		// TODO: Implement the active toggle function
-		setUserData({...userData, is_active: checked});
-		console.log(checked)
+		const newUserData = {...userData, is_active: checked}
+		setUserData(newUserData);
+		saveUserDataToDB(newUserData);
 	};
-
-	// Updates the local user data state 
-	useEffect(() => {
-		setUserData({...userData, schema_access: schemaAccessList});
-	}, [schemaAccessList])
 
 	// Updates the global user data state with new user data 
 	useEffect(() => {
@@ -142,12 +143,11 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 		<td>{emailAddress}</td>
 		<td>{firstName || "-"}</td>
 		<td>{lastName || "-"}</td>
-		<td>{role}</td>
 		<td>
 			<Switch defaultChecked={active} onChange={handleActiveToggle} data-testid="visibility-switch" />
 		</td>
 		<td>
-			<MultiSelect selectedList={schemaAccessList} setSelectedList={setSchemaAccessList} choiceList={schemaNames} size="small" sx={{
+			<MultiSelect selectedList={schemaAccessList} setSelectedList={handleSchemaAccessListUpdate} choiceList={schemaNames} size="small" sx={{
 				'& .MuiSelect-select': {}, minWidth: 400, maxWidth: 400
 			}} />
 		</td>

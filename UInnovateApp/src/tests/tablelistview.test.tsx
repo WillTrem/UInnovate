@@ -9,8 +9,9 @@ import {
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { ColumnMock, TableMock } from "../virtualmodel/__mocks__/VMD";
-import { ConfigProvider } from "../contexts/ConfigContext";
 import "@testing-library/jest-dom";
+import store from "../redux/Store";
+import { Provider } from "react-redux";
 
 vi.mock("axios");
 
@@ -35,11 +36,11 @@ describe("TableListView component", () => {
   });
 
   render(
-    <ConfigProvider>
-      <MemoryRouter>
+    <MemoryRouter>
+      <Provider store={store}>
         <TableListView table={table} />
-      </MemoryRouter>
-    </ConfigProvider>
+      </Provider>
+    </MemoryRouter>
   );
 
   console.log(screen.debug(undefined, 20000));
@@ -51,7 +52,11 @@ describe("TableListView component", () => {
 
     it("opens and closes the sliding panel", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -64,7 +69,11 @@ describe("TableListView component", () => {
       expect(screen.getByText("Details")).toBeInTheDocument();
     });
     it("renders the Show Look up Table button when showTable is false", () => {
-      const { getByText } = render(<TableListView table={table} />);
+      const { getByText } = render(
+        <Provider store={store}>
+          <TableListView table={table} />
+        </Provider>
+      );
 
       expect(getByText("Show Look up Table")).toBeInTheDocument();
     });
@@ -82,11 +91,11 @@ describe("TableListView component", () => {
 
   it("renders the Show Files button", async () => {
     render(
-      <ConfigProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Check for row existence by getting them by title
@@ -114,11 +123,11 @@ describe("TableListView component", () => {
 
   it("Render Reset Filter button", async () => {
     render(
-      <ConfigProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
 
     const resetFiltersButton = screen.getByTestId("reset-filter-button");
@@ -132,11 +141,11 @@ describe("TableListView component", () => {
 
   it("render the filter button and simulate a click events", async () => {
     render(
-      <ConfigProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Wait for the button to be in the document
@@ -175,11 +184,11 @@ describe("TableListView component", () => {
 
   it("table UI is rendered", async () => {
     render(
-      <ConfigProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
 
     const renderedTable = screen.getByTestId("table");
@@ -188,11 +197,11 @@ describe("TableListView component", () => {
 
   it("Verify functionality of Shows file button", async () => {
     render(
-      <ConfigProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
@@ -217,11 +226,11 @@ describe("TableListView component", () => {
 
   it("Verify functionality of Shows file button", async () => {
     render(
-      <ConfigProvider>
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
-      </ConfigProvider>
+        </Provider>
+      </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
@@ -244,7 +253,11 @@ describe("TableListView component", () => {
     expect(uploadPop[0]).not.toBeInTheDocument();
     it("renders the date time picker", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -261,7 +274,11 @@ describe("TableListView component", () => {
 
     it("renders the date picker", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -278,7 +295,11 @@ describe("TableListView component", () => {
 
     it("renders the category selector", () => {
       // Render the component
-      render(<TableListView table={table} /* props */ />);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();

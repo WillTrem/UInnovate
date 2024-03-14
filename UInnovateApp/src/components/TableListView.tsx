@@ -1,20 +1,23 @@
 import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
+import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
 import { ConfigProperty } from "../virtualmodel/ConfigProperties";
 import StarterKit from "@tiptap/starter-kit";
-import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
+import Logger from "../virtualmodel/Logger";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/Store";
+import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import { IoIosArrowUp } from "react-icons/io";
-
 import {
   Switch,
   Button,
@@ -24,6 +27,8 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
+  createTheme,
+  ThemeProvider,
   Menu,
   Checkbox,
 } from "@mui/material";
@@ -32,6 +37,8 @@ import Pagination from "@mui/material/Pagination";
 import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
 import {
+  DatePicker,
+  DateTimePicker,
   LocalizationProvider,
   StaticDateTimePicker,
 } from "@mui/x-date-pickers";
@@ -50,6 +57,7 @@ import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
+import FunctionLoadPopup from "./FunctionLoadPopup";
 import { useNavigate } from "react-router-dom";
 import {
   Table as MUITable,
@@ -71,6 +79,18 @@ const buttonStyle = {
   width: "fit-content",
 };
 
+const theme = createTheme({
+  components: {
+    MuiPickersPopper: {
+      styleOverrides: {
+        root: {
+          zIndex: 19000,
+        },
+      },
+    },
+  },
+});
+
 const TableListView: React.FC<TableListViewProps> = ({
   table,
 }: {
@@ -83,6 +103,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
   const [isScriptPopupVisible, setIsScriptPopupVisible] =
     useState<boolean>(false);
+  const [isFunctionPopupVisible, setIsFunctionPopupVisible] =
+    useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
   const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
     null
@@ -94,8 +116,14 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
   const [showFiles, setShowFiles] = useState<boolean>(false);
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
+  const [functions, setFunctions] = useState<Row[] | undefined>([]);
+
   const [scriptDescription, setScriptDescription] = useState<string | null>("");
+  const [functionDescription, setFunctionDescription] = useState<string | null>("");
+
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
+  const [selectedFunction, setSelectedFunction] = useState<Row | null>(null);
+
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
@@ -104,6 +132,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     useState<(column: Column) => JSX.Element>();
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
+  const function_table = vmd.getTable("meta", "function_map");
+
   const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
@@ -221,7 +251,23 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     setScripts(filteredScripts);
   };
+const getFunctions = async () => {
+  if (!meta_schema || !function_table) {
+    throw new Error("Schema or table not found");
+  }
 
+  const functions_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+    meta_schema?.schema_name,
+    function_table?.table_name
+  );
+
+  const functions_rows = await functions_data_accessor?.fetchRows();
+  const filteredFunctions = functions_rows?.filter(
+    (func) => func.table_name === table.table_name
+  );
+
+  setFunctions(filteredFunctions);
+};
   const handleScriptHover = async (description: string) => {
     setScriptDescription(description);
   };
@@ -229,16 +275,31 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleScriptHoverExit = () => {
     setScriptDescription(null);
   };
+  const handleFunctionHover = async (description: string) => {
+    setFunctionDescription(description);
+  };
+
+  const handleFunctionHoverExit = () => {
+    setFunctionDescription(null);
+  };
 
   const handleConfirmForm = () => {
     setIsScriptPopupVisible(true);
   };
-
+  const handleFunctionConfirmForm = () => {
+    setIsFunctionPopupVisible(true);
+  };
   useEffect(() => {
     if (selectedScript) {
       handleConfirmForm();
     }
   }, [selectedScript]);
+
+  useEffect(() => {
+    if (selectedFunction) {
+      handleFunctionConfirmForm();
+    }
+  }, [selectedFunction]);
 
   const getConfigs = async () => {
     if (!meta_schema || !config_table) {
@@ -258,6 +319,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   useEffect(() => {
     getScripts();
     getConfigs();
+    getFunctions();
     getFileGroupsView();
   }, [inputValues]);
 
@@ -423,6 +485,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }));
   };
 
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -431,6 +494,15 @@ const TableListView: React.FC<TableListViewProps> = ({
       console.error("Schema not found");
       return;
     }
+
+    Logger.logUserAction(
+      loggedInUser || "",
+      "Edited Row",
+      //i want the edited value in the details
+      "User has modified a row in the table: " + JSON.stringify(inputValues),
+      schema?.schema_name || "",
+      table.table_name
+    );
 
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
@@ -517,7 +589,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       );
     }
 
-    if (column.references_table != null) {
+    if (column.references_table != null ) {
       const string = column.column_name + "L";
       localStorage.setItem(
         string,
@@ -566,7 +638,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       }
 
       if (column.references_table != null) {
-        const string = column.column_name + "L";
+        const string = column.column_name + "LL";
         localStorage.setItem(
           string,
           currentRow.row[column.column_name] as string
@@ -623,29 +695,33 @@ const TableListView: React.FC<TableListViewProps> = ({
       } else if (columnDisplayType.value == "date") {
         return (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticDatePicker
-              value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) =>
-                handleInputChange(date, column.column_name, "date")
-              }
-              name={column.column_name}
-              className="date-time-picker"
-              readOnly={column.is_editable === false ? true : false}
-            />
+            <ThemeProvider theme={theme}>
+              <DatePicker
+                value={dayjs(currentRow.row[column.column_name])}
+                onChange={(date) =>
+                  handleInputChange(date, column.column_name, "date")
+                }
+                name={column.column_name}
+                className="date-time-picker"
+                readOnly={column.is_editable === false ? true : false}
+              />
+            </ThemeProvider>
           </LocalizationProvider>
         );
       } else if (columnDisplayType.value == "datetime") {
         return (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StaticDateTimePicker
-              value={dayjs(currentRow.row[column.column_name])}
-              onChange={(date) =>
-                handleInputChange(date, column.column_name, "date")
-              }
-              name={column.column_name}
-              className="date-time-picker"
-              readOnly={column.is_editable === false ? true : false}
-            />
+            <ThemeProvider theme={theme}>
+              <DateTimePicker
+                value={dayjs(currentRow.row[column.column_name])}
+                onChange={(date) =>
+                  handleInputChange(date, column.column_name, "date")
+                }
+                name={column.column_name}
+                className="date-time-picker"
+                readOnly={column.is_editable === false ? true : false}
+              />
+            </ThemeProvider>
           </LocalizationProvider>
         );
       } else if (columnDisplayType.value == "categories") {
@@ -845,7 +921,41 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-
+        <div className="d-flex flex-column">
+          {(functions || []).length > 0 && <h6>Functions</h6>}
+          {functions?.map((func) => {
+            return (
+              <Tooltip
+                key={func["id"]}
+                title={func["description"]}
+                open={functionDescription === func["description"]}
+                placement="right"
+              >
+                <Button
+                  key={func["id"]}
+                  style={buttonStyle}
+                  variant="contained"
+                  onClick={() => {
+                    setSelectedFunction(func);
+                  }}
+                  onMouseEnter={() => handleFunctionHover(func["description"])}
+                  onMouseLeave={handleFunctionHoverExit}
+                >
+                  {func["btn_name"]}
+                </Button>
+              </Tooltip>
+            );
+          })}
+          {isFunctionPopupVisible && selectedFunction && (
+            <FunctionLoadPopup
+              onClose={() => {
+                setIsFunctionPopupVisible(false);
+                setSelectedFunction(null);
+              }}
+              function={selectedFunction}
+            />
+          )}
+        </div>
       </div>
       <Button
         style={{
@@ -1008,41 +1118,67 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          {table.stand_alone_details_view ? <NavBar /> : <div></div>}
-          <div className="form-panel-container">
-            <Typography variant="h5">Details</Typography>
-            <form>
-              <div className={tableStyle}>
-                {columns.map((column, colIdx) => {
-                  return (
-                    <div key={colIdx} className="row-details">
-                      <label key={column.column_name + colIdx}>
-                        {column.column_name}
-                      </label>
-                      {column.references_table == "filegroup" ? (
-                        <FileInputField {...column} />
-                      ) : (
-                        inputField(column)
-                      )}
-                    </div>
-                  );
-                })}
+          <div>
+            {table.stand_alone_details_view ? <NavBar /> : <div></div>}
+            <div className="form-panel-container">
+              <Typography variant="h5">Details</Typography>
+              <form>
+                <div className={tableStyle}>
+                  {columns.map((column, colIdx) => {
+                    return (
+                      <div key={colIdx} className="row-details">
+                        <label key={column.column_name + colIdx}>
+                          {column.column_name}
+                        </label>
+                        {column.references_table == "filegroup" ? (
+                          <FileInputField {...column} />
+                        ) : (
+                          inputField(column)
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </form>
+              <div>
+                <Button
+                  variant="contained"
+                  style={buttonStyle}
+                  onClick={() => {
+                    setCurrentPhone("");
+                    setCurrentCategory("");
+                    setCurrentWYSIWYG("");
+                    setInputValues({});
+                    setOpenPanel(false);
+                  }}
+                >
+                  close
+                </Button>
+                <Button
+                  variant="contained"
+                  style={{
+                    marginTop: 20,
+                    backgroundColor: "#403eb5",
+                    width: "fit-content",
+                    marginLeft: 10,
+                  }}
+                  onClick={handleFormSubmit}
+                >
+                  Save
+                </Button>
               </div>
-            </form>
-            <div>
-              <Button
-                variant="contained"
-                style={buttonStyle}
-                onClick={() => {
-                  setCurrentPhone("");
-                  setCurrentCategory("");
-                  setCurrentWYSIWYG("");
-                  setInputValues({});
-                  setOpenPanel(false);
-                }}
-              >
-                close
-              </Button>
+            </div>
+          </div>
+          <div style={{ paddingBottom: "2em", paddingLeft:'1.5em'}}>
+            {table.lookup_tables == "null" ? (
+              <div></div>
+            ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
+              <div></div>
+            ) : showTable ? (
+              <div style={{ paddingBottom: "2em" }}>
+                <LookUpTableDetails table={table} />
+              </div>
+            ) : (
               <Button
                 variant="contained"
                 style={{
@@ -1051,32 +1187,12 @@ const TableListView: React.FC<TableListViewProps> = ({
                   width: "fit-content",
                   marginLeft: 10,
                 }}
-                onClick={(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => handleFormSubmit(event)}
+                onClick={() => setShowTable(true)}
               >
-                Save
+                Show Look Up Table
               </Button>
-            </div>
+            )}
           </div>
-        </div>
-        <div style={{ paddingBottom: "2em" }}>
-          {table.lookup_tables == "null" ? (
-            <div></div>
-          ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
-            <div></div>
-          ) : showTable ? (
-            <div style={{ paddingBottom: "2em" }}>
-              <LookUpTableDetails table={table} />
-            </div>
-          ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginLeft: 15 }}
-              onClick={() => setShowTable(true)}
-            >
-              Show Look Up Table
-            </Button>
-          )}
         </div>
       </SlidingPanel>
     </div>
