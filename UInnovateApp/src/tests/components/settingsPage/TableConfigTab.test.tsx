@@ -16,7 +16,7 @@ vi.mock("../../../contexts/ConfigContext", () => ({
 }));
 
 describe("TableItem component", () => {
-  const table = new VMD.Table("Mock Table");
+  const table = new VMD.getTable("Mock Table");
 
   it("renders the component", () => {
     render(

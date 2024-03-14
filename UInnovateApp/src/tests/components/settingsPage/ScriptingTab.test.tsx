@@ -1,15 +1,6 @@
-import {
-  cleanup,
-  render,
-  screen,
-  waitFor,
-  act,
-  within,
-} from "@testing-library/react";
+import { render, screen, waitFor, act } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import { ScriptingTab } from "../../../components/settingsPage/ScriptingTab";
-import { ScriptEditor } from "../../../components/settingsPage/ScriptEditor";
-import { Row } from "../../../virtualmodel/DataAccessor";
 
 vi.unmock("../../virtualmodel/VMD");
 vi.unmock("../../../virtualmodel/DataAccessor");
@@ -62,12 +53,15 @@ describe("ScriptingTab", () => {
       button.click();
     });
 
+    console.log(screen.debug(undefined, 20000));
+
     await waitFor(() => {
       expect(screen.getByText("Add New Script")).toBeInTheDocument();
       expect(screen.getByText("Column1")).toBeInTheDocument();
       expect(screen.getByText("Column2")).toBeInTheDocument();
       expect(screen.getByText("Column3")).toBeInTheDocument();
-      expect(screen.getByText("name")).toBeInTheDocument();
+      expect(screen.getByText("Close")).toBeInTheDocument();
+      expect(screen.getByText("Add Script")).toBeInTheDocument();
     });
   });
 });

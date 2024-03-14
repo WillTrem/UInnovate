@@ -6,7 +6,7 @@ import VMD from "../../../virtualmodel/__mocks__/VMD";
 
 describe("ColumnConfig component", () => {
   const column = new VMD.Column("Column1");
-  const table = new VMD.Table("Table1");
+  const table = new VMD.getTable("Table1");
   table.addColumn(column, "", false, "");
 
   it("renders the component", () => {

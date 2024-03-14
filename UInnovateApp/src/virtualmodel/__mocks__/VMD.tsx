@@ -25,8 +25,8 @@ export default {
     console.log("getSchema in VMD mock was called");
     const mockSchema = new Schema("mock schema name");
     mockSchema.tables = [
-      new Table("mock table name"),
-      new Table("mock table name 2"),
+      new TableMock("mock table name"),
+      new TableMock("mock table name 2"),
     ];
     return mockSchema;
   }),
@@ -46,18 +46,26 @@ export default {
   }),
   getTable: vi.fn().mockImplementation(() => {
     console.log("getTable in VMD mock was called");
-    return new Table("mock table name");
+    return new TableMock("mock table name");
   }),
   getTables: vi.fn().mockImplementation(() => {
     console.log("getTables in VMD mock was called");
-    return [new Table("mock1"), new Table("mock2"), new Table("mock3")];
+    return [
+      new TableMock("mock1"),
+      new TableMock("mock2"),
+      new TableMock("mock3"),
+    ];
   }),
   getTableSchema: vi.fn().mockImplementation(() => {
     console.log("getTableSchema in VMD mock was called");
     return new Schema("mock schema name");
   }),
   getAllTables: vi.fn().mockImplementation(() => {
-    return [new Table("mock1"), new Table("mock2"), new Table("mock3")];
+    return [
+      new TableMock("mock1"),
+      new TableMock("mock2"),
+      new TableMock("mock3"),
+    ];
   }),
   getFunctionAccessor: vi.fn().mockImplementation(() => {
     console.log("getFunctionAccessor in VMD mock was called");
@@ -67,18 +75,19 @@ export default {
     console.log("getViewRowsDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
-  Table: class extends Table {
-    getColumns = vi.fn().mockImplementation(() => {
-      console.log("getColumns in Table mock was called");
-      return [
-        new Column("Column1"),
-        new Column("Column2"),
-        new Column("Column3"),
-        new Column("name"),
-      ];
-    });
-  },
   Column: Column,
   TableDisplayType: TableDisplayType,
   View: View,
 };
+
+class TableMock extends Table {
+  getColumns = vi.fn().mockImplementation(() => {
+    console.log("getColumns in Table mock was called");
+    return [
+      new Column("Column1"),
+      new Column("Column2"),
+      new Column("Column3"),
+      new Column("name"),
+    ];
+  });
+}
