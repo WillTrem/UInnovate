@@ -35,16 +35,17 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 -- Creating the columns view
 CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","referenced_table", "referenced_by" ) AS 
 (
-  (
-   SELECT DISTINCT ON (c.table_schema, c.table_name, c.column_name)
+  
+   (
+    SELECT DISTINCT ON (c.table_schema, c.table_name, c.column_name)
     c.table_schema, 
     c.table_name, 
     c.column_name,  
-    rc.referenced_table,
-    rc.referenced_column AS references_by, 
+    STRING_AGG(DISTINCT rc.referenced_table::text, ', '),
+    STRING_AGG(DISTINCT rc.referenced_column::text, ', ') AS references_by, 
     CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable,
-    ref.referee_table AS referenced_table, 
-    ref.referee_column AS referenced_by
+    STRING_AGG(DISTINCT ref.referee_table::text, ', '), 
+    STRING_AGG(DISTINCT ref.referee_column::text, ', ') AS referenced_by
 FROM information_schema.columns AS c
 LEFT JOIN 
 (
@@ -101,6 +102,7 @@ WHERE c.table_name IN
 (
     SELECT "table" FROM meta.tables
 )
+GROUP BY c.table_schema, c.table_name, c.column_name, pk.table_pkey
 ORDER BY c.table_schema, c.table_name, c.column_name
 )
 );

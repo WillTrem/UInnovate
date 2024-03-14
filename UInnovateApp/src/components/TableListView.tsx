@@ -32,7 +32,8 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
+import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
+import DeleteRowFunction from "./TableListViewComponents/DeleteRowFunction";
 import { Container } from "react-bootstrap";
 import {
   DatePicker,
@@ -565,41 +566,7 @@ const getFunctions = async () => {
   };
   //End of Filter Function
 
-  const DeleteRow =  async(row: Row) => {
-    let column_name: string | undefined;
-    let column_value: string | undefined;
-      table.columns.forEach((column) => {
-        if (column.is_editable === false) {
-         // Check if the row contains the key
-          column_name = column.column_name as string
-          column_value = row.row?.[column.column_name] as string;
-        }
-      });
-      const schema = vmd.getTableSchema(table.table_name);
-      if (!schema) {
-        console.error("Schema not found");
-        return;
-      }
-      console.log(schema.schema_name)
-      if( column_name && column_value){
-      const data_accessor_delete: DataAccessor = vmd.getRemoveRowAccessor(
-        schema.schema_name,
-        table.table_name,
-        column_name,
-        column_value
-      );
-
-      data_accessor_delete.deleteRow().then((res) => {
-        getRows();
-      });
-      console.log(data_accessor_delete)
-    }
-    else{
-      console.error("No Primary Key Found");
-
-    }
-
-  }
+  
     // Object.entries(row.row).map(([key, value]) => {
 
 
@@ -1115,7 +1082,8 @@ const getFunctions = async () => {
                 onClick={(event) => {  
                   event.stopPropagation();
                   
-                DeleteRow(row);
+                  DeleteRowFunction({ table, row });
+                  getRows();
 
                   
                 }}

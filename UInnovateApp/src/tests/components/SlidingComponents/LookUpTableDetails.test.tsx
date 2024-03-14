@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { describe, expect } from "vitest";
-import LookUpTableDetails from '../../../components/SlidingComponents/LookUpTableDetails';
+import LookUpTableDetails from '../../../components/TableListViewComponents/LookUpTableDetails';
 
 // Mocking the vmd module
 import Table from "react-bootstrap/Table"; // Replace 'path/to/Table' with the actual path to the Table type
