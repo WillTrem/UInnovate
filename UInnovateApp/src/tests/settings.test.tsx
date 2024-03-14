@@ -15,12 +15,35 @@ describe("Settings.tsx", () => {
   const initialState = {
     schema: { schema_name: "application" },
     script_table: { table_name: "script_mock" },
-    auth: { dbRole: Role.ADMIN, schemaRoles: {}, user: "admin", token: "token", schema_access: ['mock schema name'] },
+    auth: {
+      dbRole: Role.ADMIN,
+      schemaRoles: {},
+      user: "admin",
+      token: "token",
+      schema_access: ["mock schema name"],
+    },
     userData: {
-      users: [{ email: "mockuser123@test.com", role: "user", schema_access: ["mock schema name"], schemaRoles: {} },
-      { email: "mockAdmin@test.com", role: "administrator", schema_access: ["mock schema name"], schemaRoles: {} },
-      { email: "mockConfigurator@test.com", role: "configurator", schema_access: ["mock schema name"], schemaRoles: {} }]
-    }
+      users: [
+        {
+          email: "mockuser123@test.com",
+          role: "user",
+          schema_access: ["mock schema name"],
+          schemaRoles: {},
+        },
+        {
+          email: "mockAdmin@test.com",
+          role: "administrator",
+          schema_access: ["mock schema name"],
+          schemaRoles: {},
+        },
+        {
+          email: "mockConfigurator@test.com",
+          role: "configurator",
+          schema_access: ["mock schema name"],
+          schemaRoles: {},
+        },
+      ],
+    },
   };
   const middlewares: Middleware[] = [];
   const mockStore = configureStore(middlewares);
@@ -30,9 +53,9 @@ describe("Settings.tsx", () => {
     store = mockStore(initialState);
     const testRenderer = TestRenderer.create(
       <MemoryRouter>
-          <Provider store={store}>
-            <Settings />
-          </Provider>
+        <Provider store={store}>
+          <Settings />
+        </Provider>
       </MemoryRouter>
     );
 
