@@ -33,15 +33,18 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
 
 
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable") AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","referenced_table", "referenced_by" ) AS 
 (
+  (
    SELECT DISTINCT ON (c.table_schema, c.table_name, c.column_name)
     c.table_schema, 
     c.table_name, 
     c.column_name,  
     rc.referenced_table,
-    rc.referenced_column AS references_by, -- Added this line
-    CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable
+    rc.referenced_column AS references_by, 
+    CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable,
+    ref.referee_table AS referenced_table, 
+    ref.referee_column AS referenced_by
 FROM information_schema.columns AS c
 LEFT JOIN 
 (
@@ -61,8 +64,7 @@ LEFT JOIN
     ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
     WHERE contype = 'f'
 ) AS rc
-ON c.column_name = rc.referee_column AND c.table_name != rc.referenced_table
--- New LEFT JOIN for primary key references
+ON c.column_name = rc.referee_column AND c.table_name = rc.referee_table
 LEFT JOIN 
 (
     SELECT 
@@ -76,12 +78,31 @@ LEFT JOIN
     WHERE contype = 'p'
 ) AS pk
 ON c.table_name = pk.table_name
-
+LEFT JOIN 
+(
+    SELECT DISTINCT ON (cl.relname, att.attname)
+        cl.relname as referee_table,  
+        att.attname as referee_column, 
+        cl2.relname as referenced_table, 
+        att2.attname as referenced_column 
+    FROM pg_catalog.pg_constraint as co
+    LEFT JOIN pg_catalog.pg_class as cl
+    ON co.conrelid = cl.oid
+    LEFT JOIN pg_catalog.pg_class as cl2
+    ON co.confrelid = cl2.oid
+    LEFT JOIN pg_catalog.pg_attribute as att
+    ON cl.oid = att.attrelid AND ARRAY[att.attnum] = co.conkey
+    LEFT JOIN pg_catalog.pg_attribute as att2
+    ON cl2.oid = att2.attrelid AND ARRAY[att2.attnum] = co.confkey
+    WHERE contype = 'f'
+) AS ref
+ON c.table_name = ref.referenced_table AND c.column_name = ref.referenced_column
 WHERE c.table_name IN 
 (
     SELECT "table" FROM meta.tables
 )
 ORDER BY c.table_schema, c.table_name, c.column_name
+)
 );
 
 

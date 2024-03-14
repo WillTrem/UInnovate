@@ -190,7 +190,9 @@ class VirtualModelDefinition {
           new Column(data.column),
           data.references_table,
           data.is_editable,
-          data.references_by
+          data.references_by,
+          data.referenced_table,
+          data.referenced_by
         );
       });
 
@@ -721,11 +723,15 @@ export class Table {
     column: Column,
     references_table: string,
     is_editable: boolean,
-    references_by: string
+    references_by: string,
+    referenced_table: string,
+    referenced_by: string
   ) {
     column.setReferenceTable(references_table);
     column.setEditability(is_editable);
     column.setReferencesBy(references_by);
+    column.setReferencedTable(referenced_table);
+    column.setReferencedBy(referenced_by);
 
     this.columns.push(column);
   }
@@ -865,6 +871,8 @@ export class Column {
   references_table: string;
   is_editable: boolean;
   references_by: string;
+  referenced_table: string;
+  referenced_by:string;
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -874,6 +882,8 @@ export class Column {
     this.references_table = "";
     this.is_editable = false;
     this.references_by = "";
+    this.referenced_table = "";
+    this.referenced_by = "";
   }
 
   // Method to set the column type
@@ -923,6 +933,24 @@ export class Column {
   getReferencesBy() {
     return this.references_by;
   }
+
+  // Method to set the column's referenced table
+  // return type : void
+  setReferencedTable(referenced_table: string) {
+    this.referenced_table = referenced_table;
+  }
+
+  // Method to get the column's referenced table
+  // return type : string
+  getReferencedTable() {
+    return this.referenced_table;
+  }
+
+  // Method to set the column's referenced by
+  // return type : void
+  setReferencedBy(referenced_by: string) {
+    this.referenced_by = referenced_by;
+  }
 }
 
 export class View {
@@ -948,6 +976,8 @@ interface ColumnData {
   references_table: string;
   is_editable: boolean;
   references_by: string;
+  referenced_table: string;
+  referenced_by: string;
 }
 // Defining ViewData interface for type checking when calling /views with the API
 interface ViewData {
