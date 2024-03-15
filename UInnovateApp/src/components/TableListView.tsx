@@ -14,8 +14,6 @@ import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Box from "@mui/material/Box";
 import { IoIosArrowUp } from "react-icons/io";
-import { IoIosTrash } from "react-icons/io";
-
 import {
   Switch,
   Button,
@@ -33,7 +31,6 @@ import {
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
 import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
-import DeleteRowFunction from "./TableListViewComponents/DeleteRowFunction";
 import { Container } from "react-bootstrap";
 import {
   DatePicker,
@@ -67,7 +64,8 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
-import { Delete, Store } from "@mui/icons-material";
+
+import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 
 interface TableListViewProps {
   table: Table;
@@ -159,7 +157,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     return initialCheckedState;
   });
 
-
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
     const schemas = vmd.getTableSchema(table.table_name);
@@ -250,23 +247,23 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     setScripts(filteredScripts);
   };
-const getFunctions = async () => {
-  if (!meta_schema || !function_table) {
-    throw new Error("Schema or table not found");
-  }
+  const getFunctions = async () => {
+    if (!meta_schema || !function_table) {
+      throw new Error("Schema or table not found");
+    }
 
-  const functions_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-    meta_schema?.schema_name,
-    function_table?.table_name
-  );
+    const functions_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+      meta_schema?.schema_name,
+      function_table?.table_name
+    );
 
-  const functions_rows = await functions_data_accessor?.fetchRows();
-  const filteredFunctions = functions_rows?.filter(
-    (func) => func.table_name === table.table_name
-  );
+    const functions_rows = await functions_data_accessor?.fetchRows();
+    const filteredFunctions = functions_rows?.filter(
+      (func) => func.table_name === table.table_name
+    );
 
-  setFunctions(filteredFunctions);
-};
+    setFunctions(filteredFunctions);
+  };
   const handleScriptHover = async (description: string) => {
     setScriptDescription(description);
   };
@@ -566,8 +563,8 @@ const getFunctions = async () => {
   };
   //End of Filter Function
 
-  
-    // Object.entries(row.row).map(([key, value]) => {
+
+  // Object.entries(row.row).map(([key, value]) => {
 
 
   const FileInputField = (column: Column) => {
@@ -582,7 +579,7 @@ const getFunctions = async () => {
       );
     }
 
-    if (column.references_table != null ) {
+    if (column.references_table != null) {
       const string = column.column_name + "L";
       localStorage.setItem(
         string,
@@ -965,7 +962,7 @@ const getFunctions = async () => {
         data-testid="reset-filter-button">
         Reset Filters</Button>
 
-        
+
       <TableContainer>
         <MUITable
           className="table-container"
@@ -1065,37 +1062,14 @@ const getFunctions = async () => {
                     </Box>
                   </TableCell>
                 ))}
-              <TableCell>
-                <Button
-                size="large"
-                style={{ 
-                  color: 'black',
-                  position: 'absolute',
-                  right: '10px',
-                  transform: 'translateY(-50%)',
-                  zIndex: 1,
-                  backgroundColor:'transparent',
-                  minWidth: '35px'
-                  
-                }}
-                data-testid="delete-row-button"
-                onClick={(event) => {  
-                  event.stopPropagation();
-                  
-                  DeleteRowFunction({ table, row });
-                  getRows();
+                <TableCell>
+                 <DeleteRowButton getRows={getRows} table={table} row={row} />
+                </TableCell>
 
-                  
-                }}
-                >
-                  <IoIosTrash size ="1.5em"/>
-                </Button>
-              </TableCell>
-              
-              </TableRow> 
-              
+              </TableRow>
+
             ))}
-            
+
           </TableBody>
         </MUITable>
       </TableContainer>
@@ -1195,7 +1169,7 @@ const getFunctions = async () => {
               </div>
             </div>
           </div>
-          <div style={{ paddingBottom: "2em", paddingLeft:'1.5em'}}>
+          <div style={{ paddingBottom: "2em", paddingLeft: '1.5em' }}>
             {table.lookup_tables == "null" ? (
               <div></div>
             ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
@@ -1224,5 +1198,6 @@ const getFunctions = async () => {
     </div>
   );
 };
+
 
 export default TableListView;

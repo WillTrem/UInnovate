@@ -140,6 +140,7 @@ export class DataAccessor {
       return response;
     } catch (error) {
       console.error("Could not delete row:", error);
+      throw error;
     }
   }
 

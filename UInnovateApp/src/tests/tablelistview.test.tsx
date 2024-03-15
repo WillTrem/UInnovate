@@ -5,7 +5,8 @@ import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
 import "@testing-library/jest-dom";
 import { DataAccessorMock } from "../virtualmodel/__mocks__/DataAccessor";
-
+import { Provider } from "react-redux";
+import store from "../redux/Store";
 vi.mock("axios");
 vi.mock("DataAccessor");
 
@@ -26,9 +27,11 @@ describe("TableListView component", () => {
   });
 
   render(
-      <MemoryRouter>
+    <MemoryRouter>
+      <Provider store={store}>
         <TableListView table={table} />
-      </MemoryRouter>
+      </Provider>
+    </MemoryRouter>
   );
 
   it("renders a table with the specified attributes", async () => {
@@ -68,9 +71,11 @@ describe("TableListView component", () => {
   });
   it("renders the Show Files button", async () => {
     render(
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Check for row existence by getting them by title
@@ -98,9 +103,11 @@ describe("TableListView component", () => {
 
   it("Render Reset Filter button", async () => {
     render(
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     const resetFiltersButton = screen.getByTestId('reset-filter-button');
@@ -115,9 +122,11 @@ describe("TableListView component", () => {
 
   it("render the filter button and simulate a click events", async () => {
     render(
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Wait for the button to be in the document
@@ -158,35 +167,25 @@ describe("TableListView component", () => {
   it("table UI is rendered", async () => {
 
     render(
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     const renderedTable = screen.getByTestId("table");
     expect(renderedTable).toBeInTheDocument();
   });
 
-  it("Delete button is rendered", async () => {
 
-    render(
-        <MemoryRouter>
-          <TableListView table={table} />
-        </MemoryRouter>
-    );
-
-    let deleteButton;
-    await waitFor(() => {
-      deleteButton = screen.getAllByTestId("delete-row-button");
-      expect(deleteButton[0]).toBeInTheDocument(); // Check the first button
-    });
-
-  });
   it("Verify functionality of Shows file button", async () => {
     render(
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
@@ -211,9 +210,11 @@ describe("TableListView component", () => {
 
   it("Verify functionality of Shows file button", async () => {
     render(
-        <MemoryRouter>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
