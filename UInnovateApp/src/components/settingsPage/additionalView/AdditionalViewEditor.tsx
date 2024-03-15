@@ -15,13 +15,26 @@ import {
   KeyboardArrowUp,
   Delete,
 } from "@mui/icons-material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/Store";
+import { AuthState } from '../../../redux/AuthSlice';
+import  Audits  from "../../../virtualmodel/Audits";
+
 
 function CustomToggle({ children, eventKey }) {
   const [isOpen, setIsOpen] = useState<Boolean>(false);
-
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const openOnClick = useAccordionButton(eventKey, () => {
     setIsOpen(!isOpen);
     console.log("open custom!");
+
+    Audits.logAudits( 
+      loggedInUser || "",
+      "Open custom view",
+      "Opened a custom view with the following values: " + JSON.stringify(eventKey),
+      "",
+      ""
+    );
   });
 
   return (
@@ -53,6 +66,7 @@ const AdditionalViewEditor = ({
   const handleClick = () => {
     setShowModal(true);
   };
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const handleDelete = async (id: string, isCustom: boolean) => {
     const res = deleteView(id, isCustom);
     if (await res) {
@@ -61,6 +75,14 @@ const AdditionalViewEditor = ({
       console.log("updating list");
       getViewsBySchema(setViewList, selectedSchema, signal);
     }
+
+    Audits.logAudits(
+      loggedInUser || "",
+      "Delete view",
+      "Deleted a view with the following values: " + JSON.stringify(id),
+      selectedSchema,
+      ""
+    );
   };
   const refreshList = () => {
     setSelectedSchema("");

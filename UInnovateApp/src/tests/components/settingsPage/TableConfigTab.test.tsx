@@ -3,6 +3,8 @@ import { ReactNode } from "react";
 import { describe, expect } from "vitest";
 import { TableItem } from "../../../components/settingsPage/TableConfigTab";
 import VMD from "../../../virtualmodel/__mocks__/VMD";
+import { Provider } from "react-redux";
+import store from "../../../redux/store";
 
 vi.mock("../../../virtualmodel/Config");
 
@@ -11,13 +13,17 @@ describe("TableItem component", () => {
 
   it("renders the component", () => {
     render(
+      <Provider store={store}>
         <TableItem table={table} />
+      </Provider>
     );
   }),
     it("modifies the config on visibility toggle", async () => {
       // Arrange
       render(
+        <Provider store={store}>
           <TableItem table={table} />
+        </Provider>
       );
 
       // Act - toggle the visibility off
@@ -35,7 +41,9 @@ describe("TableItem component", () => {
     it("modifies the config on DisplayType change", async () => {
       // Arrange
       render(
+        <Provider store={store}>
           <TableItem table={table} />
+        </Provider>
       );
 
       // Act - select Enum View display type

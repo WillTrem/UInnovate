@@ -10,6 +10,7 @@ import { Middleware } from "@reduxjs/toolkit";
 
 vi.mock("../NavBar");
 vi.mock("../components/settingsPage/UserLogs");
+vi.mock("../components/settingsPage/AuditTrails");
 
 describe("Settings.tsx", () => {
   const initialState = {

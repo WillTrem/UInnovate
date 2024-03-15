@@ -8,12 +8,16 @@ import { IoMdAddCircle } from "react-icons/io";
 import { IoLockClosed, IoLockOpen } from "react-icons/io5";
 import { insertNewEnvVar, editEnvVar } from "../../virtualmodel/EnvVarAccessor";
 import { EnvVarValueEditor } from "./EnvVarValueEditor";
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 
 export const EnvVarCreator = () => {
 	const schema = vmd.getSchema("meta");
 	const env_var_table = vmd.getTable("meta", "env_vars");
 	const columns = env_var_table?.getColumns();
-
+	const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 	const [envVar, setEnvVar] = useState<Row[] | undefined>([]);
 	const [newEnvVar, setNewEnvVar] = useState<Row>({}); //expect valid type for the row
 	const [showModal, setShowModal] = useState<boolean>(false);
@@ -27,7 +31,15 @@ export const EnvVarCreator = () => {
 	const handleClose = () => {
 		setShowModal(false);
 	};
+
 	const handleSave = async () => {
+		Audits.logAudits(
+			loggedInUser || "",
+			"Add env var",
+			"Added a new environment variable with the following values: " + JSON.stringify(newEnvVar),
+			schema?.schema_name || "",
+			env_var_table?.table_name || ""
+			);
 		insertNewEnvVar(newEnvVar.name, newEnvVar.value);
 		getEnvVars();
 		setNewEnvVar({}); // Reset form

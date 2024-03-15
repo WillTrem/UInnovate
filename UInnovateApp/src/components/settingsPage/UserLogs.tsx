@@ -34,7 +34,7 @@ export default function UserLogs() {
 	}, [])
 
   return (
-    <div style={{ height: "400px", width: "100%" }}>
+    <div style={{ height: "600px", width: "100%" }}>
       <DataGrid rows={logs} columns={columns} />
     </div>
   );

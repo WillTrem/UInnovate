@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
 import { Role } from "../../../redux/AuthSlice";
 import { displayError, displayNotification } from "../../../redux/NotificationSlice";
+import { AuthState } from '../../../redux/AuthSlice';
+import  Audits  from "../../../virtualmodel/Audits";
 
 export interface SchemaRoles {
 	[key: string]: Role | '';
@@ -93,7 +95,7 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 	const [defaultRole, setDefaultRole] = useState(user.role);
 	const currentUser = useSelector((state: RootState) => state.auth.user);
 	const dispatch = useDispatch();
-
+	const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
 		const notificationMessage = `Default role updated successfully for user "${user.email}"`;
 		const errorMessage = `A problem occured while updating the default role for user "${user.email}"`;
@@ -116,6 +118,14 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 		if (currentUser && user.email === currentUser) {
 			setInfoMessage('It seems that you changed your own default role. To make your changes take effect, please reload the page.')
 		}
+
+		Audits.logAudits(
+			loggedInUser || "",
+			"Update Default Role",
+			"User default role updated successfully " + user.email + " to " + newRole,
+			"",
+			""
+		)
 	}
 
 	function handleRoleChange(event: SelectChangeEvent<unknown>, schema: string) {
@@ -154,6 +164,14 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 					dispatch(displayError(errorMessage));
 				});
 		}
+
+		Audits.logAudits(
+			loggedInUser || "",
+			"Update Schema Role",
+			"User updated schema role " + schema + " to " + event.target.value + " for user " + user.email,
+			"",
+			""
+		)
 	}
 
 	return <TableRow {...props}>

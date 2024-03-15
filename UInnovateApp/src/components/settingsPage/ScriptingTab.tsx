@@ -6,6 +6,10 @@ import { ScriptEditor } from "./ScriptEditor";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 
 const buttonStyle = {
   marginRight: 10,
@@ -16,7 +20,7 @@ export const ScriptingTab = () => {
   const schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const columns = script_table?.getColumns();
-
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [showModal, setShowModal] = useState<boolean>(false);
   const [newScript, setNewScript] = useState<Row>({});
@@ -57,6 +61,14 @@ export const ScriptingTab = () => {
     await data_accessor?.addRow();
     getScripts();
     setShowModal(false);
+
+    Audits.logAudits(
+      loggedInUser || "",
+      "Add Scripts",
+      "User Added New Script" + JSON.stringify(newScript), 
+      "meta",
+      ""
+    );
   };
   return (
     <div>

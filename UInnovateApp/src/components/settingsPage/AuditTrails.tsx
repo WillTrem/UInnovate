@@ -7,7 +7,7 @@ const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 50 },
   { field: "timestamp", headerName: "Timestamp", width: 200 },
   { field: "user_id", headerName: "User", width: 200 },
-  { field: "action", headerName: "Action", width: 150 },
+  { field: "action", headerName: "Action", width: 200 },
   { field: "details", headerName: "Details", width: 900 },
   { field: "schema_name", headerName: "Schema Name", width: 150 },
   { field: "table_name", headerName: "Table Name", width: 150 },
@@ -34,7 +34,7 @@ export default function UserLogs() {
 	}, [])
 
   return (
-    <div style={{ height: "400px", width: "100%" }}>
+    <div style={{ height: "600px", width: "100%" }}>
       <DataGrid rows={logs} columns={columns} />
     </div>
   );
