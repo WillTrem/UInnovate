@@ -5,6 +5,10 @@ import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
 import { IoIosTrash } from 'react-icons/io';
 import { displayError } from '../../redux/NotificationSlice';
+import Logger from '../../virtualmodel/Logger';
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { AuthState } from "../../redux/AuthSlice";
 interface DeleteRowProps {
   getRows: () => void;
   table: Table;
@@ -13,6 +17,7 @@ interface DeleteRowProps {
 
 const DeleteRowButton: React.FC<DeleteRowProps> =
   ({ getRows, table, row }: DeleteRowProps): ReactNode => {
+    const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
     //for the error display message
     const dispatch = useDispatch();
     const schema = vmd.getTableSchema(table.table_name);
@@ -56,13 +61,24 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
         );
 
         try {
+
           await data_accessor_delete.deleteRow();
+          Logger.logUserAction(
+            loggedInUser || "",
+            "Deleted Row",
+            "User has deleted a row in the table: "+ table.table_name+ "with primary key: "+ column_name + " = " + column_value,
+            schema?.schema_name || "",
+            table.table_name
+
+          );
         } catch (error) {
           if (error) {
             dispatch(displayError(`The row could not be deleted due to dependencies with ${referencedTables}.`));
           }
           
         }
+        
+    
         getRows();
 
       }
@@ -79,11 +95,21 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
 
         try {
           await data_accessor_delete.deleteRow();
+
+          Logger.logUserAction(
+            loggedInUser || "",
+            "Deleted Row",
+            "User has deleted a row in the table: "+ table.table_name,
+            schema?.schema_name || "",
+            table.table_name
+          );
+
         } catch (error) {
           if (error) {
             dispatch(displayError(`The row could not be deleted due to dependencies with ${referencedTables}.`));
           }
         }
+        
         getRows();
 
       }
