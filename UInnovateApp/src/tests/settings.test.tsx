@@ -9,6 +9,7 @@ import { Role } from "../redux/AuthSlice";
 import { Middleware } from "@reduxjs/toolkit";
 
 vi.mock("../NavBar");
+vi.mock("../components/settingsPage/UserLogs");
 
 describe("Settings.tsx", () => {
   const initialState = {

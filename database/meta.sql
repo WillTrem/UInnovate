@@ -134,6 +134,19 @@ CREATE TABLE IF NOT EXISTS meta.appconfig_properties (
 	value_type TEXT NOT NULL,
 	default_value TEXT NOT NULL
 );
+
+-- Creating the user logs table
+
+CREATE TABLE IF NOT EXISTS meta.user_logs (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMP NOT NULL,
+    user_id VARCHAR(255) NOT NULL,
+    action VARCHAR(255) NOT NULL,
+    details TEXT,
+    schema_name VARCHAR(255) NOT NULL,
+    table_name VARCHAR(255) NOT NULL
+);
+
 -- Creating the application config values table
 
 CREATE TABLE IF NOT EXISTS meta.appconfig_values (
@@ -503,6 +516,7 @@ GRANT ALL ON FUNCTION meta.export_env_vars_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_env_vars_from_json(json) TO configurator;
 GRANT USAGE ON SCHEMA information_schema TO "user";
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
+GRANT USAGE ON SCHEMA meta.user_logs TO "user";
 GRANT SELECT ON information_schema.referential_constraints TO "user";
 GRANT SELECT ON information_schema.constraint_column_usage TO "user";
 
@@ -514,7 +528,7 @@ GRANT SELECT ON meta.appconfig_properties TO "user";
 GRANT SELECT ON meta.appconfig_values TO "user";
 GRANT SELECT ON meta.scripts TO "user";
 GRANT SELECT ON meta.function_map TO "user";
-
+GRANT SELECT ON meta.user_logs TO "user";
 GRANT SELECT ON meta.i18n_languages TO "user";
 GRANT SELECT ON meta.i18n_keys TO "user";
 GRANT SELECT ON meta.i18n_values TO "user";
@@ -526,12 +540,15 @@ GRANT ALL ON meta.appconfig_values TO configurator;
 GRANT ALL ON meta.scripts TO configurator;
 GRANT ALL ON meta.function_map TO configurator;  
 GRANT ALL ON meta.i18n_languages TO configurator;
+GRANT ALL ON meta.user_logs TO "user";
 GRANT ALL ON meta.i18n_keys TO configurator;
 GRANT ALL ON meta.i18n_values TO configurator;
 GRANT ALL ON meta.view_type TO configurator;
 GRANT ALL ON meta.additional_view_settings TO configurator;
 GRANT ALL ON meta.custom_view_templates TO configurator;
 
+-- Grant INSERT permission on the user_logs table to the user role
+GRANT INSERT ON meta.user_logs TO "user";
 -- Views (Only SELECT necessary)
 GRANT SELECT ON meta.schemas TO "user"; 
 GRANT SELECT ON meta.tables TO "user";
@@ -539,7 +556,6 @@ GRANT SELECT ON meta.columns TO "user";
 GRANT SELECT ON meta.constraints TO "user";
 GRANT SELECT ON meta.views TO "user";
 GRANT SELECT ON meta.i18n_translations TO "user";
-
 -- -- web_anon related (necessary on vmd load)
 GRANT USAGE ON SCHEMA meta TO web_anon;
 GRANT SELECT ON meta.appconfig_values TO web_anon;
