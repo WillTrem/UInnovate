@@ -16,14 +16,15 @@ interface TableListViewProps {
   table: Table;
 }
 
-const LookUpTableDetails: React.FC<TableListViewProps> = ({ table }: TableListViewProps) => {
+const LookUpTableDetails: React.FC<TableListViewProps> = 
+({ table }: TableListViewProps) => {
 
   const [Columns, setColumns] = useState<Column[][]>([]);
   const [rows, setRows] = useState<Row[][] | undefined>([]);
   const getTable = JSON.parse(table.lookup_tables);
   const count = Object.keys(getTable).length - 1;
 
-
+  
   const LookUpTables = (num: number) => {
     num = num - 1;
 

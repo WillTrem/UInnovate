@@ -3,6 +3,10 @@ import "../styles/AddEnumModal.css";
 import { useState } from "react";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import vmd, { Column, Table } from "../virtualmodel/VMD";
+import Logger from "../virtualmodel/Logger";
+import { AuthState } from '../redux/AuthSlice';
+import { RootState } from '../redux/Store';
+import { useSelector } from 'react-redux';
 
 const AddRowPopup = ({
   onClose,
@@ -14,7 +18,7 @@ const AddRowPopup = ({
   columns: Column[];
 }) => {
   const [inputValues, setInputValues] = useState<Row>(new Row({}));
-
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValues({
       ...inputValues,
@@ -28,6 +32,14 @@ const AddRowPopup = ({
       console.error("Could not find schema for table ", table.table_name);
       return;
     }
+
+    Logger.logUserAction( 
+      loggedInUser || "",
+      "Add Row",
+      "Added a new row with the following values: " + JSON.stringify(inputValues.row),
+      schema?.schema_name || "",
+      table.table_name
+    );
 
     const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
       schema?.schema_name,

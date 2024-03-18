@@ -4,6 +4,7 @@ import authReducer from './AuthSlice'
 import loadingReducer from './LoadingSlice'
 import userDataReducer from './UserDataSlice';
 import notificationReducer from './NotificationSlice'
+import selectedViewListReducer from './AdditionalViewSlice';
 
 // App state store
 const Store = configureStore({
@@ -12,7 +13,8 @@ const Store = configureStore({
     auth: authReducer,
     loading: loadingReducer,
     userData: userDataReducer,
-    notification: notificationReducer
+    notification: notificationReducer,
+    selectedViewList:  selectedViewListReducer
   },
 });
 

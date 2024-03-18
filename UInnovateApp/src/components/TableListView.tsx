@@ -12,6 +12,10 @@ import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
 import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
+import Logger from "../virtualmodel/Logger";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/Store";
+import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import { IoIosArrowUp } from "react-icons/io";
 import {
@@ -31,7 +35,7 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
+import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
 import {
   DatePicker,
@@ -65,6 +69,8 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
+
+import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 
 interface TableListViewProps {
   table: Table;
@@ -142,7 +148,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
-
   //These are all the Usestate which is used for Pagination, Sorting and Filtering for the List view of the table
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -481,6 +486,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }));
   };
 
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -489,6 +495,15 @@ const TableListView: React.FC<TableListViewProps> = ({
       console.error("Schema not found");
       return;
     }
+
+    Logger.logUserAction(
+      loggedInUser || "",
+      "Edited Row",
+      //i want the edited value in the details
+      "User has modified a row in the table: " + JSON.stringify(inputValues),
+      schema?.schema_name || "",
+      table.table_name
+    );
 
     const storedPrimaryKeyValue = localStorage.getItem(
       "currentPrimaryKeyValue"
@@ -574,6 +589,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
   //End of Filter Function
 
+
+  // Object.entries(row.row).map(([key, value]) => {
+
+
   const FileInputField = (column: Column) => {
     handleShowFiles(column);
     if (!appConfigValues) {
@@ -587,7 +606,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       );
     }
 
-    if (column.references_table != null ) {
+    if (column.references_table != null) {
       const string = column.column_name + "L";
       localStorage.setItem(
         string,
@@ -609,6 +628,11 @@ const TableListView: React.FC<TableListViewProps> = ({
       </div>
     );
   };
+
+
+
+
+
 
   useEffect(() => {
     const newInputField = (column: Column) => {
@@ -957,10 +981,10 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
         variant="contained"
         onClick={ResetFilter}
-        data-testid="reset-filter-button"
-      >
-        Reset Filters
-      </Button>
+        data-testid="reset-filter-button">
+        Reset Filters</Button>
+
+
       <TableContainer>
         <MUITable
           className="table-container"
@@ -1090,8 +1114,14 @@ const TableListView: React.FC<TableListViewProps> = ({
                     </Box>
                   </TableCell>
                 ))}
+                <TableCell>
+                 <DeleteRowButton getRows={getRows} table={table} row={row} />
+                </TableCell>
+
               </TableRow>
+
             ))}
+
           </TableBody>
         </MUITable>
       </TableContainer>
@@ -1205,7 +1235,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               </div>
             </div>
           </div>
-          <div style={{ paddingBottom: "2em", paddingLeft:'1.5em'}}>
+          <div style={{ paddingBottom: "2em", paddingLeft: '1.5em' }}>
             {table.lookup_tables == "null" ? (
               <div></div>
             ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
@@ -1234,5 +1264,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     </div>
   );
 };
+
 
 export default TableListView;
