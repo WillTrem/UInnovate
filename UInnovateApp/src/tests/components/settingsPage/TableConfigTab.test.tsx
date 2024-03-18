@@ -4,7 +4,7 @@ import { describe, expect } from "vitest";
 import { TableItem } from "../../../components/settingsPage/TableConfigTab";
 import VMD from "../../../virtualmodel/__mocks__/VMD";
 import { Provider } from "react-redux";
-import store from "../../../redux/store";
+import store from "../../../redux/Store";
 
 vi.mock("../../../virtualmodel/Config");
 

@@ -3,7 +3,7 @@ import { describe, expect } from "vitest";
 import { ColumnConfig } from "../../../components/settingsPage/ColumnConfig";
 import VMD from "../../../virtualmodel/__mocks__/VMD";
 import { Provider } from "react-redux";
-import store from "../../../redux/store";
+import store from "../../../redux/Store";
 
 describe("ColumnConfig component", () => {
   const column = new VMD.Column("Column1");
