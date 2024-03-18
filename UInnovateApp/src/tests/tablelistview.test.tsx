@@ -24,7 +24,7 @@ describe("TableListView component", () => {
 
   // Adding the columns to the table
   columns.forEach((column) => {
-    table.addColumn(column, "something", false, "");
+    table.addColumn(column, "something", false, "", "", "");
   });
 
   render(
