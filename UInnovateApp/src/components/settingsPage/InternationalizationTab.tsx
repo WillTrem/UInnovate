@@ -463,6 +463,14 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         } catch (error) {
             console.error('Error deleting row:', error);
         }
+
+        Audits.logAudits(
+            loggedInUser || "",
+            "Delete Label",
+            "Deleted a label with the following values: " + JSON.stringify(keyCode),
+            "i18n_keys",
+            ""
+        );
     };
 
     const saveChanges = async () => {
