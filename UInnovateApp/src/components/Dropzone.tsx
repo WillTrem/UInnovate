@@ -28,14 +28,18 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
               ?.toString()
               .replace("data:application/pdf;base64,", "")
           : extension == "jpg"
-          ? reader.result?.toString().replace("data:image/jpg;base64,", "")
-          : extension == "jpeg"
-          ? reader.result?.toString().replace("data:image/jpeg;base64,", "")
-          : extension == "png"
-          ? reader.result?.toString().replace("data:image/png;base64,", "")
-          : extension == "csv"
-          ? reader.result?.toString().replace("data:text/csv;base64,", "")
-          : null;
+            ? reader.result?.toString().replace("data:image/jpg;base64,", "")
+            : extension == "jpeg"
+              ? reader.result?.toString().replace("data:image/jpeg;base64,", "")
+              : extension == "png"
+                ? reader.result
+                    ?.toString()
+                    .replace("data:image/png;base64,", "")
+                : extension == "csv"
+                  ? reader.result
+                      ?.toString()
+                      .replace("data:text/csv;base64,", "")
+                  : null;
 
       if (onItemAdded) {
         onItemAdded(evt, buffer, extension, name, currentColumn);
@@ -108,7 +112,7 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
   // };
   return (
     <div>
-      <div className="flex-row">
+      <div className="flex-row" title="file-instance">
         {itemsList?.length > 0
           ? itemsList.map((item, index) => {
               return (
@@ -141,12 +145,12 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
                         item.extension == "pdf"
                           ? "http://localhost:5173/pdf-icon.png"
                           : item.extension == "jpg" ||
-                            item.extension == "jpeg" ||
-                            item.extension == "png"
-                          ? "http://localhost:5173/image-icon.png"
-                          : item.extension == "csv"
-                          ? "http://localhost:5173/csv-icon.png"
-                          : null
+                              item.extension == "jpeg" ||
+                              item.extension == "png"
+                            ? "http://localhost:5173/image-icon.png"
+                            : item.extension == "csv"
+                              ? "http://localhost:5173/csv-icon.png"
+                              : null
                       }
                       className="image-size"
                     />
@@ -170,6 +174,7 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
         >
           <>
             <input
+              title="Uploader"
               ref={fileInputRef}
               className="FileInput"
               type="file"
