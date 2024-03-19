@@ -136,6 +136,7 @@ describe("DataAccessor", () => {
 
     dataAccessor.addRow = mockDataAccessor.addRow.bind(dataAccessor);
 
+    console.log(dataAccessor.addRow());
     const response = await dataAccessor.addRow();
 
     expect(response).toEqual({
