@@ -12,6 +12,10 @@ import { Role } from "../../../redux/AuthSlice"
 import { ErrMsg } from "../../../enums/ErrMsg"
 import validator from "validator"
 import { AxiosError } from "axios"
+import { AuthState } from '../../../redux/AuthSlice';
+import { RootState } from '../../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../../virtualmodel/Audits";
 
 interface AddUserModalProps extends Omit<ModalProps, 'children'> {
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -22,7 +26,7 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 	// Input values of the modal
 	const defaultInputValues = { role: "user" };
 	const [inputValues, setInputValues] = useState<Row>(defaultInputValues)
-
+	const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 	const [emailError, setEmailError] = useState<string>("");
 
 	// Role selection state
@@ -88,6 +92,13 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ setOpen, getUsers, ...props
 				}
 				console.error("An error occured while creating user " + inputValues["email"]);
 			});
+
+		Audits.logAudits(
+			loggedInUser || "",
+			"Create New User",
+			"Create User " + inputValues["email"] + " with role " + inputValues["role"] + " and schema access " + inputValues["schema_access"],
+			"",
+			"")
 	}
 
 	function validateEmail(): boolean {

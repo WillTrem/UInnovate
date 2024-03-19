@@ -10,7 +10,10 @@ import buttonStyle from '../TableEnumView'
 import { Row } from '../../virtualmodel/DataAccessor';
 import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
 import { saveConfigToDB } from '../../helper/SettingsHelpers';
-
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 
 type LookUpTableProps = {
   table: Table;
@@ -23,7 +26,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
-
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   attributes?.map((attribute) => {
     if (attribute.references_table != "null" && attribute.references_table != null) {
       count = count + 1;
@@ -100,6 +103,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       if (success) {
         table.setLookupCounter(counter.toString())
       }
+
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User changed the lookup counter of the table to " + counter.toString(),
+        "",
+        table.table_name) 
     };
 
     const setSelectInputConfig = async (selectInput: Row) => {
@@ -113,6 +123,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       if (success) {
         table.setLookupTables(objstring);
       }
+
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User changed the lookup tables of the table to " + objstring,
+        "",
+        table.table_name)
     };
 
 
@@ -124,6 +141,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       }
       setSelectInput(newSelectInput);
       setSelectInputConfig(newSelectInput);
+
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User changed the lookup tables of the table to " + JSON.stringify(newSelectInput),
+        "",
+        table.table_name)
     };
 
 
@@ -136,6 +160,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
         setCounter(newCounterValue);
         setCounterConfig(newCounterValue);
       }
+
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User added a lookup table to the table",
+        "",
+        table.table_name)
     };
 
     const handleButtonClickDelete = () => {
@@ -148,6 +179,12 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       else
         setCounter(0);
       setCounterConfig(0);
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User removed a lookup table from the table",
+        "",
+        table.table_name)
     };
 
     const handleReset = () => {
@@ -157,6 +194,13 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
       }
       setSelectInput(newSelectInput);
       setSelectInputConfig(newSelectInput);
+
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User reset the lookup tables of the table",
+        "",
+        table.table_name)
     }
 
 

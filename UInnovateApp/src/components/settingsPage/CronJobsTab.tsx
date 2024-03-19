@@ -11,6 +11,8 @@ import { RootState } from "../../redux/Store";
 import Tab from "react-bootstrap/Tab";
 import DisplayType from '../Schema/DisplayType';
 import vmd from "../../virtualmodel/VMD";
+import { AuthState } from '../../redux/AuthSlice';
+import  Audits  from "../../virtualmodel/Audits";
 
 interface ExecutionLogEntry {
     id: any; 
@@ -43,7 +45,7 @@ export const CronJobsTab = () => {
     const [queuedLogs, setQueuedLogs] = useState<QueuedJob[]>([]);
     const selectedSchema = useSelector((state: RootState) => state.schema.value);
     const { schema_access } = useSelector((state: RootState) => state.auth);
-
+    const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
     const updateProcedureNames = async () => {
         if (!selectedSchema || schema_access.length == 0) return
         try {
@@ -74,6 +76,14 @@ export const CronJobsTab = () => {
                     // Handle success here
                     console.log("Cron job scheduled successfully");
                     resolve(response);
+
+                    Audits.logAudits(
+                        loggedInUser || "",
+                        "Cron Job",
+                        "Cron job scheduled successfully",
+                        "",
+                        ""
+                    )
                 })
                 .catch(error => {
                     // Handle error here
@@ -95,6 +105,14 @@ export const CronJobsTab = () => {
                     // Handle success here
                     console.log("Cron job unscheduled successfully");
                     resolve(response);
+
+                    Audits.logAudits(
+                        loggedInUser || "",
+                        "Cron Job",
+                        "Cron job unscheduled successfully",
+                        "",
+                        ""
+                    )
                 })
                 .catch(error => {
                     // Handle error here
