@@ -32,7 +32,7 @@ describe("TableListView component", () => {
 
   // Adding the columns to the table
   columns.forEach((column) => {
-    table.addColumn(column, "something", false, "id", "", "");
+    table.addColumn(column, "something", false, "", "", "");
   });
 
   render(
