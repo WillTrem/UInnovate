@@ -17,7 +17,8 @@ import  { setUserData, updateUserData } from "../../../redux/UserDataSlice";
 import {isEqual} from 'lodash';
 import RolesTab from "./RolesTab";
 import { saveUserDataToDB } from "../../../helper/SettingsHelpers";
-
+import { AuthState } from '../../../redux/AuthSlice';
+import  Audits  from "../../../virtualmodel/Audits";
 
 // Component containing the Users Management tab of the Settings page
 const UserManagementTab = () => {
@@ -115,18 +116,32 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 	const schemaNames = vmd.getApplicationSchemas().map((schema) => schema.schema_name);
 	const dispatch = useDispatch();
 	const {user: current_user, schema_access} = useSelector((state: RootState) => state.auth)
-
+	const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 	function handleSchemaAccessListUpdate(newSchemaAccessList: string[]){
 		setSchemaAccessList(newSchemaAccessList);
 		const newUserData = {...userData, schema_access: newSchemaAccessList}
 		setUserData(newUserData);
 		saveUserDataToDB(newUserData);
+
+		Audits.logAudits(
+			loggedInUser || "",
+			"Update Schema Access",
+			`User "${userData.email}" schema access updated to ${newSchemaAccessList}`,
+			"meta",
+			"");
 	}
 	
 	function handleActiveToggle(event: React.ChangeEvent<HTMLInputElement>, checked: boolean ) {
 		const newUserData = {...userData, is_active: checked}
 		setUserData(newUserData);
 		saveUserDataToDB(newUserData);
+
+		Audits.logAudits(
+			loggedInUser || "",
+			"User Active Status",
+			`User "${userData.email}" active status updated to ${checked}`,
+			"meta",
+			"");
 	};
 
 	// Updates the global user data state with new user data 

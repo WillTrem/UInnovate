@@ -19,6 +19,10 @@ import ace from "ace-builds";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 
 ace.config.set("basePath", "../../../node_modules/ace-builds/src-noconflict");
 interface ScriptEditorProps {
@@ -28,7 +32,7 @@ interface ScriptEditorProps {
 export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
   const script_name = script["name"];
   const tables = vmd.getAllTables();
-
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   const [updateScript, setUpdateScript] = useState<Row>(script);
   const [content, setContent] = useState<string>(script["content"] || "");
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -60,6 +64,14 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
     );
 
     data_accessor?.updateRow();
+
+    Audits.logAudits(
+      loggedInUser || "",
+      "Update",
+      "Script Update: " + JSON.stringify(updatedScript),
+      "meta",
+      ""
+    );
   };
 
   return (

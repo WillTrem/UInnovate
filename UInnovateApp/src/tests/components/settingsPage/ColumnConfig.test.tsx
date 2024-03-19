@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import { ColumnConfig } from "../../../components/settingsPage/ColumnConfig";
 import VMD from "../../../virtualmodel/__mocks__/VMD";
+import { Provider } from "react-redux";
+import store from "../../../redux/Store";
 
 describe("ColumnConfig component", () => {
   const column = new VMD.Column("Column1");
@@ -10,13 +12,17 @@ describe("ColumnConfig component", () => {
 
   it("renders the component", () => {
     render(
+      <Provider store={store}>
         <ColumnConfig table={table} />
+      </Provider>
     );
   }),
     it("modifies the config on visibility toggle", async () => {
       // Arrange
       render(
+        <Provider store={store}>
           <ColumnConfig table={table} />
+        </Provider>
       );
 
       // Act - toggle the visibility off for the first column
