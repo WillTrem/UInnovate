@@ -66,6 +66,10 @@ export default {
     console.log("getRemoveRowAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
+  getAddRowDataAccessor: vi.fn().mockImplementation(() => {
+    console.log("getAddRowDataAccessor in VMD mock was called");
+    return new DataAccessorMock();
+  }),
   Table: Table,
   Column: Column,
   TableDisplayType: TableDisplayType,
