@@ -7,7 +7,7 @@ const columns: GridColDef[] = [
   { field: "id", headerName: "ID", width: 50 },
   { field: "timestamp", headerName: "Timestamp", width: 200 },
   { field: "user_id", headerName: "User", width: 200 },
-  { field: "action", headerName: "Action", width: 150 },
+  { field: "action", headerName: "Action", width: 200 },
   { field: "details", headerName: "Details", width: 900 },
   { field: "schema_name", headerName: "Schema Name", width: 150 },
   { field: "table_name", headerName: "Table Name", width: 150 },
@@ -19,7 +19,7 @@ export default function UserLogs() {
   const getLogs = async () => {
 		const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
 			"meta",
-			"user_logs",
+			"audit_trails",
 		);
 
 		const rows = await data_accessor.fetchRows();

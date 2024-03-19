@@ -13,6 +13,7 @@ import UserManagementTab from "../components/settingsPage/Users/UserManagementTa
 import ButtonConfigurationSaver from "../components/settingsPage/ButtonConfigurationSaver";
 import InternationalizationTab from "../components/settingsPage/InternationalizationTab";
 import UserLogs from "../components/settingsPage/UserLogs";
+import AuditTrails from "../components/settingsPage/AuditTrails";
 import UnauthorizedScreen from "../components/UnauthorizedScreen";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
@@ -116,6 +117,11 @@ export function Settings() {
 											User Action Logging and Tracing
 										</Nav.Link>
 									</Nav.Item>
+									<Nav.Item>
+										<Nav.Link eventKey='audittrails' onClick={() => handleNavClick('audittrails')}>
+											Audit Trails
+										</Nav.Link>
+									</Nav.Item>
 								</Nav>
 							</Col>
 							<Col sm={9}>
@@ -148,6 +154,9 @@ export function Settings() {
 									</Tab.Pane>
 									<Tab.Pane eventKey='userlogs'>
 										<UserLogs />
+									</Tab.Pane>
+									<Tab.Pane eventKey='audittrails'>
+										<AuditTrails />
 									</Tab.Pane>
 								</Tab.Content>
 							</Col>

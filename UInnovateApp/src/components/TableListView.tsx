@@ -27,6 +27,7 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
+  CircularProgress,
   createTheme,
   ThemeProvider,
   Menu,
@@ -34,7 +35,7 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import LookUpTableDetails from "./SlidingComponents/LookUpTableDetails";
+import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
 import {
   DatePicker,
@@ -68,6 +69,8 @@ import {
   TableRow,
   TableSortLabel,
 } from "@mui/material";
+
+import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 
 interface TableListViewProps {
   table: Table;
@@ -119,7 +122,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [functions, setFunctions] = useState<Row[] | undefined>([]);
 
   const [scriptDescription, setScriptDescription] = useState<string | null>("");
-  const [functionDescription, setFunctionDescription] = useState<string | null>("");
+  const [functionDescription, setFunctionDescription] = useState<string | null>(
+    ""
+  );
 
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [selectedFunction, setSelectedFunction] = useState<Row | null>(null);
@@ -128,8 +133,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
+  const [currentFileGroup, setCurrentFileGroup] = useState<Row[] | undefined>();
   const [inputField, setInputField] =
     useState<(column: Column) => JSX.Element>();
+  const [renderNumber, setRenderNumber] = useState<number>(0);
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const function_table = vmd.getTable("meta", "function_map");
@@ -141,7 +148,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   if (defaultOrderValue == undefined) {
     defaultOrderValue = table.columns[0].column_name;
   }
-
   //These are all the Usestate which is used for Pagination, Sorting and Filtering for the List view of the table
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
@@ -150,16 +156,22 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(defaultOrderValue);
   const [conditionFilter, setConditionFilter] = useState<string>("");
-  const [FilterMenu, setFilterMenu] = useState<(null | HTMLElement)[]>(new Array(columns.length).fill(null));
-  const [FilterCheckedList, setFilterCheckedList] = useState<{ [key: string]: string[] }>(() => {
-    const initialCheckedState = table.columns.reduce((acc, column) => {
-      acc[column.column_name] = [];
-      return acc;
-    }, {} as { [key: string]: string[] });
+  const [FilterMenu, setFilterMenu] = useState<(null | HTMLElement)[]>(
+    new Array(columns.length).fill(null)
+  );
+  const [FilterCheckedList, setFilterCheckedList] = useState<{
+    [key: string]: string[];
+  }>(() => {
+    const initialCheckedState = table.columns.reduce(
+      (acc, column) => {
+        acc[column.column_name] = [];
+        return acc;
+      },
+      {} as { [key: string]: string[] }
+    );
 
     return initialCheckedState;
   });
-
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -207,12 +219,10 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (conditionFilter === "") {
       setRowsFilter(FilteredRowsCount);
       setLength(count?.length || 0);
-    }
-    else {
+    } else {
       setRowsFilter(filteredRows);
       setLength(lines?.length || 0);
     }
-
   };
 
   useEffect(() => {
@@ -251,23 +261,23 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     setScripts(filteredScripts);
   };
-const getFunctions = async () => {
-  if (!meta_schema || !function_table) {
-    throw new Error("Schema or table not found");
-  }
+  const getFunctions = async () => {
+    if (!meta_schema || !function_table) {
+      throw new Error("Schema or table not found");
+    }
 
-  const functions_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-    meta_schema?.schema_name,
-    function_table?.table_name
-  );
+    const functions_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+      meta_schema?.schema_name,
+      function_table?.table_name
+    );
 
-  const functions_rows = await functions_data_accessor?.fetchRows();
-  const filteredFunctions = functions_rows?.filter(
-    (func) => func.table_name === table.table_name
-  );
+    const functions_rows = await functions_data_accessor?.fetchRows();
+    const filteredFunctions = functions_rows?.filter(
+      (func) => func.table_name === table.table_name
+    );
 
-  setFunctions(filteredFunctions);
-};
+    setFunctions(filteredFunctions);
+  };
   const handleScriptHover = async (description: string) => {
     setScriptDescription(description);
   };
@@ -399,6 +409,7 @@ const getFunctions = async () => {
           )
           .updateRow();
         setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
+        setRenderNumber(0);
       });
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
@@ -436,18 +447,8 @@ const getFunctions = async () => {
       });
     const newItems = allFileGroups?.filter((file) => file.id !== item.id);
     setAllFileGroups(newItems);
+    setRenderNumber(0);
     getRows();
-  };
-
-  const handleShowFiles = (column: Column) => {
-    fileStorageViewDataAccessor.fetchRows().then((response) => {
-      setAllFileGroups(
-        response?.filter(
-          (file) => file.groupid == currentRow.row[column.column_name]
-        )
-      );
-    });
-    setShowFiles(true);
   };
 
   const handleInputChange = (
@@ -521,10 +522,26 @@ const getFunctions = async () => {
     setInputValues({});
     setOpenPanel(false);
   };
-
+  const handleShowFiles = (column: Column) => {
+    if (renderNumber < 30) {
+      fileStorageViewDataAccessor.fetchRows().then((response) => {
+        setAllFileGroups(response);
+        setCurrentFileGroup(
+          response?.filter(
+            (file) => file.groupid == currentRow.row[column.column_name]
+          )
+        );
+        setShowFiles(true);
+        setRenderNumber(renderNumber + 1);
+      });
+    }
+  };
   //Filter Functions
   //Handle when you click on the filter button
-  const handleFilterClick = (event: React.MouseEvent<HTMLElement>, index: number) => {
+  const handleFilterClick = (
+    event: React.MouseEvent<HTMLElement>,
+    index: number
+  ) => {
     const newPopup = [...FilterMenu];
     newPopup[index] = event.currentTarget;
     setFilterMenu(newPopup);
@@ -537,19 +554,14 @@ const getFunctions = async () => {
     setFilterMenu(newPopup);
     let Filter = "";
     Object.entries(FilterCheckedList).map(([key, value]) => {
-
       if (value.length > 0) {
         Filter += `&${key}=in.(${value.map((val) => `"${val}"`).join(",")}) `;
         setConditionFilter(Filter);
       }
-
-
-
     });
-    if (Object.values(FilterCheckedList).every(value => value.length === 0)) {
+    if (Object.values(FilterCheckedList).every((value) => value.length === 0)) {
       setConditionFilter("");
     }
-
   };
 
   //When a check is selected on the pop up
@@ -577,7 +589,12 @@ const getFunctions = async () => {
   };
   //End of Filter Function
 
+
+  // Object.entries(row.row).map(([key, value]) => {
+
+
   const FileInputField = (column: Column) => {
+    handleShowFiles(column);
     if (!appConfigValues) {
       return null;
     }
@@ -589,34 +606,33 @@ const getFunctions = async () => {
       );
     }
 
-    if (column.references_table != null ) {
+    if (column.references_table != null) {
       const string = column.column_name + "L";
       localStorage.setItem(
         string,
         currentRow.row[column.column_name] as string
       );
     }
-    return showFiles ? (
+    return showFiles && currentFileGroup ? (
       <div title="Dropzone">
         <Dropzone
           onItemAdded={onItemAdded}
           onItemRemoved={onItemRemoved}
-          items={allFileGroups}
+          items={currentFileGroup}
           currentColumn={column.column_name}
         />
       </div>
     ) : (
-      <Button
-        title="Show Files Button"
-        variant="contained"
-        color="primary"
-        style={{ marginLeft: 15 }}
-        onClick={handleShowFiles.bind(this, column)}
-      >
-        Show Files
-      </Button>
+      <div title="Dropzone">
+        <CircularProgress />
+      </div>
     );
   };
+
+
+
+
+
 
   useEffect(() => {
     const newInputField = (column: Column) => {
@@ -813,8 +829,8 @@ const getFunctions = async () => {
     currentCategory,
     inputValues,
     currentWYSIWYG,
-    allFileGroups,
     showFiles,
+    allFileGroups,
   ]);
   useEffect(() => {
     getRows();
@@ -838,7 +854,8 @@ const getFunctions = async () => {
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
+        row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -856,7 +873,6 @@ const getFunctions = async () => {
       }, 1000);
     }
   }, [openPanel]);
-
 
   return (
     <div>
@@ -959,25 +975,30 @@ const getFunctions = async () => {
       </div>
       <Button
         style={{
-          ...buttonStyle, marginTop: "",
-          backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2"
+          ...buttonStyle,
+          marginTop: "",
+          backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2",
         }}
         variant="contained"
         onClick={ResetFilter}
         data-testid="reset-filter-button">
         Reset Filters</Button>
+
+
       <TableContainer>
         <MUITable
           className="table-container"
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
-          style={{ padding: '10px' }}
+          style={{ padding: "10px" }}
           data-testid="table"
         >
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <TableCell key={index} style={{ textAlign: "center", whiteSpace: 'nowrap' }}
+                <TableCell
+                  key={index}
+                  style={{ textAlign: "center", whiteSpace: "nowrap" }}
                 >
                   <TableSortLabel
                     active={orderBy === column.column_name}
@@ -985,12 +1006,19 @@ const getFunctions = async () => {
                     onClick={() => handleSort(column.column_name)}
                   >
                     {column.column_name}
-                  </TableSortLabel >
-                  <Button size="small" style={{ color: 'black', maxWidth: '25px', minWidth: '25px' }}
+                  </TableSortLabel>
+                  <Button
+                    size="small"
+                    style={{
+                      color: "black",
+                      maxWidth: "25px",
+                      minWidth: "25px",
+                    }}
                     onClick={(event) => handleFilterClick(event, index)}
                     data-testid="Button-Filtering"
                   >
-                    <IoIosArrowUp /></Button>
+                    <IoIosArrowUp />
+                  </Button>
                   <Menu
                     id={`simple-menu-${index}`}
                     anchorEl={FilterMenu[index]}
@@ -998,50 +1026,66 @@ const getFunctions = async () => {
                     open={Boolean(FilterMenu[index])}
                     onClose={() => handleFilterClose(index)}
                     data-testid="filter-menu"
-                    sx={{ display: 'flex', flexDirection: 'column', flexWrap: 'wrap', maxHeight: '500px' }}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      flexWrap: "wrap",
+                      maxHeight: "500px",
+                    }}
                   >
-                    <Button variant="text"
+                    <Button
+                      variant="text"
                       style={{
                         ...buttonStyle,
-                        backgroundColor: 'black',
-                        textAlign: 'center',
-                        color: 'white',
-                        margin: '0px 10px 10px 10px',
-                        position: 'sticky',
-                        top: '10px',
-                        cursor: 'pointer',
-                        zIndex: 1
+                        backgroundColor: "black",
+                        textAlign: "center",
+                        color: "white",
+                        margin: "0px 10px 10px 10px",
+                        position: "sticky",
+                        top: "10px",
+                        cursor: "pointer",
+                        zIndex: 1,
                       }}
                       onClick={() => handleFilterClose(index)}
-                      data-testid="filter-confirm-button">
+                      data-testid="filter-confirm-button"
+                    >
                       Confirm
                     </Button>
 
-                    <div  >
-
-                      {[...new Set(rowsFilter?.map((row) => row.row[column.column_name]))].map((value) => {
+                    <div>
+                      {[
+                        ...new Set(
+                          rowsFilter?.map((row) => row.row[column.column_name])
+                        ),
+                      ].map((value) => {
                         if (value === true || value === false) {
                           value = value.toString();
                         }
                         return (
-                          <MenuItem key={value} >
+                          <MenuItem key={value}>
                             <Checkbox
                               edge="start"
-                              checked={FilterCheckedList[column.column_name]?.indexOf(value) !== -1}
+                              checked={
+                                FilterCheckedList[column.column_name]?.indexOf(
+                                  value
+                                ) !== -1
+                              }
                               tabIndex={-1}
                               disableRipple
-                              inputProps={{ 'aria-labelledby': `checkbox-list-label-${value}` }}
-                              onClick={handleFilterToggle(value, column.column_name)}
+                              inputProps={{
+                                "aria-labelledby": `checkbox-list-label-${value}`,
+                              }}
+                              onClick={handleFilterToggle(
+                                value,
+                                column.column_name
+                              )}
                               size="small"
                             />
                             {value}
                           </MenuItem>
-
                         );
                       })}
-
                     </div>
-
                   </Menu>
                 </TableCell>
               ))}
@@ -1061,15 +1105,23 @@ const getFunctions = async () => {
                       {typeof cell === "boolean"
                         ? cell.toString()
                         : columns[idx].references_table === "filegroup"
-                          ? fileGroupsView?.find(
-                            (fileGroup) => fileGroup.id === cell
-                          )?.count
+                          ? (
+                              fileGroupsView?.find(
+                                (fileGroup) => fileGroup.id === cell
+                              )?.count || 0
+                            ).toString() + " file(s)"
                           : (cell as React.ReactNode)}
                     </Box>
                   </TableCell>
                 ))}
+                <TableCell>
+                 <DeleteRowButton getRows={getRows} table={table} row={row} />
+                </TableCell>
+
               </TableRow>
+
             ))}
+
           </TableBody>
         </MUITable>
       </TableContainer>
@@ -1091,7 +1143,6 @@ const getFunctions = async () => {
                   displayEmpty
                   onChange={handlePaginationchange}
                 >
-
                   <MenuItem value={10}>10 per page</MenuItem>
                   <MenuItem value={20}>20 per page</MenuItem>
                   <MenuItem value={50}>50 per page</MenuItem>
@@ -1115,6 +1166,8 @@ const getFunctions = async () => {
           setOpenPanel(false);
           setInputValues({});
           setShowFiles(false);
+          setCurrentFileGroup(undefined);
+          setRenderNumber(0);
         }}
       >
         <div>
@@ -1125,18 +1178,28 @@ const getFunctions = async () => {
               <form>
                 <div className={tableStyle}>
                   {columns.map((column, colIdx) => {
-                    return (
-                      <div key={colIdx} className="row-details">
-                        <label key={column.column_name + colIdx}>
-                          {column.column_name}
-                        </label>
-                        {column.references_table == "filegroup" ? (
+                    if (column.references_table != "filegroup") {
+                      return (
+                        <div key={colIdx} className="row-details">
+                          <label key={column.column_name + colIdx}>
+                            {column.column_name}
+                          </label>
+                          {inputField(column)}
+                        </div>
+                      );
+                    }
+                  })}
+                  {columns.map((column, colIdx) => {
+                    if (column.references_table == "filegroup") {
+                      return (
+                        <div key={colIdx} className="row-details">
+                          <label key={column.column_name + colIdx}>
+                            {column.column_name}
+                          </label>
                           <FileInputField {...column} />
-                        ) : (
-                          inputField(column)
-                        )}
-                      </div>
-                    );
+                        </div>
+                      );
+                    }
                   })}
                 </div>
               </form>
@@ -1150,6 +1213,9 @@ const getFunctions = async () => {
                     setCurrentWYSIWYG("");
                     setInputValues({});
                     setOpenPanel(false);
+                    setRenderNumber(0);
+                    setShowFiles(false);
+                    setCurrentFileGroup(undefined);
                   }}
                 >
                   close
@@ -1169,7 +1235,7 @@ const getFunctions = async () => {
               </div>
             </div>
           </div>
-          <div style={{ paddingBottom: "2em", paddingLeft:'1.5em'}}>
+          <div style={{ paddingBottom: "2em", paddingLeft: '1.5em' }}>
             {table.lookup_tables == "null" ? (
               <div></div>
             ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
@@ -1198,5 +1264,6 @@ const getFunctions = async () => {
     </div>
   );
 };
+
 
 export default TableListView;

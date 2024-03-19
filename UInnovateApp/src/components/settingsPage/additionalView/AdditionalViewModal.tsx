@@ -6,6 +6,8 @@ import { insertNewView } from "../../../virtualmodel/AdditionalViewsDataAccessor
 import vmd, { Table } from "../../../virtualmodel/VMD";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
+import { AuthState } from '../../../redux/AuthSlice';
+import  Audits  from "../../../virtualmodel/Audits";
 
 interface AdditionalViewModalProp {
   show: boolean;
@@ -25,6 +27,7 @@ const AdditionalViewModal = ({
   const [tableList, setTableList] = useState<Table[]>([]);
 
   const schemaName = useSelector((state: RootState) => state.schema.value);
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     // Only show tables of the selected schema
@@ -45,6 +48,13 @@ const AdditionalViewModal = ({
   };
 
   const handleSave = (e): void => {
+    Audits.logAudits(
+      loggedInUser || "",
+      "Add view",
+      "Added a new view with the following values: " + JSON.stringify(viewName) + ", " + JSON.stringify(viewType) + ", " + JSON.stringify(customCode),
+      schemaName,
+      tableName
+    );
     e.preventDefault();
     insertNewView(schemaName, tableName, viewName, viewType, customCode);
     handleClose();

@@ -6,11 +6,14 @@ import { Button, SelectChangeEvent } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
 import { IoLockClosed } from "react-icons/io5";
 import { IoMdAddCircle } from "react-icons/io"; 
-import { PiNotePencilBold } from "react-icons/pi";
 import { MdDelete } from "react-icons/md";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import "../../styles/InternationalizationTab.css";
 import isoLanguages from 'iso-639-1';
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/Store";
+import { AuthState } from '../../redux/AuthSlice';
+import  Audits  from "../../virtualmodel/Audits";
 
 const buttonStyle = {
     marginRight: 10,
@@ -38,7 +41,7 @@ const InternationalizationTab = () => {
     const [languages, setLanguages] = useState<string[]>([]); 
 
     const [newLabelName, setNewLabelName] = useState<string>(''); 
-
+    const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
     
     const getTranslations = async () => {
@@ -161,6 +164,14 @@ const InternationalizationTab = () => {
         } catch (error) {
             console.error('Error adding a new label:', error);
         }
+
+        Audits.logAudits(
+            loggedInUser || "",
+            "Add Label",
+            "Added a new label with the following values: " + JSON.stringify(labelName),
+            "i18n_keys",
+            ""
+        );
     };
 
     const handleEdit = async (keyCode: string, editedValue: string) => {
@@ -191,6 +202,14 @@ const InternationalizationTab = () => {
         } catch (error) {
             console.error("Error editing label:", error);
         }
+
+        Audits.logAudits(
+            loggedInUser || "",
+            "Edit Label",
+            "Edited a label with the following values: " + JSON.stringify(editedValue),
+            "i18n_keys",
+            ""
+        );
     };
 
     const handleDropdownLanguages = async () => {
@@ -372,8 +391,11 @@ interface TranslationTableRowProps {
 }
 
 const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslations, keyCode, value, is_default, onEdit }) => {
+    const [showModalDeleteLabel, setshowModalDeleteLabel] = useState<boolean>(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [editedValue, setEditedValue] = useState(value || "");
+    const [editedValue, setEditedValue] = useState(keyCode);
+    const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+
 
     const handleDoubleClick = () => {
         if (!is_default) {
@@ -441,20 +463,34 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         } catch (error) {
             console.error('Error deleting row:', error);
         }
+
+        Audits.logAudits(
+            loggedInUser || "",
+            "Delete Label",
+            "Deleted a label with the following values: " + JSON.stringify(keyCode),
+            "i18n_keys",
+            ""
+        );
     };
 
     const saveChanges = async () => {
         try {
-            if (value !== editedValue) {
-                // Console log the changes
-                console.log(`Changes detected: ${value} -> ${editedValue}`);
-                onEdit(keyCode || "", editedValue);
+            if (keyCode !== editedValue) {
+                onEdit(keyCode || "", editedValue || "");
             }
 
         } catch (error) {
             console.error('Error saving changes:', error);
         }
 
+    };
+
+    const showModalDelete = () => {
+        setshowModalDeleteLabel(true);
+    };
+
+    const handleClose = () => {
+        setshowModalDeleteLabel(false);
     };
 
     useEffect(() => {
@@ -482,15 +518,38 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
                 />
                 {is_default ? <IoLockClosed className="icon-lock" /> : (
                     <>
-                        <PiNotePencilBold
-                            style={{ marginLeft: 5, cursor: 'pointer' }}
-                            onClick={handleDoubleClick}
-                        /> {/* Edit icon */}
-                        <MdDelete onClick={() => handleDelete(keyCode || '')}  style={{ marginLeft: 5, cursor: 'pointer' }} /> {/* Delete icon */}
+                        <MdDelete onClick={showModalDelete} className="icon-delete" /> 
                     </>
-                )}
+                )} 
+                <Modal show={showModalDeleteLabel} onHide={handleClose}>
+                    <Modal.Header>
+                        <Modal.Title>Delete Label</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <p>Are you sure you want to delete the label <b>{keyCode}</b>?</p>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <div>
+                            <Button
+                                onClick={() => handleDelete(keyCode || '')}
+                                style={buttonStyle}
+                                variant="contained"
+                            >
+                                Delete
+                            </Button>
+                            <Button
+                                onClick={handleClose}
+                                style={buttonStyle}
+                                variant="contained"
+                            >
+                                Cancel
+                            </Button>
+                        </div>
+                    </Modal.Footer>
+                </Modal>
             </td>
-        </tr>
+        </tr> 
+    
     );
 };
 

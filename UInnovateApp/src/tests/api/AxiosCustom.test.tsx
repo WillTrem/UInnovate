@@ -1,9 +1,10 @@
 import axios from 'axios';
 import MockAdapter from 'axios-mock-adapter';
 import axiosCustom from '../../api/AxiosCustom'; 
+import { describe, expect } from "vitest";
 
 // Create a new instance of the axios-mock-adapter
-const mock = new MockAdapter(axios);
+const mock = new MockAdapter(axiosCustom);
 
 // Mock the token refresh function
 mock.onPost('/api/token_refresh', { withCredentials: true }).reply(200, { token: 'newToken' });

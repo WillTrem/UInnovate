@@ -10,6 +10,10 @@ import { ColumnConfig } from "./ColumnConfig";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import LookUpTable from "./LookupSetting";
 import { saveConfigToDB } from "../../helper/SettingsHelpers";
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 
 interface TableItemProps {
   table: Table;
@@ -23,7 +27,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
   }
 
   const displayType = table.getDisplayType();
-
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   // Updates the local configuration with a table-specific configuration value
   const updateTableConfig = async (property: ConfigProperty, value: string) => {
     const newConfigValue: ConfigData = {
@@ -45,6 +49,13 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     else {
       event.preventDefault();
     }
+
+    Audits.logAudits( 
+      loggedInUser || "",
+      "Table Visibility",
+      "User toggled the visibility of the table ",
+      schema.schema_name,
+      table.table_name,)
   };
 
   const handleToggleDetails = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +67,13 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     else {
       event.preventDefault();
     }
+
+    Audits.logAudits( 
+      loggedInUser || "",
+      "Details View",
+      "User toggled the Details View of the table ",
+      schema.schema_name,
+      table.table_name,)
   };
 
   const handleToggleStandAloneDetails = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,6 +85,13 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     else {
       event.preventDefault();
     }
+
+    Audits.logAudits( 
+      loggedInUser || "",
+      "Stand Alone Details View",
+      "User toggled the Stand Alone Details View of the table ",
+      schema.schema_name,
+      table.table_name,)
   };
 
 
@@ -79,6 +104,13 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
     else {
       event.preventDefault();
     }
+
+    Audits.logAudits( 
+      loggedInUser || "",
+      "Display Type",
+      "User changed the display type of the table to " + newDisplayType,
+      schema.schema_name,
+      table.table_name,)
   };
 
 

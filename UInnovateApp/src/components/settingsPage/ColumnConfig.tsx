@@ -7,6 +7,10 @@ import { ColumnDisplayTypes } from "../../virtualmodel/Config";
 import { SelectChangeEvent } from "@mui/material";
 import { Column, Table } from "../../virtualmodel/VMD";
 import { saveConfigToDB } from "../../helper/SettingsHelpers";
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 
 interface ColumnConfigProps {
   table: Table;
@@ -53,6 +57,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
   column,
   table,
 }: ColumnConfigRowProps) => {
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   async function handleVisibilityToggle(event: React.ChangeEvent<HTMLInputElement>) {
     const newConfigValue = {
       property: ConfigProperty.VISIBLE,
@@ -67,6 +72,13 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
     else {
       event.preventDefault();
     };
+
+    Audits.logAudits(
+      loggedInUser || "",
+      "Column Visibility",
+      "User toggled the visibility of the column ",
+      table.table_name,
+      column.column_name,)
 
   }
 
@@ -84,6 +96,13 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
     else {
       event.preventDefault();
     };
+
+    Audits.logAudits(
+      loggedInUser || "",
+      "Column Display Type",
+      "User changed the display type of the column " + event.target.value,
+      table.table_name,
+      column.column_name,)
   }
   return (
     <tr>
