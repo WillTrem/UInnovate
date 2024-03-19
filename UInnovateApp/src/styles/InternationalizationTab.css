@@ -14,3 +14,12 @@ td.container-labels {
 .icon-lock {
     color: #C0C0C0;
 }
+
+.icon-delete {
+    color: #C0C0C0;
+    cursor: pointer;
+}
+
+.icon-delete:hover {
+    color: #FF0000;
+}
