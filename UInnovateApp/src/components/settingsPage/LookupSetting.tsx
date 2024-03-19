@@ -13,7 +13,7 @@ import { saveConfigToDB } from '../../helper/SettingsHelpers';
 import { AuthState } from '../../redux/AuthSlice';
 import { RootState } from '../../redux/Store';
 import { useSelector } from 'react-redux';
-import  Audits  from "../../virtualmodel/Audits";
+import Audits from "../../virtualmodel/Audits";
 
 type LookUpTableProps = {
   table: Table;
@@ -26,11 +26,18 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
-  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+  const { user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   attributes?.map((attribute) => {
     if (attribute.references_table != "null" && attribute.references_table != null) {
       count = count + 1;
-      referencesTableList.push(attribute.references_table);
+      referencesTableList.push(attribute.references_table + " : " + attribute.references_by);
+    }
+    if (attribute.referenced_table != "null" && attribute.referenced_table != null) {
+      const tables = attribute.referenced_table.split(','); 
+      tables.forEach(table => { 
+        count = count + 1;
+        referencesTableList.push(table.trim() + " : " + attribute.referenced_by);
+      });
     }
     else {
       count = count + 0;
@@ -81,7 +88,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
               ))}
             </Select>
             <FormHelperText>
-              To customize the table which will be looked up
+              Format of look up table = Table : Column
             </FormHelperText>
           </FormControl>
         </div>
@@ -109,7 +116,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
         "Lookup Tables",
         "User changed the lookup counter of the table to " + counter.toString(),
         "",
-        table.table_name) 
+        table.table_name)
     };
 
     const setSelectInputConfig = async (selectInput: Row) => {
@@ -220,7 +227,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
               ))}
             </Select>
             <FormHelperText>
-              To customize the table which will be looked up
+            Format of look up table = Table : Column
             </FormHelperText>
           </FormControl>
 
