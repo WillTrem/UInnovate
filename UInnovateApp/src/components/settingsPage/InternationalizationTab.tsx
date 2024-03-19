@@ -384,7 +384,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
 
     const handleBlur = () => {
         if (!is_default) {
-            console.log(is_default)
             setIsEditing(false);
             saveChanges(); 
         }
@@ -450,8 +449,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     const saveChanges = async () => {
         try {
             if (keyCode !== editedValue) {
-                // Console log the changes
-                console.log(`Changes detected: ${keyCode} -> ${editedValue}`);
                 onEdit(keyCode || "", editedValue || "");
             }
 
