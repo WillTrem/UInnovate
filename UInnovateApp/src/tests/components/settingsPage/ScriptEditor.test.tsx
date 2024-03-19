@@ -11,6 +11,8 @@ import { describe, expect } from "vitest";
 import ace from "ace-builds";
 import { ScriptEditor } from "../../../components/settingsPage/ScriptEditor";
 import { Row } from "../../../virtualmodel/DataAccessor";
+import { Provider } from "react-redux";
+import store from "../../../redux/Store";
 
 vi.unmock("../../virtualmodel/VMD");
 vi.unmock("../../../virtualmodel/DataAccessor");
@@ -30,7 +32,11 @@ describe("ScriptEditor component", () => {
   });
 
   it("renders the script components", () => {
-    render(<ScriptEditor script={mockScript} />);
+    render(
+      <Provider store={store}>
+        <ScriptEditor script={mockScript} />
+      </Provider>
+    );
 
     const aceEditorElement = document.querySelector(".ace_editor");
     const aceEditor = ace.edit(aceEditorElement as HTMLElement);
@@ -51,7 +57,11 @@ describe("ScriptEditor component", () => {
   });
 
   it("changes the button name when typing in the TextField", async () => {
-    render(<ScriptEditor script={mockScript} />);
+    render(
+      <Provider store={store}>
+        <ScriptEditor script={mockScript} />
+      </Provider>
+    );
 
     const buttonNameField = screen.getAllByRole("textbox")[0];
 
@@ -67,7 +77,11 @@ describe("ScriptEditor component", () => {
   });
 
   it("changes the script description when typing in the TextField", async () => {
-    render(<ScriptEditor script={mockScript} />);
+    render(
+      <Provider store={store}>
+        <ScriptEditor script={mockScript} />
+      </Provider>
+    );
 
     const descriptionField = screen.getByTestId("description-field");
     const inputElement = within(descriptionField).getByRole("textbox");
@@ -84,7 +98,11 @@ describe("ScriptEditor component", () => {
   });
 
   it("changes the script content when the Edit and Save buttons are clicked", async () => {
-    render(<ScriptEditor script={mockScript} />);
+    render(
+      <Provider store={store}>
+        <ScriptEditor script={mockScript} />
+      </Provider>
+    );
 
     const editButton = screen.getByTestId("EditIcon");
     const aceEditorElement = document.querySelector(".ace_editor");
