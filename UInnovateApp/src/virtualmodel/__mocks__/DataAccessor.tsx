@@ -33,18 +33,7 @@ export class DataAccessorMock {
         },
       ]);
     } else if (this.data_url === 'user_info') {
-      return Promise.resolve(
-        [
-          {
-            email: "test@test.com",
-            first_name: "first_name",
-            last_name: "last_name",
-            role: Role.ADMIN, // Default role
-            is_active: true,
-            schema_access: ["mock schema name", "mock schema name 2"]
-          }
-        ]
-      )
+      return Promise.resolve(userInfoMock);
     }
     else {
       return Promise.resolve([]);
@@ -61,3 +50,14 @@ export class DataAccessorMock {
     return Promise.resolve();
   })
 }
+
+const userInfoMock =  [
+  {
+    email: "test@test.com",
+    first_name: "first_name",
+    last_name: "last_name",
+    role: Role.ADMIN, // Default role
+    is_active: true,
+    schema_access: ["mock schema name", "mock schema name 2"]
+  }
+];

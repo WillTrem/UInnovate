@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">27.27% </span>
+                <span class="strong">54.54% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/22</span>
+                <span class='fraction'>12/22</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/6</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">27.27% </span>
+                <span class="strong">54.54% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/22</span>
+                <span class='fraction'>12/22</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -197,9 +197,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,14 +217,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -224,7 +224,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import vmd, { ConfigData, UserData } from "../virtualmodel/VMD";
 import store from "../redux/Store";
@@ -277,18 +277,18 @@ export async function saveConfigToDB(newConfig: ConfigData) {
   return true;
 }
 &nbsp;
-export async function <span class="fstat-no" title="function not covered" >saveUserDataToDB(u</span>ser: UserData) {
-  const updateUserDataFA = <span class="cstat-no" title="statement not covered" >vmd.getFunctionAccessor("meta", "update_user_data");</span>
-<span class="cstat-no" title="statement not covered" >  updateUserDataFA.setBody({ user });</span>
-<span class="cstat-no" title="statement not covered" >  updateUserDataFA</span>
+export async function saveUserDataToDB(user: UserData) {
+  const updateUserDataFA = vmd.getFunctionAccessor("meta", "update_user_data");
+  updateUserDataFA.setBody({ user });
+  updateUserDataFA
   .executeFunction()
-  .then(<span class="fstat-no" title="function not covered" >() =&gt; {</span>
+  .then(() =&gt; {
     //Displays a success notification
-    const action = <span class="cstat-no" title="statement not covered" >{</span>
+    const action = {
       type: "notification/displayNotification",
       payload: `Sucessfully updated user data of "${user.email}".`,
     };
-<span class="cstat-no" title="statement not covered" >    store.dispatch(action);</span>
+    store.dispatch(action);
   })
   .catch((<span class="fstat-no" title="function not covered" >error) =&gt; {</span>
     //Displays an error notification
@@ -305,7 +305,7 @@ export async function <span class="fstat-no" title="function not covered" >saveU
 <span class="cstat-no" title="statement not covered" >    return false;</span>
   });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >return true;</span>
+return true;
 }</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -313,7 +313,7 @@ export async function <span class="fstat-no" title="function not covered" >saveU
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-19T22:17:31.082Z
+                at 2024-03-19T23:31:08.388Z
             </div>
         <script src="../prettify.js"></script>
         <script>
