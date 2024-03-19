@@ -63,11 +63,12 @@ export class DataAccessorMock {
         config: {},
       });
     } else {
-      return Promise.reject({
-        response: {
-          status: 400,
-          data: "Bad request",
-        },
+      return Promise.resolve({
+        data: {},
+        status: 201,
+        statusText: "Created",
+        headers: {},
+        config: {},
       });
     }
   });
