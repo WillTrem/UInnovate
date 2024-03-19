@@ -14,9 +14,9 @@ describe("UserManagementTab component", () => {
 		script_table: { table_name: "script_mock" },
 		auth: { dbRole: Role.ADMIN, user: "admin", token: "token" },
 		userData: {
-			users: [{ email: "mockuser123@test.com", role: "user", schema_access: ["mock schema name"], schemaRoles: {} },
-			{ email: "mockAdmin@test.com", role: "administrator", schema_access: ["mock schema name"], schemaRoles: {} },
-			{ email: "mockConfigurator@test.com", role: "configurator", schema_access: ["mock schema name"], schemaRoles: {} }]
+			users: [{ email: "mockuser123@test.com", role: "user", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
+			{ email: "mockAdmin@test.com", role: "administrator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
+			{ email: "mockConfigurator@test.com", role: "configurator",  is_active: true, schema_access: ["mock schema name"], schemaRoles: {} }]
 		}
 	};
 	const middlewares: Middleware[] = [];
@@ -134,5 +134,33 @@ describe("UserManagementTab component", () => {
 				expect(screen.getByText(ErrMsg.INVALID_EMAIL));
 			})
 
+		}),
+		it("Displays the unauthorized screen for unauthorized user", async () => {
+			store = mockStore({...initialState, auth: { dbRole: Role.CONFIG, user: "configurator_user", token: "token" }});
+			render(
+				<MemoryRouter>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
+				</MemoryRouter>
+			);
+			expect(screen.getByTestId("unauthorized-screen"));
+		}),
+		it("Renders user data properly", async () => {
+			store = mockStore(initialState);
+			render(
+				<MemoryRouter>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
+				</MemoryRouter>
+			);
+			
+			await waitFor(() => {
+				expect(screen.getByText("test@test.com")).toBeInTheDocument();
+			})
+			
 		})
 })
+
+// describe("UserTableRow")

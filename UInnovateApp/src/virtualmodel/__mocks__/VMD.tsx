@@ -58,9 +58,12 @@ export default {
     console.log("getFunctionAccessor in VMD mock was called");
     return new FunctionAccessorMock();
   }),
-  getViewRowsDataAccessor: vi.fn().mockImplementation(() => {
+  getViewRowsDataAccessor: vi.fn().mockImplementation((schema_name: string,
+    view_name: string,
+    search_key: string[],
+    search_key_value: string[]) => {
     console.log("getViewRowsDataAccessor in VMD mock was called");
-    return new DataAccessorMock();
+    return new DataAccessorMock(view_name);
   }),
   getRemoveRowAccessor: vi.fn().mockImplementation(() => {
     console.log("getRemoveRowAccessor in VMD mock was called");
