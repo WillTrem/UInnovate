@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.23% </span>
+                <span class="strong">56.25% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/13</span>
+                <span class='fraction'>9/16</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/5</span>
+                <span class='fraction'>2/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">61.53% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/10</span>
+                <span class='fraction'>8/13</span>
             </div>
         
             
@@ -163,7 +163,12 @@
 <a name='L98'></a><a href='#L98'>98</a>
 <a name='L99'></a><a href='#L99'>99</a>
 <a name='L100'></a><a href='#L100'>100</a>
-<a name='L101'></a><a href='#L101'>101</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L101'></a><a href='#L101'>101</a>
+<a name='L102'></a><a href='#L102'>102</a>
+<a name='L103'></a><a href='#L103'>103</a>
+<a name='L104'></a><a href='#L104'>104</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -189,18 +194,19 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -280,20 +286,25 @@ import {Tooltip, Zoom} from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { setLoading } from '../redux/LoadingSlice';
+import vmd from '../virtualmodel/VMD';
 &nbsp;
 interface NavBarProps {
   showSchemaFilter?: boolean;
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
-  const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) =&gt; state.auth);
+  const {user: loggedInUser, dbRole }: AuthState = useSelector((state: RootState) =&gt; state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-&nbsp;
   const handleClose = <span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowSignupModal(false);</span>
   const handleShow = <span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowSignupModal(true);</span>
   const handleLogout = <span class="fstat-no" title="function not covered" >() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    dispatch(setLoading(true));</span>
 <span class="cstat-no" title="statement not covered" >    dispatch(logOut());</span>
+<span class="cstat-no" title="statement not covered" >    vmd.refetchSchemas().then(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >      dispatch(setLoading(false));</span>
+    })
 <span class="cstat-no" title="statement not covered" >    navigate('/');</span>
   }
 &nbsp;
@@ -328,11 +339,9 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
           &lt;/Nav&gt;}
           &lt;Nav className="justify-content-end flex-grow-1 pe-3"&gt;
             {( LOGIN_BYPASS || loggedInUser ) &amp;&amp;
-            &lt;&gt;&lt;Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}&gt;
-              ObjectMenu
-            &lt;/Nav.Link&gt;
+            &lt;&gt;
             {/* Hides the Settings page link for user role */}
-            &lt;Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}&gt;
+            &lt;Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={dbRole === Role.USER}&gt;
               Settings
             &lt;/Nav.Link&gt;&lt;/&gt;
             }
@@ -370,7 +379,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-07T21:52:55.337Z
+                at 2024-03-11T20:05:52.968Z
             </div>
         <script src="../prettify.js"></script>
         <script>

@@ -56,6 +56,7 @@ export async function callProcedure(params: ProcedureSchedulingParams): Promise<
 }
 
 export async function scheduleProcedure(params: ProcedureSchedulingParams): Promise<void> {
+    console.log('alive and well');
     // 1. Ask VMD to give schema for cron
     const schema = await vmd.getSchema('cron');
     

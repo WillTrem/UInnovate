@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">1.92% </span>
+                <span class="strong">36.53% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/52</span>
+                <span class='fraction'>19/52</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">9.09% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/22</span>
+                <span class='fraction'>2/22</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">23.07% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/13</span>
+                <span class='fraction'>3/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">2% </span>
+                <span class="strong">38% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/50</span>
+                <span class='fraction'>19/50</span>
             </div>
         
             
@@ -215,27 +215,27 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -244,10 +244,10 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -332,9 +332,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -357,27 +357,27 @@ interface TableListViewProps {
   table: Table;
 }
 &nbsp;
-const LookUpTableDetails: React.FC&lt;TableListViewProps&gt; = <span class="fstat-no" title="function not covered" >({</span> table }: TableListViewProps) =&gt; {
+const LookUpTableDetails: React.FC&lt;TableListViewProps&gt; = ({ table }: TableListViewProps) =&gt; {
 &nbsp;
-    const [Columns, setColumns] = <span class="cstat-no" title="statement not covered" >useState&lt;Column[][]&gt;([]);</span>
-    const [rows, setRows] = <span class="cstat-no" title="statement not covered" >useState&lt;Row[][] | undefined&gt;([]);</span>
-    const getTable = <span class="cstat-no" title="statement not covered" >JSON.parse(table.lookup_tables);</span>
-    const count = <span class="cstat-no" title="statement not covered" >Object.keys(getTable).length - 1;</span>
+    const [Columns, setColumns] = useState&lt;Column[][]&gt;([]);
+    const [rows, setRows] = useState&lt;Row[][] | undefined&gt;([]);
+    const getTable = JSON.parse(table.lookup_tables);
+    const count = Object.keys(getTable).length - 1;
 &nbsp;
 &nbsp;
-    const LookUpTables = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(n</span>um: number) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      num = num - 1;</span>
+    const LookUpTables = (num: number) =&gt; {
+      num = num - 1;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      if (getTable[num] == 'none') {</span>
+      <span class="missing-if-branch" title="if path not taken" >I</span>if (getTable[num] == 'none') {
 <span class="cstat-no" title="statement not covered" >        return (&lt;&gt;&lt;/&gt;);</span>
       }
       else {
-        const tableName = <span class="cstat-no" title="statement not covered" >getTable[num];</span>
-        const search = <span class="cstat-no" title="statement not covered" >table.getColumns()</span>
+        const tableName = getTable[num];
+        const search = table.getColumns()
 &nbsp;
-        let toolsColumn: string = <span class="cstat-no" title="statement not covered" >"";</span>
-        let toolsColumnName: string = <span class="cstat-no" title="statement not covered" >"";</span>
-<span class="cstat-no" title="statement not covered" >        search?.map(<span class="fstat-no" title="function not covered" >(a</span>ttribute) =&gt; {</span>
+        let toolsColumn: string = "";
+        let toolsColumnName: string = "";
+        search?.map(<span class="fstat-no" title="function not covered" >(a</span>ttribute) =&gt; {
 <span class="cstat-no" title="statement not covered" >          if (attribute.references_table == tableName) {</span>
 <span class="cstat-no" title="statement not covered" >            toolsColumn = attribute.column_name;</span>
 <span class="cstat-no" title="statement not covered" >            toolsColumnName = attribute.references_by;</span>
@@ -386,10 +386,10 @@ const LookUpTableDetails: React.FC&lt;TableListViewProps&gt; = <span class="fsta
 <span class="cstat-no" title="statement not covered" >            return (&lt;&gt;no&lt;/&gt;);</span>
           }
         });
-        const temp = <span class="cstat-no" title="statement not covered" >toolsColumn;</span>
-        const connectionID = <span class="cstat-no" title="statement not covered" >localStorage.getItem(temp);</span>
-<span class="cstat-no" title="statement not covered" >        if (connectionID == undefined) {</span>
-<span class="cstat-no" title="statement not covered" >          return (&lt;&gt;Missing ConnectionID&lt;/&gt;);</span>
+        const temp = toolsColumn;
+        const connectionID = localStorage.getItem(temp);
+        <span class="missing-if-branch" title="else path not taken" >E</span>if (connectionID == undefined) {
+          return (&lt;&gt;Missing ConnectionID&lt;/&gt;);
         }
 &nbsp;
 &nbsp;
@@ -474,9 +474,9 @@ const LookUpTableDetails: React.FC&lt;TableListViewProps&gt; = <span class="fsta
     }
 &nbsp;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    return (&lt;&gt;</span>
-      {[...Array(count)].map(<span class="fstat-no" title="function not covered" >(_</span>, index) =&gt; (
-<span class="cstat-no" title="statement not covered" >        &lt;div key={index}&gt;</span>
+    return (&lt;&gt;
+      {[...Array(count)].map((_, index) =&gt; (
+        &lt;div key={index}&gt;
           {LookUpTables(index)}
         &lt;/div&gt;
 &nbsp;
@@ -496,7 +496,7 @@ export default LookUpTableDetails;</pre></td></tr></table></pre>
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-07T21:52:55.337Z
+                at 2024-03-11T20:05:52.968Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

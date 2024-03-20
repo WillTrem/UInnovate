@@ -5,11 +5,9 @@ import { DataAccessor } from "../../virtualmodel/DataAccessor";
 import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchFunctionNames } from '../../virtualmodel/PlatformFunctions';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
-import SchemaSelector from '../Schema/SchemaSelector';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import Tab from "react-bootstrap/Tab";
-import DisplayType from '../Schema/DisplayType';
 import vmd from "../../virtualmodel/VMD";
 
 interface ExecutionLogEntry {
@@ -35,6 +33,21 @@ const buttonStyle = {
     backgroundColor: "#404040",
     width: "fit-content",
   };
+export const formatDuration = (ms: number | 'N/A') => {
+    if (ms === 'N/A') return 'N/A';
+
+    let seconds = Math.floor(ms / 1000);
+    let minutes = Math.floor(seconds / 60);
+    let hours = Math.floor(minutes / 60);
+
+    seconds = seconds % 60;
+    minutes = minutes % 60;
+
+    // Padding the numbers with zero if less than 10 for a more consistent display
+    const padTo2Digits = (num: number) => num.toString().padStart(2, '0');
+
+    return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
+};
 export const CronJobsTab = () => {
     const [selectedProc, setSelectedProc] = useState('');
     const [cronSchedule, setCronSchedule] = useState('');
@@ -45,6 +58,9 @@ export const CronJobsTab = () => {
     const { schema_access } = useSelector((state: RootState) => state.auth);
 
     const updateProcedureNames = async () => {
+        console.log("Schema Names:", schema_access);
+        console.log("Selected Schema Names:", selectedSchema);
+
         if (!selectedSchema || schema_access.length == 0) return
         try {
             // wait for resolve of fetchFunctionNames promises
@@ -61,13 +77,13 @@ export const CronJobsTab = () => {
         }
     };
 
-    const scheduleCronJob = () => {
+     const scheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
             functionName: "schedule_job_by_name",
             stored_procedure: selectedProc,
             cron_schedule: cronSchedule,
         };
-    
+        console.log("Cron Job Params:", params)
         return new Promise((resolve, reject) => {
             scheduleProcedure(params)
                 .then(response => {
@@ -83,7 +99,7 @@ export const CronJobsTab = () => {
         });
     };    
 
-    const unscheduleCronJob = () => {
+     const unscheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
             functionName: "unschedule_job_by_name",
             stored_procedure: selectedProc
@@ -102,22 +118,6 @@ export const CronJobsTab = () => {
                     reject(error);
                 });
         });
-    };
-
-    const formatDuration = (ms: number | 'N/A') => {
-        if (ms === 'N/A') return 'N/A';
-    
-        let seconds = Math.floor(ms / 1000);
-        let minutes = Math.floor(seconds / 60);
-        let hours = Math.floor(minutes / 60);
-    
-        seconds = seconds % 60;
-        minutes = minutes % 60;
-    
-        // Padding the numbers with zero if less than 10 for a more consistent display
-        const padTo2Digits = (num: number) => num.toString().padStart(2, '0');
-    
-        return `${padTo2Digits(hours)}:${padTo2Digits(minutes)}:${padTo2Digits(seconds)}`;
     };
     
     const fetchExecutionLogsForProc = async (procName: string) => {

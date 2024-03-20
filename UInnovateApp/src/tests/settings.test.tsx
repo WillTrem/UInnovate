@@ -13,7 +13,7 @@ vi.mock("../NavBar");
 
 describe("Settings.tsx", () => {
   const initialState = {
-    schema: { schema_name: "application" },
+    schema: { schema_name: "application"},
     script_table: { table_name: "script_mock" },
     auth: { dbRole: Role.ADMIN, schemaRoles: {}, user: "admin", token: "token", schema_access: ['mock schema name'] },
     userData: {

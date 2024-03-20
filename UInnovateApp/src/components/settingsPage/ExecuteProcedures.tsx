@@ -2,7 +2,7 @@ import { Col, Row as Line, Tab, Nav } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { fetchFunctionNames, callProcedure, ProcedureSchedulingParams, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
+import { fetchFunctionNames, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -69,20 +69,6 @@ export const ExecuteProcedures = () => {
       await data_accessor?.addRow();
       getFunctions();
       setShowModal(false);
-    };
-    const execProcedure = () => {
-        const params: ProcedureSchedulingParams = {
-            functionName: selectedProc,
-            schema: selectedSchema
-        };
-        callProcedure(params)
-            .then(() => {
-                alert(selectedProc + ' executed successfully');
-            })
-            .catch(error => {
-                console.error('Error executing procedure:', error);
-                alert('Error executing procedure: ' + error.message);
-            });
     };
     const updateProcedureNames = async () => {
         if (!selectedSchema || schema_access.length == 0) return
