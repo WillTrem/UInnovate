@@ -88,7 +88,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
               ))}
             </Select>
             <FormHelperText>
-              Format of look up table = Table : Column
+            Table : Column, column is references or referenced by
             </FormHelperText>
           </FormControl>
         </div>
@@ -176,7 +176,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
         table.table_name)
     };
 
-    const handleButtonClickDelete = () => {
+    const handleButtonClickDelete = async () => {
       if (counter > 0) {
         const newCounterValue = counter - 1;
         setCounter(newCounterValue);
@@ -194,7 +194,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
         table.table_name)
     };
 
-    const handleReset = () => {
+    const handleReset = async() => {
       const newSelectInput = {
         ...SelectInput,
         [counter - 1]: "none"
@@ -227,7 +227,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
               ))}
             </Select>
             <FormHelperText>
-            Format of look up table = Table : Column
+            Table : Column, column is references or referenced by
             </FormHelperText>
           </FormControl>
 

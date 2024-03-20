@@ -845,7 +845,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-    if (table.stand_alone_details_view) {
+    if (!table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
     const schema = vmd.getTableSchema(table.table_name);
@@ -866,13 +866,13 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsPopupVisible(true);
   };
 
-  useEffect(() => {
-    if (showTable) {
-      setTimeout(() => {
-        setShowTable(false);
-      }, 1000);
-    }
-  }, [openPanel]);
+  // useEffect(() => {
+  //   if (showTable) {
+  //     setTimeout(() => {
+  //       setShowTable(false);
+  //     }, 1000);
+  //   }
+  // }, [openPanel]);
 
   return (
     <div>
@@ -1242,7 +1242,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               <div></div>
             ) : showTable ? (
               <div style={{ paddingBottom: "2em" }}>
-                <LookUpTableDetails table={table} />
+                <LookUpTableDetails table={table} currentRow={currentRow.row} />
               </div>
             ) : (
               <Button
