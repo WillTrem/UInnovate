@@ -487,6 +487,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -505,18 +506,17 @@ const TableListView: React.FC<TableListViewProps> = ({
       table.table_name
     );
 
-    const storedPrimaryKeyValue = localStorage.getItem(
-      "currentPrimaryKeyValue"
-    );
+    const storedPrimaryKeyValue = currentRow.row ? currentRow.row[currentPrimaryKey as string] : null;
+    
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
       table.table_name,
       inputValues,
       currentPrimaryKey as string,
-      storedPrimaryKeyValue as string
+      storedPrimaryKeyValue as unknown as string
     );
-    data_accessor.updateRow().then((res) => {
+    data_accessor.updateRow().then(() => {
       getRows();
     });
     setInputValues({});
@@ -599,20 +599,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       return null;
     }
 
-    if (column.is_editable == false) {
-      localStorage.setItem(
-        "currentPrimaryKeyValue",
-        currentRow.row[column.column_name]
-      );
-    }
+   
 
-    if (column.references_table != null) {
-      const string = column.column_name + "L";
-      localStorage.setItem(
-        string,
-        currentRow.row[column.column_name] as string
-      );
-    }
+    
     return showFiles && currentFileGroup ? (
       <div title="Dropzone">
         <Dropzone
@@ -646,20 +635,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-      if (column.is_editable == false) {
-        localStorage.setItem(
-          "currentPrimaryKeyValue",
-          currentRow.row[column.column_name]
-        );
-      }
-
-      if (column.references_table != null) {
-        const string = column.column_name + "LL";
-        localStorage.setItem(
-          string,
-          currentRow.row[column.column_name] as string
-        );
-      }
+     
       if (
         !columnDisplayType ||
         columnDisplayType.value == "text" ||
