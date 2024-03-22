@@ -446,7 +446,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 		required={props.required}
 		sx={props.sx}
 		onKeyDown={props.onKeyDown}
-
 	>
 		<InputLabel>{props.label}</InputLabel>
 		<OutlinedInput
@@ -457,8 +456,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 			autoFocus={props.autoFocus}
 			onFocus={() => setSelected(true)}
 			onBlur={() => setSelected(false)}
-
-
 			endAdornment={
 				<InputAdornment position="end" >
 					<IconButton
@@ -471,6 +468,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 				</InputAdornment>
 			}
 			label={props.label}
+			data-testid="password-field"
 		/>
 		{validateStrength
 			?

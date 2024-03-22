@@ -7,6 +7,10 @@ export { Table, Schema, Column };
 
 export default {
   ...VMD,
+  getRowDataAccessor: vi.fn().mockImplementation(() => {
+    console.log("getRowDataAccessor in VMD mock was called.")
+    return new DataAccessorMock();
+  }),
   getRowsDataAccessor: vi.fn().mockImplementation((schema, table) => {
     console.log("getRowsDataAccessor in VMD mock was called");
     return new DataAccessorMock(table);
@@ -58,6 +62,13 @@ export default {
     console.log("getFunctionAccessor in VMD mock was called");
     return new FunctionAccessorMock(function_name);
   }),
+  getViewRowDataAccessor: vi.fn().mockImplementation((schema_name: string,
+    view_name: string,
+    search_key: string[],
+    search_key_value: string[]) => {
+    console.log("getViewRowDataAccessor in VMD mock was called.")
+    return new DataAccessorMock(view_name);
+  }),
   getViewRowsDataAccessor: vi.fn().mockImplementation((schema_name: string,
     view_name: string,
     search_key: string[],
@@ -81,6 +92,10 @@ export default {
     console.log("getUpsertRowData in VMD mock was called");
     return new DataAccessorMock(table_name);
   }),
+  refetchSchemas: vi.fn().mockImplementation(() => {
+    console.log("refetchSchemas in VMD mock was called.")
+  }),
+  
   Table: Table,
   Column: Column,
   TableDisplayType: TableDisplayType,
