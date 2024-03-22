@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import Switch from "@mui/material/Switch";
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
+import Select from "@mui/material/Select";
 import { MenuItem } from '@mui/material';
 import "../../styles/TableItem.css";
 import { ConfigData, Table } from "../../virtualmodel/VMD";
-import buttonStyle from '../TableEnumView'
 import { Row } from '../../virtualmodel/DataAccessor';
 import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
 import { saveConfigToDB } from '../../helper/SettingsHelpers';
@@ -25,6 +23,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
   const referencesTableList: string[] = [];
   const { user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   attributes?.map((attribute) => {
+    //checks for references table and referenced table
     if (attribute.references_table != "null" && attribute.references_table != null) {
       count = count + 1;
       referencesTableList.push(attribute.references_table + ":references");
@@ -32,21 +31,22 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
     if (attribute.referenced_table != "null" && attribute.referenced_table != null) {
       const tables = attribute.referenced_table.split(',');
       tables.forEach(table => {
-       
-          count = count + 1;
-          referencesTableList.push(table.trim() + ":referenced");
-        
+
+        count = count + 1;
+        referencesTableList.push(table.trim() + ":referenced");
+
       });
     }
     else {
       count = count + 0;
     }
   });
+  //if there are no references or referenced tables
   if (count == 0) {
     return (<></>)
   }
   else {
-
+    //if there are references or referenced tables
     const defaultRow = new Row({});
     for (let i = -1; i < count - 1; i++) {
 
@@ -67,7 +67,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
     )
 
 
-
+    //button component for when we have multiple references or referenced tables and want more than 1 lookup table
     const MyButtonComponent = ({ buttonIndex }: { buttonIndex: number }) => {
       return (
         <div style={{ marginTop: '2em' }} >
@@ -86,7 +86,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
               ))}
             </Select>
             <FormHelperText>
-            References means current table references selected table
+              References means current table references selected table
             </FormHelperText>
           </FormControl>
         </div>
@@ -138,7 +138,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
     };
 
 
-
+    //function to handle change in the select input
     const HandleChange = (index: number) => (event: React.ChangeEvent<{ value: unknown }>) => {
       const newSelectInput = {
         ...SelectInput,
@@ -155,7 +155,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
         table.table_name)
     };
 
-
+    //function to handle increase in amount of lookup tables
     const handleButtonClick = async () => {
       if (count - 1 == counter || count == 0) {
         alert("You can't add more lookup tables")
@@ -228,7 +228,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
               ))}
             </Select>
             <FormHelperText>
-            References means current table references selected table
+              References means current table references selected table
             </FormHelperText>
           </FormControl>
 
@@ -249,7 +249,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08' }}>
           {[...Array(counter)].map((_, index) => (
-
+            //button component for when we have multiple references or referenced tables and want more than 1 lookup table
             <MyButtonComponent key={index} buttonIndex={index} />
 
           ))}

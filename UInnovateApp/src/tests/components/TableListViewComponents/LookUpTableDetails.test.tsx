@@ -34,7 +34,7 @@ describe('LookUpTableDetails component', () => {
     });
   });
 
-  it('renders the table', async () => {
+  it('renders a table', async () => {
     renderComponent();
     expect(VMD.getRowsDataAccessorForLookUpTable).toHaveBeenCalled();
 
@@ -44,7 +44,7 @@ describe('LookUpTableDetails component', () => {
     });
   });
 
-  it('checks if nothing shows', async () => {
+  it('checks if nothing shows for when settings have nothing', async () => {
     const { container } = render(<LookUpTableDetails table={table2} currentRow={row} />);
 
     expect(container.firstChild).toBeEmptyDOMElement();
@@ -60,8 +60,6 @@ describe('LookUpTableDetails component', () => {
       expect(tableElement.length).toBeGreaterThan(1);
       const tabletext = screen.getAllByTestId('look-up-table-text')
       expect(tabletext.length).toBeGreaterThan(1);
-
-
     });
   });
 

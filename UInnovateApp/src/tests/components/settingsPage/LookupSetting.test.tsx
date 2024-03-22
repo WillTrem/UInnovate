@@ -53,7 +53,7 @@ describe('LookupSetting component', () => {
 
     });
 
-    it('testing buttons where there are multiple tables', async () => {
+    it('testing buttons when there are multiple tables', async () => {
 
         render(
             <Provider store={store}>
@@ -79,14 +79,14 @@ describe('LookupSetting component', () => {
 
     });
 
-    it('checks if nothing shows', async () => {
-        const { container } =  render(
+    it('checks if nothing shows for tables with no referencing', async () => {
+        const { container } = render(
             <Provider store={store}>
                 <LookUpTableSetting table={table3} />
             </Provider>
         );
-    
+
         expect(container.firstChild).toBeNull();
     });
-    
+
 });

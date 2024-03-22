@@ -21,25 +21,22 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
 
     const [Columns, setColumns] = useState<Column[][]>([]);
     const [rows, setRows] = useState<Row[][] | undefined>([]);
-    console.log(table.lookup_tables);
     const getTable = JSON.parse(table.lookup_tables);
-    const count = Object.keys(getTable).length - 1;
+    const count = Object.keys(getTable).length - 1; // -1 to account for the row key and checks for the number of look up tables that are present
     const LookUpTables = (num: number) => {
       num = num - 1;
-
+      //if not settings are present for look up tables
       if (getTable[num] == 'none') {
         return (<></>);
       }
       else {
-        console.log(currentRow);
         const attributes = table.getColumns();
-        console.log(attributes);
         const value = getTable[num].split(':');
         const tableName = value[0].trim();
         const type = value[1].trim();
-        console.log(type)
         let column = 'bruh';
         attributes?.map((attribute) => {
+          //checks for references table and referenced table
           if (type == 'references') {
             if (attribute.references_table == tableName) {
               column = attribute.references_by;
@@ -88,7 +85,6 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
               column,
               columnValue
             );
-            console.log(data_accessor);
             const lines = await data_accessor.fetchRows();
             if (!lines) {
               return console.error("Could not fetch rows");
@@ -117,7 +113,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
               {tableName} {type} look up table:
             </div>
             <div>
-              {/* Here is the table name: {toolsColumn} */}
+              
             </div>
             {Columns[num + 1] && rows[num + 1] ? (
               <TableContainer style={{ marginBottom: '2em' }} >
