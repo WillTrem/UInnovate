@@ -18,6 +18,7 @@ import { RootState } from "../redux/Store";
 import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import ConfirmationPopup from "./SavePopup";
+import InfoPopup from "./PrimaryKeyErrorPopup";
 import { IoIosArrowUp } from "react-icons/io";
 import {
   Switch,
@@ -161,6 +162,8 @@ const TableListView: React.FC<TableListViewProps> = ({
     message: '', 
     confirmAction: () => {},
   });
+  const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
+  const [infoPopupMessage, setInfoPopupMessage] = useState('');
 
   const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
@@ -666,6 +669,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       clickTimeoutRef.current = null;
     }
     if(!column.is_editable){
+      setInfoPopupMessage(`${column.column_name} is not editable because it's a primary key.`);
+      setIsInfoPopupOpen(true);
       return false;
     }
     const columnName = column.column_name
@@ -1272,6 +1277,14 @@ const TableListView: React.FC<TableListViewProps> = ({
         onCancel={handleCancelConfirm}
       />
       )}
+    {isInfoPopupOpen && (
+      <InfoPopup
+        open={isInfoPopupOpen}
+        message={infoPopupMessage}
+        onClose={() => setIsInfoPopupOpen(false)}
+      />
+    )}
+
 
       <div>
         <Container>
