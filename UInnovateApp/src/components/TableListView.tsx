@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
 import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
+import ConfirmationPopup from "./SavePopup";
 import { IoIosArrowUp } from "react-icons/io";
 import {
   Switch,
@@ -71,17 +72,28 @@ import {
 } from "@mui/material";
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
+import { set } from "lodash";
 
 interface TableListViewProps {
   table: Table;
 }
-
+interface EditingCell {
+  rowIdx: number;
+  columnName: string;
+  value: string;
+}
 const buttonStyle = {
   marginTop: 20,
   backgroundColor: "#404040",
   width: "fit-content",
 };
 
+type ConfirmPopupContent = {
+  title: string;
+  message: string;
+  confirmAction: () => void;
+  onCancel?: () => void;
+};
 const theme = createTheme({
   components: {
     MuiPickersPopper: {
@@ -140,6 +152,15 @@ const TableListView: React.FC<TableListViewProps> = ({
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const function_table = vmd.getTable("meta", "function_map");
+  
+  const [clickAction, setClickAction] = useState<'single' | 'double' | null>(null);
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
+  const [confirmPopupContent, setConfirmPopupContent] = useState<ConfirmPopupContent>({ 
+    title: '', 
+    message: '', 
+    confirmAction: () => {},
+  });
 
   const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
@@ -172,10 +193,12 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     return initialCheckedState;
   });
+    const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
     const schemas = vmd.getTableSchema(table.table_name);
+  
 
     if (!schemas) {
       return;
@@ -368,7 +391,11 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
-
+  const handleUserConfirm = () => {
+    confirmPopupContent.confirmAction(); 
+    setIsConfirmPopupOpen(false); 
+  };
+  
   const onItemAdded = async (
     e,
     item,
@@ -630,10 +657,118 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
 
+  const handleDoubleClick = (rowIndex : number, column: Column) => {
+    const newRow = rows[rowIndex];
+    setCurrentRow(newRow);
+    // clear timeout on double click
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+    }
+    if(!column.is_editable){
+      return false;
+    }
+    const columnName = column.column_name
+    // Set state indicating the action is a double click
+    setClickAction('double');
+    const cellValue = newRow.row[columnName];
+    const valueAsString = String(cellValue);
+    setEditingCell({ rowIdx: rowIndex, columnName: columnName, value: valueAsString });
+  };
+  
+  
+  const handleClick = (row : Row) => {
+    if(editingCell !== null){return}
+    // Clear any existing timeout to start fresh
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
+    
+    // Set a timeout for a single click
+    clickTimeoutRef.current = setTimeout(() => {
+      if (clickAction !== 'double') {
+        // It's a single click
+        handleOpenPanel(row);
+      }
+      setClickAction(null);  // Reset the click action after the action is determined
+    }, 200); // 200 ms delay, you may adjust this based on the UX
+  };
+  const isCellEditable = (rowIndex : number, columnNamec: string) => {
+    // Implement your logic here
+    return true; // or false based on certain conditions
+  };
+  const handleSave = async (e, rowIdx : number, columnName : string) => {
+    // Prevent the default action, if called within a form
+      const confirmAction = async () => {
+        if (e.preventDefault) e.preventDefault();
+      
+        const newValue = e.target.value;
+        // Prepare the update payload
+        const updatedRow = { [columnName]: newValue };
+      
+        const schema = vmd.getTableSchema(table.table_name);
+        if (!schema) {
+          console.error("Schema not found");
+          return;
+        }
+      
+        // Optionally, log the user action
+        Logger.logUserAction(
+          loggedInUser || "",
+          "Edited Cell",
+          `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+          schema.schema_name,
+          table.table_name
+        );
+      
+        // Use the primary key for the row to identify which row to update
+        const storedPrimaryKeyValue = localStorage.getItem(
+          "currentPrimaryKeyValue"
+        );
+        const primaryKeyValue = Object.keys(currentRow.row)[0];
+        // Call the update API
+        try {
+          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+            schema.schema_name,
+            table.table_name,
+            updatedRow,
+            primaryKeyValue as string,
+            storedPrimaryKeyValue as string
+          );
+          data_accessor.updateRow().then((res) => {
+            getRows();
+          });
+          // Reflect the update in the local state
+          const updatedRows = [...rows];
+          updatedRows[rowIdx] = new Row(updatedRow);
+          setRows(updatedRows);
+      
+          // Exit editing mode
+        } catch (error) {
+          console.error("Failed to update row", error);
+          // Handle error (e.g., show a notification to the user)
+        }
+        setEditingCell(null);
+    };
+      
+    setConfirmPopupContent({
+      title: 'Confirm Save',
+      message: 'Are you sure you want to save these changes?',
+      confirmAction: confirmAction,
+      onCancel: handleCancelConfirm,
+    });
+    setIsConfirmPopupOpen(true);
 
-
-
-
+  };
+  const handleKeyDown = (e,  rowIdx: number, columnName: string) => {
+    if (e.key === 'Enter') {
+      handleSave(e, rowIdx, columnName);
+    }
+  };
+  const handleCancelConfirm = () => {
+    setIsConfirmPopupOpen(false); 
+    setEditingCell(null); 
+  };
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!appConfigValues) {
@@ -996,7 +1131,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           <TableHead>
             <TableRow>
               {columns.map((column, index) => (
-                <TableCell
+                <TableCell 
                   key={index}
                   style={{ textAlign: "center", whiteSpace: "nowrap" }}
                 >
@@ -1096,23 +1231,26 @@ const TableListView: React.FC<TableListViewProps> = ({
               <TableRow
                 title="row"
                 key={rowIdx}
-                onClick={() => handleOpenPanel(row)}
+                onClick={() => handleClick(row)}
+                onDoubleClick={() => setCurrentRow(row)}
                 sx={{ backgroundColor: rowIdx % 2 === 0 ? "#f2f2f2" : "white" }}
               >
                 {Object.values(row.row).map((cell, idx) => (
-                  <TableCell key={idx}>
+                  <TableCell key={idx} onDoubleClick={() => handleDoubleClick(rowIdx, columns[idx])}>
+                  {editingCell && editingCell.rowIdx === rowIdx && editingCell.columnName === columns[idx].column_name ? (
+                    <input
+                      type="text"
+                      defaultValue={editingCell.value}
+                      onBlur={(e) => handleSave(e, rowIdx, columns[idx].column_name)}
+                      onKeyDown={(e) => handleKeyDown(e, rowIdx, columns[idx].column_name)}
+                      autoFocus
+                    />
+                  ) : (
                     <Box sx={{ textAlign: "center" }}>
-                      {typeof cell === "boolean"
-                        ? cell.toString()
-                        : columns[idx].references_table === "filegroup"
-                          ? (
-                              fileGroupsView?.find(
-                                (fileGroup) => fileGroup.id === cell
-                              )?.count || 0
-                            ).toString() + " file(s)"
-                          : (cell as React.ReactNode)}
+                      {cell}
                     </Box>
-                  </TableCell>
+                  )}
+                </TableCell>
                 ))}
                 <TableCell>
                  <DeleteRowButton getRows={getRows} table={table} row={row} />
@@ -1125,6 +1263,15 @@ const TableListView: React.FC<TableListViewProps> = ({
           </TableBody>
         </MUITable>
       </TableContainer>
+      {isConfirmPopupOpen && (
+      <ConfirmationPopup
+        open={isConfirmPopupOpen}
+        title={confirmPopupContent.title}
+        message={confirmPopupContent.message}
+        onConfirm={handleUserConfirm}
+        onCancel={handleCancelConfirm}
+      />
+      )}
 
       <div>
         <Container>
