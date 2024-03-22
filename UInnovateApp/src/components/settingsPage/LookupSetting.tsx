@@ -18,11 +18,8 @@ import Audits from "../../virtualmodel/Audits";
 type LookUpTableProps = {
   table: Table;
 }
-type DefaultRow = {
-  [key: number]: string;
-};
 
-const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
+const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -44,11 +41,7 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     }
   });
   if (count == 0) {
-
-
-    return (<div>
-
-    </div>)
+    return (<></>)
   }
   else {
 
@@ -79,7 +72,10 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
           <FormControl size="small">
             <h6>Lookup Tables</h6>
-            <Select onChange={HandleChange(buttonIndex)} value={SelectInput[buttonIndex] == undefined ? "error" : SelectInput[buttonIndex]}>
+            <Select onChange={HandleChange(buttonIndex)} 
+            value={SelectInput[buttonIndex] == undefined ? "error" : SelectInput[buttonIndex]}
+            data-testid = "lookup-tables-component"
+            >
               <MenuItem value={"none"} >None</MenuItem>
               {referencesTableList.map((ref, index) => (
                 <MenuItem value={ref} key={index}>
@@ -218,7 +214,10 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
 
           <FormControl style={{ marginRight: '30px' }} size="small">
             <h6>Lookup Tables</h6>
-            <Select onChange={HandleChange(-1)} value={SelectInput[-1] == undefined ? "error" : SelectInput[-1]}>
+            <Select onChange={HandleChange(-1)} 
+            value={SelectInput[-1] == undefined ? "error" : SelectInput[-1]}
+            data-testid = "lookup-tables-initial"
+            >
               <MenuItem value={"none"} >None</MenuItem>
               {referencesTableList.map((ref, index) => (
                 <MenuItem key={index} value={ref}>
@@ -234,12 +233,14 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
           <button
             onClick={handleButtonClick}
             style={{ width: '26.5px', height: '30px', marginRight: '30px' }}
+            data-testid = "initial-plus-button"
           >
             +
           </button>
           <button
             onClick={handleButtonClickDelete}
             style={{ width: '26.5px', height: '30px', }}
+            data-testid = "initial-minus-button"
           >
             -
           </button>
@@ -255,6 +256,6 @@ const LookUpTable: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) =>
     );
   }
 };
-export default LookUpTable;
+export default LookUpTableSetting;
 
 

@@ -1,31 +1,54 @@
-import { render, screen, waitFor } from '@testing-library/react';
-import { describe, expect } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+
+import { Table } from "../../../virtualmodel/VMD";
+import VMD from "../../../virtualmodel/__mocks__/VMD";
 import LookUpTableDetails from '../../../components/TableListViewComponents/LookUpTableDetails';
 
-// Mocking the vmd module
-import Table from "react-bootstrap/Table"; // Replace 'path/to/Table' with the actual path to the Table type
 
-const mockTable: typeof Table = {
-    lookup_tables: '{"1": "table1", "2": "table2"}',
-    getColumns: () => [],
-};
 
-const renderComponent = () => render(<LookUpTableDetails table={mockTable} table_name="" table_display_type="" is_visible={false} has_details_view={false} />);
+const table = new Table("table");
+const table2 = new Table("table");
+
+table.setLookupTables('{"row":{},"-1":"unit_scheduler : availability_status_id"}');
+table2.setLookupTables('{"row":{},"-1":"none"}');
+
+const row = { row: { id: '1' } };
+
+
+const renderComponent = () => render(<LookUpTableDetails table={table} currentRow={row} />);
 
 describe('LookUpTableDetails component', () => {
 
-  it('renders the component with "Missing ConnectionID" state', async () => {
-    globalThis.fetch = async () => ({
-      json: async () => [{ /* Mock row data */ }],
-    } as Response);
+
+
+  it('renders text and runs the accessor', async () => {
 
     renderComponent();
+    expect(VMD.getRowsDataAccessorForLookUpTable).toHaveBeenCalled();
 
-    // Wait for the asynchronous operations to complete
     await waitFor(() => {
-      // Check for the presence of "Missing ConnectionID"
-      const missingConnectionIDElement = screen.queryByText(/Missing ConnectionID/i);
-      expect(missingConnectionIDElement).toBeInTheDocument();
+      const tabletext = screen.getByTestId('look-up-table-text')
+      expect(tabletext).toBeInTheDocument(); // Check the first button
     });
   });
+
+  it('renders the table', async () => {
+    renderComponent();
+    expect(VMD.getRowsDataAccessorForLookUpTable).toHaveBeenCalled();
+
+    await waitFor(() => {
+      const tableElement = screen.getByTestId("lookUp-table");
+      expect(tableElement).toBeInTheDocument();
+    });
+  });
+
+  it('checks if nothing shows', async () => {
+    const { container } = render(<LookUpTableDetails table={table2} currentRow={row} />);
+
+    expect(container.firstChild).toBeEmptyDOMElement();
+  });
+
+
+
 });

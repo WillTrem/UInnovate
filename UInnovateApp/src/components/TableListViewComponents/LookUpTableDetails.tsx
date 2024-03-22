@@ -21,6 +21,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
 
     const [Columns, setColumns] = useState<Column[][]>([]);
     const [rows, setRows] = useState<Row[][] | undefined>([]);
+    console.log(table.lookup_tables);
     const getTable = JSON.parse(table.lookup_tables);
     const count = Object.keys(getTable).length - 1;
     const LookUpTables = (num: number) => {
@@ -88,18 +89,23 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
 
         return (
           <div>
-            {tableName} look up table:
+            <div 
+            style={{ marginLeft: '12px' }}
+            data-testid="look-up-table-text"
+            >
+              {tableName} look up table:
+            </div>
             <div>
               {/* Here is the table name: {toolsColumn} */}
             </div>
             {Columns[num + 1] && rows[num + 1] ? (
-              <TableContainer style={{ marginBottom: '2em' }}>
+              <TableContainer style={{ marginBottom: '2em' }} >
                 <TableMUI
                   className="table-container"
                   size="medium"
                   sx={{ border: "1px solid lightgrey" }}
                   style={{ padding: '10px' }}
-                  data-testid="table"
+                  data-testid="lookUp-table"
                 >
                   <TableHead>
                     <TableRow >

@@ -486,7 +486,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     }));
   };
 
-  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+  const { user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -507,7 +507,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     );
 
     const storedPrimaryKeyValue = currentRow.row ? currentRow.row[currentPrimaryKey as string] : null;
-    
+
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -599,9 +599,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       return null;
     }
 
-   
 
-    
+
+
     return showFiles && currentFileGroup ? (
       <div title="Dropzone">
         <Dropzone
@@ -635,7 +635,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-     
+
       if (
         !columnDisplayType ||
         columnDisplayType.value == "text" ||
@@ -830,8 +830,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -1082,16 +1081,16 @@ const TableListView: React.FC<TableListViewProps> = ({
                         ? cell.toString()
                         : columns[idx].references_table === "filegroup"
                           ? (
-                              fileGroupsView?.find(
-                                (fileGroup) => fileGroup.id === cell
-                              )?.count || 0
-                            ).toString() + " file(s)"
+                            fileGroupsView?.find(
+                              (fileGroup) => fileGroup.id === cell
+                            )?.count || 0
+                          ).toString() + " file(s)"
                           : (cell as React.ReactNode)}
                     </Box>
                   </TableCell>
                 ))}
                 <TableCell>
-                 <DeleteRowButton getRows={getRows} table={table} row={row} />
+                  <DeleteRowButton getRows={getRows} table={table} row={row} />
                 </TableCell>
 
               </TableRow>
@@ -1218,8 +1217,7 @@ const TableListView: React.FC<TableListViewProps> = ({
               <div></div>
             ) : showTable ? (
               <div style={{ paddingBottom: "2em" }}>
-                <LookUpTableDetails table={table} currentRow={currentRow.row} />
-              </div>
+                {currentRow.row && <LookUpTableDetails table={table} currentRow={currentRow.row} />}              </div>
             ) : (
               <Button
                 variant="contained"
@@ -1227,7 +1225,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   marginTop: 20,
                   backgroundColor: "#403eb5",
                   width: "fit-content",
-                  marginLeft: 10,
+                  marginLeft: '12px',
                 }}
                 onClick={() => setShowTable(true)}
               >
