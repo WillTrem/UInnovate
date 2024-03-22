@@ -552,18 +552,18 @@ const TableListView: React.FC<TableListViewProps> = ({
       table.table_name
     );
 
-    const storedPrimaryKeyValue = localStorage.getItem(
-      "currentPrimaryKeyValue"
-    );
+    const storedPrimaryKeyValue = currentRow.row
+      ? currentRow.row[currentPrimaryKey as string]
+      : null;
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
       table.table_name,
       inputValues,
       currentPrimaryKey as string,
-      storedPrimaryKeyValue as string
+      storedPrimaryKeyValue as unknown as string
     );
-    data_accessor.updateRow().then((res) => {
+    data_accessor.updateRow().then(() => {
       getRows();
     });
     setInputValues({});
@@ -787,20 +787,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
 
-      if (column.is_editable == false) {
-        localStorage.setItem(
-          "currentPrimaryKeyValue",
-          currentRow.row[column.column_name]
-        );
-      }
-
-      if (column.references_table != null) {
-        const string = column.column_name + "LL";
-        localStorage.setItem(
-          string,
-          currentRow.row[column.column_name] as string
-        );
-      }
       if (
         !columnDisplayType ||
         columnDisplayType.value == "text" ||
@@ -986,7 +972,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-    if (table.stand_alone_details_view) {
+    if (!table.stand_alone_details_view) {
       console.log("No Stand Alone Details View " + table.table_name);
     }
     const schema = vmd.getTableSchema(table.table_name);
@@ -1006,14 +992,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleAddRowClick = () => {
     setIsPopupVisible(true);
   };
-
-  useEffect(() => {
-    if (showTable) {
-      setTimeout(() => {
-        setShowTable(false);
-      }, 1000);
-    }
-  }, [openPanel]);
 
   return (
     <div>
@@ -1429,7 +1407,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   marginTop: 20,
                   backgroundColor: "#403eb5",
                   width: "fit-content",
-                  marginLeft: 10,
+                  marginLeft: "12px",
                 }}
                 onClick={() => setShowTable(true)}
               >
