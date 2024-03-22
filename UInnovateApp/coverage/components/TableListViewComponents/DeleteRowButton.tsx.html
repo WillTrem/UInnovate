@@ -213,7 +213,11 @@
 <a name='L148'></a><a href='#L148'>148</a>
 <a name='L149'></a><a href='#L149'>149</a>
 <a name='L150'></a><a href='#L150'>150</a>
-<a name='L151'></a><a href='#L151'>151</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L151'></a><a href='#L151'>151</a>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -232,27 +236,27 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">172x</span>
+<span class="cline-any cline-yes">175x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">155x</span>
-<span class="cline-any cline-yes">155x</span>
-<span class="cline-any cline-yes">155x</span>
+<span class="cline-any cline-yes">158x</span>
+<span class="cline-any cline-yes">158x</span>
+<span class="cline-any cline-yes">158x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">155x</span>
-<span class="cline-any cline-yes">155x</span>
-<span class="cline-any cline-yes">155x</span>
-<span class="cline-any cline-yes">155x</span>
+<span class="cline-any cline-yes">158x</span>
+<span class="cline-any cline-yes">158x</span>
+<span class="cline-any cline-yes">158x</span>
+<span class="cline-any cline-yes">158x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">155x</span>
+<span class="cline-any cline-yes">158x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -334,7 +338,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">155x</span>
+<span class="cline-any cline-yes">158x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -368,12 +372,14 @@ import vmd, { Table } from '../../virtualmodel/VMD';
 import { DataAccessor, Row } from '../../virtualmodel/DataAccessor';
 import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
-import { IoIosTrash } from 'react-icons/io';
+import { MdDelete } from "react-icons/md";
 import { displayError } from '../../redux/NotificationSlice';
 import Logger from '../../virtualmodel/Logger';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { AuthState } from "../../redux/AuthSlice";
+import "../../styles/TableListView.css";
+&nbsp;
 interface DeleteRowProps {
   getRows: () =&gt; void;
   table: Table;
@@ -382,7 +388,7 @@ interface DeleteRowProps {
 &nbsp;
 const DeleteRowButton: React.FC&lt;DeleteRowProps&gt; =
   ({ getRows, table, row }: DeleteRowProps): ReactNode =&gt; {
-    const {user: loggedInUser }: AuthState = useSelector((state: RootState) =&gt; state.auth);
+    const { user: loggedInUser }: AuthState = useSelector((state: RootState) =&gt; state.auth);
     //for the error display message
     const dispatch = useDispatch();
     const schema = vmd.getTableSchema(table.table_name);
@@ -431,7 +437,7 @@ const DeleteRowButton: React.FC&lt;DeleteRowProps&gt; =
 <span class="cstat-no" title="statement not covered" >          Logger.logUserAction(</span>
             loggedInUser || "",
             "Deleted Row",
-            "User has deleted a row in the table: "+ table.table_name+ "with primary key: "+ column_name + " = " + column_value,
+            "User has deleted a row in the table: " + table.table_name + "with primary key: " + column_name + " = " + column_value,
             schema?.schema_name || "",
             table.table_name
 &nbsp;
@@ -440,10 +446,10 @@ const DeleteRowButton: React.FC&lt;DeleteRowProps&gt; =
 <span class="cstat-no" title="statement not covered" >          if (error) {</span>
 <span class="cstat-no" title="statement not covered" >            dispatch(displayError(`The row could not be deleted due to dependencies with ${referencedTables}.`));</span>
           }
-          
+&nbsp;
         }
-        
-    
+&nbsp;
+&nbsp;
 <span class="cstat-no" title="statement not covered" >        getRows();</span>
 &nbsp;
       }
@@ -464,7 +470,7 @@ const DeleteRowButton: React.FC&lt;DeleteRowProps&gt; =
 <span class="cstat-no" title="statement not covered" >          Logger.logUserAction(</span>
             loggedInUser || "",
             "Deleted Row",
-            "User has deleted a row in the table: "+ table.table_name,
+            "User has deleted a row in the table: " + table.table_name,
             schema?.schema_name || "",
             table.table_name
           );
@@ -474,7 +480,7 @@ const DeleteRowButton: React.FC&lt;DeleteRowProps&gt; =
             dispatch(displayError(`The row could not be deleted due to dependencies with ${referencedTables}.`));
           }
         }
-        
+&nbsp;
         getRows();
 &nbsp;
       }
@@ -508,7 +514,7 @@ const DeleteRowButton: React.FC&lt;DeleteRowProps&gt; =
 &nbsp;
         }}
       &gt;
-        &lt;IoIosTrash size="1.5em" /&gt;
+        &lt;MdDelete size="1.5em" className="delete-icon" /&gt;
       &lt;/Button&gt;&lt;/&gt;);
 &nbsp;
   }
@@ -520,7 +526,7 @@ export default DeleteRowButton;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-22T18:08:24.410Z
+                at 2024-03-22T19:55:38.085Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

@@ -1,10 +1,10 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
-import UserManagementTab from "../../../components/settingsPage/Users/UserManagementTab"
 import { describe, expect } from "vitest";
 import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
+import UserManagementTab from "../../../components/settingsPage/Users/UserManagementTab";
 import { Provider } from "react-redux";
 import { ErrMsg } from "../../../enums/ErrMsg";
 import { MemoryRouter } from "react-router-dom";

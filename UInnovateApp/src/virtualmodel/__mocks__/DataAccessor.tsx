@@ -64,7 +64,7 @@ const userInfoMock =  [
     email: "test@test.com",
     first_name: "first_name",
     last_name: "last_name",
-    role: Role.ADMIN, // Default role
+    role: "administrator", // Default role
     is_active: true,
     schema_access: ["mock schema name", "mock schema name 2"]
   }

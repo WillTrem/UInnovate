@@ -397,7 +397,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 							<Button
 								variant="contained"
 								onClick={handleBack}
-								sx={{ backgroundColor: "#404040" }}>
+								sx={{ backgroundColor: "#404040" }}
+								data-testid='back-button'>
 								<NavigateBefore />
 							</Button>
 							<Button
@@ -411,7 +412,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 						(<Button
 							variant="contained"
 							onClick={handleNext}
-							sx={{ backgroundColor: "#404040" }}>
+							sx={{ backgroundColor: "#404040" }}
+							data-testid='next-button'>
 							<NavigateNext />
 						</Button>)
 					}

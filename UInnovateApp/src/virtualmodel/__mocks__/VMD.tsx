@@ -54,9 +54,9 @@ export default {
   getAllTables: vi.fn().mockImplementation(() => {
     return [new Table("mock1"), new Table("mock2"), new Table("mock3")];
   }),
-  getFunctionAccessor: vi.fn().mockImplementation(() => {
+  getFunctionAccessor: vi.fn().mockImplementation((schema_name: string, function_name: string) => {
     console.log("getFunctionAccessor in VMD mock was called");
-    return new FunctionAccessorMock();
+    return new FunctionAccessorMock(function_name);
   }),
   getViewRowsDataAccessor: vi.fn().mockImplementation((schema_name: string,
     view_name: string,
