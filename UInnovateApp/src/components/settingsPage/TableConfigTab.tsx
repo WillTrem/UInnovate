@@ -8,7 +8,7 @@ import vmd, { ConfigData, Table, TableDisplayType } from "../../virtualmodel/VMD
 import "../../styles/TableItem.css";
 import { ColumnConfig } from "./ColumnConfig";
 import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
-import LookUpTable from "./LookupSetting";
+import LookUpTableSetting from "./LookupSetting";
 import { saveConfigToDB } from "../../helper/SettingsHelpers";
 import { AuthState } from '../../redux/AuthSlice';
 import { RootState } from '../../redux/Store';
@@ -169,7 +169,7 @@ export const TableItem: React.FC<TableItemProps> = ({ table }) => {
 
             </div>
             <div className="details-view">
-              <LookUpTable table={table} />
+              <LookUpTableSetting table={table} />
             </div>
 
           </div>

@@ -70,6 +70,10 @@ export default {
     console.log("getAddRowDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
+  getRowsDataAccessorForLookUpTable: vi.fn().mockImplementation(() => {
+    console.log("getRowsDataAccessorForLookUpTable in VMD mock was called");
+    return new DataAccessorMock();
+  }),
   Table: Table,
   Column: Column,
   TableDisplayType: TableDisplayType,
