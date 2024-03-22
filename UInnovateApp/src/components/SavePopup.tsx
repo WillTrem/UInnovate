@@ -27,8 +27,8 @@ const ConfirmationPopup = ({ open, title, message, onConfirm, onCancel }) => {
         <Box sx={style}>
           <Typography id="confirmation-dialog-title" variant="h6">{title}</Typography>
           <Typography sx={{ mt: 2 }}>{message}</Typography>
-          <Button onClick={onConfirm} sx={buttonStyle}>Yes</Button>
-          <Button onClick={onCancel} sx={buttonStyle}>No</Button>
+          <Button  variant="contained" onClick={onConfirm} sx={buttonStyle}>Yes</Button>
+          <Button  variant="contained" onClick={onCancel} sx={buttonStyle}>No</Button>
         </Box>
       </Modal>
     );
