@@ -73,6 +73,10 @@ export default {
     console.log("getAddRowDataAccessor in VMD mock was called");
     return new DataAccessorMock();
   }),
+  getRowsDataAccessorForLookUpTable: vi.fn().mockImplementation(() => {
+    console.log("getRowsDataAccessorForLookUpTable in VMD mock was called");
+    return new DataAccessorMock();
+  }),
   getUpsertRowDataAccessor: vi.fn().mockImplementation((schema_name: string, table_name: string, primary_keys: string[], params: { [key: string]: string },row: Row) => {
     console.log("getUpsertRowData in VMD mock was called");
     return new DataAccessorMock(table_name);
