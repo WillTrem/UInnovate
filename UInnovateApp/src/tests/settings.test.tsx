@@ -1,5 +1,5 @@
-import { describe, it, vi } from "vitest";
-import TestRenderer from "react-test-renderer";
+import { describe, it, vi, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
 import configureStore from "redux-mock-store";
@@ -52,7 +52,8 @@ describe("Settings.tsx", () => {
 
   it("tests the children inside settings page", async () => {
     store = mockStore(initialState);
-    const testRenderer = TestRenderer.create(
+
+    render(
       <MemoryRouter>
         <Provider store={store}>
           <Settings />
@@ -60,7 +61,12 @@ describe("Settings.tsx", () => {
       </MemoryRouter>
     );
 
-    const testInstance = await testRenderer.root;
-    expect(testInstance.findByType(Settings)).to.be.ok;
+    expect(screen.getAllByText("Settings")[1]).toBeInTheDocument();
+    expect(screen.getByText("Layout Personalization")).toBeInTheDocument();
+    expect(screen.getByText("Tables")).toBeInTheDocument();
+    expect(screen.getByText("Cron Jobs")).toBeInTheDocument();
+    expect(screen.getAllByText("Users")[1]).toBeInTheDocument();
+    expect(screen.getByText("Add Language")).toBeInTheDocument();
+    expect(screen.getByText("ADD VIEW")).toBeInTheDocument();
   });
 });
