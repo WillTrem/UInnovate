@@ -3,12 +3,14 @@ import vmd, { Table } from '../../virtualmodel/VMD';
 import { DataAccessor, Row } from '../../virtualmodel/DataAccessor';
 import { useDispatch } from 'react-redux';
 import { Button } from '@mui/material';
-import { IoIosTrash } from 'react-icons/io';
+import { MdDelete } from "react-icons/md";
 import { displayError } from '../../redux/NotificationSlice';
 import Logger from '../../virtualmodel/Logger';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { AuthState } from "../../redux/AuthSlice";
+import "../../styles/TableListView.css";
+
 interface DeleteRowProps {
   getRows: () => void;
   table: Table;
@@ -17,7 +19,7 @@ interface DeleteRowProps {
 
 const DeleteRowButton: React.FC<DeleteRowProps> =
   ({ getRows, table, row }: DeleteRowProps): ReactNode => {
-    const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+    const { user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
     //for the error display message
     const dispatch = useDispatch();
     const schema = vmd.getTableSchema(table.table_name);
@@ -66,7 +68,7 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
           Logger.logUserAction(
             loggedInUser || "",
             "Deleted Row",
-            "User has deleted a row in the table: "+ table.table_name+ "with primary key: "+ column_name + " = " + column_value,
+            "User has deleted a row in the table: " + table.table_name + "with primary key: " + column_name + " = " + column_value,
             schema?.schema_name || "",
             table.table_name
 
@@ -75,10 +77,10 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
           if (error) {
             dispatch(displayError(`The row could not be deleted due to dependencies with ${referencedTables}.`));
           }
-          
+
         }
-        
-    
+
+
         getRows();
 
       }
@@ -99,7 +101,7 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
           Logger.logUserAction(
             loggedInUser || "",
             "Deleted Row",
-            "User has deleted a row in the table: "+ table.table_name,
+            "User has deleted a row in the table: " + table.table_name,
             schema?.schema_name || "",
             table.table_name
           );
@@ -109,7 +111,7 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
             dispatch(displayError(`The row could not be deleted due to dependencies with ${referencedTables}.`));
           }
         }
-        
+
         getRows();
 
       }
@@ -143,7 +145,7 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
 
         }}
       >
-        <IoIosTrash size="1.5em" />
+        <MdDelete size="1.5em" className="delete-icon" />
       </Button></>);
 
   }
