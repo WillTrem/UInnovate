@@ -841,13 +841,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsPopupVisible(true);
   };
 
-  // useEffect(() => {
-  //   if (showTable) {
-  //     setTimeout(() => {
-  //       setShowTable(false);
-  //     }, 1000);
-  //   }
-  // }, [openPanel]);
 
   return (
     <div>
