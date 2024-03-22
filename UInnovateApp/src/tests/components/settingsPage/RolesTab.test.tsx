@@ -27,13 +27,8 @@ describe("RolesTab component", () => {
 	let store: Store;
 	const mock = new MockAdapter(axiosCustom);
 
-	afterEach(() => {
-		mock.reset(); // Reset the mock adapter after each test
-	});
-
 	it("Changes the default role when selecting a new one", async () => {
 		// Arrange
-		mock.onPost('/rpc/update_default_role').reply(200)
 		store = mockStore(initialState);
 		const user = userEvent.setup()
 		const { debug } = render(
@@ -60,6 +55,36 @@ describe("RolesTab component", () => {
 		// Assert
 		await waitFor(async () => {
 			expect(combobox).toHaveTextContent("Configurator");
+		})
+	}),
+	it("Changes the schema role when selecting a new one", async () => {
+		// Arrange
+		store = mockStore(initialState);
+		const user = userEvent.setup()
+		const { debug } = render(
+			<MemoryRouter>
+				<Provider store={store}>
+					<RolesTab />
+				</Provider>
+			</MemoryRouter>
+		);
+		
+		// Act
+		await waitFor(() => {
+			const defaultColumn = screen.getByText('Default');
+			expect(defaultColumn).toBeInTheDocument();
+		});
+		
+		const select = screen.queryAllByTestId('schema-role-select')[0];
+		const combobox = within(select).getByRole('combobox');
+		await act(() => user.click(combobox));
+		const listbox = await screen.findByRole("listbox");		
+		debug(listbox);
+		await act(() => user.click(within(listbox).getByText('Configurator')))
+
+		// Assert
+		await waitFor(async () => {
+			expect(combobox).not.toHaveTextContent("User");
 		})
 	})
 });

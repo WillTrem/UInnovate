@@ -205,7 +205,7 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 							size="small"
 							disabled={defaultRole === Role.ADMIN}
 							defaultValue={schemaRoles[schema]}
-							data-testid="default-role-select"
+							data-testid="schema-role-select"
 						>
 							<MenuItem value='' ><i>Default</i></MenuItem>
 							<MenuItem value={Role.USER}>User</MenuItem>

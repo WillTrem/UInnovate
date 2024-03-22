@@ -1,5 +1,5 @@
 import { vi } from "vitest";
-import { DataAccessorMock } from "./DataAccessor";
+import { DataAccessorMock, Row } from "./DataAccessor";
 import { FunctionAccessorMock } from "./FunctionAccessor.tsx";
 import VMD, { Table, Schema, Column, TableDisplayType, View } from "../VMD";
 
@@ -72,6 +72,10 @@ export default {
   getAddRowDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getAddRowDataAccessor in VMD mock was called");
     return new DataAccessorMock();
+  }),
+  getUpsertRowDataAccessor: vi.fn().mockImplementation((schema_name: string, table_name: string, primary_keys: string[], params: { [key: string]: string },row: Row) => {
+    console.log("getUpsertRowData in VMD mock was called");
+    return new DataAccessorMock(table_name);
   }),
   Table: Table,
   Column: Column,

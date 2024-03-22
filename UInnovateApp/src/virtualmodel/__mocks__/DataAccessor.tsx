@@ -52,6 +52,11 @@ export class DataAccessorMock {
     console.log("addRow in DataAccessor mock was called");
     return Promise.resolve();
   })
+
+  put = vi.fn().mockImplementation(() => {
+    console.log("put in DataAccessor mock was called");
+    return Promise.resolve();
+  })
 }
 
 const userInfoMock =  [
