@@ -35,6 +35,9 @@ export class DataAccessorMock {
     } else if (this.data_url === 'user_info') {
       return Promise.resolve(userInfoMock);
     }
+    else if(this.data_url === 'role_per_schema'){
+      return Promise.resolve([{user:"mockConfigurator@test.com", schema: "mock schema name", role: Role.USER}]);
+    }
     else {
       return Promise.resolve([]);
     }

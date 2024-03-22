@@ -20,10 +20,10 @@ describe("UserManagementTab component", () => {
 			{ email: "mockConfigurator@test.com", role: "configurator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} }]
 		}
 	};
+
 	const middlewares: Middleware[] = [];
 	const mockStore = configureStore(middlewares);
 	let store: Store;
-
 
 	it("renders the component", () => {
 		store = mockStore(initialState);
@@ -134,7 +134,6 @@ describe("UserManagementTab component", () => {
 			await waitFor(() => {
 				expect(screen.getByText(ErrMsg.INVALID_EMAIL));
 			})
-
 		}),
 		it("Displays the unauthorized screen for unauthorized user", async () => {
 			store = mockStore({ ...initialState, auth: { dbRole: Role.CONFIG, user: "configurator_user", token: "token" } });
@@ -160,7 +159,6 @@ describe("UserManagementTab component", () => {
 			await waitFor(() => {
 				expect(screen.getByText("test@test.com")).toBeInTheDocument();
 			})
-
 		}),
 		it("Properly toggles active state", async () => {
 			store = mockStore(initialState);
@@ -179,7 +177,6 @@ describe("UserManagementTab component", () => {
 			await waitFor(() => {
 				expect(toggleSwitch).not.toBeChecked();
 			})
-
 		}),
 		it("Properly handles change in schema access", async () => {
 			store = mockStore(initialState);
@@ -201,7 +198,5 @@ describe("UserManagementTab component", () => {
 			await waitFor(() => {
 				expect(within(select).queryByText("mock schema name")).not.toBeInTheDocument();
 			})
-
 		})
-
-})
+});

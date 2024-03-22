@@ -7,9 +7,9 @@ export { Table, Schema, Column };
 
 export default {
   ...VMD,
-  getRowsDataAccessor: vi.fn().mockImplementation(() => {
+  getRowsDataAccessor: vi.fn().mockImplementation((schema, table) => {
     console.log("getRowsDataAccessor in VMD mock was called");
-    return new DataAccessorMock();
+    return new DataAccessorMock(table);
   }),
   getRowsDataAccessorForOrder: vi.fn().mockImplementation(() => {
     console.log("getRowsDataAccessorForOrder in VMD mock was called");
