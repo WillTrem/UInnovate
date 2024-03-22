@@ -33,9 +33,30 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
       else {
         console.log(currentRow);
         const attributes = table.getColumns();
-        const lookup: string[] = getTable[num].split(':');
-        const tableName = lookup[0].trim();
-        const column = lookup[1].trim();
+        console.log(attributes);
+        const value = getTable[num].split(':');
+        const tableName = value[0].trim();
+        const type = value[1].trim();
+        console.log(type)
+        let column = 'bruh';
+        attributes?.map((attribute) => {
+          if (type == 'references') {
+            if (attribute.references_table == tableName) {
+              column = attribute.references_by;
+            }
+          }
+          if (type == 'referenced') {
+            if (attribute.referenced_table != null && attribute.referenced_table != "null") {
+              attribute.referenced_table.split(',').map((table) => {
+                if (table.trim() == tableName) {
+                  column = attribute.referenced_by;
+                }
+              }
+              );
+            }
+          }
+        });
+
         let columnValue = currentRow[column];
         if (columnValue == undefined) {
           attributes?.map((attribute) => {
@@ -85,15 +106,15 @@ const LookUpTableDetails: React.FC<TableListViewProps> =
 
           };
           getRows();
-        }, [num, columnValue, tableName, column]);
+        }, [num, columnValue, tableName, column, currentRow, attributes]);
 
         return (
           <div>
-            <div 
-            style={{ marginLeft: '12px' }}
-            data-testid="look-up-table-text"
+            <div
+              style={{ marginLeft: '12px' }}
+              data-testid="look-up-table-text"
             >
-              {tableName} look up table:
+              {tableName} {type} look up table:
             </div>
             <div>
               {/* Here is the table name: {toolsColumn} */}

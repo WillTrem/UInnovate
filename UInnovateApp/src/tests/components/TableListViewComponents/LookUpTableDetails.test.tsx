@@ -9,10 +9,11 @@ import LookUpTableDetails from '../../../components/TableListViewComponents/Look
 
 const table = new Table("table");
 const table2 = new Table("table");
+const table3 = new Table("table");
 
-table.setLookupTables('{"row":{},"-1":"unit_scheduler : availability_status_id"}');
+table.setLookupTables('{"row":{},"-1":"unit_scheduler:referenced"}');
 table2.setLookupTables('{"row":{},"-1":"none"}');
-
+table3.setLookupTables('{"0":"company:referenced","row":{},"-1":"company:references"}');
 const row = { row: { id: '1' } };
 
 
@@ -47,6 +48,21 @@ describe('LookUpTableDetails component', () => {
     const { container } = render(<LookUpTableDetails table={table2} currentRow={row} />);
 
     expect(container.firstChild).toBeEmptyDOMElement();
+  });
+
+  it('renders multiple tables', async () => {
+    render(<LookUpTableDetails table={table3} currentRow={row} />);
+
+    expect(VMD.getRowsDataAccessorForLookUpTable).toHaveBeenCalled();
+
+    await waitFor(() => {
+      const tableElement = screen.getAllByTestId("lookUp-table");
+      expect(tableElement.length).toBeGreaterThan(1);
+      const tabletext = screen.getAllByTestId('look-up-table-text')
+      expect(tabletext.length).toBeGreaterThan(1);
+
+
+    });
   });
 
 

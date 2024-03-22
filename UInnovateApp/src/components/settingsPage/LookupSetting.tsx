@@ -27,13 +27,15 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
   attributes?.map((attribute) => {
     if (attribute.references_table != "null" && attribute.references_table != null) {
       count = count + 1;
-      referencesTableList.push(attribute.references_table + " : " + attribute.references_by);
+      referencesTableList.push(attribute.references_table + ":references");
     }
     if (attribute.referenced_table != "null" && attribute.referenced_table != null) {
-      const tables = attribute.referenced_table.split(','); 
-      tables.forEach(table => { 
-        count = count + 1;
-        referencesTableList.push(table.trim() + " : " + attribute.referenced_by);
+      const tables = attribute.referenced_table.split(',');
+      tables.forEach(table => {
+       
+          count = count + 1;
+          referencesTableList.push(table.trim() + ":referenced");
+        
       });
     }
     else {
@@ -72,9 +74,9 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
 
           <FormControl size="small">
             <h6>Lookup Tables</h6>
-            <Select onChange={HandleChange(buttonIndex)} 
-            value={SelectInput[buttonIndex] == undefined ? "error" : SelectInput[buttonIndex]}
-            data-testid = "lookup-tables-component"
+            <Select onChange={HandleChange(buttonIndex)}
+              value={SelectInput[buttonIndex] == undefined ? "error" : SelectInput[buttonIndex]}
+              data-testid="lookup-tables-component"
             >
               <MenuItem value={"none"} >None</MenuItem>
               {referencesTableList.map((ref, index) => (
@@ -84,7 +86,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
               ))}
             </Select>
             <FormHelperText>
-            Table : Column, column is references or referenced by
+            References means current table references selected table
             </FormHelperText>
           </FormControl>
         </div>
@@ -190,7 +192,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
         table.table_name)
     };
 
-    const handleReset = async() => {
+    const handleReset = async () => {
       const newSelectInput = {
         ...SelectInput,
         [counter - 1]: "none"
@@ -214,9 +216,9 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
 
           <FormControl style={{ marginRight: '30px' }} size="small">
             <h6>Lookup Tables</h6>
-            <Select onChange={HandleChange(-1)} 
-            value={SelectInput[-1] == undefined ? "error" : SelectInput[-1]}
-            data-testid = "lookup-tables-initial"
+            <Select onChange={HandleChange(-1)}
+              value={SelectInput[-1] == undefined ? "error" : SelectInput[-1]}
+              data-testid="lookup-tables-initial"
             >
               <MenuItem value={"none"} >None</MenuItem>
               {referencesTableList.map((ref, index) => (
@@ -226,21 +228,21 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
               ))}
             </Select>
             <FormHelperText>
-            Table : Column, column is references or referenced by
+            References means current table references selected table
             </FormHelperText>
           </FormControl>
 
           <button
             onClick={handleButtonClick}
             style={{ width: '26.5px', height: '30px', marginRight: '30px' }}
-            data-testid = "initial-plus-button"
+            data-testid="initial-plus-button"
           >
             +
           </button>
           <button
             onClick={handleButtonClickDelete}
             style={{ width: '26.5px', height: '30px', }}
-            data-testid = "initial-minus-button"
+            data-testid="initial-minus-button"
           >
             -
           </button>
