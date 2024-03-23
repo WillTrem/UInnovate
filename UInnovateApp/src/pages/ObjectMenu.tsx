@@ -79,8 +79,28 @@ export function ObjectMenu() {
         viewType = selection[0].selectedView;
       }
       setViewType(viewType);
+
+      if (viewType == ViewTypeEnum.Custom) {
+        //update custom view index
+        const index = findIndexByTablename(p_tableName);
+        if (index > 0) {
+          setselectedCustomViewIndex(index);
+        } else {
+          setselectedCustomViewIndex(0);
+        }
+      }
     }
   };
+
+  function findIndexByTablename(tablename: string) {
+    for (let i = 0; i < customViews.length; i++) {
+      if (customViews[i].tablename === tablename) {
+        return i; // Return the index of the object with matching tablename
+      }
+    }
+    return -1; // Return -1 if the object is not found
+  }
+
   const dispatch = useDispatch();
   const { tableName } = useParams();
   const { schema } = useParams();
