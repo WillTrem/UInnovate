@@ -57,6 +57,15 @@ const InternationalizationTab = () => {
         language_name: string
     }
 
+    // i18n_translations Object
+    interface i18nTranslationsProps {
+        translation_id: number,
+        language_code: string,
+        key_code: string,
+        value: string,
+        is_default: boolean
+    }
+
     const getTranslationsByLanguage = async (chosenLanguage: string) => {
         try {
             const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -161,6 +170,30 @@ const InternationalizationTab = () => {
         }
         catch (error) {
             console.error('Error fetching language_id:', error);
+        }
+    }
+
+    const getTranslationsPropsByLanguage = async (selectedLanguage: string) => {
+        try {
+            const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
+                "meta",
+                "i18n_translations"
+            );
+
+            const rows = await data_accessor.fetchRowsByColumnValues(language_code_column_name, selectedLanguage, order_by_column);
+            if (rows) {
+                const translations: i18nTranslationsProps[] = rows.map(row => ({
+                    translation_id: row.translation_id as number,
+                    language_code: row.language_code as string,
+                    key_code: row.key_code as string,
+                    value: row.value as string,
+                    is_default: row.is_default as boolean
+                }));
+
+                return translations;
+            }
+        } catch (error) {
+            console.error('Error fetching translations:', error);
         }
     }
 
@@ -302,16 +335,32 @@ const InternationalizationTab = () => {
         setTranslations([]);
     };
 
+    // Sort the translations by missing translations of the selected language and using the getTranslationsProps function
+    // meaning that I want to display all the missing translations of the selected language at the top of the table and the rest of the translations below
+    const sortByMissingTranslations = async (selectedLanguage: string) => {
+        try {
+            const translations = await getTranslationsPropsByLanguage(selectedLanguage);
+            if (translations) {
+                const missingTranslations = translations.filter(translation => translation.language_code === selectedLanguage && !translation.value);
+                const otherTranslations = translations.filter(translation => translation.language_code !== selectedLanguage || translation.value);
+                setTranslations([...missingTranslations, ...otherTranslations]);
+            }
+        } catch (error) {
+            console.error('Error sorting by missing translations:', error);
+        }
+    };
+
+
     return (
         <div>
             <div>
-            <Button
-                data-testid="add-language-button" 
-                onClick={showAddLanguage}
-                style={buttonStyle}
-                variant="contained"
-            >
-                    Add Language
+                <Button
+                    data-testid="add-language-button" 
+                    onClick={showAddLanguage}
+                    style={buttonStyle}
+                    variant="contained"
+                >
+                        Add Language
                 </Button>
                 <Button
                     style={buttonStyle}
@@ -319,6 +368,14 @@ const InternationalizationTab = () => {
                     data-testid="refresh-button"
                 >
                     Refresh
+                </Button>
+                <Button
+                    style={buttonStyle}
+                    variant="contained"
+                    data-testid="missing-translations-button"
+                    onClick={() => sortByMissingTranslations(selectedLanguage)}
+                >
+                    Show Missing Translations
                 </Button>
             </div>
 
