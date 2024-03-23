@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Container, Nav, Navbar } from "react-bootstrap";
 import {
-  AdditionalViews,
-  getCustomViews,
+  AdditionalView,
   getViewsBySchema,
 } from "../virtualmodel/AdditionalViewsDataAccessor";
 import { Table } from "../virtualmodel/VMD";
 import { ViewTypeEnum } from "../enums/ViewTypeEnum";
-import e from "express";
 
 interface AdditionalViewNavBarProp {
   selectedSchema: string;
@@ -25,15 +23,13 @@ const AdditionalViewNavBar = ({
   selectedViewType,
   selectViewHandler,
 }: AdditionalViewNavBarProp) => {
-  const [viewList, setViewList] = useState<AdditionalViews[]>([]);
-  const [customViews, setCustomViews] = useState([]);
+  const [viewList, setViewList] = useState<AdditionalView[]>([]);
 
   useEffect(() => {
     const ctrl = new AbortController();
     const signal = ctrl.signal;
     // get data from db
     getViewsBySchema(setViewList, selectedSchema, signal);
-    // getCustomViews(setCustomViews, signal)
 
     return () => {
       ctrl.abort();
@@ -53,7 +49,7 @@ const AdditionalViewNavBar = ({
   );
 };
 interface AdditionalTableViewSelectorProp {
-  views: AdditionalViews[];
+  views: AdditionalView[];
   selectedSchema: string;
   selectedTable: string | undefined;
   selectedView: ViewTypeEnum;
@@ -70,12 +66,12 @@ const AdditionalTableViewSelector = ({
   selectedView,
   selectedViewHandler,
 }: AdditionalTableViewSelectorProp) => {
-  const [filteredViews, setFilteredViews] = useState<AdditionalViews[]>([]);
+  const [filteredViews, setFilteredViews] = useState<AdditionalView[]>([]);
   const [activeView, setActiveView] = useState(0);
 
   useEffect(() => {
     setActiveView(selectedView);
-    const filteredViews = views.filter((view: AdditionalViews) => {
+    const filteredViews = views.filter((view: AdditionalView) => {
       if (view.tablename === selectedTable) return true;
       return false;
     });
@@ -102,7 +98,7 @@ const AdditionalTableViewSelector = ({
           eventKey={viewName}
           href="#"
           className={viewtype == activeView ? "active" : ""}
-          onClick={(e) => {
+          onClick={() => {
             handleActiveView(viewtype);
           }}
         >
@@ -119,7 +115,7 @@ const AdditionalTableViewSelector = ({
         <Nav className="d-flex justify-content-evenly" variant="underline">
           {navLink("default", ViewTypeEnum.Default, "Default")}
           {filteredViews.length > 0 &&
-            filteredViews.map((view: AdditionalViews) => {
+            filteredViews.map((view: AdditionalView) => {
               if (view) {
                 switch (view.viewtype) {
                   case ViewTypeEnum.Calendar:
