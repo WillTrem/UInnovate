@@ -32,7 +32,6 @@ export const getViewsBySchema = async (setterCallback:(args:any)=>void | undefin
 
     const rows = await data_accessor?.fetchRows(signal);
     if(rows){
-		// console.log(rows);
 		const filteredData = rows.filter(r => {if(r.schemaname == p_schemaName){return r}} )
         setterCallback && setterCallback(filteredData);
 		return filteredData;
@@ -48,7 +47,6 @@ export const getCustomViews = async (setterCallback:(args:any)=>void, signal: Ab
 
     const rows = await data_accessor?.fetchRows(signal);
     if(rows){
-		// console.log(rows);
         setterCallback(rows);
 		return rows;
     }
@@ -81,7 +79,6 @@ export const insertNewView = async (p_schemaName: string, p_tableName: string, p
 				"p_view_name": p_viewName,
 				"p_view_type_id": p_viewType
 			} as Row;
-			// console.log(data);
 			const cstm_view_data_accessor: FunctionAccessor = vmd.getFunctionAccessor(
 				SETTING_SCHEMA_NAME, // schema name
 				RPC_NAME, // remote procedure function name
