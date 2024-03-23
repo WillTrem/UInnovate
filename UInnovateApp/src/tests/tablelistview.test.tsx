@@ -207,7 +207,7 @@ describe("TableListView component", () => {
     columns[0].setReferenceTable("filegroup");
 
     // Check if the upload pop is now displayed
-    const dropzoneButton = screen.findByTitle("Dropzone");
+    const dropzoneButton = await screen.findByTitle("Dropzone");
 
     waitFor(() => expect(dropzoneButton).toBeInTheDocument());
   });

@@ -644,7 +644,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       );
     }
     return (
-      <div title="Dropzone">
+      <div>
         <Dropzone
           onItemAdded={onItemAdded}
           onItemRemoved={onItemRemoved}
@@ -1345,7 +1345,11 @@ const TableListView: React.FC<TableListViewProps> = ({
                   {columns.map((column, colIdx) => {
                     if (column.references_table == "filegroup") {
                       return (
-                        <div key={colIdx} className="row-details">
+                        <div
+                          key={colIdx}
+                          className="row-details"
+                          title="Dropzone"
+                        >
                           <label key={column.column_name + colIdx}>
                             {column.column_name}
                           </label>
