@@ -164,7 +164,7 @@ const UserTableRow: React.FC<UserTableRowProps> = ({ firstName, lastName, emailA
 		<td>
 			<MultiSelect selectedList={schemaAccessList} setSelectedList={handleSchemaAccessListUpdate} choiceList={schemaNames} size="small" sx={{
 				'& .MuiSelect-select': {}, minWidth: 400, maxWidth: 400
-			}} />
+			}} data-testid="schema-multi-select" />
 		</td>
 	</tr >
 }

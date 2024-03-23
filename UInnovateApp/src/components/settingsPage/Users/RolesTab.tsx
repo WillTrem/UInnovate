@@ -54,7 +54,7 @@ const RolesTab: React.FC = () => {
 						<TableHead >
 							<TableRow>
 								<TableCell className="sticky-column-left" sx={{ maxWidth: "15rem", borderRight: "thin solid #e0e0e0", fontWeight: "Bold" }}>Users</TableCell>
-								<TableCell sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>Default </TableCell>
+								<TableCell sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>Default</TableCell>
 								{schemas.map((schema) => {
 									return <TableCell key={schema} sx={{ minWidth: "11rem", width: "11rem", fontWeight: "Bold" }}>{schema}</TableCell>
 								})}
@@ -96,6 +96,7 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 	const currentUser = useSelector((state: RootState) => state.auth.user);
 	const dispatch = useDispatch();
 	const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+	
 	function handleDefaultRoleChange(event: SelectChangeEvent) {
 		const notificationMessage = `Default role updated successfully for user "${user.email}"`;
 		const errorMessage = `A problem occured while updating the default role for user "${user.email}"`;
@@ -184,7 +185,7 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 					onChange={(event) => handleDefaultRoleChange(event)}
 					variant="outlined"
 					size="small"
-
+					data-testid="default-role-select"
 				>
 					<MenuItem value={Role.USER}>User</MenuItem>
 					<MenuItem value={Role.CONFIG}>Configurator</MenuItem>
@@ -204,6 +205,7 @@ const RolesTableRow: React.FC<RolesTableRowProps> = ({ user, schemas, schemaRole
 							size="small"
 							disabled={defaultRole === Role.ADMIN}
 							defaultValue={schemaRoles[schema]}
+							data-testid="schema-role-select"
 						>
 							<MenuItem value='' ><i>Default</i></MenuItem>
 							<MenuItem value={Role.USER}>User</MenuItem>

@@ -8,7 +8,7 @@ const UnauthorizedScreen: React.FC = () => {
 	const handleClick = () => {
 		navigate('/');
 	}
-	return <Box display={"flex"} flexDirection={"column"} alignItems={"center"} padding={"4rem"} gap={"1rem"}>
+	return <Box display={"flex"} flexDirection={"column"} alignItems={"center"} padding={"4rem"} gap={"1rem"} data-testid="unauthorized-screen">
 		<Box display={"flex"} flexDirection={"row"} justifyContent={"center"} alignItems={"center"}>
 			<WarningAmberIcon sx={{"fontSize":"5rem"}}/>
 			<Typography variant="h3">Unauthorized</Typography>

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">69.23% </span>
+                <span class="strong">68.75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>9/13</span>
+                <span class='fraction'>11/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.61% </span>
+                <span class="strong">92.3% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>11/13</span>
+                <span class='fraction'>12/13</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/5</span>
+                <span class='fraction'>4/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">61.53% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/10</span>
+                <span class='fraction'>8/13</span>
             </div>
         
             
@@ -185,24 +185,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -268,8 +268,6 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { BsFillWrenchAdjustableCircleFill } from "react-icons/bs";
-import SchemaSelector from "./Schema/SchemaSelector";
-import DisplayType from "./Schema/DisplayType";
 import { useState } from 'react';
 import SignupModal from './settingsPage/SignupModal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -280,20 +278,26 @@ import {Tooltip, Zoom} from '@mui/material'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { setLoading } from '../redux/LoadingSlice';
+import vmd from '../virtualmodel/VMD';
+import MenuSchemaSelector from './Schema/MenuSchemaSelector';
 &nbsp;
 interface NavBarProps {
   showSchemaFilter?: boolean;
 }
 export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const [showSignupModal, setShowSignupModal] = useState(false);
-  const {user: loggedInUser, role }: AuthState = useSelector((state: RootState) =&gt; state.auth);
+  const {user: loggedInUser, dbRole }: AuthState = useSelector((state: RootState) =&gt; state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-&nbsp;
-  const handleClose = <span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowSignupModal(false);</span>
-  const handleShow = <span class="fstat-no" title="function not covered" >() =&gt; <span class="cstat-no" title="statement not covered" >s</span>etShowSignupModal(true);</span>
+  const handleClose = () =&gt; setShowSignupModal(false);
+  const handleShow = () =&gt; setShowSignupModal(true);
   const handleLogout = <span class="fstat-no" title="function not covered" >() =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    dispatch(setLoading(true));</span>
 <span class="cstat-no" title="statement not covered" >    dispatch(logOut());</span>
+<span class="cstat-no" title="statement not covered" >    vmd.refetchSchemas().then(<span class="fstat-no" title="function not covered" >() =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >      dispatch(setLoading(false));</span>
+    })
 <span class="cstat-no" title="statement not covered" >    navigate('/');</span>
   }
 &nbsp;
@@ -322,17 +326,13 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
                 : <span class="branch-1 cbranch-no" title="branch not covered" >"d-none"</span>
             }
           &gt;
-            &lt;SchemaSelector
-              displayType={DisplayType.Nav} //DisplayType = NavDropdown | NavPills | Nav
-            &gt;&lt;/SchemaSelector&gt;
+            &lt;MenuSchemaSelector /&gt;
           &lt;/Nav&gt;}
           &lt;Nav className="justify-content-end flex-grow-1 pe-3"&gt;
             {( LOGIN_BYPASS || loggedInUser ) &amp;&amp;
-            &lt;&gt;&lt;Nav.Link as={Link} to="/objview" style={{ fontSize: "25px" }}&gt;
-              ObjectMenu
-            &lt;/Nav.Link&gt;
+            &lt;&gt;
             {/* Hides the Settings page link for user role */}
-            &lt;Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={role === Role.USER}&gt;
+            &lt;Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={dbRole === Role.USER}&gt;
               Settings
             &lt;/Nav.Link&gt;&lt;/&gt;
             }
@@ -348,11 +348,11 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             &lt;/Nav.Link&gt;
             }
             {loggedInUser ? 
-            &lt;Nav.Link onClick={handleLogout} style={{ fontSize: "25px", display: "flex", alignItems:"center" }}&gt;
+            &lt;Nav.Link onClick={handleLogout} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} data-testid="logout-button"&gt;
               {/* Log out */}
               &lt;LogoutIcon fontSize='large'/&gt;
             &lt;/Nav.Link&gt;: 
-<span class="branch-1 cbranch-no" title="branch not covered" >            &lt;Nav.Link onClick={handleShow} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} &gt;</span>
+            &lt;Nav.Link onClick={handleShow} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} data-testid="signup-button" &gt;
               {/* Sign Up */}
               &lt;LoginIcon fontSize='large'/&gt;
             &lt;/Nav.Link&gt;}
@@ -370,7 +370,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-07T21:52:55.337Z
+                at 2024-03-22T21:33:58.811Z
             </div>
         <script src="../prettify.js"></script>
         <script>
