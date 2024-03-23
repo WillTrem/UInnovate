@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.88% </span>
+                <span class="strong">56.75% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>19/34</span>
+                <span class='fraction'>21/37</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">21.42% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/12</span>
+                <span class='fraction'>3/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30% </span>
+                <span class="strong">36.36% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/10</span>
+                <span class='fraction'>4/11</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.88% </span>
+                <span class="strong">55.55% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>19/34</span>
+                <span class='fraction'>20/36</span>
             </div>
         
             
@@ -214,7 +214,23 @@
 <a name='L149'></a><a href='#L149'>149</a>
 <a name='L150'></a><a href='#L150'>150</a>
 <a name='L151'></a><a href='#L151'>151</a>
-<a name='L152'></a><a href='#L152'>152</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L152'></a><a href='#L152'>152</a>
+<a name='L153'></a><a href='#L153'>153</a>
+<a name='L154'></a><a href='#L154'>154</a>
+<a name='L155'></a><a href='#L155'>155</a>
+<a name='L156'></a><a href='#L156'>156</a>
+<a name='L157'></a><a href='#L157'>157</a>
+<a name='L158'></a><a href='#L158'>158</a>
+<a name='L159'></a><a href='#L159'>159</a>
+<a name='L160'></a><a href='#L160'>160</a>
+<a name='L161'></a><a href='#L161'>161</a>
+<a name='L162'></a><a href='#L162'>162</a>
+<a name='L163'></a><a href='#L163'>163</a>
+<a name='L164'></a><a href='#L164'>164</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -232,7 +248,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
@@ -273,6 +289,14 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -373,6 +397,10 @@ import { ScriptEditor } from "./ScriptEditor";
 import { Modal, Form } from "react-bootstrap";
 import { Button } from "@mui/material";
 import { IoMdAddCircle } from "react-icons/io";
+import { AuthState } from '../../redux/AuthSlice';
+import { RootState } from '../../redux/Store';
+import { useSelector } from 'react-redux';
+import  Audits  from "../../virtualmodel/Audits";
 &nbsp;
 const buttonStyle = {
   marginRight: 10,
@@ -383,7 +411,7 @@ export const ScriptingTab = () =&gt; {
   const schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const columns = script_table?.getColumns();
-&nbsp;
+  const {user: loggedInUser }: AuthState = useSelector((state: RootState) =&gt; state.auth);
   const [scripts, setScripts] = useState&lt;Row[] | undefined&gt;([]);
   const [showModal, setShowModal] = useState&lt;boolean&gt;(false);
   const [newScript, setNewScript] = useState&lt;Row&gt;({});
@@ -424,6 +452,14 @@ export const ScriptingTab = () =&gt; {
 <span class="cstat-no" title="statement not covered" >    await data_accessor?.addRow();</span>
 <span class="cstat-no" title="statement not covered" >    getScripts();</span>
 <span class="cstat-no" title="statement not covered" >    setShowModal(false);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    Audits.logAudits(</span>
+      loggedInUser || "",
+      "Add Scripts",
+      "User Added New Script" + JSON.stringify(newScript), 
+      "meta",
+      ""
+    );
   };
   return (
     &lt;div&gt;
@@ -523,7 +559,7 @@ export const ScriptingTab = () =&gt; {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-02-07T21:52:55.337Z
+                at 2024-03-22T21:33:58.811Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

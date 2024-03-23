@@ -397,7 +397,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 							<Button
 								variant="contained"
 								onClick={handleBack}
-								sx={{ backgroundColor: "#404040" }}>
+								sx={{ backgroundColor: "#404040" }}
+								data-testid='back-button'>
 								<NavigateBefore />
 							</Button>
 							<Button
@@ -411,7 +412,8 @@ const SignupModal: React.FC<Omit<ModalProps, 'children'>> = (props) => {
 						(<Button
 							variant="contained"
 							onClick={handleNext}
-							sx={{ backgroundColor: "#404040" }}>
+							sx={{ backgroundColor: "#404040" }}
+							data-testid='next-button'>
 							<NavigateNext />
 						</Button>)
 					}
@@ -444,7 +446,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 		required={props.required}
 		sx={props.sx}
 		onKeyDown={props.onKeyDown}
-
 	>
 		<InputLabel>{props.label}</InputLabel>
 		<OutlinedInput
@@ -455,8 +456,6 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 			autoFocus={props.autoFocus}
 			onFocus={() => setSelected(true)}
 			onBlur={() => setSelected(false)}
-
-
 			endAdornment={
 				<InputAdornment position="end" >
 					<IconButton
@@ -469,6 +468,7 @@ const PasswordField: React.FC<PasswordFieldProps> = ({ validateStrength = false,
 				</InputAdornment>
 			}
 			label={props.label}
+			data-testid="password-field"
 		/>
 		{validateStrength
 			?

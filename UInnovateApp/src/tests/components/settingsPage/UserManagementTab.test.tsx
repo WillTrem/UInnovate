@@ -1,9 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import UserManagementTab from "../../../components/settingsPage/Users/UserManagementTab"
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from '@testing-library/user-event';
 import { describe, expect } from "vitest";
 import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
+import UserManagementTab from "../../../components/settingsPage/Users/UserManagementTab";
 import { Provider } from "react-redux";
 import { ErrMsg } from "../../../enums/ErrMsg";
 import { MemoryRouter } from "react-router-dom";
@@ -14,15 +15,15 @@ describe("UserManagementTab component", () => {
 		script_table: { table_name: "script_mock" },
 		auth: { dbRole: Role.ADMIN, user: "admin", token: "token" },
 		userData: {
-			users: [{ email: "mockuser123@test.com", role: "user", schema_access: ["mock schema name"], schemaRoles: {} },
-			{ email: "mockAdmin@test.com", role: "administrator", schema_access: ["mock schema name"], schemaRoles: {} },
-			{ email: "mockConfigurator@test.com", role: "configurator", schema_access: ["mock schema name"], schemaRoles: {} }]
+			users: [{ email: "mockuser123@test.com", role: "user", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
+			{ email: "mockAdmin@test.com", role: "administrator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
+			{ email: "mockConfigurator@test.com", role: "configurator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} }]
 		}
 	};
+
 	const middlewares: Middleware[] = [];
 	const mockStore = configureStore(middlewares);
 	let store: Store;
-
 
 	it("renders the component", () => {
 		store = mockStore(initialState);
@@ -133,6 +134,69 @@ describe("UserManagementTab component", () => {
 			await waitFor(() => {
 				expect(screen.getByText(ErrMsg.INVALID_EMAIL));
 			})
+		}),
+		it("Displays the unauthorized screen for unauthorized user", async () => {
+			store = mockStore({ ...initialState, auth: { dbRole: Role.CONFIG, user: "configurator_user", token: "token" } });
+			render(
+				<MemoryRouter>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
+				</MemoryRouter>
+			);
+			expect(screen.getByTestId("unauthorized-screen"));
+		}),
+		it("Renders user data properly", async () => {
+			store = mockStore(initialState);
+			render(
+				<MemoryRouter>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
+				</MemoryRouter>
+			);
 
+			await waitFor(() => {
+				expect(screen.getByText("test@test.com")).toBeInTheDocument();
+			})
+		}),
+		it("Properly toggles active state", async () => {
+			store = mockStore(initialState);
+			render(
+				<MemoryRouter>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
+				</MemoryRouter>
+			);
+			await waitFor(() => {
+				expect(screen.getByText("test@test.com")).toBeInTheDocument();
+			})
+			const toggleSwitch = screen.getByTestId('visibility-switch')
+			act(() => fireEvent.change(toggleSwitch, { target: { checked: false } }));
+			await waitFor(() => {
+				expect(toggleSwitch).not.toBeChecked();
+			})
+		}),
+		it("Properly handles change in schema access", async () => {
+			store = mockStore(initialState);
+			const {debug} = render(
+				<MemoryRouter>
+					<Provider store={store}>
+						<UserManagementTab />
+					</Provider>
+				</MemoryRouter>
+			);
+			await waitFor(() => {
+				expect(screen.getByText("test@test.com")).toBeInTheDocument();
+			})
+			const multiSelect = screen.getByTestId('schema-multi-select')
+			const select = within(multiSelect).getByRole('combobox');
+			const chip = within(select).queryAllByRole('button')[0];
+			const deleteIcon = within(chip).getByTestId('CancelIcon');
+			act(() => fireEvent.click(deleteIcon));
+			await waitFor(() => {
+				expect(within(select).queryByText("mock schema name")).not.toBeInTheDocument();
+			})
 		})
-})
+});

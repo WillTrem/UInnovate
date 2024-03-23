@@ -83,11 +83,11 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
             </Nav.Link>
             }
             {loggedInUser ? 
-            <Nav.Link onClick={handleLogout} style={{ fontSize: "25px", display: "flex", alignItems:"center" }}>
+            <Nav.Link onClick={handleLogout} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} data-testid="logout-button">
               {/* Log out */}
               <LogoutIcon fontSize='large'/>
             </Nav.Link>: 
-            <Nav.Link onClick={handleShow} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} >
+            <Nav.Link onClick={handleShow} style={{ fontSize: "25px", display: "flex", alignItems:"center" }} data-testid="signup-button" >
               {/* Sign Up */}
               <LoginIcon fontSize='large'/>
             </Nav.Link>}
