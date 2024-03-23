@@ -43,22 +43,32 @@ const InternationalizationTab = () => {
     const [newLabelName, setNewLabelName] = useState<string>(''); 
     const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
     const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
-    
-    const getTranslations = async () => {
+
+    // Key Object
+    interface KeyProps {
+        id: number,
+        key_code: string
+    }
+
+    // Language Object
+    interface LanguageProps {
+        id: number,
+        language_code: string,
+        language_name: string
+    }
+
+    const getTranslationsByLanguage = async (chosenLanguage: string) => {
         try {
             const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
                 "meta",
                 "i18n_translations"
             );
-            const rows = await data_accessor.fetchRowsByColumnValues(language_code_column_name, selectedLanguage, order_by_column);
+            const rows = await data_accessor.fetchRowsByColumnValues(language_code_column_name, chosenLanguage, order_by_column);
             if (rows) {
-                console.log("Fetched rows:", rows);
-
                 const translationsWithIsDefault = rows.map(row => ({
                     ...row,
                     is_default: row.is_default || false,
                 }));
-
                 setTranslations(translationsWithIsDefault);
             }
         } catch (error) {
@@ -66,17 +76,72 @@ const InternationalizationTab = () => {
         }
     };
 
-    const getLanguages = async () => {
+    const getKeyProps = async () => {
+        try {
+            const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+                "meta",
+                "i18n_keys"
+            );
+
+            const rows = await data_accessor.fetchRows();
+            if (rows) {
+                const keys: KeyProps[] = rows.map(row => ({
+                    id: row.id,  // Assuming 'id' is the primary key of the table
+                    key_code: row.key_code as string
+                }));
+
+                return keys;
+            }
+        } catch (error) {
+            console.error('Error fetching keys:', error);
+        }
+    }
+
+    // Get the key_id of the selected key using the getKeyProps function
+    const getKeyId = async (keyCode: string) => {
+        try {
+            const keys = await getKeyProps();
+            if (keys) {
+                const keyId = keys.find
+                (key => key.key_code === keyCode);
+                return keyId?.id;
+            }
+        } catch (error) {
+            console.error('Error fetching key_id:', error);
+        }
+    }
+
+    const getLanguagesProps = async () => {
         try {
             const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
                 "meta",
                 "i18n_languages"
             );
-
-            // Fetch the list of language names for the dropdown
+    
+            // Fetch the list of language names for the dropdown using the LanguageProps interface
             const rows = await data_accessor.fetchRows();
             if (rows) {
-                const languageCodes = rows.map(row => row.language_code as string);
+                // Process the rows to extract language codes and names
+                const languages: LanguageProps[] = rows.map(row => ({
+                    id: row.id,  // Assuming 'id' is the primary key of the table
+                    language_code: row.language_code as string,
+                    language_name: row.language_name as string
+                }));
+    
+                // Return the list of languages_codes
+                return languages;
+            }
+        } catch (error) {
+            console.error('Error fetching languages:', error);
+        }
+    }
+
+    // Return the list of language codes using the getLanguagesProps function
+    const getLanguagesCodes = async () => {
+        try {
+            const languages = await getLanguagesProps();
+            if (languages) {
+                const languageCodes = languages.map(language => language.language_code);
                 setLanguages(languageCodes);
             }
         } catch (error) {
@@ -84,9 +149,24 @@ const InternationalizationTab = () => {
         }
     }
 
+    // Get the language_id of the selected language from the i18n_languages table using the LanguageProps interface. Return only the language_id, hence the id attribute
+    const getLanguageId = async (languageCode: string) => {
+        try {
+            const languages = await getLanguagesProps();
+            if (languages) {
+                const languageId = languages.find
+                (language => language.language_code === languageCode);
+                return languageId?.id;
+            }
+        }
+        catch (error) {
+            console.error('Error fetching language_id:', error);
+        }
+    }
+
     useEffect(() => {
-        getTranslations();
-        getLanguages();
+        getTranslationsByLanguage(selectedLanguage);
+        getLanguagesCodes();
     }, []);
 
     const showAddLanguage = () => {
@@ -123,12 +203,6 @@ const InternationalizationTab = () => {
                 );
 
                 setLanguages(prevLanguages => [...prevLanguages, newLanguageCode]);
-
-                console.log("Adding language with data:", {
-                    language_code: newLanguageCode,
-                    language_name: newLanguageName,
-                });
-
                 await data_accessor?.addRow();
                 resetNewLanguage();
 
@@ -158,9 +232,8 @@ const InternationalizationTab = () => {
                 }
             ).addRow();
 
-            await getTranslations();
-
-            console.log("Adding a new label...");
+            // await getTranslations();
+            await getTranslationsByLanguage(selectedLanguage);
         } catch (error) {
             console.error('Error adding a new label:', error);
         }
@@ -190,8 +263,7 @@ const InternationalizationTab = () => {
             const response = await data_accessor.updateRow();
 
             if (response && response.status >= 200 && response.status < 300) {
-                console.log(`Successfully updated label with keyCode ${keyCode} to value ${editedValue}`);
-                await getTranslations();
+                await getTranslationsByLanguage(selectedLanguage);
             } else {
                 console.error(`Failed to update label with keyCode ${keyCode} to value ${editedValue}`);
                 if (response) {
@@ -213,7 +285,7 @@ const InternationalizationTab = () => {
     };
 
     const handleDropdownLanguages = async () => {
-        await getLanguages();
+        await getLanguagesCodes();
     };
 
     const handleSelectedNewLanguage = (event: SelectChangeEvent<string>) => {
@@ -222,7 +294,12 @@ const InternationalizationTab = () => {
     };
 
     const handleSelectedLanguage = (event: SelectChangeEvent<string>) => {
-        setSelectedLanguage(event.target.value as string);
+        const language = event.target.value as string;
+        setSelectedLanguage(language);
+        getTranslationsByLanguage(language);
+
+        // clear the previous translations
+        setTranslations([]);
     };
 
     return (
@@ -278,12 +355,16 @@ const InternationalizationTab = () => {
                             if (translation) {
                                 return (
                                     <TranslationTableRow
-                                        getTranslations={getTranslations}
+                                        // getTranslations={getTranslations}
+                                        getTranslationsByLanguage={getTranslationsByLanguage}
                                         key={idx}
                                         keyCode={translation["key_code"] as string}
                                         value={translation["value"] as string}
                                         is_default={translation["is_default"] as boolean}
                                         onEdit={handleEdit}
+                                        getLanguageId={getLanguageId}
+                                        getKeyId={getKeyId}
+                                        selectedLanguage={selectedLanguage}
                                     />
                                 );
                             }
@@ -383,52 +464,111 @@ const InternationalizationTab = () => {
 };
 
 interface TranslationTableRowProps {
-    getTranslations: () => void,
+    getTranslationsByLanguage: (language: string) => void,
     keyCode?: string,
     value?: string,
     is_default?: boolean,
     onEdit: (keyCode: string, newValue: string) => void;
+    getLanguageId: (languageCode: string) => void;
+    getKeyId: (keyCode: string) => void;
+    selectedLanguage: string;
 }
 
-const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslations, keyCode, value, is_default, onEdit }) => {
+const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslationsByLanguage, keyCode, value, is_default, onEdit, getLanguageId, getKeyId, selectedLanguage}) => {
     const [showModalDeleteLabel, setshowModalDeleteLabel] = useState<boolean>(false);
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditingLabel, setisEditingLabel] = useState(false);
     const [editedValue, setEditedValue] = useState(keyCode);
     const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
 
+    const [editedTranslation, setEditedTranslation] = useState(value);
+    const [isEditingTranslation, setisEditingTranslation] = useState(false);
 
+    const handleUpsertTranslation = async (languageCode: string, keyCode: string, newTranslation: string) => {
+        setisEditingTranslation(true);
+        try {
+            // Get the language and key IDs
+            const languageId = await getLanguageId(languageCode);
+            const keyId = await getKeyId(keyCode);
+    
+            // Get the data accessor for upsert operation
+            const dataAccessor = vmd.getUpsertDataAccessor(
+                "meta",
+                "i18n_values",
+                {
+                    columns: "language_id, key_id, value",
+                    on_conflict: "language_id, key_id",
+                }, 
+                {
+                    language_id: languageId,
+                    key_id: keyId,
+                    value: newTranslation,
+                }
+            );
+
+            // if the value is not empty and null, perform the upsert operation
+            if (newTranslation !== "" && newTranslation !== null) {
+                await dataAccessor.upsert();
+            }
+        } catch (error) {
+            console.error(`Error upserting translation: ${newTranslation}`, error);
+        }
+    }
+    
     const handleDoubleClick = () => {
-        if (!is_default) {
-            setIsEditing(true);
+        if (!is_default && !isEditingLabel) {
+            setisEditingLabel(true);
         }
     };
 
     const handleBlur = () => {
-        if (!is_default) {
-            setIsEditing(false);
-            saveChanges(); 
+        if (!is_default && isEditingLabel) {
+            setisEditingLabel(false);
+            saveChangesLabel(); 
         }
     };
+
+    const handleTranslationBlur = () => {
+        setisEditingTranslation(false);
+        saveChangesTranslation();
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setEditedValue(e.target.value);
-        // Automatically save changes when the input field is changed
-        saveChanges();
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            setIsEditing(false);
-            saveChanges(); // Save changes on Enter key press
+        if (!is_default && isEditingLabel) {
+            setEditedValue(e.target.value);
+            saveChangesLabel();
         }
     };
+
+    const handleTranslationCellChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setEditedTranslation(e.target.value);
+        saveChangesTranslation();
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && isEditingLabel) {
+            e.preventDefault();
+            setisEditingLabel(false);
+            saveChangesLabel(); 
+        }
+    };
+
+    const handleTranslationKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            setisEditingTranslation(false);
+            saveChangesTranslation(); 
+        }
+    }
 
     const handleClickOutside = (e: MouseEvent) => {
         const target = e.target as HTMLElement;
-        if (target.tagName !== "INPUT") {
-            setIsEditing(false);
-            saveChanges(); // Save changes when clicking outside the input field
+        if (target.tagName !== "INPUT" && isEditingLabel) {
+            setisEditingLabel(false);
+            saveChangesLabel(); // Save changes when clicking outside the input field
+        }
+        else if (target.tagName !== "INPUT" && isEditingTranslation) {
+            setisEditingTranslation(false);
+            saveChangesTranslation(); // Save changes when clicking outside the input field
         }
     };
 
@@ -448,10 +588,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     
             // Check if the deletion was successful
             if (response && response.status >= 200 && response.status < 300) {
-                // Remove the deleted row from the UI or update the UI accordingly
-                console.log(`Successfully deleted row with keyCode ${keyCode}`);
-                // Refresh translations after deleting a row
-                await getTranslations();
+                await getTranslationsByLanguage(selectedLanguage);
             } else {
                 // Handle error responses
                 console.error(`Failed to delete row with keyCode ${keyCode}`);
@@ -473,7 +610,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         );
     };
 
-    const saveChanges = async () => {
+    const saveChangesLabel = async () => {
         try {
             if (keyCode !== editedValue) {
                 onEdit(keyCode || "", editedValue || "");
@@ -483,6 +620,16 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
             console.error('Error saving changes:', error);
         }
 
+    };
+
+    const saveChangesTranslation = async () => {
+        try {
+            if (value !== editedTranslation) {
+                handleUpsertTranslation(selectedLanguage, keyCode || "", editedTranslation || "");
+            }
+        } catch (error) {
+            console.error('Error saving changes:', error);
+        }
     };
 
     const showModalDelete = () => {
@@ -504,15 +651,15 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         <tr>
             <td onDoubleClick={handleDoubleClick} className="container-labels">
                 <input
-                    value={isEditing ? editedValue : keyCode}
+                    value={isEditingLabel ? editedValue : keyCode}
                     onChange={handleChange}
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
-                    readOnly={!isEditing}
+                    readOnly={!isEditingLabel}
                     style={{
                         border: 'none',
                         outline: 'none',
-                        backgroundColor: isEditing ? '#f2f2f2' : 'transparent',
+                        backgroundColor: isEditingLabel ? '#f2f2f2' : 'transparent',
                         borderRadius: '4px',
                     }}
                 />
@@ -547,6 +694,22 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
                         </div>
                     </Modal.Footer>
                 </Modal>
+            </td>
+
+            <td onDoubleClick= {() => handleUpsertTranslation(selectedLanguage, keyCode || "", editedTranslation || "")}>                
+                <input
+                    value={isEditingTranslation ? editedTranslation : value}
+                    onChange={handleTranslationCellChange}  
+                    onBlur={handleTranslationBlur}
+                    onKeyDown={handleTranslationKeyDown}
+                    readOnly={!isEditingTranslation}
+                    style={{
+                        border: 'none',
+                        outline: 'none',
+                        backgroundColor: isEditingTranslation ? '#f2f2f2' : 'transparent',
+                        borderRadius: '4px',
+                    }}
+                />
             </td>
         </tr> 
     
