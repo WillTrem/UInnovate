@@ -66,10 +66,62 @@ class ScriptHandler {
     );
 
     try {
-      await this.accessor.updateTableData(this.new_table_data, this.table);
+      await this.accessor.updateTableData(
+        this.new_table_data,
+        this.table,
+        this.schema_name as string
+      );
     } catch (error) {
       throw new Error("Error updating table data: " + error);
     }
+  }
+
+  getScript() {
+    return this.script;
+  }
+
+  getTableData() {
+    return this.table_data;
+  }
+
+  getNewTableData() {
+    return this.new_table_data;
+  }
+
+  getTable() {
+    return this.table;
+  }
+
+  getAccessor() {
+    return this.accessor;
+  }
+
+  getSchemaName() {
+    return this.schema_name;
+  }
+
+  setScript(script: Row) {
+    this.script = script;
+  }
+
+  setTableData(table_data: Row[]) {
+    this.table_data = table_data;
+  }
+
+  setNewTableData(new_table_data: Row[]) {
+    this.new_table_data = new_table_data;
+  }
+
+  setTable(table: Table) {
+    this.table = table;
+  }
+
+  setAccessor(accessor: DataAccessor) {
+    this.accessor = accessor;
+  }
+
+  setSchemaName(schema_name: string) {
+    this.schema_name = schema_name;
   }
 }
 

@@ -42,6 +42,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
 
     switch (changed_property) {
       case "table_name":
+        console.log("you changed the table name", event.target.value);
         updatedScript = { ...updateScript, table_name: event.target.value };
         break;
       case "content":
@@ -92,6 +93,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
             <FormControl size="small">
               <h6>Script Table</h6>
               <Select
+                data-testid="table-select"
                 value={updateScript["table_name"]}
                 onChange={(event) => handleChange(event, "table_name")}
               >
@@ -111,7 +113,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
           <div className="d-flex flex-column align-items-start mb-5">
             <h6>Description</h6>
             <TextField
-              multiline
+              data-testid="description-field"
               fullWidth
               defaultValue={script["description"]}
               onChange={(event) =>
@@ -139,6 +141,7 @@ export const ScriptEditor: React.FC<ScriptEditorProps> = ({ script }) => {
                 </IconButton>
               </div>
               <AceEditor
+                data-testid="ace-editor"
                 mode="javascript"
                 theme="github"
                 value={content}

@@ -1,5 +1,5 @@
-import { describe, it, vi } from "vitest";
-import TestRenderer from "react-test-renderer";
+import { describe, it, vi, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
 import configureStore from "redux-mock-store";
@@ -16,12 +16,35 @@ describe("Settings.tsx", () => {
   const initialState = {
     schema: { schema_name: "application" },
     script_table: { table_name: "script_mock" },
-    auth: { dbRole: Role.ADMIN, schemaRoles: {}, user: "admin", token: "token", schema_access: ['mock schema name'] },
+    auth: {
+      dbRole: Role.ADMIN,
+      schemaRoles: {},
+      user: "admin",
+      token: "token",
+      schema_access: ["mock schema name"],
+    },
     userData: {
-      users: [{ email: "mockuser123@test.com", role: "user", schema_access: ["mock schema name"], schemaRoles: {} },
-      { email: "mockAdmin@test.com", role: "administrator", schema_access: ["mock schema name"], schemaRoles: {} },
-      { email: "mockConfigurator@test.com", role: "configurator", schema_access: ["mock schema name"], schemaRoles: {} }]
-    }
+      users: [
+        {
+          email: "mockuser123@test.com",
+          role: "user",
+          schema_access: ["mock schema name"],
+          schemaRoles: {},
+        },
+        {
+          email: "mockAdmin@test.com",
+          role: "administrator",
+          schema_access: ["mock schema name"],
+          schemaRoles: {},
+        },
+        {
+          email: "mockConfigurator@test.com",
+          role: "configurator",
+          schema_access: ["mock schema name"],
+          schemaRoles: {},
+        },
+      ],
+    },
   };
   const middlewares: Middleware[] = [];
   const mockStore = configureStore(middlewares);
@@ -29,15 +52,21 @@ describe("Settings.tsx", () => {
 
   it("tests the children inside settings page", async () => {
     store = mockStore(initialState);
-    const testRenderer = TestRenderer.create(
+
+    render(
       <MemoryRouter>
-          <Provider store={store}>
-            <Settings />
-          </Provider>
+        <Provider store={store}>
+          <Settings />
+        </Provider>
       </MemoryRouter>
     );
 
-    const testInstance = await testRenderer.root;
-    expect(testInstance.findByType(Settings)).to.be.ok;
+    expect(screen.getAllByText("Settings")[1]).toBeInTheDocument();
+    expect(screen.getByText("Layout Personalization")).toBeInTheDocument();
+    expect(screen.getByText("Tables")).toBeInTheDocument();
+    expect(screen.getByText("Cron Jobs")).toBeInTheDocument();
+    expect(screen.getAllByText("Users")[1]).toBeInTheDocument();
+    expect(screen.getByText("Add Language")).toBeInTheDocument();
+    expect(screen.getByText("ADD VIEW")).toBeInTheDocument();
   });
 });

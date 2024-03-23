@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.64% </span>
+                <span class="strong">82.35% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>23/34</span>
+                <span class='fraction'>28/34</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">33.33% </span>
+                <span class="strong">66.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/9</span>
+                <span class='fraction'>6/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.64% </span>
+                <span class="strong">82.35% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>23/34</span>
+                <span class='fraction'>28/34</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -185,8 +185,7 @@
 <a name='L120'></a><a href='#L120'>120</a>
 <a name='L121'></a><a href='#L121'>121</a>
 <a name='L122'></a><a href='#L122'>122</a>
-<a name='L123'></a><a href='#L123'>123</a>
-<a name='L124'></a><a href='#L124'>124</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L123'></a><a href='#L123'>123</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -209,13 +208,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -239,9 +237,9 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -255,11 +253,11 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -270,10 +268,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -336,7 +334,6 @@ const TableEnumView: React.FC&lt;TableEnumViewProps&gt; = ({
   const [originalColumns, setOriginalColumns] = useState&lt;Column[]&gt;([]);
   const [rows, setRows] = useState&lt;Row[] | undefined&gt;([]);
   const [isPopupVisible, setIsPopupVisible] = useState&lt;boolean&gt;(false);
-  
 &nbsp;
   useEffect(() =&gt; {
     const fetchData = async () =&gt; {
@@ -360,11 +357,11 @@ const TableEnumView: React.FC&lt;TableEnumViewProps&gt; = ({
         const lines = await data_accessor.fetchRows();
 &nbsp;
         // Filter the rows to only include the attribute column
-        const filteredRows = lines?.map(<span class="fstat-no" title="function not covered" >(r</span>ow: Row) =&gt; {
+        const filteredRows = lines?.map((row: Row) =&gt; {
           const filteredRowData: { [key: string]: string | number | boolean } =
-<span class="cstat-no" title="statement not covered" >            {};</span>
-<span class="cstat-no" title="statement not covered" >          filteredRowData[attribute.column_name] = row[attribute.column_name];</span>
-<span class="cstat-no" title="statement not covered" >          return new Row(filteredRowData);</span>
+            {};
+          filteredRowData[attribute.column_name] = row[attribute.column_name];
+          return new Row(filteredRowData);
         });
 &nbsp;
         setColumn(attribute);
@@ -392,11 +389,11 @@ const TableEnumView: React.FC&lt;TableEnumViewProps&gt; = ({
             &lt;/tr&gt;
           &lt;/thead&gt;
           &lt;tbody&gt;
-            {rows?.map(<span class="fstat-no" title="function not covered" >(r</span>ow, rowIdx) =&gt; {
-<span class="cstat-no" title="statement not covered" >              return (</span>
+            {rows?.map((row, rowIdx) =&gt; {
+              return (
                 &lt;tr key={rowIdx}&gt;
-                  {Object.values(row.row).map(<span class="fstat-no" title="function not covered" >(c</span>ell, cellIdx) =&gt; {
-<span class="cstat-no" title="statement not covered" >                    return &lt;td key={cellIdx}&gt;{cell}&lt;/td&gt;;</span>
+                  {Object.values(row.row).map((cell, cellIdx) =&gt; {
+                    return &lt;td key={cellIdx}&gt;{cell}&lt;/td&gt;;
                   })}
                 &lt;/tr&gt;
               );
@@ -439,7 +436,7 @@ export default TableEnumView;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-22T21:33:58.811Z
+                at 2024-03-23T19:01:56.999Z
             </div>
         <script src="../prettify.js"></script>
         <script>

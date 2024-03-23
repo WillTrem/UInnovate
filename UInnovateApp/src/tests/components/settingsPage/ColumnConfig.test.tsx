@@ -1,14 +1,14 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect } from "vitest";
 import { ColumnConfig } from "../../../components/settingsPage/ColumnConfig";
-import VMD from "../../../virtualmodel/__mocks__/VMD";
+import VMD, { ColumnMock } from "../../../virtualmodel/__mocks__/VMD";
 import { Provider } from "react-redux";
 import store from "../../../redux/Store";
 
 describe("ColumnConfig component", () => {
-  const column = new VMD.Column("Column1");
-  const table = new VMD.Table("Table1");
-  table.addColumn(column);
+  const column = new ColumnMock("Column1");
+  const table = new VMD.getTable("Table1");
+  table.addColumn(column, "", false, "");
 
   it("renders the component", () => {
     render(
@@ -26,7 +26,7 @@ describe("ColumnConfig component", () => {
       );
 
       // Act - toggle the visibility off for the first column
-      fireEvent.click(screen.getByTestId("visibility-switch"));
+      fireEvent.click(screen.getAllByTestId("visibility-switch")[0]);
 
       // Assert
       await waitFor(() => {

@@ -1203,7 +1203,7 @@ const TableListView: React.FC<TableListViewProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows?.map((row, rowIdx) => (
+            {sortedRows?.map((row: Row, rowIdx) => (
               <TableRow
                 title="row"
                 key={rowIdx}

@@ -1,6 +1,4 @@
 import axiosCustom from "../api/AxiosCustom";
-import { Table } from "./VMD";
-import vmd from "./VMD";
 
 export class DataAccessor {
   data_url: string;
@@ -144,12 +142,16 @@ export class DataAccessor {
     }
   }
 
-  async updateTableData(new_table_data: Row[], table: Table) {
+  async updateTableData(
+    new_table_data: Row[],
+    table: ITable,
+    schema_name: string
+  ) {
     let old_row: Row | undefined = {} as Row;
     let old_table_data = await this.fetchRows();
 
     const primary_key = table.getPrimaryKey()?.column_name;
-    const schema_name = vmd.getTableSchema(table.table_name)?.schema_name;
+    // const schema_name = vmd.getTableSchema(table.table_name)?.schema_name;
 
     // After fetching rows, change the header from Accept-Profile to Content-Profile
     this.headers = { "Content-Profile": schema_name as string };
@@ -171,7 +173,9 @@ export class DataAccessor {
             if (old_row[key] !== new_row[key]) {
               console.log(this);
               this.values = new_row;
-              this.data_url = `${table.getURL()}?${primary_key}=eq.${new_row[primary_key]}`;
+              this.data_url = `${table.getURL()}?${primary_key}=eq.${
+                new_row[primary_key]
+              }`;
               await this.updateRow();
             }
           }
@@ -192,7 +196,9 @@ export class DataAccessor {
         (new_row) => new_row[primary_key] === old_row[primary_key]
       );
       if (!existsInNewData) {
-        this.data_url = `${table.getURL()}?${primary_key}=eq.${old_row[primary_key]}`;
+        this.data_url = `${table.getURL()}?${primary_key}=eq.${
+          old_row[primary_key]
+        }`;
         try {
           this.deleteRow();
         } catch (error) {
@@ -218,4 +224,14 @@ export class Row {
 
   // Adding index signature to Row class to allow for dynamic access of row properties
   [key: string]: any;
+}
+
+interface ITable {
+  table_name: string;
+  getURL: () => string;
+  getPrimaryKey: () => IColumn | undefined;
+}
+
+interface IColumn {
+  column_name: string;
 }
