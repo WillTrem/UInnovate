@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">41.86% </span>
+                <span class="strong">47.61% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/43</span>
+                <span class='fraction'>20/42</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">20% </span>
+                <span class="strong">41.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/10</span>
+                <span class='fraction'>5/12</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">40% </span>
+                <span class="strong">60% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/5</span>
+                <span class='fraction'>3/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">43.9% </span>
+                <span class="strong">47.5% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/41</span>
+                <span class='fraction'>19/40</span>
             </div>
         
             
@@ -186,7 +186,13 @@
 <a name='L121'></a><a href='#L121'>121</a>
 <a name='L122'></a><a href='#L122'>122</a>
 <a name='L123'></a><a href='#L123'>123</a>
-<a name='L124'></a><a href='#L124'>124</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a>
+<a name='L130'></a><a href='#L130'>130</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -205,15 +211,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -261,7 +274,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -272,7 +284,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -319,7 +331,7 @@ const SETTING_TABLE_NAME = 'additional_view_settings';
 const CUSTOM_VIEW_TABLE_NAME = 'custom_view_templates';
 const RPC_NAME = 'insert_custom_view';
 &nbsp;
-export interface AdditionalViews{
+export interface AdditionalView{
 	id: number;
 	viewname: string;
 	schemaname: string;
@@ -328,7 +340,13 @@ export interface AdditionalViews{
 	template?: string;
 }
 &nbsp;
-export const getViewsBySchema = async (setterCallback:(args:any)=&gt;void, p_schemaName: string, signal: AbortSignal)  =&gt; {
+export interface CustomView{
+	id: number;
+	settingid: number;
+	template: string;
+}
+&nbsp;
+export const getViewsBySchema = async (setterCallback:(args:any)=&gt;void | undefined, p_schemaName: string, signal: AbortSignal)  =&gt; {
 &nbsp;
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
         SETTING_SCHEMA_NAME,
@@ -337,8 +355,9 @@ export const getViewsBySchema = async (setterCallback:(args:any)=&gt;void, p_sch
 &nbsp;
     const rows = await data_accessor?.fetchRows(signal);
     <span class="missing-if-branch" title="else path not taken" >E</span>if(rows){
-		console.log(rows);
-        setterCallback(rows.filter(<span class="fstat-no" title="function not covered" >r =&gt; {<span class="cstat-no" title="statement not covered" ></span>if(r.schemaname == p_schemaName){<span class="cstat-no" title="statement not covered" >return r}</span>}</span> ));
+		const filteredData = rows.filter(r =&gt; {<span class="missing-if-branch" title="if path not taken" >I</span>if(r.schemaname == p_schemaName){<span class="cstat-no" title="statement not covered" >return r}</span>} )
+        setterCallback &amp;&amp; setterCallback(filteredData);
+		return filteredData;
     }
 };
 &nbsp;
@@ -351,8 +370,8 @@ export const getCustomViews = async (setterCallback:(args:any)=&gt;void, signal:
 &nbsp;
     const rows = await data_accessor?.fetchRows(signal);
     <span class="missing-if-branch" title="else path not taken" >E</span>if(rows){
-		console.log(rows);
         setterCallback(rows);
+		return rows;
     }
 };
 &nbsp;
@@ -383,7 +402,6 @@ export const insertNewView = <span class="fstat-no" title="function not covered"
 				"p_view_name": p_viewName,
 				"p_view_type_id": p_viewType
 			} as Row;
-<span class="cstat-no" title="statement not covered" >			console.log(data);</span>
 			const cstm_view_data_accessor: FunctionAccessor = <span class="cstat-no" title="statement not covered" >vmd.getFunctionAccessor(</span>
 				SETTING_SCHEMA_NAME, // schema name
 				RPC_NAME, // remote procedure function name
@@ -395,7 +413,7 @@ export const insertNewView = <span class="fstat-no" title="function not covered"
 		}
 &nbsp;
 	} catch (error) {
-<span class="cstat-no" title="statement not covered" >		console.error("Error in upserting view:", error);</span>
+		// console.error("Error in upserting view:", error);
 <span class="cstat-no" title="statement not covered" >		alert("Failed to save view.");</span>
 	}
 };
@@ -439,7 +457,7 @@ export const deleteView = <span class="fstat-no" title="function not covered" >a
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-22T21:33:58.811Z
+                at 2024-03-23T19:01:56.999Z
             </div>
         <script src="../prettify.js"></script>
         <script>
