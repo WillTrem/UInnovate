@@ -44,6 +44,7 @@ describe("LookupSetting component", () => {
         <LookUpTableSetting table={table} />
       </Provider>
     );
+
     const initialSelect = screen.getByTestId("lookup-tables-initial");
     expect(initialSelect).toBeInTheDocument();
 
@@ -60,6 +61,7 @@ describe("LookupSetting component", () => {
         <LookUpTableSetting table={table2} />
       </Provider>
     );
+
     const initialSelect = screen.getByTestId("lookup-tables-initial");
     expect(initialSelect).toBeInTheDocument();
 
@@ -79,12 +81,13 @@ describe("LookupSetting component", () => {
   });
 
   it("checks if nothing shows for tables with no referencing", async () => {
-    const { container } = render(
+    render(
       <Provider store={store}>
         <LookUpTableSetting table={table3} />
       </Provider>
     );
 
-    expect(container.firstChild).toBeNull();
+    const combobox = document.querySelector('[aria-controls=":r3:"]');
+    expect(combobox).toBeInTheDocument();
   });
 });

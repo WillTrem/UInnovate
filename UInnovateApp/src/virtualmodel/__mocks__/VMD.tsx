@@ -6,7 +6,7 @@ import VMD, { Table, Schema, Column, TableDisplayType, View } from "../VMD";
 export default {
   ...VMD,
   getRowDataAccessor: vi.fn().mockImplementation(() => {
-    console.log("getRowDataAccessor in VMD mock was called.")
+    console.log("getRowDataAccessor in VMD mock was called.");
     return new DataAccessorMock("/api/data");
   }),
   getRowsDataAccessor: vi.fn().mockImplementation((schema, table) => {
@@ -71,24 +71,38 @@ export default {
       new TableMock("mock3"),
     ];
   }),
-  getFunctionAccessor: vi.fn().mockImplementation((schema_name: string, function_name: string) => {
-    console.log("getFunctionAccessor in VMD mock was called");
-    return new FunctionAccessorMock(function_name);
-  }),
-  getViewRowDataAccessor: vi.fn().mockImplementation((schema_name: string,
-    view_name: string,
-    search_key: string[],
-    search_key_value: string[]) => {
-    console.log("getViewRowDataAccessor in VMD mock was called.")
-    return new DataAccessorMock(view_name);
-  }),
-  getViewRowsDataAccessor: vi.fn().mockImplementation((schema_name: string,
-    view_name: string,
-    search_key: string[],
-    search_key_value: string[]) => {
-    console.log("getViewRowsDataAccessor in VMD mock was called");
-    return new DataAccessorMock(view_name);
-  }),
+  getFunctionAccessor: vi
+    .fn()
+    .mockImplementation((schema_name: string, function_name: string) => {
+      console.log("getFunctionAccessor in VMD mock was called");
+      return new FunctionAccessorMock(function_name);
+    }),
+  getViewRowDataAccessor: vi
+    .fn()
+    .mockImplementation(
+      (
+        schema_name: string,
+        view_name: string,
+        search_key: string[],
+        search_key_value: string[]
+      ) => {
+        console.log("getViewRowDataAccessor in VMD mock was called.");
+        return new DataAccessorMock(view_name);
+      }
+    ),
+  getViewRowsDataAccessor: vi
+    .fn()
+    .mockImplementation(
+      (
+        schema_name: string,
+        view_name: string,
+        search_key: string[],
+        search_key_value: string[]
+      ) => {
+        console.log("getViewRowsDataAccessor in VMD mock was called");
+        return new DataAccessorMock(view_name);
+      }
+    ),
   getRemoveRowAccessor: vi.fn().mockImplementation(() => {
     console.log("getRemoveRowAccessor in VMD mock was called");
     return new DataAccessorMock();
@@ -101,14 +115,24 @@ export default {
     console.log("getRowsDataAccessorForLookUpTable in VMD mock was called");
     return new DataAccessorMock();
   }),
-  getUpsertRowDataAccessor: vi.fn().mockImplementation((schema_name: string, table_name: string, primary_keys: string[], params: { [key: string]: string },row: Row) => {
-    console.log("getUpsertRowData in VMD mock was called");
-    return new DataAccessorMock(table_name);
-  }),
+  getUpsertRowDataAccessor: vi
+    .fn()
+    .mockImplementation(
+      (
+        schema_name: string,
+        table_name: string,
+        primary_keys: string[],
+        params: { [key: string]: string },
+        row: Row
+      ) => {
+        console.log("getUpsertRowData in VMD mock was called");
+        return new DataAccessorMock(table_name);
+      }
+    ),
   refetchSchemas: vi.fn().mockImplementation(() => {
-    console.log("refetchSchemas in VMD mock was called.")
+    console.log("refetchSchemas in VMD mock was called.");
   }),
-  
+
   TableDisplayType: TableDisplayType,
   View: View,
 };
@@ -117,6 +141,28 @@ export class TableMock extends Table {
   constructor(name: string) {
     super(name);
   }
+  addColumn = vi
+    .fn()
+    .mockImplementation(
+      (
+        column: Column,
+        references_table: string,
+        is_editable: boolean,
+        references_by: string,
+        referenced_table: string,
+        referenced_by: string
+      ) => {
+        console.log("addColumn in Table mock was called");
+        super.addColumn(
+          column,
+          references_table,
+          is_editable,
+          references_by,
+          referenced_table,
+          referenced_by
+        );
+      }
+    );
   getColumns = vi.fn().mockImplementation(() => {
     console.log("getColumns in Table mock was called");
     return [

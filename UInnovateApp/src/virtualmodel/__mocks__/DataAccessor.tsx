@@ -8,9 +8,11 @@ export class DataAccessorMock {
   headers = {};
   params: { [key: string]: string } | undefined = {};
   values?: Row;
-  constructor(data_url?: string,
+  constructor(
+    data_url?: string,
     params?: { [key: string]: string },
-    values?: Row) {
+    values?: Row
+  ) {
     if (data_url) {
       this.data_url = data_url;
       this.headers = { Authorization: "Bearer token" };
@@ -42,13 +44,17 @@ export class DataAccessorMock {
           name: "mock name 3",
         } as Row,
       ] as Row[]);
-    } else if (this.data_url === 'user_info') {
+    } else if (this.data_url === "user_info") {
       return Promise.resolve(userInfoMock);
-    }
-    else if(this.data_url === 'role_per_schema'){
-      return Promise.resolve([{user:"mockConfigurator@test.com", schema: "mock schema name", role: Role.USER}]);
-    }
-    else {
+    } else if (this.data_url === "role_per_schema") {
+      return Promise.resolve([
+        {
+          user: "mockConfigurator@test.com",
+          schema: "mock schema name",
+          role: Role.USER,
+        },
+      ]);
+    } else {
       return Promise.resolve([]);
     }
   });
@@ -89,8 +95,19 @@ export class DataAccessorMock {
     return Promise.resolve();
   });
 
-  addRow = vi.fn().mockImplementation(()=>{
-    console.log("addRow in DataAccessor mock was called");
+  put = vi.fn().mockImplementation(() => {
+    console.log("put in DataAccessor mock was called");
     return Promise.resolve();
-  })
+  });
 }
+
+const userInfoMock = [
+  {
+    email: "test@test.com",
+    first_name: "first_name",
+    last_name: "last_name",
+    role: "administrator", // Default role
+    is_active: true,
+    schema_access: ["mock schema name", "mock schema name 2"],
+  },
+];
