@@ -111,7 +111,7 @@ describe("TableListView component", () => {
     });
 
     // Find the button that uploads files
-    const dropzoneButton = await screen.queryByTitle("Dropzone");
+    const dropzoneButton = await screen.findByTitle("Dropzone");
 
     waitFor(() => expect(dropzoneButton).toBeInTheDocument());
   });
@@ -207,7 +207,7 @@ describe("TableListView component", () => {
     columns[0].setReferenceTable("filegroup");
 
     // Check if the upload pop is now displayed
-    const dropzoneButton = screen.queryByTitle("Dropzone");
+    const dropzoneButton = screen.findByTitle("Dropzone");
 
     waitFor(() => expect(dropzoneButton).toBeInTheDocument());
   });
@@ -229,7 +229,7 @@ describe("TableListView component", () => {
     columns[0].setReferenceTable("filegroup");
 
     // Check if the upload pop is now displayed
-    const dropzoneButton = screen.queryByTitle("Dropzone");
+    const dropzoneButton = screen.findByTitle("Dropzone");
 
     waitFor(() => expect(dropzoneButton).toBeInTheDocument());
 
