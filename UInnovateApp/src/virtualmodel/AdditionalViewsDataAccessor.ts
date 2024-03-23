@@ -8,7 +8,7 @@ const SETTING_TABLE_NAME = 'additional_view_settings';
 const CUSTOM_VIEW_TABLE_NAME = 'custom_view_templates';
 const RPC_NAME = 'insert_custom_view';
 
-export interface AdditionalViews{
+export interface AdditionalView{
 	id: number;
 	viewname: string;
 	schemaname: string;
@@ -17,7 +17,13 @@ export interface AdditionalViews{
 	template?: string;
 }
 
-export const getViewsBySchema = async (setterCallback:(args:any)=>void, p_schemaName: string, signal: AbortSignal)  => {
+export interface CustomView{
+	id: number;
+	settingid: number;
+	template: string;
+}
+
+export const getViewsBySchema = async (setterCallback:(args:any)=>void | undefined, p_schemaName: string, signal: AbortSignal)  => {
 
     const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
         SETTING_SCHEMA_NAME,
@@ -26,8 +32,10 @@ export const getViewsBySchema = async (setterCallback:(args:any)=>void, p_schema
 
     const rows = await data_accessor?.fetchRows(signal);
     if(rows){
-		console.log(rows);
-        setterCallback(rows.filter(r => {if(r.schemaname == p_schemaName){return r}} ));
+		// console.log(rows);
+		const filteredData = rows.filter(r => {if(r.schemaname == p_schemaName){return r}} )
+        setterCallback && setterCallback(filteredData);
+		return filteredData;
     }
 };
 
@@ -40,8 +48,9 @@ export const getCustomViews = async (setterCallback:(args:any)=>void, signal: Ab
 
     const rows = await data_accessor?.fetchRows(signal);
     if(rows){
-		console.log(rows);
+		// console.log(rows);
         setterCallback(rows);
+		return rows;
     }
 };
 
@@ -72,7 +81,7 @@ export const insertNewView = async (p_schemaName: string, p_tableName: string, p
 				"p_view_name": p_viewName,
 				"p_view_type_id": p_viewType
 			} as Row;
-			console.log(data);
+			// console.log(data);
 			const cstm_view_data_accessor: FunctionAccessor = vmd.getFunctionAccessor(
 				SETTING_SCHEMA_NAME, // schema name
 				RPC_NAME, // remote procedure function name
@@ -84,7 +93,7 @@ export const insertNewView = async (p_schemaName: string, p_tableName: string, p
 		}
 
 	} catch (error) {
-		console.error("Error in upserting view:", error);
+		// console.error("Error in upserting view:", error);
 		alert("Failed to save view.");
 	}
 };
