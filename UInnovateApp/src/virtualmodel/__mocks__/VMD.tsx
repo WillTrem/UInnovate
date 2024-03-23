@@ -176,6 +176,10 @@ export class TableMock extends Table {
     console.log("getEnumViewColumn in Table mock was called");
     return new ColumnMock("type");
   });
+  setLookupTables = vi.fn().mockImplementation((lookupTables: string) => {
+    console.log("setLookupTables in Table mock was called");
+    super.setLookupTables(lookupTables);
+  });
 }
 
 export class ColumnMock extends Column {
