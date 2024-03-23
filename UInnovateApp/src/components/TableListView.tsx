@@ -684,20 +684,15 @@ const TableListView: React.FC<TableListViewProps> = ({
         // It's a single click
         handleOpenPanel(row);
       }
-      setClickAction(null);  // Reset the click action after the action is determined
-    }, 200); // 200 ms delay, you may adjust this based on the UX
+      setClickAction(null);  
+    }, 200); 
   };
-  const isCellEditable = (rowIndex : number, columnNamec: string) => {
-    // Implement your logic here
-    return true; // or false based on certain conditions
-  };
+
   const handleSave = async (e, rowIdx : number, columnName : string) => {
-    // Prevent the default action, if called within a form
       const confirmAction = async () => {
         if (e.preventDefault) e.preventDefault();
       
         const newValue = e.target.value;
-        // Prepare the update payload
         const updatedRow = { [columnName]: newValue };
       
         const schema = vmd.getTableSchema(table.table_name);
@@ -706,7 +701,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           return;
         }
       
-        // Optionally, log the user action
         Logger.logUserAction(
           loggedInUser || "",
           "Edited Cell",
@@ -715,11 +709,9 @@ const TableListView: React.FC<TableListViewProps> = ({
           table.table_name
         );
       
-        // Use the primary key for the row to identify which row to update
-        const storedPrimaryKeyValue = localStorage.getItem(
-          "currentPrimaryKeyValue"
-        );
         const primaryKeyValue = Object.keys(currentRow.row)[0];
+        // Use the primary key for the row to identify which row to update
+        const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
         // Call the update API
         try {
           const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
@@ -732,7 +724,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           data_accessor.updateRow().then((res) => {
             getRows();
           });
-          // Reflect the update in the local state
+          // Reflect the update locally
           const updatedRows = [...rows];
           updatedRows[rowIdx] = new Row(updatedRow);
           setRows(updatedRows);
@@ -740,7 +732,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           // Exit editing mode
         } catch (error) {
           console.error("Failed to update row", error);
-          // Handle error (e.g., show a notification to the user)
         }
         setEditingCell(null);
     };
