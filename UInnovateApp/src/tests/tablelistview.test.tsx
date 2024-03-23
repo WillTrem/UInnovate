@@ -1,5 +1,11 @@
 import { describe, it, vi } from "vitest";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import TableListView from "../components/TableListView";
 import { MemoryRouter } from "react-router-dom";
 import { Column, Table } from "../virtualmodel/VMD";
@@ -13,7 +19,7 @@ vi.mock("DataAccessor");
 
 describe("TableListView component", () => {
   // Sample data for testing
-  // Making a mock single mock table 
+  // Making a mock single mock table
   const table = new Table("Table1");
   // Making a mock column array of three columns
   const columns = [
@@ -28,11 +34,11 @@ describe("TableListView component", () => {
   });
 
   render(
-      <MemoryRouter>
-        <Provider store={store}>
+    <MemoryRouter>
+      <Provider store={store}>
         <TableListView table={table} />
-        </Provider>
-      </MemoryRouter>
+      </Provider>
+    </MemoryRouter>
   );
 
   it("renders a table with the specified attributes", async () => {
@@ -42,9 +48,11 @@ describe("TableListView component", () => {
 
     it("opens and closes the sliding panel", () => {
       // Render the component
-      render(<Provider store ={store}>
-        <TableListView table={table} /* props */ />
-        </Provider>);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -57,7 +65,11 @@ describe("TableListView component", () => {
       expect(screen.getByText("Details")).toBeInTheDocument();
     });
     it("renders the Show Look up Table button when showTable is false", () => {
-      const { getByText } = render(<Provider store={store}><TableListView table={table} /></Provider>);
+      const { getByText } = render(
+        <Provider store={store}>
+          <TableListView table={table} />
+        </Provider>
+      );
 
       expect(getByText("Show Look up Table")).toBeInTheDocument();
     });
@@ -74,11 +86,11 @@ describe("TableListView component", () => {
   });
   it("renders the upload button", async () => {
     render(
-        <MemoryRouter>
-          <Provider store={store}>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-          </Provider>
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Check for row existence by getting them by title
@@ -99,37 +111,36 @@ describe("TableListView component", () => {
     });
 
     // Find the button that uploads files
-    const dropzoneButton = screen.getByTitle("Dropzone");
+    const dropzoneButton = await screen.findByTitle("Dropzone");
 
-    expect(dropzoneButton).toBeInTheDocument();
+    waitFor(() => expect(dropzoneButton).toBeInTheDocument());
   });
-  
+
   it("Render Reset Filter button", async () => {
     render(
-        <MemoryRouter>
-          <Provider store={store}>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-          </Provider>
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
-    const resetFiltersButton = screen.getByTestId('reset-filter-button');
+    const resetFiltersButton = screen.getByTestId("reset-filter-button");
 
     // Check if the button is in the document
     expect(resetFiltersButton).toBeInTheDocument();
 
     // Simulate a click event on the button
     fireEvent.click(resetFiltersButton);
-
   });
 
   it("render the filter button and simulate a click events", async () => {
     render(
-        <MemoryRouter>
-          <Provider store={store}>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-          </Provider>
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     // Wait for the button to be in the document
@@ -147,16 +158,15 @@ describe("TableListView component", () => {
       fireEvent.click(filterButtons[0]);
     }
 
-
     //check if the filter menu is in the document which should render after pressing the filter button
-    let filtermenu
+    let filtermenu;
     await waitFor(() => {
       filtermenu = screen.getAllByTestId("filter-menu");
       expect(filtermenu[0]).toBeInTheDocument(); // Check the first button
     });
 
     //The confirm button should also be rendered with the filter menu
-    let filterConfirmButton
+    let filterConfirmButton;
     await waitFor(() => {
       filterConfirmButton = screen.getAllByTestId("filter-confirm-button");
       expect(filterConfirmButton[0]).toBeInTheDocument(); // Check the first button
@@ -168,26 +178,25 @@ describe("TableListView component", () => {
   });
 
   it("table UI is rendered", async () => {
-
     render(
-        <MemoryRouter>
-          <Provider store={store}>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-          </Provider>
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
 
     const renderedTable = screen.getByTestId("table");
     expect(renderedTable).toBeInTheDocument();
   });
 
-it("Verify existence of upload button", async () => {
+  it("Verify existence of upload button", async () => {
     render(
-        <MemoryRouter>
-          <Provider store={store}>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-          </Provider>
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
@@ -198,18 +207,18 @@ it("Verify existence of upload button", async () => {
     columns[0].setReferenceTable("filegroup");
 
     // Check if the upload pop is now displayed
-    const dropzoneButton = screen.getByTitle("Dropzone");
+    const dropzoneButton = await screen.findByTitle("Dropzone");
 
-    expect(dropzoneButton).toBeInTheDocument();
+    waitFor(() => expect(dropzoneButton).toBeInTheDocument());
   });
 
   it("Verify functionality of upload file button", async () => {
     render(
-        <MemoryRouter>
-          <Provider store={store}>
+      <MemoryRouter>
+        <Provider store={store}>
           <TableListView table={table} />
-          </Provider>
-        </MemoryRouter>
+        </Provider>
+      </MemoryRouter>
     );
     // Check for row existence by getting them by title
     const rows = await screen.findAllByTitle("row");
@@ -220,9 +229,9 @@ it("Verify existence of upload button", async () => {
     columns[0].setReferenceTable("filegroup");
 
     // Check if the upload pop is now displayed
-    const dropzoneButton = screen.getByTitle("Dropzone");
+    const dropzoneButton = screen.findByTitle("Dropzone");
 
-    expect(dropzoneButton).toBeInTheDocument();
+    waitFor(() => expect(dropzoneButton).toBeInTheDocument());
 
     const fileInputField = await screen.findByTitle("Uploader");
     const event = {
@@ -236,12 +245,16 @@ it("Verify existence of upload button", async () => {
     };
     await act(() => fireEvent.change(fileInputField, event));
     //TODO: Fix this test to be less hacky, MYKWIM
-    const file_instance = await screen.findByTitle("file-instance");
+    const file_instance = await screen.getByTitle("file-instance");
     expect(file_instance).toBeInTheDocument();
 
     it("renders the date time picker", () => {
       // Render the component
-      render(<Provider store={store}><TableListView table={table} /* props */ /></Provider>);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -258,7 +271,11 @@ it("Verify existence of upload button", async () => {
 
     it("renders the date picker ", () => {
       // Render the component
-      render(<Provider store={store}><TableListView table={table} /* props */ /></Provider>);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -275,7 +292,11 @@ it("Verify existence of upload button", async () => {
 
     it("renders the category selector", () => {
       // Render the component
-      render(<Provider store={store}><TableListView table={table} /* props */ /></Provider>);
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();

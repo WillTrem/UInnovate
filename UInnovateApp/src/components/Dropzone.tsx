@@ -8,7 +8,6 @@ import vmd from "../virtualmodel/VMD";
 function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
   const [highlight, setHighlight] = useState(false);
   const [itemsList, setItemsList] = useState(items);
-  const [showPreview, setShowPreview] = useState(false);
   const [currentBlob, setCurrentBlob] = useState("");
 
   const fileInputRef = React.createRef();

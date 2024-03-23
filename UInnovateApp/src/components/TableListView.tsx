@@ -17,6 +17,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
 import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
+import ConfirmationPopup from "./SavePopup";
+import InfoPopup from "./PrimaryKeyErrorPopup";
 import { IoIosArrowUp } from "react-icons/io";
 import {
   Switch,
@@ -71,17 +73,28 @@ import {
 } from "@mui/material";
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
+import { set } from "lodash";
 
 interface TableListViewProps {
   table: Table;
 }
-
+interface EditingCell {
+  rowIdx: number;
+  columnName: string;
+  value: string;
+}
 const buttonStyle = {
   marginTop: 20,
   backgroundColor: "#404040",
   width: "fit-content",
 };
 
+type ConfirmPopupContent = {
+  title: string;
+  message: string;
+  confirmAction: () => void;
+  onCancel?: () => void;
+};
 const theme = createTheme({
   components: {
     MuiPickersPopper: {
@@ -132,14 +145,27 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
+  const [fileGroupFiles, setFileGroupFiles] = useState<object>({});
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
-  const [currentFileGroup, setCurrentFileGroup] = useState<Row[] | undefined>();
   const [inputField, setInputField] =
     useState<(column: Column) => JSX.Element>();
-  const [renderNumber, setRenderNumber] = useState<number>(0);
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const function_table = vmd.getTable("meta", "function_map");
+
+  const [clickAction, setClickAction] = useState<"single" | "double" | null>(
+    null
+  );
+  const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [isConfirmPopupOpen, setIsConfirmPopupOpen] = useState(false);
+  const [confirmPopupContent, setConfirmPopupContent] =
+    useState<ConfirmPopupContent>({
+      title: "",
+      message: "",
+      confirmAction: () => {},
+    });
+  const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
+  const [infoPopupMessage, setInfoPopupMessage] = useState("");
 
   const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
@@ -172,6 +198,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
     return initialCheckedState;
   });
+  const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -198,8 +225,24 @@ const TableListView: React.FC<TableListViewProps> = ({
     const count = await countAccessor.fetchRows();
     const lines = await data_accessor.fetchRows();
 
+    let tempFileColumn: string = "";
+
+    const tempAllFileGroups: Row[] | undefined =
+      await fileStorageViewDataAccessor.fetchRows();
+
+    attributes.forEach((column) => {
+      if (column.references_table == "filegroup") {
+        tempFileColumn = column.column_name;
+      }
+    });
     // Filter the rows to only include the visible columns
     const filteredRows = lines?.map((row) => {
+      const allFiles = tempAllFileGroups?.filter(
+        (fileGroup) => fileGroup.groupid == row[tempFileColumn]
+      );
+      const tempFileGroupFiles = fileGroupFiles;
+      tempFileGroupFiles[row[tempFileColumn]] = allFiles;
+      setFileGroupFiles(tempFileGroupFiles);
       const filteredRowData: { [key: string]: string | number | boolean } = {};
       attributes.forEach((column) => {
         filteredRowData[column.column_name] = row[column.column_name];
@@ -368,6 +411,10 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPageNumber(value);
   };
+  const handleUserConfirm = () => {
+    confirmPopupContent.confirmAction();
+    setIsConfirmPopupOpen(false);
+  };
 
   const onItemAdded = async (
     e,
@@ -395,7 +442,7 @@ const TableListView: React.FC<TableListViewProps> = ({
           },
         }
       )
-      .then((response) => {
+      ?.then((response) => {
         let tempRow = {
           ...currentRow.row,
           [currentColumn]: response.data[0].groupid,
@@ -409,7 +456,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           )
           .updateRow();
         setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
-        setRenderNumber(0);
       });
     const nonEditableColumn = table.columns.find(
       (column) => column.is_editable === false
@@ -447,7 +493,6 @@ const TableListView: React.FC<TableListViewProps> = ({
       });
     const newItems = allFileGroups?.filter((file) => file.id !== item.id);
     setAllFileGroups(newItems);
-    setRenderNumber(0);
     getRows();
   };
 
@@ -486,8 +531,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     }));
   };
 
-  const { user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
-
+  const { user: loggedInUser }: AuthState = useSelector(
+    (state: RootState) => state.auth
+  );
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -506,8 +552,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       table.table_name
     );
 
-    const storedPrimaryKeyValue = currentRow.row ? currentRow.row[currentPrimaryKey as string] : null;
-
+    const storedPrimaryKeyValue = currentRow.row
+      ? currentRow.row[currentPrimaryKey as string]
+      : null;
 
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
       schema.schema_name,
@@ -521,20 +568,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     });
     setInputValues({});
     setOpenPanel(false);
-  };
-  const handleShowFiles = (column: Column) => {
-    if (renderNumber < 30) {
-      fileStorageViewDataAccessor.fetchRows().then((response) => {
-        setAllFileGroups(response);
-        setCurrentFileGroup(
-          response?.filter(
-            (file) => file.groupid == currentRow.row[column.column_name]
-          )
-        );
-        setShowFiles(true);
-        setRenderNumber(renderNumber + 1);
-      });
-    }
   };
   //Filter Functions
   //Handle when you click on the filter button
@@ -589,40 +622,150 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
   //End of Filter Function
 
-
   // Object.entries(row.row).map(([key, value]) => {
 
-
   const FileInputField = (column: Column) => {
-    handleShowFiles(column);
     if (!appConfigValues) {
       return null;
     }
 
+    if (column.is_editable == false) {
+      localStorage.setItem(
+        "currentPrimaryKeyValue",
+        currentRow.row[column.column_name]
+      );
+    }
 
-
-
-    return showFiles && currentFileGroup ? (
-      <div title="Dropzone">
+    if (column.references_table != null) {
+      const string = column.column_name + "L";
+      localStorage.setItem(
+        string,
+        currentRow.row[column.column_name] as string
+      );
+    }
+    return (
+      <div>
         <Dropzone
           onItemAdded={onItemAdded}
           onItemRemoved={onItemRemoved}
-          items={currentFileGroup}
+          items={fileGroupFiles[currentRow.row[column.column_name]]}
           currentColumn={column.column_name}
         />
-      </div>
-    ) : (
-      <div title="Dropzone">
-        <CircularProgress />
       </div>
     );
   };
 
+  const handleDoubleClick = (rowIndex: number, column: Column) => {
+    const newRow = rows[rowIndex];
+    setCurrentRow(newRow);
+    // clear timeout on double click
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+      clickTimeoutRef.current = null;
+    }
+    if (!column.is_editable) {
+      setInfoPopupMessage(
+        `${column.column_name} is not editable because it's a primary key.`
+      );
+      setIsInfoPopupOpen(true);
+      return false;
+    }
+    const columnName = column.column_name;
+    // Set state indicating the action is a double click
+    setClickAction("double");
+    const cellValue = newRow.row[columnName];
+    const valueAsString = String(cellValue);
+    setEditingCell({
+      rowIdx: rowIndex,
+      columnName: columnName,
+      value: valueAsString,
+    });
+  };
 
+  const handleClick = (row: Row) => {
+    if (editingCell !== null) {
+      return;
+    }
+    // Clear any existing timeout to start fresh
+    if (clickTimeoutRef.current) {
+      clearTimeout(clickTimeoutRef.current);
+    }
 
+    // Set a timeout for a single click
+    clickTimeoutRef.current = setTimeout(() => {
+      if (clickAction !== "double") {
+        // It's a single click
+        handleOpenPanel(row);
+      }
+      setClickAction(null);  
+    }, 200); 
+  };
 
+  const handleSave = async (e, rowIdx : number, columnName : string) => {
+      const confirmAction = async () => {
+        if (e.preventDefault) e.preventDefault();
+      
+        const newValue = e.target.value;
+        const updatedRow = { [columnName]: newValue };
+      
+        const schema = vmd.getTableSchema(table.table_name);
+        if (!schema) {
+          console.error("Schema not found");
+          return;
+        }
+      
+        Logger.logUserAction(
+          loggedInUser || "",
+          "Edited Cell",
+          `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+          schema.schema_name,
+          table.table_name
+        );
+      
+        const primaryKeyValue = Object.keys(currentRow.row)[0];
+        // Use the primary key for the row to identify which row to update
+        const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
+        // Call the update API
+        try {
+          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+            schema.schema_name,
+            table.table_name,
+            updatedRow,
+            primaryKeyValue as string,
+            storedPrimaryKeyValue as string
+          );
+          data_accessor.updateRow().then((res) => {
+            getRows();
+          });
+          // Reflect the update locally
+          const updatedRows = [...rows];
+          updatedRows[rowIdx] = new Row(updatedRow);
+          setRows(updatedRows);
+      
+          // Exit editing mode
+        } catch (error) {
+          console.error("Failed to update row", error);
+        }
+        setEditingCell(null);
+    };
 
-
+    setConfirmPopupContent({
+      title: "Confirm Save",
+      message: "Are you sure you want to save these changes?",
+      confirmAction: confirmAction,
+      onCancel: handleCancelConfirm,
+    });
+    setIsConfirmPopupOpen(true);
+  };
+  const handleKeyDown = (e, rowIdx: number, columnName: string) => {
+    if (e.key === "Enter") {
+      handleSave(e, rowIdx, columnName);
+    }
+  };
+  const handleCancelConfirm = () => {
+    setIsConfirmPopupOpen(false);
+    setEditingCell(null);
+  };
   useEffect(() => {
     const newInputField = (column: Column) => {
       if (!appConfigValues) {
@@ -634,7 +777,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           element.table == table.table_name &&
           element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
       );
-
 
       if (
         !columnDisplayType ||
@@ -830,7 +972,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
+        row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -840,7 +983,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleAddRowClick = () => {
     setIsPopupVisible(true);
   };
-
 
   return (
     <div>
@@ -949,9 +1091,10 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
         variant="contained"
         onClick={ResetFilter}
-        data-testid="reset-filter-button">
-        Reset Filters</Button>
-
+        data-testid="reset-filter-button"
+      >
+        Reset Filters
+      </Button>
 
       <TableContainer>
         <MUITable
@@ -1064,35 +1207,70 @@ const TableListView: React.FC<TableListViewProps> = ({
               <TableRow
                 title="row"
                 key={rowIdx}
-                onClick={() => handleOpenPanel(row)}
+                onClick={() => handleClick(row)}
+                onDoubleClick={() => setCurrentRow(row)}
                 sx={{ backgroundColor: rowIdx % 2 === 0 ? "#f2f2f2" : "white" }}
               >
                 {Object.values(row.row).map((cell, idx) => (
-                  <TableCell key={idx}>
-                    <Box sx={{ textAlign: "center" }}>
-                      {typeof cell === "boolean"
-                        ? cell.toString()
-                        : columns[idx].references_table === "filegroup"
-                          ? (
-                            fileGroupsView?.find(
-                              (fileGroup) => fileGroup.id === cell
-                            )?.count || 0
-                          ).toString() + " file(s)"
-                          : (cell as React.ReactNode)}
-                    </Box>
+                  <TableCell
+                    key={idx}
+                    onDoubleClick={() =>
+                      handleDoubleClick(rowIdx, columns[idx])
+                    }
+                  >
+                    {editingCell &&
+                    editingCell.rowIdx === rowIdx &&
+                    editingCell.columnName === columns[idx].column_name ? (
+                      <input
+                        type="text"
+                        defaultValue={editingCell.value}
+                        onBlur={(e) =>
+                          handleSave(e, rowIdx, columns[idx].column_name)
+                        }
+                        onKeyDown={(e) =>
+                          handleKeyDown(e, rowIdx, columns[idx].column_name)
+                        }
+                        autoFocus
+                      />
+                    ) : (
+                      <Box sx={{ textAlign: "center" }}>
+                        {typeof cell === "boolean"
+                          ? cell.toString()
+                          : columns[idx].references_table === "filegroup"
+                            ? (
+                                fileGroupsView?.find(
+                                  (fileGroup) => fileGroup.id === cell
+                                )?.count || 0
+                              ).toString() + " file(s)"
+                            : (cell as React.ReactNode)}
+                      </Box>
+                    )}
                   </TableCell>
                 ))}
                 <TableCell>
                   <DeleteRowButton getRows={getRows} table={table} row={row} />
                 </TableCell>
-
               </TableRow>
-
             ))}
-
           </TableBody>
         </MUITable>
       </TableContainer>
+      {isConfirmPopupOpen && (
+        <ConfirmationPopup
+          open={isConfirmPopupOpen}
+          title={confirmPopupContent.title}
+          message={confirmPopupContent.message}
+          onConfirm={handleUserConfirm}
+          onCancel={handleCancelConfirm}
+        />
+      )}
+      {isInfoPopupOpen && (
+        <InfoPopup
+          open={isInfoPopupOpen}
+          message={infoPopupMessage}
+          onClose={() => setIsInfoPopupOpen(false)}
+        />
+      )}
 
       <div>
         <Container>
@@ -1134,8 +1312,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           setOpenPanel(false);
           setInputValues({});
           setShowFiles(false);
-          setCurrentFileGroup(undefined);
-          setRenderNumber(0);
         }}
       >
         <div>
@@ -1160,7 +1336,11 @@ const TableListView: React.FC<TableListViewProps> = ({
                   {columns.map((column, colIdx) => {
                     if (column.references_table == "filegroup") {
                       return (
-                        <div key={colIdx} className="row-details">
+                        <div
+                          key={colIdx}
+                          className="row-details"
+                          title="Dropzone"
+                        >
                           <label key={column.column_name + colIdx}>
                             {column.column_name}
                           </label>
@@ -1181,9 +1361,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                     setCurrentWYSIWYG("");
                     setInputValues({});
                     setOpenPanel(false);
-                    setRenderNumber(0);
                     setShowFiles(false);
-                    setCurrentFileGroup(undefined);
                   }}
                 >
                   close
@@ -1203,14 +1381,20 @@ const TableListView: React.FC<TableListViewProps> = ({
               </div>
             </div>
           </div>
-          <div style={{ paddingBottom: "2em", paddingLeft: '1.5em' }}>
+          <div style={{ paddingBottom: "2em", paddingLeft: "1.5em" }}>
             {table.lookup_tables == "null" ? (
               <div></div>
             ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
               <div></div>
             ) : showTable ? (
               <div style={{ paddingBottom: "2em" }}>
-                {currentRow.row && <LookUpTableDetails table={table} currentRow={currentRow.row} />}              </div>
+                {currentRow.row && (
+                  <LookUpTableDetails
+                    table={table}
+                    currentRow={currentRow.row}
+                  />
+                )}{" "}
+              </div>
             ) : (
               <Button
                 variant="contained"
@@ -1218,7 +1402,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   marginTop: 20,
                   backgroundColor: "#403eb5",
                   width: "fit-content",
-                  marginLeft: '12px',
+                  marginLeft: "12px",
                 }}
                 onClick={() => setShowTable(true)}
               >
@@ -1231,6 +1415,5 @@ const TableListView: React.FC<TableListViewProps> = ({
     </div>
   );
 };
-
 
 export default TableListView;
