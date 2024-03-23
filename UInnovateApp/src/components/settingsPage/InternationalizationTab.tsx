@@ -57,12 +57,6 @@ const InternationalizationTab = () => {
         language_name: string
     }
 
-    // Value Object
-    interface ValueProps {
-        id: number,
-        value: string
-    }
-
     const getTranslationsByLanguage = async (chosenLanguage: string) => {
         try {
             const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
@@ -169,32 +163,6 @@ const InternationalizationTab = () => {
             console.error('Error fetching language_id:', error);
         }
     }
-
-    const getValuesProps = async () => {
-        try {
-            const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-                "meta",
-                "i18n_values"
-            );
-    
-            // Fetch the list of values for the dropdown using the ValueProps interface
-            const rows = await data_accessor.fetchRows();
-            if (rows) {
-                // Process the rows to extract values
-                const values: ValueProps[] = rows.map(row => ({
-                    id: row.id,  // Assuming 'id' is the primary key of the table
-                    value: row.value as string
-                }));
-    
-                // Return the list of values
-                return values;
-            }
-        } catch (error) {
-            console.error('Error fetching values:', error);
-        }
-    
-    }
-
 
     useEffect(() => {
         getTranslationsByLanguage(selectedLanguage);
@@ -397,7 +365,6 @@ const InternationalizationTab = () => {
                                         getLanguageId={getLanguageId}
                                         getKeyId={getKeyId}
                                         selectedLanguage={selectedLanguage}
-                                        getValuesProps={getValuesProps}
                                     />
                                 );
                             }
@@ -497,7 +464,6 @@ const InternationalizationTab = () => {
 };
 
 interface TranslationTableRowProps {
-    // getTranslations: () => void,
     getTranslationsByLanguage: (language: string) => void,
     keyCode?: string,
     value?: string,
@@ -506,10 +472,9 @@ interface TranslationTableRowProps {
     getLanguageId: (languageCode: string) => void;
     getKeyId: (keyCode: string) => void;
     selectedLanguage: string;
-    getValuesProps?: () => void;
 }
 
-const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslationsByLanguage, keyCode, value, is_default, onEdit, getLanguageId, getKeyId, selectedLanguage, getValuesProps}) => {
+const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslationsByLanguage, keyCode, value, is_default, onEdit, getLanguageId, getKeyId, selectedLanguage}) => {
     const [showModalDeleteLabel, setshowModalDeleteLabel] = useState<boolean>(false);
     const [isEditingLabel, setisEditingLabel] = useState(false);
     const [editedValue, setEditedValue] = useState(keyCode);
