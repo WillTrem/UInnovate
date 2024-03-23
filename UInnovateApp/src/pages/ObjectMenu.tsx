@@ -14,6 +14,13 @@ import { updateSelectedSchema } from "../redux/SchemaSlice";
 import AdditionalViewNavBar from "../components/AdditionalViewNavBar";
 import { ViewTypeEnum } from "../enums/ViewTypeEnum";
 import { updateSelectedViewList } from "../redux/AdditionalViewSlice";
+import { Row as DataRow } from "../virtualmodel/DataAccessor";
+
+import CustomViewLoader from "../components/CustomViewLoader";
+import {
+  getCustomViews,
+  getViewsBySchema,
+} from "../virtualmodel/AdditionalViewsDataAccessor";
 
 export interface viewSelection {
   schema: string;
@@ -21,6 +28,14 @@ export interface viewSelection {
   selectedView: ViewTypeEnum;
 }
 
+interface customTemplate {
+  id: number;
+  schemaname: string;
+  tablename: string;
+  viewname: string;
+  viewtype: number;
+  template: string;
+}
 export function ObjectMenu() {
   const selectedSchema: string = useSelector(
     (state: RootState) => state.schema.value,
@@ -64,8 +79,28 @@ export function ObjectMenu() {
         viewType = selection[0].selectedView;
       }
       setViewType(viewType);
+
+      if (viewType == ViewTypeEnum.Custom) {
+        //update custom view index
+        const index = findIndexByTablename(p_tableName);
+        if (index > 0) {
+          setselectedCustomViewIndex(index);
+        } else {
+          setselectedCustomViewIndex(0);
+        }
+      }
     }
   };
+
+  function findIndexByTablename(tablename: string) {
+    for (let i = 0; i < customViews.length; i++) {
+      if (customViews[i].tablename === tablename) {
+        return i; // Return the index of the object with matching tablename
+      }
+    }
+    return -1; // Return -1 if the object is not found
+  }
+
   const dispatch = useDispatch();
   const { tableName } = useParams();
   const { schema } = useParams();
@@ -73,6 +108,10 @@ export function ObjectMenu() {
   const selectedViewList: Array<viewSelection> = useSelector(
     (state: RootState) => state.selectedViewList.value,
   );
+  const [customViews, setCustomViews] = useState<customTemplate[]>([]);
+  const [selectedCustomViewIndex, setselectedCustomViewIndex] =
+    useState<number>(0);
+
   const [viewType, setViewType] = useState<ViewTypeEnum>(ViewTypeEnum.Default);
 
   const [activeTable, setActiveTable] = useState<Table | null>(null);
@@ -104,8 +143,40 @@ export function ObjectMenu() {
     const table = tables?.filter((t) => t.table_name == tableName)[0];
     setActiveTable(table || null);
     setViewForTable(schema, tableName);
+    const abortCtrl = new AbortController();
+    getCustomViewForSchema(schema, abortCtrl.signal);
+    return () => abortCtrl.abort();
   }, [schema]);
   const { user, schema_access } = useSelector((state: RootState) => state.auth);
+
+  const getCustomViewForSchema = (schema: string, signal: AbortSignal) => {
+    getViewsBySchema(null, schema, signal).then(
+      async (data: DataRow[] | undefined) => {
+        let customTemplates: customTemplate[] = [];
+        const filteredData = data?.filter(
+          (r) => r.viewtype == ViewTypeEnum.Custom,
+        );
+        let customViews: DataRow[] = [];
+        await getCustomViews((data: DataRow[] | undefined) => {
+          customViews = data;
+        }, new AbortController().signal);
+
+        filteredData?.map((data) => {
+          const matching_template = customViews.filter(
+            (x) => x.settingid == data.id,
+          );
+          if (matching_template.length > 0) {
+            const template: customTemplate = {
+              ...data,
+              template: matching_template[0].template,
+            };
+            customTemplates = [...customTemplates, template];
+          }
+        });
+        setCustomViews(customTemplates || []);
+      },
+    );
+  };
 
   return (
     <>
@@ -178,7 +249,16 @@ export function ObjectMenu() {
                     )}
                     {viewType == ViewTypeEnum.Custom && (
                       <>
-                        <span>Custom view</span>
+                        {activeTable && (
+                          <CustomViewLoader
+                            table={activeTable}
+                            templateSource={
+                              customViews.length > 0
+                                ? customViews[selectedCustomViewIndex].template
+                                : ""
+                            }
+                          />
+                        )}
                       </>
                     )}
                   </Tab.Content>

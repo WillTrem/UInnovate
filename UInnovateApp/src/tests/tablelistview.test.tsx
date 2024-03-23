@@ -57,6 +57,11 @@ describe("TableListView component", () => {
           <TableListView table={table} /* props */ />
         </Provider>
       );
+      render(
+        <Provider store={store}>
+          <TableListView table={table} /* props */ />
+        </Provider>
+      );
 
       // Check if the sliding panel is not open by default
       expect(screen.queryByText("Details")).not.toBeInTheDocument();
@@ -115,9 +120,9 @@ describe("TableListView component", () => {
     });
 
     // Find the button that uploads files
-    const dropzoneButton = screen.getByTitle("Dropzone");
+    const dropzoneButton = await screen.findByTitle("Dropzone");
 
-    expect(dropzoneButton).toBeInTheDocument();
+    waitFor(() => expect(dropzoneButton).toBeInTheDocument());
   });
 
   it("Render Reset Filter button", async () => {
@@ -195,124 +200,141 @@ describe("TableListView component", () => {
   });
 
   it("Verify existence of upload button", async () => {
-    render(
-      <MemoryRouter>
-        <Provider store={store}>
-          <TableListView table={table} />
-        </Provider>
-      </MemoryRouter>
-    );
-    // Check for row existence by getting them by title
-    const rows = await screen.findAllByTitle("row");
-
-    // Click the first row
-    act(() => rows[0].click());
-
-    columns[0].setReferenceTable("filegroup");
-
-    // Check if the upload pop is now displayed
-    const dropzoneButton = screen.getByTitle("Dropzone");
-
-    expect(dropzoneButton).toBeInTheDocument();
-  });
-
-  it("Verify functionality of upload file button", async () => {
-    render(
-      <MemoryRouter>
-        <Provider store={store}>
-          <TableListView table={table} />
-        </Provider>
-      </MemoryRouter>
-    );
-    // Check for row existence by getting them by title
-    const rows = await screen.findAllByTitle("row");
-
-    // Click the first row
-    act(() => rows[0].click());
-
-    columns[0].setReferenceTable("filegroup");
-
-    // Check if the upload pop is now displayed
-    const dropzoneButton = screen.getByTitle("Dropzone");
-
-    expect(dropzoneButton).toBeInTheDocument();
-
-    const fileInputField = await screen.findByTitle("Uploader");
-    const event = {
-      target: {
-        files: [
-          new File(["(⌐□_□)"], "chucknorris.png", {
-            type: "image/png",
-          }) as unknown as File,
-        ],
-      },
-    };
-    await act(() => fireEvent.change(fileInputField, event));
-    //TODO: Fix this test to be less hacky, MYKWIM
-    const file_instance = await screen.findByTitle("file-instance");
-    expect(file_instance).toBeInTheDocument();
-
-    it("renders the date time picker", () => {
-      // Render the component
+    it("Verify existence of upload button", async () => {
       render(
-        <Provider store={store}>
-          <TableListView table={table} /* props */ />
-        </Provider>
+        <MemoryRouter>
+          <Provider store={store}>
+            <TableListView table={table} />
+          </Provider>
+        </MemoryRouter>
       );
+      // Check for row existence by getting them by title
+      const rows = await screen.findAllByTitle("row");
 
-      // Check if the sliding panel is not open by default
-      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+      // Click the first row
+      act(() => rows[0].click());
 
-      // Find the button that opens the sliding panel and simulate a click event
-      const openButton = screen.getAllByRole("button");
-      fireEvent.click(openButton[1]);
+      columns[0].setReferenceTable("filegroup");
 
-      // Check if the sliding panel is now open
-      expect(screen.getByText("Details")).toBeInTheDocument();
+      // Check if the upload pop is now displayed
+      const dropzoneButton = await screen.findByTitle("Dropzone");
 
-      expect(screen.getByText("SELECT DATE & TIME")).toBeInTheDocument();
+      waitFor(() => expect(dropzoneButton).toBeInTheDocument());
     });
 
-    it("renders the date picker ", () => {
-      // Render the component
+    it("Verify functionality of upload file button", async () => {
       render(
-        <Provider store={store}>
-          <TableListView table={table} /* props */ />
-        </Provider>
+        <MemoryRouter>
+          <Provider store={store}>
+            <TableListView table={table} />
+          </Provider>
+        </MemoryRouter>
       );
+      // Check for row existence by getting them by title
+      const rows = await screen.findAllByTitle("row");
 
-      // Check if the sliding panel is not open by default
-      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+      // Click the first row
+      act(() => rows[0].click());
 
-      // Find the button that opens the sliding panel and simulate a click event
-      const openButton = screen.getAllByRole("button");
-      fireEvent.click(openButton[1]);
+      columns[0].setReferenceTable("filegroup");
 
-      // Check if the sliding panel is now open
-      expect(screen.getByText("Details")).toBeInTheDocument();
+      // Check if the upload pop is now displayed
+      const dropzoneButton = screen.findByTitle("Dropzone");
 
-      expect(screen.getByText("SELECT DATE")).toBeInTheDocument();
-    });
+      waitFor(() => expect(dropzoneButton).toBeInTheDocument());
 
-    it("renders the category selector", () => {
-      // Render the component
-      render(
-        <Provider store={store}>
-          <TableListView table={table} /* props */ />
-        </Provider>
-      );
+      const fileInputField = await screen.findByTitle("Uploader");
+      const event = {
+        target: {
+          files: [
+            new File(["(⌐□_□)"], "chucknorris.png", {
+              type: "image/png",
+            }) as unknown as File,
+          ],
+        },
+      };
+      await act(() => fireEvent.change(fileInputField, event));
+      //TODO: Fix this test to be less hacky, MYKWIM
+      const file_instance = await screen.getByTitle("file-instance");
+      expect(file_instance).toBeInTheDocument();
 
-      // Check if the sliding panel is not open by default
-      expect(screen.queryByText("Details")).not.toBeInTheDocument();
+      it("renders the date time picker", () => {
+        // Render the component
+        render(
+          <Provider store={store}>
+            <TableListView table={table} /* props */ />
+          </Provider>
+        );
+        render(
+          <Provider store={store}>
+            <TableListView table={table} /* props */ />
+          </Provider>
+        );
 
-      // Find the button that opens the sliding panel and simulate a click event
-      const openButton = screen.getAllByRole("button");
-      fireEvent.click(openButton[1]);
+        // Check if the sliding panel is not open by default
+        expect(screen.queryByText("Details")).not.toBeInTheDocument();
 
-      // Check if the sliding panel is now open
-      expect(screen.getByText("Details")).toBeInTheDocument();
+        // Find the button that opens the sliding panel and simulate a click event
+        const openButton = screen.getAllByRole("button");
+        fireEvent.click(openButton[1]);
 
-      expect(screen.getByText("category1")).toBeInTheDocument();
+        // Check if the sliding panel is now open
+        expect(screen.getByText("Details")).toBeInTheDocument();
+
+        expect(screen.getByText("SELECT DATE & TIME")).toBeInTheDocument();
+      });
+
+      it("renders the date picker ", () => {
+        // Render the component
+        render(
+          <Provider store={store}>
+            <TableListView table={table} /* props */ />
+          </Provider>
+        );
+        render(
+          <Provider store={store}>
+            <TableListView table={table} /* props */ />
+          </Provider>
+        );
+
+        // Check if the sliding panel is not open by default
+        expect(screen.queryByText("Details")).not.toBeInTheDocument();
+
+        // Find the button that opens the sliding panel and simulate a click event
+        const openButton = screen.getAllByRole("button");
+        fireEvent.click(openButton[1]);
+
+        // Check if the sliding panel is now open
+        expect(screen.getByText("Details")).toBeInTheDocument();
+
+        expect(screen.getByText("SELECT DATE")).toBeInTheDocument();
+      });
+
+      it("renders the category selector", () => {
+        // Render the component
+        render(
+          <Provider store={store}>
+            <TableListView table={table} /* props */ />
+          </Provider>
+        );
+        render(
+          <Provider store={store}>
+            <TableListView table={table} /* props */ />
+          </Provider>
+        );
+
+        // Check if the sliding panel is not open by default
+        expect(screen.queryByText("Details")).not.toBeInTheDocument();
+
+        // Find the button that opens the sliding panel and simulate a click event
+        const openButton = screen.getAllByRole("button");
+        fireEvent.click(openButton[1]);
+
+        // Check if the sliding panel is now open
+        expect(screen.getByText("Details")).toBeInTheDocument();
+
+        expect(screen.getByText("category1")).toBeInTheDocument();
+      });
     });
   });
 });

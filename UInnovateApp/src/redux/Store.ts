@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import schemaReducer from "./SchemaSlice";
-import authReducer from './AuthSlice'
-import loadingReducer from './LoadingSlice'
+import authReducer from './AuthSlice';
+import loadingReducer from './LoadingSlice';
 import userDataReducer from './UserDataSlice';
-import notificationReducer from './NotificationSlice'
+import notificationReducer from './NotificationSlice';
 import selectedViewListReducer from './AdditionalViewSlice';
 
 // App state store
