@@ -171,7 +171,6 @@ export function ObjectMenu() {
               template: matching_template[0].template,
             };
             customTemplates = [...customTemplates, template];
-            console.log("customTemplates:", customTemplates);
           }
         });
         setCustomViews(customTemplates || []);
