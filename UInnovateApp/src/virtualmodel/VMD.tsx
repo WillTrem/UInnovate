@@ -442,7 +442,7 @@ class VirtualModelDefinition {
 
     if (schema && table) {
       return new DataAccessor(
-        `${table.url}?id=eq.${row["id"]}`, // PostgREST URL for updating a row from its id
+        `${table.url}?${table_name}_id=eq.${row[table_name+"_id"]}`, // PostgREST URL for updating a row from its id
         {
           Prefer: "return=representation",
           "Content-Type": "application/json",
