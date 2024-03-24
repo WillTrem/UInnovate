@@ -25,7 +25,7 @@ COMMENT ON COLUMN app_rentals.tool_type.type_name IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.tool_type.type_category IS '{"reqOnCreate": true}';
 
 CREATE TABLE app_rentals.tool (
-    id serial PRIMARY KEY,
+    tool_id serial PRIMARY KEY,
     tool_type int REFERENCES app_rentals.tool_type(type_id),
     tool_name text,
     tool_price money,
@@ -42,7 +42,7 @@ COMMENT ON COLUMN app_rentals.tool.tool_qty_available IS '{"reqOnCreate": true}'
 
 CREATE TABLE app_rentals.unit (
     unit_id serial PRIMARY KEY,
-    id int REFERENCES app_rentals.tool(id),
+    tool_id int REFERENCES app_rentals.tool(tool_id),
     tool_type int REFERENCES app_rentals.tool_type(type_id),
     unit_serial_number text,
     unit_weight real,
@@ -54,7 +54,7 @@ CREATE TABLE app_rentals.unit (
     last_calibration_certificate_id int
 );
 COMMENT ON TABLE app_rentals.unit IS '{"displayField": "unit_serial_number"}';
-COMMENT ON COLUMN app_rentals.unit.id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
+COMMENT ON COLUMN app_rentals.unit.unit_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
 COMMENT ON COLUMN app_rentals.unit.tool_type IS '{"reqOnCreate": true, "refTable": "app_rentals.tool_type"}';
 COMMENT ON COLUMN app_rentals.unit.unit_serial_number IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.unit.unit_weight IS '{"reqOnCreate": true}';
@@ -119,13 +119,13 @@ COMMENT ON COLUMN app_rentals.quotation.totalprice IS '{"reqOnCreate": true}';
 --should only exist as a lookup table, no need for display field (to discuss with Eddy)
 CREATE TABLE app_rentals.quotation_line_item (
     quotation_id int REFERENCES app_rentals.quotation(quotation_id),
-    id int REFERENCES app_rentals.tool(id),
+    tool_id int REFERENCES app_rentals.tool(tool_id),
     tool_quoted_qty int,
     tool_price money,
     PRIMARY KEY (quotation_id, id)
 );
 COMMENT ON COLUMN app_rentals.quotation_line_item.quotation_id IS '{"reqOnCreate": true, "refTable": "app_rentals.quotation"}';
-COMMENT ON COLUMN app_rentals.quotation_line_item.id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
+COMMENT ON COLUMN app_rentals.quotation_line_item.tool_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
 COMMENT ON COLUMN app_rentals.quotation_line_item.tool_quoted_qty IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.quotation_line_item.tool_price IS '{"reqOnCreate": true}';
 
@@ -152,14 +152,14 @@ COMMENT ON COLUMN app_rentals.purchase_order.total_adjusted_price IS '{"reqOnCre
 --should only exist as a lookup table, no need for display field (to discuss with Eddy)
 CREATE TABLE app_rentals.purchase_order_line_item (
     purchase_order_id int REFERENCES app_rentals.purchase_order(purchase_order_id),
-    id int REFERENCES app_rentals.tool(id),
+    tool_id int REFERENCES app_rentals.tool(tool_id),
     unit_scheduled_id int,
     tool_rented_qty int,
     tool_price money,
-    PRIMARY KEY (purchase_order_id, id)
+    PRIMARY KEY (purchase_order_id, tool_id)
 );
 COMMENT ON COLUMN app_rentals.purchase_order_line_item.purchase_order_id IS '{"reqOnCreate": true, "refTable": "app_rentals.purchase_order"}';
-COMMENT ON COLUMN app_rentals.purchase_order_line_item.id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
+COMMENT ON COLUMN app_rentals.purchase_order_line_item.tool_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
 COMMENT ON COLUMN app_rentals.purchase_order_line_item.unit_scheduled_id IS '{"reqOnCreate": true, "refTable": "app_rentals.unit_scheduler"}';
 COMMENT ON COLUMN app_rentals.purchase_order_line_item.tool_rented_qty IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.purchase_order_line_item.tool_price IS '{"reqOnCreate": true}';
@@ -195,14 +195,14 @@ ALTER TABLE app_rentals.purchase_order_line_item ADD CONSTRAINT fk_purchase_orde
 --generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.tool_restock_request (
     tool_restock_request_id serial PRIMARY KEY,
-    id int REFERENCES app_rentals.tool(id) NOT NULL,
+    tool_id int REFERENCES app_rentals.tool(tool_id) NOT NULL,
     notice_date timestamp,
     --tool_restock_name text GENERATED ALWAYS AS (my_concat_immutable(id, notice_date)) STORED,
     restock_notice_author text,
     qty_requested int
 );
 COMMENT ON TABLE app_rentals.tool_restock_request IS '{"displayField": "tool_restock_request_id"}';
-COMMENT ON COLUMN app_rentals.tool_restock_request.id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
+COMMENT ON COLUMN app_rentals.tool_restock_request.tool_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
 COMMENT ON COLUMN app_rentals.tool_restock_request.notice_date IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.tool_restock_request.restock_notice_author IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.tool_restock_request.qty_requested IS '{"reqOnCreate": true}';
