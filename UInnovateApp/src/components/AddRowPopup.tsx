@@ -1,12 +1,13 @@
-import { Modal, Box, Typography, Button } from "@mui/material";
+import { Modal, Box, Typography, Button, Select } from "@mui/material";
 import "../styles/AddEnumModal.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import vmd, { Column, Table } from "../virtualmodel/VMD";
 import Logger from "../virtualmodel/Logger";
-import { AuthState } from '../redux/AuthSlice';
-import { RootState } from '../redux/Store';
-import { useSelector } from 'react-redux';
+import { AuthState } from "../redux/AuthSlice";
+import { RootState } from "../redux/Store";
+import { useSelector } from "react-redux";
+import { use } from "chai";
 
 const AddRowPopup = ({
   onClose,
@@ -18,13 +19,31 @@ const AddRowPopup = ({
   columns: Column[];
 }) => {
   const [inputValues, setInputValues] = useState<Row>(new Row({}));
-  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+  const { user: loggedInUser }: AuthState = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  useEffect(() => {
+    test();
+  }, [table]);
+
+
+  const test = () => {
+    console.log("columns", columns);
+  };
+
+
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValues({
       ...inputValues,
       row: { ...inputValues.row, [e.target.name]: e.target.value },
     });
   };
+
+
+
 
   const handleFormSubmit = () => {
     const schema = vmd.getTableSchema(table.table_name);
@@ -33,10 +52,11 @@ const AddRowPopup = ({
       return;
     }
 
-    Logger.logUserAction( 
+    Logger.logUserAction(
       loggedInUser || "",
       "Add Row",
-      "Added a new row with the following values: " + JSON.stringify(inputValues.row),
+      "Added a new row with the following values: " +
+        JSON.stringify(inputValues.row),
       schema?.schema_name || "",
       table.table_name
     );
@@ -48,7 +68,7 @@ const AddRowPopup = ({
     );
 
     data_accessor.addRow();
-    onClose();
+    onClose(); 
   };
 
   const style = {
@@ -61,9 +81,11 @@ const AddRowPopup = ({
     width: "auto",
     bgcolor: "#f1f1f1",
     border: "2px solid #000",
-    borderRadius: 8,
+    // borderRadius: 8,
     boxShadow: 24,
     p: 4,
+    maxHeight: "80vh",
+    overflow: "auto",
   };
 
   const labelStyle = {
@@ -101,15 +123,35 @@ const AddRowPopup = ({
           {columns.map((column: Column, idx) => {
             return (
               <div key={column.column_name} style={{ marginBottom: 10 }}>
-                <label key={idx} style={labelStyle}>
-                  {column.column_name}
-                  <input
-                    type="text"
-                    name={column.column_name}
-                    style={inputStyle}
-                    onChange={handleInputChange}
-                  />
-                </label>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label key={idx} style={labelStyle}>
+                    {column.references_table != null &&
+                    column.references_table != "filegroup"
+                      ? column.references_table
+                      : column.column_name}
+                  </label>
+                </div>
+                <div>
+                  {column.references_table != null 
+                  &&
+                  column.references_table != "filegroup" 
+                  ? 
+                  (
+                    <Select
+                      name={column.references_table}
+                      style={inputStyle}
+                    >
+                      
+                    </Select>
+                  ) : (
+                    <input
+                      type="text"
+                      name={column.column_name}
+                      style={inputStyle}
+                      onChange={handleInputChange}
+                    />
+                  )}
+                </div>
               </div>
             );
           })}
