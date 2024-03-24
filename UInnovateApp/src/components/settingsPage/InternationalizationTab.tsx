@@ -541,7 +541,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     const [isEditingTranslation, setisEditingTranslation] = useState(false);
 
     const handleUpsertTranslation = async (languageCode: string, keyCode: string, newTranslation: string) => {
-        setisEditingTranslation(true);
+        // setisEditingTranslation(true);
         try {
             // Get the language and key IDs
             const languageId = await getLanguageId(languageCode);
@@ -571,9 +571,14 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         }
     }
     
-    const handleDoubleClick = () => {
+    const handleDoubleClickLabel = () => {
         if (!is_default && !isEditingLabel) {
             setisEditingLabel(true);
+        }
+    };
+    const handleDoubleClickTranslation = () => {
+        if  (!isEditingTranslation) {
+            setisEditingTranslation(true);
         }
     };
 
@@ -584,7 +589,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         }
     };
 
-    const handleTranslationBlur = () => {
+    const   handleTranslationBlur = () => {
         setisEditingTranslation(false);
         saveChangesTranslation();
     }
@@ -592,13 +597,13 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!is_default && isEditingLabel) {
             setEditedValue(e.target.value);
-            saveChangesLabel();
+            // saveChangesLabel();
         }
     };
 
     const handleTranslationCellChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditedTranslation(e.target.value);
-        saveChangesTranslation();
+        // saveChangesTranslation();
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -699,14 +704,18 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
 
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
+        // return () => {
+        //     document.removeEventListener("mousedown", handleClickOutside);
+        // };
     }, []);
+
+    useEffect(() => {
+        setEditedTranslation(value);
+    }, [value])
 
     return (
         <tr>
-            <td onDoubleClick={handleDoubleClick} className="container-labels">
+            <td onDoubleClick={handleDoubleClickLabel} className="container-labels">
                 <input
                     value={isEditingLabel ? editedValue : keyCode}
                     onChange={handleChange}
@@ -753,9 +762,11 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
                 </Modal>
             </td>
 
-            <td onDoubleClick= {() => handleUpsertTranslation(selectedLanguage, keyCode || "", editedTranslation || "")}>                
+            <td onDoubleClick= {() => handleDoubleClickTranslation()
+                // handleUpsertTranslation(selectedLanguage, keyCode || "", editedTranslation || "")
+                }>                
                 <input
-                    value={isEditingTranslation ? editedTranslation : value}
+                    value={editedTranslation}
                     onChange={handleTranslationCellChange}  
                     onBlur={handleTranslationBlur}
                     onKeyDown={handleTranslationKeyDown}
