@@ -152,6 +152,42 @@ class VirtualModelDefinition {
     console.log(this.schemas);
   }
 
+
+  // Method to get the display field for a table
+  // return type : string
+  async getTableDisplayField(schema_name: string, table_name: string) {
+    const table_url = API_BASE_URL + "tables";
+
+    try {
+      let response = await axiosCustom.get(table_url, {
+        headers: { "Accept-Profile": "meta" },
+      });
+
+      let data = response.data;
+
+      data.forEach((data: DisplayField) => {
+        if(data.schema === schema_name && data.table === table_name) {
+          let schema = this.getSchema(data.schema);
+
+          if (!schema) {
+            console.error(`Schema ${data.schema} does not exist.`);
+            return;
+          }
+
+          let table = schema.getTable(data.table);
+          
+          if (!table) {
+            console.error(`Table ${data.table} does not exist in schema ${data.schema}.`);
+            return;
+          }
+          table.setDisplayField(data.display_field);
+        }
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   // Method to fetch schemas, tables, columns and views from the API
   // return type : void
   async fetchSchemas() {
@@ -705,6 +741,7 @@ export class Table {
   lookup_tables: string;
   stand_alone_details_view: boolean;
   lookup_counter: string;
+  display_field: string;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -716,6 +753,7 @@ export class Table {
     this.lookup_tables = "null";
     this.stand_alone_details_view = false;
     this.lookup_counter = "0";
+    this.display_field = "";
   }
 
   // Method to add a new column to the table object
@@ -861,6 +899,12 @@ export class Table {
   setLookupCounter(lookup_counter: string) {
     this.lookup_counter = lookup_counter;
   }
+
+  // Method to set the table's display field
+  // return type : void
+  setDisplayField(display_field: string) {
+    this.display_field = display_field;
+  }
 }
 
 export class Column {
@@ -983,6 +1027,13 @@ interface ColumnData {
 interface ViewData {
   schema: string;
   view: string;
+}
+
+// Defining DisplayField interface for type checking when calling /tables with the API
+interface DisplayField {
+  schema: string;
+  table: string;
+  display_field: string;
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
