@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userDataReducer, { setUserData, updateUserData } from '../../redux/userDataSlice';
+import userDataReducer, { setUserData, updateUserData } from '../../redux/UserDataSlice';
 import { UserData } from '../../virtualmodel/VMD';
 
 describe('userDataSlice', () => {
