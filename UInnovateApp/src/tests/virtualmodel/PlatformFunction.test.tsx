@@ -12,7 +12,6 @@ import VMD from "../../virtualmodel/__mocks__/VMD";
 import { Row } from "../../virtualmodel/DataAccessor";
 
 let mock: MockAdapter;
-const API_BASE_URL = "http://localhost:3000/";
 
 beforeAll(() => {
   mock = new MockAdapter(axios);
@@ -48,7 +47,7 @@ describe("PlatformFunction", () => {
       },
     };
 
-    mock.onGet(API_BASE_URL).reply(200, mockResponse);
+    mock.onGet("http://localhost:3000/").reply(200, mockResponse);
 
     const result = await fetchFunctionNames(schema);
 
