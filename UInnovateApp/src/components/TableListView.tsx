@@ -5,12 +5,8 @@ import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
 import "react-sliding-side-panel/lib/index.css";
-import { ConfigProperty } from "../virtualmodel/ConfigProperties";
-import StarterKit from "@tiptap/starter-kit";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
-import dayjs from "dayjs";
 import { NavBar } from "./NavBar";
 import Logger from "../virtualmodel/Logger";
 import { useSelector } from "react-redux";
@@ -21,7 +17,6 @@ import ConfirmationPopup from "./SavePopup";
 import InfoPopup from "./PrimaryKeyErrorPopup";
 import { IoIosArrowUp } from "react-icons/io";
 import {
-  Switch,
   Button,
   Typography,
   Select,
@@ -29,9 +24,7 @@ import {
   FormControl,
   SelectChangeEvent,
   Tooltip,
-  CircularProgress,
   createTheme,
-  ThemeProvider,
   Menu,
   Checkbox,
 } from "@mui/material";
@@ -39,23 +32,6 @@ import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
 import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
-import {
-  DatePicker,
-  DateTimePicker,
-  LocalizationProvider,
-  StaticDateTimePicker,
-} from "@mui/x-date-pickers";
-import { CategoriesDisplayType } from "../virtualmodel/Config";
-import { MuiTelInput } from "mui-tel-input";
-import {
-  MenuButtonBold,
-  MenuButtonItalic,
-  MenuControlsContainer,
-  MenuDivider,
-  MenuSelectHeading,
-  RichTextEditor,
-  type RichTextEditorRef,
-} from "mui-tiptap";
 import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
@@ -73,7 +49,6 @@ import {
 } from "@mui/material";
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
-import { set } from "lodash";
 import InputField from "./InputField";
 
 interface TableListViewProps {
@@ -491,40 +466,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     getRows();
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    columnName: string | undefined,
-    type: string | undefined
-  ) => {
-    const nonEditableColumn = table.columns.find(
-      (column) => column.is_editable === false
-    );
-    if (nonEditableColumn) {
-      setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
-    let eventName: string | undefined = undefined;
-    let eventValue: string | undefined = undefined;
-    if (event?.target?.name !== undefined && event?.target?.name !== "") {
-      eventName = event.target.name;
-      eventValue = event.target.value;
-    } else {
-      if (type !== undefined) {
-        eventName = columnName;
-        eventValue = event;
-      } else if (type == "phone" || type == "date") {
-        eventName = columnName;
-        eventValue = event.format();
-      } else {
-        eventName = columnName;
-        eventValue = event.target.value;
-      }
-    }
-
-    setInputValues((prevInputValues) => ({
-      ...prevInputValues,
-      [eventName as string]: eventValue,
-    }));
-  };
 
   const { user: loggedInUser }: AuthState = useSelector(
     (state: RootState) => state.auth
