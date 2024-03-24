@@ -1,5 +1,6 @@
 import { vi, describe, it, expect, beforeAll, afterAll } from "vitest";
 import axios from "axios";
+import * as AxiosCustom from "../../api/AxiosCustom";
 import MockAdapter from "axios-mock-adapter";
 import {
   fetchFunctionNames,
@@ -23,64 +24,42 @@ afterAll(() => {
 
 describe("PlatformFunction", () => {
   it("should return function names from Swagger documentation", async () => {
-    const schema = "meta";
+    // Arrange
+    const schema = "cron";
     const mockResponse = {
       paths: {
-        "/rpc/signup": {},
-        "/rpc/update_default_role": {},
-        "/rpc/update_user_data": {},
-        "/rpc/export_appconfig_to_json": {},
-        "/rpc/export_scripts_to_json": {},
-        "/rpc/token_refresh": {},
-        "/rpc/verify_signup": {},
-        "/rpc/import_appconfig_from_json": {},
-        "/rpc/login": {},
-        "/rpc/export_i18n_to_json": {},
-        "/rpc/insert_custom_view": {},
-        "/rpc/import_i18n_from_json": {},
-        "/rpc/create_user": {},
-        "/rpc/get_function_source_code_and_arg_count": {},
-        "/rpc/import_env_vars_from_json": {},
-        "/rpc/logout": {},
-        "/rpc/import_scripts_from_json": {},
-        "/rpc/export_env_vars_to_json": {},
+        "/rpc/function1": {},
+        "/rpc/function2": {},
+        "/not-rpc/function3": {},
       },
     };
 
-    let expected_result: string[];
-    let result: string[];
+    const mockGet = vi.spyOn(AxiosCustom.default, "get");
+    mockGet.mockImplementation(() => Promise.resolve({ data: mockResponse }));
 
-    try {
-      mock.onGet("http://localhost:3000/").reply(200, mockResponse);
-      result = await fetchFunctionNames(schema);
+    // Act
+    const result = await fetchFunctionNames(schema);
 
-      expected_result = [
-        "signup",
-        "update_default_role",
-        "update_user_data",
-        "export_appconfig_to_json",
-        "export_scripts_to_json",
-        "token_refresh",
-        "verify_signup",
-        "import_appconfig_from_json",
-        "login",
-        "export_i18n_to_json",
-        "insert_custom_view",
-        "import_i18n_from_json",
-        "create_user",
-        "get_function_source_code_and_arg_count",
-        "import_env_vars_from_json",
-        "logout",
-        "import_scripts_from_json",
-        "export_env_vars_to_json",
-      ];
-    } catch (error) {
-      result = [];
-      expected_result = [];
-    }
-
-    expect(result).toEqual(expected_result);
+    // Assert
+    expect(result).toEqual(["function1", "function2"]);
   });
+
+  it("should return an empty array when an error occurs", async () => {
+    // Arrange
+    const schema = "cron";
+
+    const mockGet = vi.spyOn(AxiosCustom.default, "get");
+    mockGet.mockImplementation(() =>
+      Promise.reject(new Error("Network error"))
+    );
+
+    // Act
+    const result = await fetchFunctionNames(schema);
+
+    // Assert
+    expect(result).toEqual([]);
+  });
+
   it("should return source code and argument count", async () => {
     // Arrange
     const schema = "your-schema";
