@@ -27,8 +27,6 @@ describe("PlatformFunction", () => {
     const schema = "meta";
     const mockResponse = {
       paths: {
-        "/rpc/function1": {},
-        "/rpc/function2": {},
         "/rpc/signup": {},
         "/rpc/update_default_role": {},
         "/rpc/update_user_data": {},
