@@ -80,6 +80,37 @@ INSERT INTO meta.i18n_languages (language_code, language_name)
 VALUES ('en', 'English');
 
 
+CREATE OR REPLACE FUNCTION meta.refresh_i18n() RETURNS TRIGGER AS $$
+BEGIN
+    IF NOT EXISTS (
+        -- Insert the tables names, columns names, schema tables into the i18n_keys table
+        -- Insert unique column names into i18n_keys
+        INSERT INTO meta.i18n_keys (key_code, is_default)
+        SELECT DISTINCT column_name, true
+        FROM information_schema.columns;
+
+        -- Insert unique table names into i18n_keys
+        INSERT INTO meta.i18n_keys (key_code, is_default)
+        SELECT DISTINCT table_name, true
+        FROM information_schema.tables;
+
+        -- Insert unique schema names into i18n_keys
+        INSERT INTO meta.i18n_keys (key_code, is_default)
+        SELECT DISTINCT table_schema, true
+        FROM information_schema.tables
+        WHERE table_schema NOT IN ('pg_catalog', 'information_schema');
+
+        -- Insert the default language into the i18n_languages table
+        INSERT INTO meta.i18n_languages (language_code, language_name) 
+        VALUES ('en', 'English')
+        ON CONFLICT (language_code) DO NOTHING;
+    ) THEN
+        RAISE foreign_key_violation USING message = 'invalid database role: ' || NEW.role;
+        RETURN NULL;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
 
 
