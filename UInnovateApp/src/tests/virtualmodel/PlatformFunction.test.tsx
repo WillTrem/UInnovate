@@ -47,13 +47,14 @@ describe("PlatformFunction", () => {
       },
     };
 
+    let expected_result: string[];
     let result: string[];
 
     try {
       mock.onGet("http://localhost:3000/").reply(200, mockResponse);
       result = await fetchFunctionNames(schema);
 
-      expect(result).toEqual([
+      expected_result = [
         "signup",
         "update_default_role",
         "update_user_data",
@@ -72,12 +73,13 @@ describe("PlatformFunction", () => {
         "logout",
         "import_scripts_from_json",
         "export_env_vars_to_json",
-      ]);
+      ];
     } catch (error) {
       result = [];
-
-      expect(result).toEqual([]);
+      expected_result = [];
     }
+
+    expect(result).toEqual(expected_result);
   });
   it("should return source code and argument count", async () => {
     // Arrange
