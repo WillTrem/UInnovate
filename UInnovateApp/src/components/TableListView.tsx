@@ -74,6 +74,7 @@ import {
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 import { set } from "lodash";
+import InputField from "./InputField";
 
 interface TableListViewProps {
   table: Table;
@@ -127,9 +128,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   );
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
-  const [currentPhone, setCurrentPhone] = useState<string>("");
-  const [currentCategory, setCurrentCategory] = useState<string>("");
-  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
   const [showFiles, setShowFiles] = useState<boolean>(false);
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [functions, setFunctions] = useState<Row[] | undefined>([]);
@@ -143,12 +141,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [selectedFunction, setSelectedFunction] = useState<Row | null>(null);
 
   const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
-  const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
   const [fileGroupFiles, setFileGroupFiles] = useState<object>({});
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
-  const [inputField, setInputField] =
-    useState<(column: Column) => JSX.Element>();
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const function_table = vmd.getTable("meta", "function_map");
@@ -766,190 +761,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsConfirmPopupOpen(false);
     setEditingCell(null);
   };
-  useEffect(() => {
-    const newInputField = (column: Column) => {
-      if (!appConfigValues) {
-        return null;
-      }
-      const columnDisplayType = appConfigValues?.find(
-        (element) =>
-          element.column == column.column_name &&
-          element.table == table.table_name &&
-          element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-      );
 
-      if (
-        !columnDisplayType ||
-        columnDisplayType.value == "text" ||
-        columnDisplayType.value == "email"
-      ) {
-        return (
-          <input
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow?.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "number") {
-        return (
-          <input
-            type="number"
-            name={column.column_name}
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "longtext") {
-        return (
-          <textarea
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "boolean") {
-        return (
-          <Switch
-            checked={
-              currentRow?.row[column.column_name] == "true"
-                ? true
-                : false || false
-            }
-            name={column.column_name}
-          />
-        );
-      } else if (columnDisplayType.value == "date") {
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ThemeProvider theme={theme}>
-              <DatePicker
-                value={dayjs(currentRow.row[column.column_name])}
-                onChange={(date) =>
-                  handleInputChange(date, column.column_name, "date")
-                }
-                name={column.column_name}
-                className="date-time-picker"
-                readOnly={column.is_editable === false ? true : false}
-              />
-            </ThemeProvider>
-          </LocalizationProvider>
-        );
-      } else if (columnDisplayType.value == "datetime") {
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ThemeProvider theme={theme}>
-              <DateTimePicker
-                value={dayjs(currentRow.row[column.column_name])}
-                onChange={(date) =>
-                  handleInputChange(date, column.column_name, "date")
-                }
-                name={column.column_name}
-                className="date-time-picker"
-                readOnly={column.is_editable === false ? true : false}
-              />
-            </ThemeProvider>
-          </LocalizationProvider>
-        );
-      } else if (columnDisplayType.value == "categories") {
-        return (
-          <Select
-            value={
-              currentCategory
-                ? currentCategory
-                : currentRow.row[column.column_name]
-            }
-            name={column.column_name}
-            onChange={(event) => {
-              handleInputChange(event, column.column_name, undefined);
-              setCurrentCategory(event.target.value);
-            }}
-            native
-            className="width"
-          >
-            {Object.keys(CategoriesDisplayType).map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </Select>
-        );
-      } else if (columnDisplayType.value == "phone") {
-        return (
-          <MuiTelInput
-            value={
-              currentPhone !== "" || currentPhone
-                ? currentPhone
-                : currentRow.row[column.column_name]
-            }
-            onChange={(phone) => {
-              handleInputChange(phone, column.column_name, "phone");
-              setCurrentPhone(phone);
-            }}
-            name={column.column_name}
-          />
-        );
-      } else if (columnDisplayType.value == "currency") {
-        return (
-          <input
-            type="number"
-            name={column.column_name}
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "multiline_wysiwyg") {
-        return (
-          <RichTextEditor
-            name={column.column_name}
-            content={
-              currentWYSIWYG
-                ? currentWYSIWYG
-                : currentRow.row[column.column_name]
-            }
-            onChange={(event) => {
-              handleInputChange(event, column.column_name, undefined);
-              rteRef.current?.editor.setContent(event);
-            }}
-            ref={rteRef}
-            extensions={[StarterKit]} // Or any Tiptap extensions you wish!
-            // Optionally include `renderControls` for a menu-bar atop the editor:
-            renderControls={() => (
-              <MenuControlsContainer>
-                <MenuSelectHeading />
-                <MenuDivider />
-                <MenuButtonBold />
-                <MenuButtonItalic />
-                {/* Add more controls of your choosing here */}
-              </MenuControlsContainer>
-            )}
-          />
-        );
-      }
-    };
-    setInputField(() => newInputField as (column: Column) => JSX.Element);
-  }, [
-    currentRow,
-    columns,
-    table,
-    appConfigValues,
-    currentPhone,
-    rows,
-    currentCategory,
-    inputValues,
-    currentWYSIWYG,
-    showFiles,
-    allFileGroups,
-  ]);
   useEffect(() => {
     getRows();
   }, [showFiles]);
@@ -957,9 +769,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
-    setCurrentPhone("");
-    setCurrentCategory("");
-    setCurrentWYSIWYG("");
     if (!table.has_details_view) {
       return;
     }
@@ -1306,9 +1115,6 @@ const TableListView: React.FC<TableListViewProps> = ({
         size={table.stand_alone_details_view ? 100 : 50}
         panelContainerClassName="panel-container"
         backdropClicked={() => {
-          setCurrentPhone("");
-          setCurrentCategory("");
-          setCurrentWYSIWYG("");
           setOpenPanel(false);
           setInputValues({});
           setShowFiles(false);
@@ -1328,7 +1134,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                           <label key={column.column_name + colIdx}>
                             {column.column_name}
                           </label>
-                          {inputField(column)}
+                          <InputField column={column} table={table} appConfigValues={appConfigValues} currentRow={currentRow} setCurrentPrimaryKey={setCurrentPrimaryKey} setInputValues={setInputValues}></InputField>
                         </div>
                       );
                     }
@@ -1356,9 +1162,6 @@ const TableListView: React.FC<TableListViewProps> = ({
                   variant="contained"
                   style={buttonStyle}
                   onClick={() => {
-                    setCurrentPhone("");
-                    setCurrentCategory("");
-                    setCurrentWYSIWYG("");
                     setInputValues({});
                     setOpenPanel(false);
                     setShowFiles(false);
