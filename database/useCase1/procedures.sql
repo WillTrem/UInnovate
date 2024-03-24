@@ -20,10 +20,10 @@ BEGIN
     RETURNING quotation_id INTO new_quotation_id;
 
     -- Clone quotation line items
-    INSERT INTO quotation_line_item (quotation_id, id, tool_quoted_qty, tool_price)
+    INSERT INTO quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price)
     SELECT
         new_quotation_id,
-        id,
+        tool_id,
         tool_quoted_qty,
         tool_price
     FROM
@@ -59,10 +59,10 @@ BEGIN
     RETURNING purchase_order_id INTO new_purchase_order_id;
 
     -- Clone quotation line items to purchase order line items
-    INSERT INTO purchase_order_line_item (purchase_order_id, id, unit_scheduled_id, tool_rented_qty, tool_price)
+    INSERT INTO purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price)
     SELECT
         new_purchase_order_id,
-        id,
+        tool_id,
         NULL::INT, -- NULL for now, will likely change how this works in the future
         tool_quoted_qty,
         tool_price
@@ -94,7 +94,7 @@ BEGIN
     FROM
         unit
     WHERE
-        id = id_param
+        tool_id = id_param
         AND (last_returned_date IS NULL OR last_returned_date <= CURRENT_DATE)
     ORDER BY
         last_returned_date ASC
@@ -125,7 +125,7 @@ DECLARE
     new_restock_request_id INT;
 BEGIN
     -- Check if the tool exists
-    IF NOT EXISTS (SELECT 1 FROM tool WHERE id = id_param) THEN
+    IF NOT EXISTS (SELECT 1 FROM tool WHERE tool_id = id_param) THEN
         -- Handle the case where the tool is not found
         RETURN 0;
     END IF;
@@ -153,12 +153,12 @@ BEGIN
         -- Handle the case where the quotation is not found
 
     -- Check if the tool exists
-    ELSIF NOT EXISTS (SELECT 1 FROM tool WHERE id = id_param) THEN
+    ELSIF NOT EXISTS (SELECT 1 FROM tool WHERE tool_id = id_param) THEN
         -- Handle the case where the tool is not found;
 
     -- Create a new line item for the tool in the quotation
     ELSE 
-        INSERT INTO quotation_line_item (quotation_id, id, tool_quoted_qty, tool_price)
+        INSERT INTO quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price)
         VALUES
             (quotation_id_param, id_param, tool_quoted_qty_param, tool_price_param);
     END IF;
