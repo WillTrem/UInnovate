@@ -54,7 +54,7 @@ CREATE TABLE app_rentals.unit (
     last_calibration_certificate_id int
 );
 COMMENT ON TABLE app_rentals.unit IS '{"displayField": "unit_serial_number"}';
-COMMENT ON COLUMN app_rentals.unit.unit_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
+COMMENT ON COLUMN app_rentals.unit.tool_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
 COMMENT ON COLUMN app_rentals.unit.tool_type IS '{"reqOnCreate": true, "refTable": "app_rentals.tool_type"}';
 COMMENT ON COLUMN app_rentals.unit.unit_serial_number IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.unit.unit_weight IS '{"reqOnCreate": true}';
@@ -122,7 +122,7 @@ CREATE TABLE app_rentals.quotation_line_item (
     tool_id int REFERENCES app_rentals.tool(tool_id),
     tool_quoted_qty int,
     tool_price money,
-    PRIMARY KEY (quotation_id, id)
+    PRIMARY KEY (quotation_id, tool_id)
 );
 COMMENT ON COLUMN app_rentals.quotation_line_item.quotation_id IS '{"reqOnCreate": true, "refTable": "app_rentals.quotation"}';
 COMMENT ON COLUMN app_rentals.quotation_line_item.tool_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
@@ -197,7 +197,7 @@ CREATE TABLE app_rentals.tool_restock_request (
     tool_restock_request_id serial PRIMARY KEY,
     tool_id int REFERENCES app_rentals.tool(tool_id) NOT NULL,
     notice_date timestamp,
-    --tool_restock_name text GENERATED ALWAYS AS (my_concat_immutable(id, notice_date)) STORED,
+    --tool_restock_name text GENERATED ALWAYS AS (my_concat_immutable(tool_id, notice_date)) STORED,
     restock_notice_author text,
     qty_requested int
 );
