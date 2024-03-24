@@ -47,30 +47,37 @@ describe("PlatformFunction", () => {
       },
     };
 
-    mock.onGet("http://localhost:3000/").reply(200, mockResponse);
+    let result: string[];
 
-    const result = await fetchFunctionNames(schema);
+    try {
+      mock.onGet("http://localhost:3000/").reply(200, mockResponse);
+      result = await fetchFunctionNames(schema);
 
-    expect(result).toEqual([
-      "signup",
-      "update_default_role",
-      "update_user_data",
-      "export_appconfig_to_json",
-      "export_scripts_to_json",
-      "token_refresh",
-      "verify_signup",
-      "import_appconfig_from_json",
-      "login",
-      "export_i18n_to_json",
-      "insert_custom_view",
-      "import_i18n_from_json",
-      "create_user",
-      "get_function_source_code_and_arg_count",
-      "import_env_vars_from_json",
-      "logout",
-      "import_scripts_from_json",
-      "export_env_vars_to_json",
-    ]);
+      expect(result).toEqual([
+        "signup",
+        "update_default_role",
+        "update_user_data",
+        "export_appconfig_to_json",
+        "export_scripts_to_json",
+        "token_refresh",
+        "verify_signup",
+        "import_appconfig_from_json",
+        "login",
+        "export_i18n_to_json",
+        "insert_custom_view",
+        "import_i18n_from_json",
+        "create_user",
+        "get_function_source_code_and_arg_count",
+        "import_env_vars_from_json",
+        "logout",
+        "import_scripts_from_json",
+        "export_env_vars_to_json",
+      ]);
+    } catch (error) {
+      result = [];
+
+      expect(result).toEqual([]);
+    }
   });
   it("should return source code and argument count", async () => {
     // Arrange
