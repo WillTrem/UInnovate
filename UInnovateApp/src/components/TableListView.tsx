@@ -737,17 +737,17 @@ const TableListView: React.FC<TableListViewProps> = ({
     
         case "boolean":
           return (
-            <input
-              type="checkbox"
-              defaultChecked={editingCell.value === "true"}
-              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-              autoFocus
-            />
+            <select
+            defaultValue={editingCell.value}
+            onChange={(e) => handleSave(e, rowIdx, column.column_name)}
+            autoFocus
+          >
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
           );
     
         case "datetime":
-          // Similar handling as "date", adjust for DateTimePicker specifics
           return (
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <ThemeProvider theme={theme}>
@@ -788,10 +788,11 @@ const TableListView: React.FC<TableListViewProps> = ({
     
         case "currency":
           // Simple numeric input for currency
+          const numericValue = editingCell.value.replace('$', '');
           return (
             <input
               type="number"
-              defaultValue={editingCell.value}
+              defaultValue={numericValue}
               onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
               onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
               autoFocus
@@ -810,7 +811,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       default:
         return (
           <input
-            type="text" // Assuming default type is 'text'. Adjust as needed.
+            type="text"
             defaultValue={editingCell.value}
             onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
             onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
@@ -824,8 +825,14 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleSave = async (e, rowIdx : number, columnName : string) => {
       const confirmAction = async () => {
         if (e.preventDefault) e.preventDefault();
-      
-        const newValue = e.target.value;
+        
+        let newValue;
+        if(e.target !== undefined){
+          newValue = e.target.value;
+        }
+        else{
+          newValue = e.format("YYYY-MM-DDTHH:mm:ss");
+        }
         const updatedRow = { [columnName]: newValue };
       
         const schema = vmd.getTableSchema(table.table_name);
