@@ -701,6 +701,126 @@ const TableListView: React.FC<TableListViewProps> = ({
     }, 200); 
   };
 
+  const renderEditableField = (editingCell, column, rowIdx) => {
+    switch (column.column_type) {
+      case "text":
+      case "email":
+        return (
+          <input
+            type="text"
+            defaultValue={editingCell.value}
+            onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+            onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+            autoFocus
+          />
+        );
+      case "number":
+        return (
+          <input
+            type="number"
+            defaultValue={editingCell.value}
+            onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+            onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+            autoFocus
+          />
+        );
+
+        case "longtext":
+          return (
+            <textarea
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          );
+    
+        case "boolean":
+          return (
+            <input
+              type="checkbox"
+              defaultChecked={editingCell.value === "true"}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          );
+    
+        case "datetime":
+          // Similar handling as "date", adjust for DateTimePicker specifics
+          return (
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <ThemeProvider theme={theme}>
+                <DateTimePicker
+                  defaultValue={dayjs(editingCell.value)}
+                  onAccept={(e) => handleSave(e, rowIdx, column.column_name)}
+                  autoFocus
+                />
+              </ThemeProvider>
+            </LocalizationProvider>
+          );
+    
+        case "categories":
+          return (
+            <Select
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            >
+              {Object.keys(CategoriesDisplayType).map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </Select>
+          );
+    
+        case "phone":
+          return (
+            <MuiTelInput
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          );
+    
+        case "currency":
+          // Simple numeric input for currency
+          return (
+            <input
+              type="number"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          );
+    
+        case "multiline_wysiwyg":
+          return (
+            <RichTextEditor
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          );
+      default:
+        return (
+          <input
+            type="text" // Assuming default type is 'text'. Adjust as needed.
+            defaultValue={editingCell.value}
+            onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+            onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+            autoFocus
+          />
+        );
+      }
+  };
+  
+  
   const handleSave = async (e, rowIdx : number, columnName : string) => {
       const confirmAction = async () => {
         if (e.preventDefault) e.preventDefault();
@@ -1221,17 +1341,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                     {editingCell &&
                     editingCell.rowIdx === rowIdx &&
                     editingCell.columnName === columns[idx].column_name ? (
-                      <input
-                        type="text"
-                        defaultValue={editingCell.value}
-                        onBlur={(e) =>
-                          handleSave(e, rowIdx, columns[idx].column_name)
-                        }
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, rowIdx, columns[idx].column_name)
-                        }
-                        autoFocus
-                      />
+                      renderEditableField(editingCell, columns[idx], rowIdx)
                     ) : (
                       <Box sx={{ textAlign: "center" }}>
                         {typeof cell === "boolean"
