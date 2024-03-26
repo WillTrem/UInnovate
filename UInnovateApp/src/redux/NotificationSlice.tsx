@@ -18,6 +18,7 @@ const notificationSlice = createSlice({
 	reducers: {
 		displayNotification: (state: NotificationSliceState, action: PayloadAction<string>) =>{
 			state.message = action.payload;
+			state.isError = false;
 			state.showSnackbar = true;
 		} ,
 		displayError: (state: NotificationSliceState, action: PayloadAction<string>) =>{
@@ -27,8 +28,6 @@ const notificationSlice = createSlice({
 		} ,
 		closeNotification: (state: NotificationSliceState) => {
 			state.showSnackbar = false;
-			// state.message = '';
-			// state.isError = false;
 		}
 	}
 } )
