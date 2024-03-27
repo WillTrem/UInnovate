@@ -77,6 +77,12 @@ export default {
       console.log("getFunctionAccessor in VMD mock was called");
       return new FunctionAccessorMock(function_name);
     }),
+
+  getTableDisplayField: vi.fn().mockImplementation(() => {
+    console.log("getTableDisplayField in VMD mock was called");
+    return new TableMock("display_field");
+  }),
+
   getViewRowDataAccessor: vi
     .fn()
     .mockImplementation(

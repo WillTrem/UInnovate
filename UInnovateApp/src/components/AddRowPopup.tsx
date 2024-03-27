@@ -221,11 +221,12 @@ const AddRowPopup = ({
                         sx={selectStyle}
                         value={selectedValues[column.column_name] || -1}
                         onChange={handleSelectChange}
+                        data-testid="select-field"
                       >
 
 
                         <MenuItem value={-1} >None</MenuItem>
-                        
+
                         {displayField[count] && Rows && Rows[count] && Rows[count].map((row, index) => (
                           <MenuItem key={index} value={row[column.references_by]}>
                             {row[displayField[count]]}
@@ -239,6 +240,7 @@ const AddRowPopup = ({
                         name={column.column_name}
                         style={inputStyle}
                         onChange={handleInputChange}
+                        data-testid="input-field"
                       />
                     )}
                 </div>
