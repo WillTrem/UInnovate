@@ -46,8 +46,6 @@ export function ObjectMenu() {
     const schema = vmd.getTableSchema(table.table_name);
     // Navigate to the TableListView route with the selected table name
 
-    setViewForTable(schema?.schema_name, table.table_name);
-
     navigate(
       `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}`,
     );
@@ -56,33 +54,15 @@ export function ObjectMenu() {
   const setViewForTable = (
     p_schema: string | undefined,
     p_tableName: string | undefined,
+    p_viewName: string | undefined,
+    p_viewType: ViewTypeEnum = ViewTypeEnum.Default,
   ) => {
     if (p_schema && p_tableName) {
-      //retrieve view selection from list
-      let selection = selectedViewList.filter((v) => {
-        if (v.schema == p_schema && v.tableName == p_tableName) return true;
-        return false;
-      });
-
-      let viewType = ViewTypeEnum.Default;
-      //add default if it dosen't exist
-      if (selection.length == 0) {
-        const view: viewSelection = {
-          schema: p_schema,
-          tableName: p_tableName,
-          selectedView: viewType,
-        };
-
-        dispatch(updateSelectedViewList([...selectedViewList, view]));
-      } else {
-        //get existing value
-        viewType = selection[0].selectedView;
-      }
-      setViewType(viewType);
+      let viewType = p_viewType;
 
       if (viewType == ViewTypeEnum.Custom) {
         //update custom view index
-        const index = findIndexByTablename(p_tableName);
+        const index = findIndexByViewName(p_viewName);
         if (index > 0) {
           setselectedCustomViewIndex(index);
         } else {
@@ -92,9 +72,9 @@ export function ObjectMenu() {
     }
   };
 
-  function findIndexByTablename(tablename: string) {
+  function findIndexByViewName(p_viewName: string | undefined) {
     for (let i = 0; i < customViews.length; i++) {
-      if (customViews[i].tablename === tablename) {
+      if (customViews[i].viewname.toLowerCase() === p_viewName?.toLowerCase()) {
         return i; // Return the index of the object with matching tablename
       }
     }
@@ -105,15 +85,11 @@ export function ObjectMenu() {
   const { tableName } = useParams();
   const { schema } = useParams();
 
-  const selectedViewList: Array<viewSelection> = useSelector(
-    (state: RootState) => state.selectedViewList.value,
-  );
   const [customViews, setCustomViews] = useState<customTemplate[]>([]);
   const [selectedCustomViewIndex, setselectedCustomViewIndex] =
     useState<number>(0);
 
   const [viewType, setViewType] = useState<ViewTypeEnum>(ViewTypeEnum.Default);
-
   const [activeTable, setActiveTable] = useState<Table | null>(null);
 
   // Get the visible tables from the VMD for the selected schema
@@ -122,20 +98,18 @@ export function ObjectMenu() {
   const handleViewTypeSelection = (
     p_schema: string,
     p_tableName: string,
+    p_viewName: string,
     p_viewType: ViewTypeEnum,
   ) => {
-    //get list without schema table
-    const filteredList = selectedViewList.filter((v) => {
-      if (v.schema == p_schema && v.tableName == p_tableName) return false;
-      return true;
-    });
-    const newEntry = {
-      schema: p_schema,
-      tableName: p_tableName,
-      selectedView: p_viewType,
-    };
-    dispatch(updateSelectedViewList([...filteredList, newEntry]));
+    if (p_viewType == ViewTypeEnum.Custom) {
+      const abortCtrl = new AbortController();
+      getCustomViewForSchema(p_schema, abortCtrl.signal);
+      setViewForTable(p_schema, p_tableName, p_viewName, p_viewType); // to set viewtype and show proper custom view template
+    }
     setViewType(p_viewType);
+
+    const table = tables?.filter((t) => t.table_name == p_tableName)[0];
+    setActiveTable(table || null); // to show proper table data
   };
 
   useEffect(() => {
@@ -145,6 +119,8 @@ export function ObjectMenu() {
     setViewForTable(schema, tableName);
     const abortCtrl = new AbortController();
     getCustomViewForSchema(schema, abortCtrl.signal);
+
+    setViewType(ViewTypeEnum.Default);
     return () => abortCtrl.abort();
   }, [schema]);
   const { user, schema_access } = useSelector((state: RootState) => state.auth);
@@ -189,82 +165,84 @@ export function ObjectMenu() {
           <AdditionalViewNavBar
             selectedSchema={selectedSchema}
             selectedTable={activeTable}
-            selectedViewType={viewType}
+            selectedView={viewType}
             selectViewHandler={handleViewTypeSelection}
           />
           <div className="page-container">
-            <h1 className="title">Tables</h1>
-            <Tab.Container activeKey={tableName}>
-              <Row>
-                <Col sm={3}>
-                  <Nav variant="pills" className="flex-column">
-                    {tables?.map((table: Table) => {
-                      return (
-                        <Nav.Item key={table.table_name}>
-                          <Nav.Link
-                            eventKey={table.table_name}
-                            onClick={() => handleTableSelect(table)}
-                          >
-                            {table.table_name}
-                          </Nav.Link>
-                        </Nav.Item>
-                      );
-                    })}
-                  </Nav>
-                </Col>
-                <Col sm={9}>
-                  <Tab.Content>
-                    {viewType == ViewTypeEnum.Default && (
-                      <>
+            {viewType == ViewTypeEnum.Default && (
+              <>
+                <h1 className="title">Tables</h1>
+                <Tab.Container activeKey={tableName}>
+                  <Row>
+                    <Col sm={3}>
+                      <Nav variant="pills" className="flex-column">
+                        {tables?.map((table: Table) => {
+                          return (
+                            <Nav.Item key={table.table_name}>
+                              <Nav.Link
+                                eventKey={table.table_name}
+                                onClick={() => handleTableSelect(table)}
+                              >
+                                {table.table_name}
+                              </Nav.Link>
+                            </Nav.Item>
+                          );
+                        })}
+                      </Nav>
+                    </Col>
+                    <Col sm={9}>
+                      <Tab.Content>
                         {tables?.map((table: Table) => (
-                          <Tab.Pane
-                            key={table.table_name}
-                            eventKey={table.table_name}
-                          >
-                            {tableName === table.table_name ? (
-                              table.table_display_type === "list" ? (
-                                <TableListView table={table}></TableListView>
-                              ) : table.table_display_type === "enum" ? (
-                                <TableEnumView table={table}></TableEnumView>
-                              ) : null
-                            ) : null}
-                          </Tab.Pane>
+                          <>
+                            <Tab.Pane
+                              key={table.table_name}
+                              eventKey={table.table_name}
+                            >
+                              {tableName === table.table_name ? (
+                                table.table_display_type === "list" ? (
+                                  <TableListView table={table}></TableListView>
+                                ) : table.table_display_type === "enum" ? (
+                                  <TableEnumView table={table}></TableEnumView>
+                                ) : null
+                              ) : null}
+                            </Tab.Pane>
+                          </>
                         ))}
-                      </>
-                    )}
-                    {viewType == ViewTypeEnum.Calendar && (
-                      <>
-                        <span>Calendar view</span>
-                      </>
-                    )}
-                    {viewType == ViewTypeEnum.Timeline && (
-                      <>
-                        <span>Timeline view</span>
-                      </>
-                    )}
-                    {viewType == ViewTypeEnum.TreeView && (
-                      <>
-                        <span>TreeView view</span>
-                      </>
-                    )}
-                    {viewType == ViewTypeEnum.Custom && (
-                      <>
-                        {activeTable && (
-                          <CustomViewLoader
-                            table={activeTable}
-                            templateSource={
-                              customViews.length > 0
-                                ? customViews[selectedCustomViewIndex].template
-                                : ""
-                            }
-                          />
-                        )}
-                      </>
-                    )}
-                  </Tab.Content>
-                </Col>
-              </Row>
-            </Tab.Container>
+                      </Tab.Content>
+                    </Col>
+                  </Row>
+                </Tab.Container>
+              </>
+            )}
+            {viewType == ViewTypeEnum.Calendar && (
+              <>
+                <span>Calendar view</span>
+              </>
+            )}
+            {viewType == ViewTypeEnum.Timeline && (
+              <>
+                <span>Timeline view</span>
+              </>
+            )}
+            {viewType == ViewTypeEnum.TreeView && (
+              <>
+                <span>TreeView view</span>
+              </>
+            )}
+            {viewType == ViewTypeEnum.Custom && (
+              <>
+                {activeTable && (
+                  <CustomViewLoader
+                    table={activeTable}
+                    templateSource={
+                      customViews.length > 0
+                        ? customViews[selectedCustomViewIndex].template
+                        : ""
+                    }
+                  />
+                )}
+              </>
+            )}
           </div>
         </>
       )}
