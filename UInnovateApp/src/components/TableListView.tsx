@@ -1004,6 +1004,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
           {isPopupVisible && (
             <AddRowPopup
+              getRows={getRows}
               onClose={() => setIsPopupVisible(false)}
               table={table}
               columns={table.getColumns()}

@@ -159,22 +159,22 @@ class VirtualModelDefinition {
     const table_url = API_BASE_URL + "tables";
 
     try {
-      let response = await axiosCustom.get(table_url, {
+      const response = await axiosCustom.get(table_url, {
         headers: { "Accept-Profile": "meta" },
       });
 
-      let data = response.data;
+      const data = response.data;
 
       data.forEach((data: DisplayField) => {
         if(data.schema === schema_name && data.table === table_name) {
-          let schema = this.getSchema(data.schema);
+          const schema = this.getSchema(data.schema);
 
           if (!schema) {
             console.error(`Schema ${data.schema} does not exist.`);
             return;
           }
 
-          let table = schema.getTable(data.table);
+          const table = schema.getTable(data.table);
           
           if (!table) {
             console.error(`Table ${data.table} does not exist in schema ${data.schema}.`);
