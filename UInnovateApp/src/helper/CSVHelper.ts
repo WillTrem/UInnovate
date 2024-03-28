@@ -1,6 +1,5 @@
 import { ParseResult, parse } from "papaparse";
 import VMD, { Table } from "../virtualmodel/VMD";
-import { Row } from "../virtualmodel/DataAccessor";
 
 export function validateCSV(
     csvObject: ParseResult<unknown>,

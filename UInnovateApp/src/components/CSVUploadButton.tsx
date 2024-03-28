@@ -1,4 +1,4 @@
-import { CloudUpload } from "@mui/icons-material"
+import { UploadFile } from "@mui/icons-material"
 import { Box, Button } from "@mui/material"
 import { VisuallyHiddenInput } from "./VisuallyHiddenInput"
 import React, { useState } from "react"
@@ -21,6 +21,10 @@ export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({table, getRows}
 	function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>){
 		const file = event?.target?.files?.[0];
 		if(file){
+			if(file.type !== 'text/csv'){
+				dispatch(displayError(`ERROR: '${file.name}' is not in CSV format.`))
+				return;
+			}
 			parse(file, {header: true, skipEmptyLines: true, complete: async (result) => {
 				console.log(result);
 				try{
@@ -56,13 +60,14 @@ export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({table, getRows}
 		role={undefined}
 		variant="contained"
 		tabIndex={-1}
-		startIcon={<CloudUpload />}
+		endIcon={<UploadFile fontSize="small"/>}
 		style={{
 			backgroundColor: "#404040",
 			width: "fit-content",
 			marginTop: "",
 			display: "flex",
-			flexDirection: "row"
+			flexDirection: "row",
+			alignItems: "start"
 		}}
 	>
 		Upload CSV
