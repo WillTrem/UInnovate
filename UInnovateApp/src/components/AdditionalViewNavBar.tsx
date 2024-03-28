@@ -4,23 +4,22 @@ import {
   AdditionalView,
   getViewsBySchema,
 } from "../virtualmodel/AdditionalViewsDataAccessor";
-import { Table } from "../virtualmodel/VMD";
 import { ViewTypeEnum } from "../enums/ViewTypeEnum";
+import { useNavigate } from "react-router-dom";
 
 interface AdditionalViewNavBarProp {
   selectedSchema: string;
-  selectedTable?: Table | null;
-  selectedViewType: ViewTypeEnum;
+  selectedView: string;
   selectViewHandler: (
     p_schema: string,
     p_tableName: string,
+    p_viewName: string,
     p_viewType: ViewTypeEnum,
   ) => void;
 }
 const AdditionalViewNavBar = ({
   selectedSchema,
-  selectedTable,
-  selectedViewType,
+  selectedView,
   selectViewHandler,
 }: AdditionalViewNavBarProp) => {
   const [viewList, setViewList] = useState<AdditionalView[]>([]);
@@ -35,14 +34,13 @@ const AdditionalViewNavBar = ({
       ctrl.abort();
     };
   }, [selectedSchema]);
-  0;
+
   return (
     <>
       <AdditionalTableViewSelector
         views={viewList}
         selectedSchema={selectedSchema}
-        selectedTable={selectedTable?.table_name}
-        selectedView={selectedViewType}
+        selectedView={selectedView}
         selectedViewHandler={selectViewHandler}
       />
     </>
@@ -51,98 +49,84 @@ const AdditionalViewNavBar = ({
 interface AdditionalTableViewSelectorProp {
   views: AdditionalView[];
   selectedSchema: string;
-  selectedTable: string | undefined;
-  selectedView: ViewTypeEnum;
+  selectedView: string;
   selectedViewHandler: (
     p_schema: string,
     p_tableName: string,
+    p_viewName: string,
     p_viewType: ViewTypeEnum,
   ) => void;
 }
 const AdditionalTableViewSelector = ({
   views,
   selectedSchema,
-  selectedTable,
-  selectedView,
   selectedViewHandler,
 }: AdditionalTableViewSelectorProp) => {
-  const [filteredViews, setFilteredViews] = useState<AdditionalView[]>([]);
-  const [activeView, setActiveView] = useState(0);
+  const [filteredViews, setFilteredViews] = useState<AdditionalView[]>(views);
 
+  const navigate = useNavigate();
   useEffect(() => {
-    setActiveView(selectedView);
-    const filteredViews = views.filter((view: AdditionalView) => {
-      if (view.tablename === selectedTable) return true;
-      return false;
-    });
-    setFilteredViews(filteredViews);
-  }, [activeView, selectedTable]);
+    setFilteredViews(views);
+  }, [views]);
 
-  if (filteredViews.length == 0) {
+  //hide bar if no views
+  if (views.length == 0) {
     return <></>;
   }
 
-  const handleActiveView = (viewtype: ViewTypeEnum) => {
-    selectedViewHandler(selectedSchema, selectedTable, viewtype);
-    setActiveView(viewtype);
+  const handleActiveView = (view: AdditionalView) => {
+    selectedViewHandler(
+      view.schemaname,
+      view.tablename,
+      view.viewname,
+      view.viewtype,
+    );
   };
 
-  const navLink = (
-    viewName: string,
-    viewtype: ViewTypeEnum,
-    linkText: string,
-  ) => {
+  const navLink = (view: AdditionalView) => {
     return (
-      <Nav.Item key={viewName}>
+      <Nav.Item key={view.viewname}>
         <Nav.Link
-          eventKey={viewName}
-          href="#"
-          className={viewtype == activeView ? "active" : ""}
+          eventKey={view.viewname}
           onClick={() => {
-            handleActiveView(viewtype);
+            handleActiveView(view);
+            navigate(`/${view.schemaname}/${view.tablename}/${view.viewname}`);
           }}
         >
-          {linkText}
+          {view.viewname}
         </Nav.Link>{" "}
       </Nav.Item>
     );
   };
 
+  const defaultViewname = "default";
   return (
     <Navbar bg="light" data-bs-theme="light" className="viewSelectionNav">
       <Container>
         <h4>views</h4>
         <Nav className="d-flex justify-content-evenly" variant="underline">
-          {navLink("default", ViewTypeEnum.Default, "Default")}
+          <Nav.Item key={defaultViewname}>
+            <Nav.Link
+              eventKey={defaultViewname}
+              onClick={() => {
+                const defaultView: AdditionalView = {
+                  id: 0,
+                  schemaname: selectedSchema,
+                  viewtype: ViewTypeEnum.Default,
+                  viewname: defaultViewname,
+                  tablename: "",
+                };
+                handleActiveView(defaultView);
+                navigate(`/${selectedSchema}/`);
+              }}
+            >
+              {defaultViewname}
+            </Nav.Link>{" "}
+          </Nav.Item>
           {filteredViews.length > 0 &&
             filteredViews.map((view: AdditionalView) => {
               if (view) {
-                switch (view.viewtype) {
-                  case ViewTypeEnum.Calendar:
-                    return navLink(
-                      view.viewname,
-                      ViewTypeEnum.Calendar,
-                      "Calendar",
-                    );
-                  case ViewTypeEnum.Timeline:
-                    return navLink(
-                      view.viewname,
-                      ViewTypeEnum.Timeline,
-                      "Timeline",
-                    );
-                  case ViewTypeEnum.TreeView:
-                    return navLink(
-                      view.viewname,
-                      ViewTypeEnum.TreeView,
-                      "Tree View",
-                    );
-                  case ViewTypeEnum.Custom:
-                    return navLink(
-                      view.viewname,
-                      ViewTypeEnum.Custom,
-                      "Custom",
-                    );
-                }
+                return navLink(view);
               }
             })}
         </Nav>

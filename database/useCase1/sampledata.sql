@@ -462,12 +462,26 @@ INSERT INTO meta.additional_view_settings(schemaName, tableName, viewName, viewT
 
 -- sample custom view 
 INSERT INTO meta.custom_view_templates(settingId, template) VALUES
-(4, 'import React from ''react''
-
-const HelloWorld = () => {
-  return (
-    <div>HelloWorld</div>
-  )
-}
-
-export default HelloWorld')
+(4, '
+    <div>
+      <div id="CustomView" class="container mt-5">
+        <div class="row" data-bind="foreach: sampleData">
+        {{#rows }}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" data-bind="text: title">test</h5>
+                <p class="card-text">company_id: {{row.company_id}}</p>
+                <p class="card-text">company_name: {{row.company_name}}</p>
+                <p class="card-text">is_prev_customer: {{row.is_prev_customer}}</p>
+                <p class="card-text">pricing_rate: {{row.pricing_rate}}</p>
+                <p class="card-text">primary_contact_id: {{row.primary_contact_id}}</p>
+                <a href="#" class="btn btn-primary" data-bind="text: details">Some action</a>
+              </div>
+            </div>
+          </div>
+        {{/rows}}
+        </div>
+      </div>
+    </div>
+')

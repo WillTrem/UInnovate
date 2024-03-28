@@ -27,7 +27,7 @@ const CustomViewLoader: React.FC<CustomViewLoaderProps> = ({
   }
 
   //These are all the Usestate which is used for Pagination, Sorting and Filtering for the List view of the table
-  const [PaginationValue, setPaginationValue] = useState<number>(10);
+  const [PaginationValue, setPaginationValue] = useState<number>(100);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -103,14 +103,19 @@ const CustomViewLoader: React.FC<CustomViewLoaderProps> = ({
   };
 
   useEffect(() => {
+    setOrderBy(table.columns[0].column_name);
     getRows().then(() => {
       console.log(rows);
     });
-  }, [table, orderBy, PageNumber, PaginationValue, sortOrder, conditionFilter]);
-
-  useEffect(() => {
-    return () => {};
-  }, []);
+  }, [
+    templateSource,
+    table,
+    orderBy,
+    PageNumber,
+    PaginationValue,
+    sortOrder,
+    conditionFilter,
+  ]);
 
   return (
     <>
