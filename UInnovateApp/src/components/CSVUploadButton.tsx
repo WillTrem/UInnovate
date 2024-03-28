@@ -12,9 +12,10 @@ import { RootState } from "../redux/Store";
 
 interface CSVUploadButtonProps {
 	table: Table;
+	getRows: () => Promise<void>;
 }
 
-export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({table}) => {
+export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({table, getRows}) => {
 	const dispatch = useDispatch();
 	const loggedInUser  = useSelector((state: RootState) => state.auth.user);
 	function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>){
@@ -26,7 +27,6 @@ export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({table}) => {
 					validateCSV(result, table);
 					await loadCSVToDB(result, table);
 					dispatch(displayNotification(`Succesfully loaded ${file.name} in table ${table.table_name}`));
-					
 					const schema = VMD.getTableSchema(table.table_name);
 					Logger.logUserAction( 
 						loggedInUser || "",
@@ -35,6 +35,7 @@ export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({table}) => {
 						schema?.schema_name || "",
 						table.table_name
 					  );
+					  getRows();
 				}
 				catch(error: any){
 					if(error.response){

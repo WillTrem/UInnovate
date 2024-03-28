@@ -190,6 +190,7 @@ class VirtualModelDefinition {
           new Column(data.column),
           data.references_table,
           data.is_editable,
+          data.is_serial,
           data.references_by,
           data.referenced_table,
           data.referenced_by
@@ -723,6 +724,7 @@ export class Table {
     column: Column,
     references_table: string,
     is_editable: boolean,
+    is_serial: boolean,
     references_by: string,
     referenced_table: string,
     referenced_by: string
@@ -732,6 +734,7 @@ export class Table {
     column.setReferencesBy(references_by);
     column.setReferencedTable(referenced_table);
     column.setReferencedBy(referenced_by);
+    column.setIsSerial(is_serial);
 
     this.columns.push(column);
   }
@@ -870,6 +873,7 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
+  is_serial: boolean;
   references_by: string;
   referenced_table: string;
   referenced_by: string;
@@ -881,6 +885,7 @@ export class Column {
     this.reqOnCreate = false;
     this.references_table = "";
     this.is_editable = false;
+    this.is_serial = false;
     this.references_by = "";
     this.referenced_table = "";
     this.referenced_by = "";
@@ -951,6 +956,22 @@ export class Column {
   setReferencedBy(referenced_by: string) {
     this.referenced_by = referenced_by;
   }
+
+  /**
+   * Method to set the column is_serial field
+   * @param isSerial The new value of is_serial
+   */
+  setIsSerial(isSerial: boolean){
+    this.is_serial = isSerial;
+  }
+
+  /**
+   * Method to get the column is_serial field
+   * @returns boolean 
+   */
+  getIsSerial(){
+    return this.is_serial;
+  }
 }
 
 export class View {
@@ -975,6 +996,7 @@ interface ColumnData {
   column: string;
   references_table: string;
   is_editable: boolean;
+  is_serial: boolean;
   references_by: string;
   referenced_table: string;
   referenced_by: string;

@@ -1,5 +1,6 @@
 import { ParseResult, parse } from "papaparse";
 import VMD, { Table } from "../virtualmodel/VMD";
+import { Row } from "../virtualmodel/DataAccessor";
 
 export function validateCSV(
     csvObject: ParseResult<unknown>,
@@ -11,11 +12,13 @@ export function validateCSV(
     if (!csvHeaders) {
         throw new Error("Could not parse the headers of the CSV file.");
     }
+    const serialColumns = table.columns
+    .filter(column => column.is_serial);
 
-    // Rejects if the csv file doesn't have the same number of headers as the table's number of columns
-    if (csvHeaders.length !== table.columns.length) {
+    // Rejects if the csv file has a number of headers less than the number of columns in the table minus the number of serial columns
+    if (csvHeaders.length > table.columns.length || csvHeaders.length < (table.columns.length - serialColumns.length)) {
         throw new Error(
-            "The number of headers in the CSV file does not match the number of columns in the table."
+            "The number of headers in the CSV file is not valid."
         );
     }
 
@@ -26,7 +29,7 @@ export function validateCSV(
 
     // Rejects if not all the table columns are included in the csv headers
     table.columns.every((column) => {
-        if (!csvHeaders.includes(column.column_name)) {
+        if (!csvHeaders.includes(column.column_name) && !column.is_serial) {
             throw new Error(
                 `Column ${column.column_name} could not be found in the headers of the CSV file.`
             );
@@ -43,10 +46,24 @@ export async function loadCSVToDB(
     if (!schema) {
 		throw new Error(`Could not find the schema for table ${table.table_name}.`);
     }
+    
+    // Filtering SERIAL typed columns from the CSV file
+    const serialColumns = table.columns
+    .filter(column => column.is_serial)
+    .map(column => column.column_name);
+
+    const filteredCSVObject = csvObject.data.map((row: any) => {
+        let filteredRow = { ...row };
+        serialColumns.forEach((serialColumn) => {
+            delete filteredRow[serialColumn]
+        })
+        return filteredRow;
+    })
+
     const dataAccessor = VMD.getAddRowDataAccessor(
         schema.schema_name,
         table.table_name,
-        csvObject.data,
+        filteredCSVObject,
         true
     );
 		await dataAccessor.addRow();

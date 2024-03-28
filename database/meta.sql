@@ -31,9 +31,9 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
         USING (constraint_name)
 );
 
-
+DROP VIEW IF EXISTS meta.columns;
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","referenced_table", "referenced_by" ) AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","is_serial", "referenced_table", "referenced_by" ) AS 
 (
   
    (
@@ -44,6 +44,7 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     STRING_AGG(DISTINCT rc.referenced_table::text, ', '),
     STRING_AGG(DISTINCT rc.referenced_column::text, ', ') AS references_by, 
     CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable,
+    ( SELECT pg_catalog.pg_get_serial_sequence(c.table_schema || '.' || c.table_name, c.column_name) IS NOT NULL) AS is_serial,
     STRING_AGG(DISTINCT ref.referee_table::text, ', '), 
     STRING_AGG(DISTINCT ref.referee_column::text, ', ') AS referenced_by
 FROM information_schema.columns AS c

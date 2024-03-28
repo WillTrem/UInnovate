@@ -1098,7 +1098,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         >
           Reset Filters
         </Button>
-        <CSVUploadButton table={table}/>
+        <CSVUploadButton table={table} getRows={getRows}/>
       </Box>
       <TableContainer>
         <MUITable
