@@ -235,9 +235,7 @@ export function ObjectMenu() {
                   <CustomViewLoader
                     table={activeTable}
                     templateSource={
-                      customViews.length > 0
-                        ? customViews[selectedCustomViewIndex].template
-                        : ""
+                      customViews[selectedCustomViewIndex]?.template
                     }
                   />
                 )}
