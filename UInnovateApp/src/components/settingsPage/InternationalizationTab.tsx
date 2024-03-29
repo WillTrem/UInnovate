@@ -323,6 +323,15 @@ const InternationalizationTab = () => {
     const handleSelectedNewLanguage = (event: SelectChangeEvent<string>) => {
         setNewLanguageName(event.target.value as string);
         setNewLanguageCode(isoLanguages.getCode(event.target.value as string));
+
+        // Audits
+        Audits.logAudits(
+            loggedInUser || "",
+            "Add New Language",
+            "Added language: " + "\"" + event.target.value + "\"",
+            "i18n_languages",
+            ""
+        );
     };
 
     const handleSelectedLanguage = (event: SelectChangeEvent<string>) => {
@@ -351,6 +360,15 @@ const InternationalizationTab = () => {
         } catch (error) {
             console.error('Error sorting by missing translations:', error);
         }
+
+        // Audits
+        Audits.logAudits(
+            loggedInUser || "",
+            "Sort by Missing Translations",
+            "Sorted by missing translations for the language: " + "\"" + selectedLanguage + "\"",
+            "i18n_translations",
+            ""
+        );
     };
 
 
