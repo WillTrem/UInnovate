@@ -1,7 +1,6 @@
 import vmd from "./VMD";
 import { Row } from "./DataAccessor";
 import axiosCustom from "../api/AxiosCustom";
-import { AxiosResponse } from "axios";
 
 const API_BASE_URL = "http://localhost:3000/"; // Base URL of your PostgREST API
 
