@@ -330,9 +330,6 @@ const InternationalizationTab = () => {
         setSelectedLanguage(language);
         getTranslationsByLanguage(language);
 
-        //clear the translations when the language is changed
-        setTranslations([]);
-
         // Audits
         Audits.logAudits(
             loggedInUser || "",
