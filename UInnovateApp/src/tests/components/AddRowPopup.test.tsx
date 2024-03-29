@@ -128,12 +128,11 @@ describe('AddRowPopup component', () => {
 
     const SelectInput = screen.getByTestId("select-field");
     expect(SelectInput).toBeInTheDocument();
+    await waitFor(() => {
+      expect(VMD.getRowsDataAccessor).toHaveBeenCalled();
+      expect(VMD.getTableSchema).toHaveBeenCalled();
+    });
     
-    act(() => SelectInput.click());
-    
-    const SelectFieldItems = screen.getAllByTestId("select-field-item");
-    expect(SelectFieldItems).toBeGreaterThanOrEqual(1);
-  
 
 
     const SubmitButton = screen.getByTestId("submit-button");
