@@ -1,4 +1,12 @@
-import { Modal, Box, Typography, Button, Select, Menu, MenuItem } from "@mui/material";
+import {
+  Modal,
+  Box,
+  Typography,
+  Button,
+  Select,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import "../styles/AddEnumModal.css";
 import { useEffect, useRef, useState } from "react";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
@@ -25,7 +33,9 @@ const AddRowPopup = ({
   );
   const [displayField, setdisplayField] = useState<string[]>([]);
   const [Rows, setRows] = useState<Row[][] | undefined>([]);
-  const [selectedValues, setSelectedValues] = useState<Record<string, number>>({});
+  const [selectedValues, setSelectedValues] = useState<Record<string, number>>(
+    {}
+  );
   const selectCountRef = useRef(-1);
 
   useEffect(() => {
@@ -34,29 +44,29 @@ const AddRowPopup = ({
 
   // this is for the values of the foreign keys
   const getForeignKeys = async () => {
-
-
     const newDisplayFields = [];
     const newRows = [];
 
     for (const column of columns) {
-
-      if (column.references_table != null && column.references_table != "filegroup") {
+      if (
+        column.references_table != null &&
+        column.references_table != "filegroup"
+      ) {
         const schema = vmd.getTableSchema(column.references_table);
 
-
         if (!schema) {
-          console.error("Could not find schema for table ", column.references_table);
+          console.error(
+            "Could not find schema for table ",
+            column.references_table
+          );
           continue;
         }
 
-        const table = vmd.getTable(schema.schema_name, column.references_table)
-        if (!table) {
-          console.error("Could not find schema for table ", column.references_table);
-          continue;
-        }
 
-        const data_accessor: DataAccessor = vmd.getRowsDataAccessor(schema.schema_name, table.table_name);
+        const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+          schema.schema_name,
+          column.references_table
+        );
         const rows = await data_accessor.fetchRows();
 
         if (!rows) {
@@ -64,51 +74,46 @@ const AddRowPopup = ({
           continue;
         }
 
-        await vmd.getTableDisplayField(schema.schema_name, table.table_name);
-
-        const JSONdisplayField = JSON.parse(table.display_field);
-        const display_field = JSONdisplayField["displayField"];
-        newDisplayFields.push(display_field);
+        const display_field = await vmd.getTableDisplayField(schema.schema_name, column.references_table);
+        newDisplayFields.push(display_field as string);
         newRows.push(rows);
       }
     }
-  
+
     setdisplayField(newDisplayFields);
     setRows(newRows);
   };
 
-
-
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
     setInputValues({
       ...inputValues,
       row: { ...inputValues.row, [e.target.name]: e.target.value },
     });
   };
 
-  const handleSelectChange = (e: React.ChangeEvent<{ name?: string; value: number }>) => {
-
+  const handleSelectChange = (
+    e: React.ChangeEvent<{ name?: string; value: number }>
+  ) => {
     const value = e.target.value;
     const name = e.target.name;
 
     setInputValues({
       ...inputValues,
-      row: { ...inputValues.row, [e.target.name as string]: e.target.value as unknown as string },
+      row: {
+        ...inputValues.row,
+        [e.target.name as string]: e.target.value as unknown as string,
+      },
     });
 
-    setSelectedValues(prevValues => ({ ...prevValues, [name as string]: value }));
-
+    setSelectedValues((prevValues) => ({
+      ...prevValues,
+      [name as string]: value,
+    }));
   };
 
-
-
-
   const handleFormSubmit = () => {
-
     const schema = vmd.getTableSchema(table.table_name);
-  
+
     if (!schema) {
       console.error("Could not find schema for table ", table.table_name);
       return;
@@ -118,7 +123,7 @@ const AddRowPopup = ({
       loggedInUser || "",
       "Add Row",
       "Added a new row with the following values: " +
-      JSON.stringify(inputValues.row),
+        JSON.stringify(inputValues.row),
       schema?.schema_name || "",
       table.table_name
     );
@@ -130,8 +135,8 @@ const AddRowPopup = ({
     );
     data_accessor.addRow();
 
-    getRows();
     onClose();
+    getRows();
   };
 
   const style = {
@@ -190,59 +195,55 @@ const AddRowPopup = ({
         )}
         <div className="addEnum">
           {columns.map((column: Column, idx) => {
-            if (column.references_table != null &&
-              column.references_table != "filegroup") {
-
-              selectCountRef.current += 1;
-            }
+            if (
+              column.references_table != null &&
+              column.references_table != "filegroup"
+            ) 
+            {selectCountRef.current += 1;}
             const count = selectCountRef.current % displayField.length;
             return (
               <div key={column.column_name} style={{ marginBottom: 10 }}>
-
                 <div style={{ display: "flex", alignItems: "center" }}>
-
                   <label key={idx} style={labelStyle}>
-
                     {column.references_table != null &&
-                      column.references_table != "filegroup"
+                    column.references_table != "filegroup"
                       ? column.references_table
                       : column.column_name}
-
                   </label>
                 </div>
                 <div>
-                  {column.references_table != null
-                    &&
-                    column.references_table != "filegroup"
-                    ?
-                    (
-                      <Select
-                        name={column.column_name}
-                        sx={selectStyle}
-                        value={selectedValues[column.column_name] || -1}
-                        onChange={handleSelectChange}
-                        data-testid="select-field"
-                      >
+                  {column.references_table != null &&
+                  column.references_table != "filegroup" ? (
+                    <Select
+                      name={column.column_name}
+                      sx={selectStyle}
+                      value={selectedValues[column.column_name] || -1}
+                      onChange={(handleSelectChange)}
+                      data-testid="select-field"
+                    >
+                      <MenuItem value={-1}>None</MenuItem>
 
-
-                        <MenuItem value={-1} >None</MenuItem>
-
-                        {displayField[count] && Rows && Rows[count] && Rows[count].map((row, index) => (
-                          <MenuItem key={index} value={row[column.references_by]}>
+                      {displayField[count] &&
+                        Rows &&
+                        Rows[count] &&
+                        Rows[count].map((row, index) => (
+                          <MenuItem
+                            key={index}
+                            value={row[column.references_by]}
+                          >
                             {row[displayField[count]]}
                           </MenuItem>
                         ))}
-
-                      </Select>
-                    ) : (
-                      <input
-                        type="text"
-                        name={column.column_name}
-                        style={inputStyle}
-                        onChange={handleInputChange}
-                        data-testid="input-field"
-                      />
-                    )}
+                    </Select>
+                  ) : (
+                    <input
+                      type="text"
+                      name={column.column_name}
+                      style={inputStyle}
+                      onChange={handleInputChange}
+                      data-testid="input-field"
+                    />
+                  )}
                 </div>
               </div>
             );
@@ -253,6 +254,7 @@ const AddRowPopup = ({
             variant="contained"
             onClick={handleFormSubmit}
             style={buttonStyle}
+            data-testid="submit-button"
           >
             Save Changes
           </Button>
@@ -261,7 +263,6 @@ const AddRowPopup = ({
           </Button>
         </div>
       </Box>
-
     </Modal>
   );
 };

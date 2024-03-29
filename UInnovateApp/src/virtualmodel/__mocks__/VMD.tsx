@@ -80,7 +80,7 @@ export default {
 
   getTableDisplayField: vi.fn().mockImplementation(() => {
     console.log("getTableDisplayField in VMD mock was called");
-    return new TableMock("display_field");
+    return "display_field";
   }),
 
   getViewRowDataAccessor: vi
@@ -200,4 +200,21 @@ export class ColumnMock extends Column {
     console.log("setVisibility in Column mock was called");
     super.setVisibility(true);
   });
+  getReferencesTable = vi.fn().mockImplementation(() => {
+    console.log("getReferencesTable in Column mock was called");
+    return "references_table";
+  });
+  setReferencesTable = vi.fn().mockImplementation((references_table: string) => {
+    console.log("setReferencesTable in Column mock was called");
+    super.setReferenceTable(references_table);
+  });
+  getReferencesBy = vi.fn().mockImplementation(() => {
+    console.log("getReferencesBy in Column mock was called");
+    return "references_by";
+  });
+  setReferencesBy = vi.fn().mockImplementation((references_by: string) => {
+    console.log("setReferencesBy in Column mock was called");
+    super.setReferencesBy(references_by);
+  });
+
 }

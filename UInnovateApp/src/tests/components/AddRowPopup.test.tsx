@@ -10,7 +10,19 @@ const mockTable = {
   table_display_type: "enum", // or "list"
 
 };
+const Col1 = new ColumnMock("Column1")
+const Col2 =new ColumnMock("Column2")
+Col1.setReferencesTable("i am not null")
+Col1.setReferencesBy("Ref_by")
 
+
+const mockCols= [
+  Col1, Col2
+]
+const table = new TableMock("example");
+
+table.addColumn(Col1)
+table.addColumn(Col2)
 
 const mockColumns = [
   {
@@ -18,9 +30,9 @@ const mockColumns = [
     column_type: "string",
     is_visible: true,
     reqOnCreate: true,
-    references_table: "",
+    references_table: null,
     is_editable: false,
-    references_by: "",
+    references_by: null,
     referenced_table: "",
     referenced_by: "",
   },
@@ -39,7 +51,6 @@ const mockColumns = [
   // Add more mock columns as needed
 ];
 
-const table = new TableMock("example");
 
 
 const onCloseMock = () => console.log("onCloseMock was called");
@@ -49,7 +60,7 @@ describe('AddRowPopup component', () => {
   it('renders the component with the correct title for enum type', async () => {
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTable} columns={mockColumns} />
+        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTable} columns={mockCols} />
       </Provider>
     );
 
@@ -64,7 +75,7 @@ describe('AddRowPopup component', () => {
 
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTableListType} columns={mockColumns} />
+        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTableListType} columns={mockCols} />
       </Provider>
     );
 
@@ -77,15 +88,19 @@ describe('AddRowPopup component', () => {
   it('renders input fields for each column', async () => {
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTable} columns={mockColumns} />
+        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={table} columns={mockColumns} />
       </Provider>
     );
-    const inputElement1 = screen.getByTestId("select-field");
+
+    const inputElement1 = screen.getByTestId("input-field");
     expect(inputElement1).toBeInTheDocument();
 
-    const inputElement = screen.getByTestId("input-field");
-    expect(inputElement).toBeInTheDocument();
+    const inputElement2 = screen.getByTestId("select-field");
+    expect(inputElement2).toBeInTheDocument();
 
-    
+  
+    // const inputElement = await screen.findByTestId("input-field");
+    // expect(inputElement).toBeInTheDocument();
+
   });
 });

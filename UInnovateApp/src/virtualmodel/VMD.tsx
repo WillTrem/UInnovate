@@ -152,7 +152,6 @@ class VirtualModelDefinition {
     console.log(this.schemas);
   }
 
-
   // Method to get the display field for a table
   // return type : string
   async getTableDisplayField(schema_name: string, table_name: string) {
@@ -164,9 +163,9 @@ class VirtualModelDefinition {
       });
 
       const data = response.data;
-
+      let display_field = "";
       data.forEach((data: DisplayField) => {
-        if(data.schema === schema_name && data.table === table_name) {
+        if (data.schema === schema_name && data.table === table_name) {
           const schema = this.getSchema(data.schema);
 
           if (!schema) {
@@ -175,14 +174,18 @@ class VirtualModelDefinition {
           }
 
           const table = schema.getTable(data.table);
-          
+
           if (!table) {
-            console.error(`Table ${data.table} does not exist in schema ${data.schema}.`);
+            console.error(
+              `Table ${data.table} does not exist in schema ${data.schema}.`
+            );
             return;
           }
-          table.setDisplayField(data.display_field);
+          const JSONdisplayField = JSON.parse(data.display_field);
+          display_field = JSONdisplayField["displayField"];
         }
       });
+      return display_field;
     } catch (error) {
       console.error("Error:", error);
     }
@@ -916,7 +919,7 @@ export class Column {
   is_editable: boolean;
   references_by: string;
   referenced_table: string;
-  referenced_by:string;
+  referenced_by: string;
 
   constructor(column_name: string) {
     this.column_name = column_name;
