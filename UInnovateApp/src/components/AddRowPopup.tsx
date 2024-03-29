@@ -62,7 +62,6 @@ const AddRowPopup = ({
           continue;
         }
 
-
         const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
           schema.schema_name,
           column.references_table
@@ -74,7 +73,10 @@ const AddRowPopup = ({
           continue;
         }
 
-        const display_field = await vmd.getTableDisplayField(schema.schema_name, column.references_table);
+        const display_field = await vmd.getTableDisplayField(
+          schema.schema_name,
+          column.references_table
+        );
         newDisplayFields.push(display_field as string);
         newRows.push(rows);
       }
@@ -198,8 +200,9 @@ const AddRowPopup = ({
             if (
               column.references_table != null &&
               column.references_table != "filegroup"
-            ) 
-            {selectCountRef.current += 1;}
+            ) {
+              selectCountRef.current += 1;
+            }
             const count = selectCountRef.current % displayField.length;
             return (
               <div key={column.column_name} style={{ marginBottom: 10 }}>
@@ -218,7 +221,7 @@ const AddRowPopup = ({
                       name={column.column_name}
                       sx={selectStyle}
                       value={selectedValues[column.column_name] || -1}
-                      onChange={(handleSelectChange)}
+                      onChange={handleSelectChange}
                       data-testid="select-field"
                     >
                       <MenuItem value={-1}>None</MenuItem>
@@ -258,7 +261,12 @@ const AddRowPopup = ({
           >
             Save Changes
           </Button>
-          <Button variant="contained" onClick={onClose} style={buttonStyle}>
+          <Button 
+          variant="contained" 
+          onClick={onClose} 
+          style={buttonStyle}
+          data-testid="close-button"
+          >
             Close
           </Button>
         </div>

@@ -1,9 +1,10 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { describe, expect } from "vitest";
 import AddRowPopup from '../../components/AddRowPopup';
 import store from '../../redux/Store';
 import { Provider } from 'react-redux';
-import { ColumnMock, TableMock } from "../../virtualmodel/__mocks__/VMD";
+import VMD, { ColumnMock, TableMock } from "../../virtualmodel/__mocks__/VMD";
+import { Close } from '@mui/icons-material';
 
 const mockTable = {
   table_name: "mock_table",
@@ -85,22 +86,44 @@ describe('AddRowPopup component', () => {
     });
   });
 
-  it('renders input fields for each column', async () => {
+  it('renders input fields and select field and when submit is clicked ', async () => {
     render(
       <Provider store={store}>
         <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={table} columns={mockColumns} />
       </Provider>
     );
+    await waitFor(() => expect(VMD.getTableDisplayField).toHaveBeenCalled());
 
-    const inputElement1 = screen.getByTestId("input-field");
-    expect(inputElement1).toBeInTheDocument();
+    const inputElement = screen.getByTestId("input-field");
+    expect(inputElement).toBeInTheDocument();
 
-    const inputElement2 = screen.getByTestId("select-field");
-    expect(inputElement2).toBeInTheDocument();
+    const SelectInput = screen.getByTestId("select-field");
+    expect(SelectInput).toBeInTheDocument();
 
-  
-    // const inputElement = await screen.findByTestId("input-field");
-    // expect(inputElement).toBeInTheDocument();
+    const SubmitButton = screen.getByTestId("submit-button");
+    expect(SubmitButton).toBeInTheDocument();
+    act(() => SubmitButton.click());
+
+    await waitFor(() => expect(VMD.getAddRowDataAccessor).toHaveBeenCalled());
+    const modal = screen.queryByTestId("modal-row-popup");
+    expect(modal).toBeNull();
 
   });
+
+  it('renders only input fields and when close button is clicked', async () => {
+    render(
+      <Provider store={store}>
+        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={table} columns={mockCols} />
+      </Provider>
+    );
+    const inputElements = screen.getAllByTestId("input-field");
+    expect(inputElements).toHaveLength(2);
+    const CloseButton = screen.getByTestId("close-button");
+    expect(CloseButton).toBeInTheDocument(); 
+    act(() => CloseButton.click());
+
+    const modal = screen.queryByTestId("modal-row-popup");
+    expect(modal).toBeNull();
+    //modal-row-popup
+    });
 });
