@@ -42,7 +42,7 @@ const InternationalizationTab = () => {
 
     const [newLabelName, setNewLabelName] = useState<string>(''); 
     const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
-    const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("en"); // Default language is English
 
     // Key Object
     interface KeyProps {
@@ -265,7 +265,6 @@ const InternationalizationTab = () => {
                 }
             ).addRow();
 
-            // await getTranslations();
             await getTranslationsByLanguage(selectedLanguage);
         } catch (error) {
             console.error('Error adding a new label:', error);
@@ -331,12 +330,19 @@ const InternationalizationTab = () => {
         setSelectedLanguage(language);
         getTranslationsByLanguage(language);
 
-        // clear the previous translations
+        //clear the translations when the language is changed
         setTranslations([]);
+
+        // Audits
+        Audits.logAudits(
+            loggedInUser || "",
+            "Select Internationalization Language",
+            "Selected language: " + "\"" + language + "\"",
+            "i18n_languages",
+            ""
+        );
     };
 
-    // Sort the translations by missing translations of the selected language and using the getTranslationsProps function
-    // meaning that I want to display all the missing translations of the selected language at the top of the table and the rest of the translations below
     const sortByMissingTranslations = async (selectedLanguage: string) => {
         try {
             const translations = await getTranslationsPropsByLanguage(selectedLanguage);
@@ -379,17 +385,17 @@ const InternationalizationTab = () => {
                 </Button>
             </div>
 
-            <div className="default-language-input">
+            <div className="selected-language-input">
 
                 <FormControl fullWidth>
-                    <InputLabel id="default-language-label">Default Language</InputLabel>
+                    <InputLabel id="selected-language-label">Selected Language</InputLabel>
                     <Select
-                        labelId="default-language-label"
-                        name="Default Language"
+                        labelId="selected-language-label"
+                        name="Selected Language"
                         onChange={handleSelectedLanguage}
                         onClick={handleDropdownLanguages}
                         variant="outlined"
-                        label="Default Language"
+                        label="Selected Language"
                         defaultValue=''
                     >
                         {languages.map(language => (
@@ -412,7 +418,6 @@ const InternationalizationTab = () => {
                             if (translation) {
                                 return (
                                     <TranslationTableRow
-                                        // getTranslations={getTranslations}
                                         getTranslationsByLanguage={getTranslationsByLanguage}
                                         key={idx}
                                         keyCode={translation["key_code"] as string}
@@ -565,10 +570,21 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
             // if the value is not empty and null, perform the upsert operation
             if (newTranslation !== "" && newTranslation !== null) {
                 await dataAccessor.upsert();
+
+                //Audits
+                Audits.logAudits(
+                    loggedInUser || "",
+                    "Upsert Translation",
+                    "Upserted a translation with the following value: " + JSON.stringify(newTranslation) + ", for the language: "+ "\"" + languageCode + "\"" + ", and the label: " + "\""+ keyCode + "\"",
+                    "i18n_values",
+                    ""
+                );
             }
         } catch (error) {
             console.error(`Error upserting translation: ${newTranslation}`, error);
         }
+
+
     }
     
     const handleDoubleClickLabel = () => {
@@ -597,13 +613,11 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!is_default && isEditingLabel) {
             setEditedValue(e.target.value);
-            // saveChangesLabel();
         }
     };
 
     const handleTranslationCellChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditedTranslation(e.target.value);
-        // saveChangesTranslation();
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -704,9 +718,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
 
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
-        // return () => {
-        //     document.removeEventListener("mousedown", handleClickOutside);
-        // };
     }, []);
 
     useEffect(() => {
