@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.07% </span>
+                <span class="strong">88.46% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>19/26</span>
+                <span class='fraction'>23/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">92.85% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>8/14</span>
+                <span class='fraction'>13/14</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.07% </span>
+                <span class="strong">88.46% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>19/26</span>
+                <span class='fraction'>23/26</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -139,35 +139,35 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -211,28 +211,28 @@ export function validateCSV(
     const csvHeaders = csvObject.meta.fields;
 &nbsp;
     // Reject if the csv file doesn't have columns (headers)
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (!csvHeaders) {
-<span class="cstat-no" title="statement not covered" >        throw new Error("Could not parse the headers of the CSV file.");</span>
+    if (!csvHeaders) {
+        throw new Error("Could not parse the headers of the CSV file.");
     }
     const serialColumns = table.columns
     .filter(column =&gt; column.is_serial);
 &nbsp;
     // Rejects if the csv file has a number of headers less than the number of columns in the table minus the number of serial columns
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (csvHeaders.length &gt; table.columns.length || csvHeaders.length &lt; (table.columns.length - serialColumns.length)) {
-<span class="cstat-no" title="statement not covered" >        throw new Error(</span>
+    if (csvHeaders.length &gt; table.columns.length || csvHeaders.length &lt; (table.columns.length - serialColumns.length)) {
+        throw new Error(
             "The number of headers in the CSV file is not valid."
         );
     }
 &nbsp;
     // Rejects if the csv file has duplicate headers
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (new Set(csvHeaders).size !== csvHeaders.length) {
-<span class="cstat-no" title="statement not covered" >        throw new Error("The CSV file has duplicate headers.");</span>
+    if (new Set(csvHeaders).size !== csvHeaders.length) {
+        throw new Error("The CSV file has duplicate headers.");
     }
 &nbsp;
     // Rejects if not all the table columns are included in the csv headers
     table.columns.every((column) =&gt; {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!csvHeaders.includes(column.column_name) &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >!column.is_serial) {</span>
-<span class="cstat-no" title="statement not covered" >            throw new Error(</span>
+        if (!csvHeaders.includes(column.column_name) &amp;&amp; !column.is_serial) {
+            throw new Error(
                 `Column ${column.column_name} could not be found in the headers of the CSV file.`
             );
         }
@@ -277,7 +277,7 @@ export async function loadCSVToDB(
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-29T01:04:08.030Z
+                at 2024-03-29T01:52:53.290Z
             </div>
         <script src="../prettify.js"></script>
         <script>
