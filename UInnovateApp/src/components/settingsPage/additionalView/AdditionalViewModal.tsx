@@ -6,8 +6,8 @@ import { insertNewView } from "../../../virtualmodel/AdditionalViewsDataAccessor
 import vmd, { Table } from "../../../virtualmodel/VMD";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
-import { AuthState } from '../../../redux/AuthSlice';
-import  Audits  from "../../../virtualmodel/Audits";
+import { AuthState } from "../../../redux/AuthSlice";
+import Audits from "../../../virtualmodel/Audits";
 
 interface AdditionalViewModalProp {
   show: boolean;
@@ -25,9 +25,12 @@ const AdditionalViewModal = ({
   const [tableName, setTableName] = useState<string>("");
   const [customCode, setCustomCode] = useState<string>("");
   const [tableList, setTableList] = useState<Table[]>([]);
+  const [validated, setValidated] = useState(false);
 
   const schemaName = useSelector((state: RootState) => state.schema.value);
-  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+  const { user: loggedInUser }: AuthState = useSelector(
+    (state: RootState) => state.auth,
+  );
 
   useEffect(() => {
     // Only show tables of the selected schema
@@ -39,6 +42,7 @@ const AdditionalViewModal = ({
     setViewName("");
     setViewType(1);
     setTableName("");
+    setValidated(false);
     const form = document.getElementById("AdditionalViewModalForm");
     form && form.reset();
   };
@@ -47,15 +51,37 @@ const AdditionalViewModal = ({
     resetForm();
   };
 
-  const handleSave = (e): void => {
+  const handleFormSubmit = (e) => {
+    const formName = "AdditionalViewModalForm";
+    const form = document.getElementById(formName);
+
+    setValidated(true);
+    e.preventDefault();
+
+    if (form.checkValidity() === false) {
+      // e.preventDefault();
+      // e.stopPropagation();
+      console.log("invalid form, redcheck data");
+    } else {
+      console.log("valid form, submitting");
+      handleSubmit();
+    }
+  };
+
+  const handleSubmit = (): void => {
     Audits.logAudits(
       loggedInUser || "",
       "Add view",
-      "Added a new view with the following values: " + JSON.stringify(viewName) + ", " + JSON.stringify(viewType) + ", " + JSON.stringify(customCode),
+      "Added a new view with the following values: " +
+        JSON.stringify(viewName) +
+        ", " +
+        JSON.stringify(viewType) +
+        ", " +
+        JSON.stringify(customCode),
       schemaName,
-      tableName
+      tableName,
     );
-    e.preventDefault();
+
     insertNewView(schemaName, tableName, viewName, viewType, customCode);
     handleClose();
     updateList();
@@ -83,10 +109,16 @@ const AdditionalViewModal = ({
           <Modal.Title>Add a new view</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSave} id="AdditionalViewModalForm">
+          <Form
+            noValidate
+            validated={validated}
+            onSubmit={handleFormSubmit}
+            id="AdditionalViewModalForm"
+          >
             <Form.Group className="mb-3" controlId="viewName">
               <Form.Label>view name</Form.Label>
               <Form.Control
+                required
                 name="viewName"
                 type="text"
                 onChange={(e) => {
@@ -94,6 +126,9 @@ const AdditionalViewModal = ({
                 }}
                 placeholder="Enter a view name"
               />
+              <Form.Control.Feedback type="invalid">
+                Please provide a valid name.
+              </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="viewType">
               <Form.Label>view type</Form.Label>
@@ -122,6 +157,7 @@ const AdditionalViewModal = ({
               <Form.Group className="mb-3" controlId="viewCustomCode">
                 <Form.Label>view custom code</Form.Label>
                 <Form.Control
+                  required={viewType == ViewTypeEnum.Custom}
                   type="file"
                   accept=".ts, .tsx, ,js, .jsx, .txt"
                   onChange={(e) => handleFileChange(e)}
@@ -139,7 +175,7 @@ const AdditionalViewModal = ({
           >
             Close
           </Button>
-          <Button variant="contained" onClick={handleSave}>
+          <Button variant="contained" onClick={handleFormSubmit}>
             Save Changes
           </Button>
         </Modal.Footer>
