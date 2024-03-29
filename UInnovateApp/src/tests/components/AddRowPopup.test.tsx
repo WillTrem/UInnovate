@@ -52,16 +52,45 @@ const mockColumns = [
   // Add more mock columns as needed
 ];
 
+const mockColumns2 = [
+  {
+    column_name: "column1",
+    column_type: "string",
+    is_visible: true,
+    reqOnCreate: true,
+    references_table: null,
+    is_editable: false,
+    references_by: null,
+    referenced_table: "",
+    referenced_by: "",
+  },
+
+  {
+    column_name: "column2",
+    column_type: "string",
+    is_visible: true,
+    reqOnCreate: true,
+    references_table: "filegroup",
+    is_editable: false,
+    references_by: "",
+    referenced_table: "",
+    referenced_by: ""
+  },
+  // Add more mock columns as needed
+];
 
 
-const onCloseMock = () => console.log("onCloseMock was called");
-const getRowsMock = () => console.log("getRowsMock was called");
+
+
+const getRows = vi.fn();
+const onClose = vi.fn();
+
 
 describe('AddRowPopup component', () => {
   it('renders the component with the correct title for enum type', async () => {
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTable} columns={mockCols} />
+        <AddRowPopup getRows={getRows} onClose={onClose} table={mockTable} columns={mockCols} />
       </Provider>
     );
 
@@ -76,7 +105,7 @@ describe('AddRowPopup component', () => {
 
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={mockTableListType} columns={mockCols} />
+        <AddRowPopup getRows={getRows} onClose={onClose} table={mockTableListType} columns={mockCols} />
       </Provider>
     );
 
@@ -89,7 +118,7 @@ describe('AddRowPopup component', () => {
   it('renders input fields and select field and when submit is clicked ', async () => {
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={table} columns={mockColumns} />
+        <AddRowPopup getRows={getRows} onClose={onClose} table={table} columns={mockColumns} />
       </Provider>
     );
     await waitFor(() => expect(VMD.getTableDisplayField).toHaveBeenCalled());
@@ -99,21 +128,31 @@ describe('AddRowPopup component', () => {
 
     const SelectInput = screen.getByTestId("select-field");
     expect(SelectInput).toBeInTheDocument();
+    
+    act(() => SelectInput.click());
+    
+    const SelectFieldItems = screen.getAllByTestId("select-field-item");
+    expect(SelectFieldItems).toBeGreaterThanOrEqual(1);
+  
+
 
     const SubmitButton = screen.getByTestId("submit-button");
     expect(SubmitButton).toBeInTheDocument();
     act(() => SubmitButton.click());
-
-    await waitFor(() => expect(VMD.getAddRowDataAccessor).toHaveBeenCalled());
-    const modal = screen.queryByTestId("modal-row-popup");
-    expect(modal).toBeNull();
+    await waitFor(() => {
+      expect(VMD.getAddRowDataAccessor).toHaveBeenCalled();
+      expect(getRows).toHaveBeenCalled();
+      expect(onClose).toHaveBeenCalled();
+    });
+    
+   
 
   });
 
   it('renders only input fields and when close button is clicked', async () => {
     render(
       <Provider store={store}>
-        <AddRowPopup getRows={getRowsMock} onClose={onCloseMock} table={table} columns={mockCols} />
+        <AddRowPopup getRows={getRows} onClose={onClose} table={table} columns={mockColumns2} />
       </Provider>
     );
     const inputElements = screen.getAllByTestId("input-field");
@@ -122,8 +161,8 @@ describe('AddRowPopup component', () => {
     expect(CloseButton).toBeInTheDocument(); 
     act(() => CloseButton.click());
 
-    const modal = screen.queryByTestId("modal-row-popup");
-    expect(modal).toBeNull();
-    //modal-row-popup
+    expect(onClose).toHaveBeenCalled();
+
+    
     });
 });

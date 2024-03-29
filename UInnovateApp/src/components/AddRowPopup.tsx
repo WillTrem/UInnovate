@@ -187,6 +187,7 @@ const AddRowPopup = ({
       onClose={onClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
+      data-testid="modal-row-popup"
     >
       <Box sx={style}>
         {/* Verify if we need a modal for the Enum Type or the List Type to display the title */}
@@ -233,6 +234,7 @@ const AddRowPopup = ({
                           <MenuItem
                             key={index}
                             value={row[column.references_by]}
+                            data-testid="select-field-item"
                           >
                             {row[displayField[count]]}
                           </MenuItem>
