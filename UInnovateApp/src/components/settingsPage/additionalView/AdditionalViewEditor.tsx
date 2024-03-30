@@ -17,21 +17,23 @@ import {
 } from "@mui/icons-material";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/Store";
-import { AuthState } from '../../../redux/AuthSlice';
-import  Audits  from "../../../virtualmodel/Audits";
-
+import { AuthState } from "../../../redux/AuthSlice";
+import Audits from "../../../virtualmodel/Audits";
 
 function CustomToggle({ children, eventKey }) {
   const [isOpen, setIsOpen] = useState<Boolean>(false);
-  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+  const { user: loggedInUser }: AuthState = useSelector(
+    (state: RootState) => state.auth
+  );
   const openOnClick = useAccordionButton(eventKey, () => {
     setIsOpen(!isOpen);
     console.log("open custom!");
 
-    Audits.logAudits( 
+    Audits.logAudits(
       loggedInUser || "",
       "Open custom view",
-      "Opened a custom view with the following values: " + JSON.stringify(eventKey),
+      "Opened a custom view with the following values: " +
+        JSON.stringify(eventKey),
       "",
       ""
     );
@@ -66,7 +68,9 @@ const AdditionalViewEditor = ({
   const handleClick = () => {
     setShowModal(true);
   };
-  const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
+  const { user: loggedInUser }: AuthState = useSelector(
+    (state: RootState) => state.auth
+  );
   const handleDelete = async (id: string, isCustom: boolean) => {
     const res = deleteView(id, isCustom);
     if (await res) {
@@ -134,8 +138,12 @@ const AdditionalViewEditor = ({
                           <div className="hstack gap-3">
                             <div>{view.viewname}</div>
                             <div className="vr"></div>
-                            <div>target table: {view.tablename}</div>
-                            <div className="vr"></div>
+                            {view.tablename && (
+                              <>
+                                <div>target table: {view.tablename}</div>
+                                <div className="vr"></div>
+                              </>
+                            )}
                             <Badge pill bg="dark">
                               {getViewTypeEnum(view.viewtype)}
                             </Badge>
@@ -153,7 +161,7 @@ const AdditionalViewEditor = ({
                                 onClick={(e) =>
                                   handleDelete(
                                     `${view.id}`,
-                                    view.viewtype === ViewTypeEnum.Custom,
+                                    view.viewtype === ViewTypeEnum.Custom
                                   )
                                 }
                               >

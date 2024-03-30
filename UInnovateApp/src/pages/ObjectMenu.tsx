@@ -21,6 +21,7 @@ import {
   getCustomViews,
   getViewsBySchema,
 } from "../virtualmodel/AdditionalViewsDataAccessor";
+import DashboardView from "../components/DashboardView";
 
 export interface viewSelection {
   schema: string;
@@ -38,7 +39,7 @@ interface customTemplate {
 }
 export function ObjectMenu() {
   const selectedSchema: string = useSelector(
-    (state: RootState) => state.schema.value,
+    (state: RootState) => state.schema.value
   );
   const navigate = useNavigate();
   const handleTableSelect = (table: Table) => {
@@ -47,7 +48,7 @@ export function ObjectMenu() {
     // Navigate to the TableListView route with the selected table name
 
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}`,
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}`
     );
   };
 
@@ -55,7 +56,7 @@ export function ObjectMenu() {
     p_schema: string | undefined,
     p_tableName: string | undefined,
     p_viewName: string | undefined,
-    p_viewType: ViewTypeEnum = ViewTypeEnum.Default,
+    p_viewType: ViewTypeEnum = ViewTypeEnum.Default
   ) => {
     if (p_schema && p_tableName) {
       let viewType = p_viewType;
@@ -99,7 +100,7 @@ export function ObjectMenu() {
     p_schema: string,
     p_tableName: string,
     p_viewName: string,
-    p_viewType: ViewTypeEnum,
+    p_viewType: ViewTypeEnum
   ) => {
     if (p_viewType == ViewTypeEnum.Custom) {
       const abortCtrl = new AbortController();
@@ -130,7 +131,7 @@ export function ObjectMenu() {
       async (data: DataRow[] | undefined) => {
         let customTemplates: customTemplate[] = [];
         const filteredData = data?.filter(
-          (r) => r.viewtype == ViewTypeEnum.Custom,
+          (r) => r.viewtype == ViewTypeEnum.Custom
         );
         let customViews: DataRow[] = [];
         await getCustomViews((data: DataRow[] | undefined) => {
@@ -139,7 +140,7 @@ export function ObjectMenu() {
 
         filteredData?.map((data) => {
           const matching_template = customViews.filter(
-            (x) => x.settingid == data.id,
+            (x) => x.settingid == data.id
           );
           if (matching_template.length > 0) {
             const template: customTemplate = {
@@ -150,7 +151,7 @@ export function ObjectMenu() {
           }
         });
         setCustomViews(customTemplates || []);
-      },
+      }
     );
   };
 
@@ -217,6 +218,11 @@ export function ObjectMenu() {
             {viewType == ViewTypeEnum.Calendar && (
               <>
                 <span>Calendar view</span>
+              </>
+            )}
+            {viewType == ViewTypeEnum.Kpi && (
+              <>
+                <DashboardView />
               </>
             )}
             {viewType == ViewTypeEnum.Timeline && (

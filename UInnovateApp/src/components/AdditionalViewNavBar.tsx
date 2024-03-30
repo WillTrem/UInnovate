@@ -14,7 +14,7 @@ interface AdditionalViewNavBarProp {
     p_schema: string,
     p_tableName: string,
     p_viewName: string,
-    p_viewType: ViewTypeEnum,
+    p_viewType: ViewTypeEnum
   ) => void;
 }
 const AdditionalViewNavBar = ({
@@ -54,7 +54,7 @@ interface AdditionalTableViewSelectorProp {
     p_schema: string,
     p_tableName: string,
     p_viewName: string,
-    p_viewType: ViewTypeEnum,
+    p_viewType: ViewTypeEnum
   ) => void;
 }
 const AdditionalTableViewSelector = ({
@@ -79,7 +79,7 @@ const AdditionalTableViewSelector = ({
       view.schemaname,
       view.tablename,
       view.viewname,
-      view.viewtype,
+      view.viewtype
     );
   };
 
@@ -90,7 +90,13 @@ const AdditionalTableViewSelector = ({
           eventKey={view.viewname}
           onClick={() => {
             handleActiveView(view);
-            navigate(`/${view.schemaname}/${view.tablename}/${view.viewname}`);
+            if (view.viewtype === ViewTypeEnum.Kpi) {
+              navigate(`/${view.schemaname}/${view.viewname}`);
+            } else {
+              navigate(
+                `/${view.schemaname}/${view.tablename}/${view.viewname}`
+              );
+            }
           }}
         >
           {view.viewname}

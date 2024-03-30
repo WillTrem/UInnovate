@@ -29,7 +29,7 @@ const AdditionalViewModal = ({
 
   const schemaName = useSelector((state: RootState) => state.schema.value);
   const { user: loggedInUser }: AuthState = useSelector(
-    (state: RootState) => state.auth,
+    (state: RootState) => state.auth
   );
 
   useEffect(() => {
@@ -77,7 +77,7 @@ const AdditionalViewModal = ({
         ", " +
         JSON.stringify(customCode),
       schemaName,
-      tableName,
+      tableName
     );
 
     insertNewView(schemaName, tableName, viewName, viewType, customCode);
@@ -94,7 +94,7 @@ const AdditionalViewModal = ({
         const text = reader.result;
         setCustomCode(text);
       },
-      false,
+      false
     );
     if (file) {
       reader.readAsText(file);
@@ -135,22 +135,25 @@ const AdditionalViewModal = ({
                 onChange={(e) => setViewType(parseInt(e.target.value))}
               >
                 <option value={ViewTypeEnum.Calendar}>Calendar</option>
+                <option value={ViewTypeEnum.Kpi}>KPI Dashboard</option>
                 <option value={ViewTypeEnum.Timeline}>Timeline</option>
                 <option value={ViewTypeEnum.TreeView}>Tree View</option>
                 <option value={ViewTypeEnum.Custom}>Custom</option>
               </Form.Select>
             </Form.Group>
-            <Form.Group className="mb-3" controlId="viewTable">
-              <Form.Label>tables</Form.Label>
-              <Form.Select onChange={(e) => setTableName(e.target.value)}>
-                {tableList &&
-                  tableList.map((table) => (
-                    <option key={table.table_name} value={table.table_name}>
-                      {table.table_name}
-                    </option>
-                  ))}
-              </Form.Select>
-            </Form.Group>
+            {viewType !== ViewTypeEnum.Kpi && (
+              <Form.Group className="mb-3" controlId="viewTable">
+                <Form.Label>tables</Form.Label>
+                <Form.Select onChange={(e) => setTableName(e.target.value)}>
+                  {tableList &&
+                    tableList.map((table) => (
+                      <option key={table.table_name} value={table.table_name}>
+                        {table.table_name}
+                      </option>
+                    ))}
+                </Form.Select>
+              </Form.Group>
+            )}
             {viewType === ViewTypeEnum.Custom && (
               <Form.Group className="mb-3" controlId="viewCustomCode">
                 <Form.Label>view custom code</Form.Label>
