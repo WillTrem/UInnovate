@@ -516,21 +516,6 @@ BEGIN
     AND pg_proc.proname = p_function_name;
 END;
 $$ LANGUAGE plpgsql STABLE;
-
--- Fetch Functions with no args
-CREATE OR REPLACE FUNCTION meta.get_procedures_with_no_args(p_schema text)
-RETURNS TABLE(function_name text) AS $$
-BEGIN
-    -- Start with a basic query that's known to work
-    RETURN QUERY 
-    SELECT proname::text AS function_name -- Explicit casting, for diagnostic purposes
-    FROM pg_proc
-    JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid
-    WHERE pg_namespace.nspname = p_schema
-    AND pg_proc.pronargs = 0
-    AND pg_proc.prokind = 'p';
-END;
-$$ LANGUAGE plpgsql;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas
