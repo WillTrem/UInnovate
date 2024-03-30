@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/Store';
 import { AuthState } from '../../redux/AuthSlice';
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { DataAccessor } from '../../virtualmodel/DataAccessor';
 import vmd from '../../virtualmodel/VMD';
 import  Audits  from "../../virtualmodel/Audits";
 import { IoLockClosed } from 'react-icons/io5';
 import { MdDelete } from 'react-icons/md';
+import "../../styles/InternationalizationTab.css";
+import { Button } from "@mui/material";
 
 const buttonStyle = {
     marginRight: 10,
