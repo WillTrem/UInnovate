@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import vmd, { Column, Table } from "../../virtualmodel/VMD";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import {
@@ -19,68 +19,80 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
   table,
   currentRow,
 }: TableListViewProps) => {
-  const [Columns, setColumns] = useState<Column[][]>([]);
-  const [rows, setRows] = useState<Row[][] | undefined>([]);
-  const getTable = JSON.parse(table.lookup_tables);
-  const count = Object.keys(getTable).length - 1; // -1 to account for the row key and checks for the number of look up tables that are present
+  const [tableLookups, setTableLookup] = useState<string[]>([]); // [tableName, type
+  const [tablesData, setTablesData] = useState<{ tableName: string, columns: Column[], rows: Row[] }[]>([]);
+  useEffect(() => {
+    console.log("test")
 
-  const LookUpTables = (num: number) => {
-    num = num - 1;
+    const getTable = JSON.parse(table.lookup_tables);
+    const count = Object.keys(getTable).length - 1; // -1 to account for the row key and checks for the number of look up tables that are present
+    const tableLookup = [];
+    for (let i = -1; i < count - 1; i++) {
+      if (getTable[i] != "none") {
+        tableLookup.push(getTable[i]);
+      }
+    }
+    setTableLookup(tableLookup);
+  }, [table]);
 
-    //if not settings are present for look up tables
-    if (getTable[num] == "none") {
-      return <></>;
-    } else {
-      const attributes = table.getColumns();
-      const value = getTable[num].split(":");
-      const tableName = value[0].trim();
-      const type = value[1].trim();
 
-      let column = "bruh";
+  useEffect(() => {
+    console.log("test")
+    const fetchTableData = async () => {
+      const promises = tableLookups.map(async (lookup) => {
 
-      attributes?.map((attribute) => {
-        //checks for references table and referenced table
-        if (type == "references") {
-          if (attribute.references_table == tableName) {
-            column = attribute.references_by;
-          }
-        }
+        const attributes = table.getColumns();
+        const value = lookup.split(":");
+        const tableName = value[0].trim();
+        const type = value[1].trim();
 
-        if (type == "referenced") {
-          if (
-            attribute.referenced_table != null &&
-            attribute.referenced_table != "null"
-          ) {
-            attribute.referenced_table.split(",").map((table) => {
-              if (table.trim() == tableName) {
-                column = attribute.referenced_by;
-              }
-            });
-          }
-        }
-      });
+        let column = "";
 
-      let columnValue = currentRow[column];
-
-      if (columnValue == undefined) {
         attributes?.map((attribute) => {
-          if (attribute.is_editable == false) {
-            columnValue = currentRow[attribute.column_name];
+          //checks for references table and referenced table
+          if (type == "references") {
+            if (attribute.references_table == tableName) {
+              column = attribute.references_by;
+            }
+          }
+
+          if (type == "referenced") {
+            if (
+              attribute.referenced_table != null &&
+              attribute.referenced_table != "null"
+            ) {
+              attribute.referenced_table.split(",").map((table) => {
+                if (table.trim() == tableName) {
+                  column = attribute.referenced_by;
+                }
+              });
+            }
           }
         });
-      }
 
-      const getRows = useCallback(async () => {
+        let columnValue = currentRow[column];
+
+        if (columnValue == undefined) {
+          attributes?.map((attribute) => {
+            if (attribute.is_editable == false) {
+              columnValue = currentRow[attribute.column_name];
+            }
+          });
+        }
+
+
         const schemaObj = vmd.getTableSchema(tableName);
         if (!schemaObj) {
-          return <>SchemaObj did not work</>;
+          console.error("SchemaObj did not work");
+          return { tableName: "", columns: [], rows: [] }; // Return a default object
         }
         const tableObj = vmd.getTable(schemaObj.schema_name, tableName);
         if (!tableObj) {
-          return <>tableObj did not work</>;
+          console.error("tableObj did not work");
+          return { tableName: "", columns: [], rows: [] }; // Return a default object
         }
-        const Colss = tableObj.getColumns();
-        setColumns((prevColumns) => [...prevColumns, Colss]);
+        const columns = tableObj.getColumns();
+        // setColumns((prevColumns) => [...prevColumns, Colss]);
         const data_accessor: DataAccessor =
           vmd.getRowsDataAccessorForLookUpTable(
             schemaObj.schema_name,
@@ -88,37 +100,44 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
             column,
             columnValue
           );
-        const lines = await data_accessor.fetchRows();
-        if (!lines) {
-          return console.error("Could not fetch rows");
-        }
-        // Filter the rows to only include the visible columns
-        const filteredRows = lines?.map((row) => {
-          const filteredRowData: { [key: string]: string | number | boolean } =
-            {};
-          Colss.forEach((column) => {
+        const rows = await data_accessor.fetchRows();
+
+        const filteredRows = rows?.map((row) => {
+          const filteredRowData: { [key: string]: string | number | boolean } = {};
+          columns.forEach((column) => {
             filteredRowData[column.column_name] = row[column.column_name];
           });
           return filteredRowData;
         });
-        setRows((prevRows) => [...(prevRows || []), filteredRows]);
-      }, [columnValue, tableName, column]);
+        
+        
+        
+        console.log(filteredRows)
+        if (!filteredRows) {
+          console.error("Could not fetch rows");
+          return { tableName: "", columns: [], rows: [] };
+        }
 
-      useEffect(() => {
-        getRows();
-      }, [getRows]);
+        // setRows((prevRows) => [...(prevRows || []), filteredRows]);
+        return { tableName, columns, rows: filteredRows };
+      });
 
-      if (!rows) {
-        return <></>;
-      }
+      const tablesData = await Promise.all(promises);
+      setTablesData(tablesData);
+    };
 
-      return (
-        <div>
+    fetchTableData();
+  }, [tableLookups]);
+
+  return (
+    <>
+      {tablesData.map((tableData, index) => (
+        <div key={index}>
           <div style={{ marginLeft: "12px" }} data-testid="look-up-table-text">
-            {tableName} {type} look up table:
+            {tableData.tableName} look up table:
           </div>
           <div></div>
-          {Columns[num + 1] && rows[num + 1] ? (
+          {tableData.columns && tableData.rows ? (
             <TableContainer style={{ marginBottom: "2em" }}>
               <TableMUI
                 className="table-container"
@@ -129,7 +148,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
               >
                 <TableHead>
                   <TableRow>
-                    {Columns[num + 1].map((column) => {
+                    {tableData.columns.map((column) => {
                       return (
                         <TableCell key={column.column_name}>
                           {column.column_name}
@@ -139,12 +158,9 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Array.isArray(rows[num + 1]) &&
-                    rows[num + 1].map((row, rowIdx) => (
-                      <TableRow
-                        key={rowIdx}
-                        sx={{ backgroundColor: "#f2f2f2" }}
-                      >
+                  {Array.isArray(tableData.rows) &&
+                    tableData.rows.map((row, rowIdx) => (
+                      <TableRow key={rowIdx} sx={{ backgroundColor: "#f2f2f2" }}>
                         {Object.values(row).map((cell, idx) => (
                           <TableCell key={idx}>
                             {cell !== null &&
@@ -163,14 +179,6 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
             <p>Loading...</p>
           )}
         </div>
-      );
-    }
-  };
-
-  return (
-    <>
-      {[...Array(count)].map((_, index) => (
-        <div key={index}>{LookUpTables(index)}</div>
       ))}
     </>
   );
