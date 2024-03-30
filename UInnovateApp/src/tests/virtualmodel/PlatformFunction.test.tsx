@@ -172,6 +172,7 @@ describe("PlatformFunction", () => {
       functionName: "your-function-name",
       stored_procedure: "your-stored-procedure",
       cron_schedule: "your-cron-schedule",
+      schema: "your-schema",
       // TODO: Add other parameters if needed
     };
     const mockSchema = { schema_name: "your-schema" };
@@ -212,6 +213,7 @@ describe("PlatformFunction", () => {
     const params = {
       functionName: "your-function-name",
       stored_procedure: "your-stored-procedure",
+      schema: "your-schema",
       // TODO: Add other parameters if needed
     };
     const mockSchema = { schema_name: "your-schema" };
