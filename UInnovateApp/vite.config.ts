@@ -8,9 +8,9 @@ export default defineConfig({
   base: "/",
   plugins: [
     react({
-      jsxImportSource: '@emotion/react',
+      jsxImportSource: "@emotion/react",
       babel: {
-        plugins: ['@emotion/babel-plugin'],
+        plugins: ["@emotion/babel-plugin"],
       },
     }),
     eslintPlugin({
@@ -46,5 +46,20 @@ export default defineConfig({
   build: {
     target: "ES2022",
     outDir: "build",
+  },
+  optimizeDeps: {
+    include: [
+      "lodash",
+      "lodash-es",
+      "recharts",
+      "react-grid-layout",
+      "yaml",
+      "react-kpi-dashboard",
+    ],
+  },
+  resolve: {
+    alias: {
+      lodash: "lodash-es",
+    },
   },
 });
