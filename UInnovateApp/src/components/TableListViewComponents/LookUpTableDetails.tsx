@@ -19,10 +19,9 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
   table,
   currentRow,
 }: TableListViewProps) => {
-  const [tableLookups, setTableLookup] = useState<string[]>([]); // [tableName, type
+  const [tableLookups, setTableLookup] = useState<string[]>([]);
   const [tablesData, setTablesData] = useState<{ tableName: string, columns: Column[], rows: Row[] }[]>([]);
   useEffect(() => {
-    console.log("test")
 
     const getTable = JSON.parse(table.lookup_tables);
     const count = Object.keys(getTable).length - 1; // -1 to account for the row key and checks for the number of look up tables that are present
@@ -37,10 +36,8 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
 
 
   useEffect(() => {
-    console.log("test")
     const fetchTableData = async () => {
       const promises = tableLookups.map(async (lookup) => {
-
         const attributes = table.getColumns();
         const value = lookup.split(":");
         const tableName = value[0].trim();
@@ -80,7 +77,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
           });
         }
 
-
+        //API call to get the data from the table
         const schemaObj = vmd.getTableSchema(tableName);
         if (!schemaObj) {
           console.error("SchemaObj did not work");
@@ -92,7 +89,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
           return { tableName: "", columns: [], rows: [] }; // Return a default object
         }
         const columns = tableObj.getColumns();
-        // setColumns((prevColumns) => [...prevColumns, Colss]);
+
         const data_accessor: DataAccessor =
           vmd.getRowsDataAccessorForLookUpTable(
             schemaObj.schema_name,
@@ -109,10 +106,9 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
           });
           return filteredRowData;
         });
-        
-        
-        
-        console.log(filteredRows)
+
+
+
         if (!filteredRows) {
           console.error("Could not fetch rows");
           return { tableName: "", columns: [], rows: [] };
@@ -147,7 +143,7 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
                 data-testid="lookUp-table"
               >
                 <TableHead>
-                  <TableRow>
+                  <TableRow sx={{ backgroundColor: "light grey" }}>
                     {tableData.columns.map((column) => {
                       return (
                         <TableCell key={column.column_name}>
@@ -160,12 +156,12 @@ const LookUpTableDetails: React.FC<TableListViewProps> = ({
                 <TableBody>
                   {Array.isArray(tableData.rows) &&
                     tableData.rows.map((row, rowIdx) => (
-                      <TableRow key={rowIdx} sx={{ backgroundColor: "#f2f2f2" }}>
+                      <TableRow key={rowIdx} sx={{ backgroundColor: "white" }}>
                         {Object.values(row).map((cell, idx) => (
                           <TableCell key={idx}>
                             {cell !== null &&
-                            cell !== undefined &&
-                            typeof cell !== "object"
+                              cell !== undefined &&
+                              typeof cell !== "object"
                               ? cell.toString()
                               : ""}
                           </TableCell>
