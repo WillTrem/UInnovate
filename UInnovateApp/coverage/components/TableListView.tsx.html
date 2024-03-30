@@ -1482,7 +1482,14 @@
 <a name='L1417'></a><a href='#L1417'>1417</a>
 <a name='L1418'></a><a href='#L1418'>1418</a>
 <a name='L1419'></a><a href='#L1419'>1419</a>
-<a name='L1420'></a><a href='#L1420'>1420</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L1420'></a><a href='#L1420'>1420</a>
+<a name='L1421'></a><a href='#L1421'>1421</a>
+<a name='L1422'></a><a href='#L1422'>1422</a>
+<a name='L1423'></a><a href='#L1423'>1423</a>
+<a name='L1424'></a><a href='#L1424'>1424</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2459,7 +2466,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2561,6 +2567,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -2903,7 +2911,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
-import type {} from "@mui/x-date-pickers/themeAugmentation";
+import type { } from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
@@ -2936,7 +2944,7 @@ import {
   createTheme,
   ThemeProvider,
   Menu,
-  Checkbox,
+  Checkbox
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -2977,6 +2985,9 @@ import {
 &nbsp;
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 import { set } from "lodash";
+import { CloudUpload } from '@mui/icons-material'
+import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
+import { CSVUploadButton } from "./CSVUploadButton";
 &nbsp;
 interface TableListViewProps {
   table: Table;
@@ -3065,7 +3076,7 @@ const TableListView: React.FC&lt;TableListViewProps&gt; = ({
     useState&lt;ConfirmPopupContent&gt;({
       title: "",
       message: "",
-      confirmAction: <span class="fstat-no" title="function not covered" >() =&gt; {</span>},
+      confirmAction: <span class="fstat-no" title="function not covered" >() =&gt; {</span> },
     });
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
@@ -3600,56 +3611,56 @@ const TableListView: React.FC&lt;TableListViewProps&gt; = ({
         // It's a single click
         handleOpenPanel(row);
       }
-      setClickAction(null);  
-    }, 200); 
+      setClickAction(null);
+    }, 200);
   };
 &nbsp;
-  const handleSave = <span class="fstat-no" title="function not covered" >async (e</span>, rowIdx : number, columnName : string) =&gt; {
-      const confirmAction = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async () =&gt; {</span></span>
-<span class="cstat-no" title="statement not covered" >        if (e.preventDefault) <span class="cstat-no" title="statement not covered" >e.preventDefault();</span></span>
-      
-        const newValue = <span class="cstat-no" title="statement not covered" >e.target.value;</span>
-        const updatedRow = <span class="cstat-no" title="statement not covered" >{ [columnName]: newValue };</span>
-      
-        const schema = <span class="cstat-no" title="statement not covered" >vmd.getTableSchema(table.table_name);</span>
-<span class="cstat-no" title="statement not covered" >        if (!schema) {</span>
-<span class="cstat-no" title="statement not covered" >          console.error("Schema not found");</span>
-<span class="cstat-no" title="statement not covered" >          return;</span>
-        }
-      
-<span class="cstat-no" title="statement not covered" >        Logger.logUserAction(</span>
-          loggedInUser || "",
-          "Edited Cell",
-          `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+  const handleSave = <span class="fstat-no" title="function not covered" >async (e</span>, rowIdx: number, columnName: string) =&gt; {
+    const confirmAction = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >async () =&gt; {</span></span>
+<span class="cstat-no" title="statement not covered" >      if (e.preventDefault) <span class="cstat-no" title="statement not covered" >e.preventDefault();</span></span>
+&nbsp;
+      const newValue = <span class="cstat-no" title="statement not covered" >e.target.value;</span>
+      const updatedRow = <span class="cstat-no" title="statement not covered" >{ [columnName]: newValue };</span>
+&nbsp;
+      const schema = <span class="cstat-no" title="statement not covered" >vmd.getTableSchema(table.table_name);</span>
+<span class="cstat-no" title="statement not covered" >      if (!schema) {</span>
+<span class="cstat-no" title="statement not covered" >        console.error("Schema not found");</span>
+<span class="cstat-no" title="statement not covered" >        return;</span>
+      }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >      Logger.logUserAction(</span>
+        loggedInUser || "",
+        "Edited Cell",
+        `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+        schema.schema_name,
+        table.table_name
+      );
+&nbsp;
+      const primaryKeyValue = <span class="cstat-no" title="statement not covered" >Object.keys(currentRow.row)[0];</span>
+      // Use the primary key for the row to identify which row to update
+      const storedPrimaryKeyValue = <span class="cstat-no" title="statement not covered" >currentRow.row[primaryKeyValue];</span>
+      // Call the update API
+<span class="cstat-no" title="statement not covered" >      try {</span>
+        const data_accessor: DataAccessor = <span class="cstat-no" title="statement not covered" >vmd.getUpdateRowDataAccessorView(</span>
           schema.schema_name,
-          table.table_name
+          table.table_name,
+          updatedRow,
+          primaryKeyValue as string,
+          storedPrimaryKeyValue as string
         );
-      
-        const primaryKeyValue = <span class="cstat-no" title="statement not covered" >Object.keys(currentRow.row)[0];</span>
-        // Use the primary key for the row to identify which row to update
-        const storedPrimaryKeyValue = <span class="cstat-no" title="statement not covered" >currentRow.row[primaryKeyValue];</span>
-        // Call the update API
-<span class="cstat-no" title="statement not covered" >        try {</span>
-          const data_accessor: DataAccessor = <span class="cstat-no" title="statement not covered" >vmd.getUpdateRowDataAccessorView(</span>
-            schema.schema_name,
-            table.table_name,
-            updatedRow,
-            primaryKeyValue as string,
-            storedPrimaryKeyValue as string
-          );
-<span class="cstat-no" title="statement not covered" >          data_accessor.updateRow().then(<span class="fstat-no" title="function not covered" >(r</span>es) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            getRows();</span>
-          });
-          // Reflect the update locally
-          const updatedRows = <span class="cstat-no" title="statement not covered" >[...rows];</span>
-<span class="cstat-no" title="statement not covered" >          updatedRows[rowIdx] = new Row(updatedRow);</span>
-<span class="cstat-no" title="statement not covered" >          setRows(updatedRows);</span>
-      
-          // Exit editing mode
-        } catch (error) {
-<span class="cstat-no" title="statement not covered" >          console.error("Failed to update row", error);</span>
-        }
-<span class="cstat-no" title="statement not covered" >        setEditingCell(null);</span>
+<span class="cstat-no" title="statement not covered" >        data_accessor.updateRow().then(<span class="fstat-no" title="function not covered" >(r</span>es) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          getRows();</span>
+        });
+        // Reflect the update locally
+        const updatedRows = <span class="cstat-no" title="statement not covered" >[...rows];</span>
+<span class="cstat-no" title="statement not covered" >        updatedRows[rowIdx] = new Row(updatedRow);</span>
+<span class="cstat-no" title="statement not covered" >        setRows(updatedRows);</span>
+&nbsp;
+        // Exit editing mode
+      } catch (error) {
+<span class="cstat-no" title="statement not covered" >        console.error("Failed to update row", error);</span>
+      }
+<span class="cstat-no" title="statement not covered" >      setEditingCell(null);</span>
     };
 &nbsp;
 <span class="cstat-no" title="statement not covered" >    setConfirmPopupContent({</span>
@@ -3875,8 +3886,7 @@ const TableListView: React.FC&lt;TableListViewProps&gt; = ({
 <span class="cstat-no" title="statement not covered" >      detailtype = "standalone";</span>
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -3986,19 +3996,21 @@ const TableListView: React.FC&lt;TableListViewProps&gt; = ({
           )}
         &lt;/div&gt;
       &lt;/div&gt;
-      &lt;Button
-        style={{
-          ...buttonStyle,
-          marginTop: "",
-          backgroundColor: conditionFilter === "" ? "#404040" : <span class="branch-1 cbranch-no" title="branch not covered" >"#1976d2",</span>
-        }}
-        variant="contained"
-        onClick={ResetFilter}
-        data-testid="reset-filter-button"
-      &gt;
-        Reset Filters
-      &lt;/Button&gt;
-&nbsp;
+      &lt;Box display={"flex"} justifyContent={"space-between"} width={"100%"}&gt;
+        &lt;Button
+          style={{
+            ...buttonStyle,
+            marginTop: "",
+            backgroundColor: conditionFilter === "" ? "#404040" : <span class="branch-1 cbranch-no" title="branch not covered" >"#1976d2",</span>
+          }}
+          variant="contained"
+          onClick={ResetFilter}
+          data-testid="reset-filter-button"
+        &gt;
+          Reset Filters
+        &lt;/Button&gt;
+        &lt;CSVUploadButton table={table} getRows={getRows}/&gt;
+      &lt;/Box&gt;
       &lt;TableContainer&gt;
         &lt;MUITable
           className="table-container"
@@ -4122,8 +4134,8 @@ const TableListView: React.FC&lt;TableListViewProps&gt; = ({
                     }
                   &gt;
                     {editingCell &amp;&amp;
-<span class="branch-1 cbranch-no" title="branch not covered" >                    editingCell.rowIdx === rowIdx &amp;&amp;</span>
-<span class="branch-2 cbranch-no" title="branch not covered" >                    editingCell.columnName === columns[idx].column_name ? (</span>
+<span class="branch-1 cbranch-no" title="branch not covered" >                      editingCell.rowIdx === rowIdx &amp;&amp;</span>
+<span class="branch-2 cbranch-no" title="branch not covered" >                      editingCell.columnName === columns[idx].column_name ? (</span>
 <span class="branch-0 cbranch-no" title="branch not covered" >                      &lt;input</span>
                         type="text"
                         defaultValue={editingCell.value}
@@ -4141,10 +4153,10 @@ const TableListView: React.FC&lt;TableListViewProps&gt; = ({
                           ? <span class="branch-0 cbranch-no" title="branch not covered" >cell.toString()</span>
                           : columns[idx].references_table === "filegroup"
                             ? (
-                                fileGroupsView?.find(
-<span class="fstat-no" title="function not covered" >                                  (f</span>ileGroup) =&gt; <span class="cstat-no" title="statement not covered" >fileGroup.id === cell</span>
-                                )?.count || 0
-                              ).toString() + " file(s)"
+                              fileGroupsView?.find(
+<span class="fstat-no" title="function not covered" >                                (f</span>ileGroup) =&gt; <span class="cstat-no" title="statement not covered" >fileGroup.id === cell</span>
+                              )?.count || 0
+                            ).toString() + " file(s)"
                             : (cell as React.ReactNode)}
                       &lt;/Box&gt;
                     )}
@@ -4327,7 +4339,7 @@ export default TableListView;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-03-23T19:01:56.999Z
+                at 2024-03-29T01:52:53.290Z
             </div>
         <script src="../prettify.js"></script>
         <script>
