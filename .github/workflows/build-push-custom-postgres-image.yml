@@ -32,7 +32,7 @@ jobs:
         with:
           build-args: "JWT_SECRET=${{ secrets.JWT_SECRET }}"
           push: true
-          # tags: postgoat/postgres-custom:latest
+          tags: ${{ secrets.ACR_URL}}/postgres-custom:latest
           file: Dockerfile.postgres
           
 
