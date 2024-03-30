@@ -85,21 +85,20 @@ export const CronJobsTab = () => {
             cron_schedule: cronSchedule,
             schema: selectedSchema
         };
-        if (!cronSchedule || selectedProc == 'Select a procedure') {
-            // Update the message and show the InfoPopup
+        if (!cronSchedule || selectedProc == '' || selectedProc == 'Select a procedure') {
             setInfoPopupMessage('Please specify a cron schedule and procedure before attempting to schedule a job.');
             setIsInfoPopupOpen(true);
-            return; // Prevent further execution
+            return; 
         }
         if (!isValidCron(cronSchedule)) {
             setInfoPopupMessage('The specified cron schedule is invalid. Please enter a valid cron schedule.');
             setIsInfoPopupOpen(true);
-            return; // Prevent further execution
+            return; 
         }
         return new Promise((resolve, reject) => {
             scheduleProcedure(params)
                 .then(response => {
-                    // Handle success here
+                    
                     resolve(response);
 
                     Audits.logAudits(
@@ -111,7 +110,7 @@ export const CronJobsTab = () => {
                     )
                 })
                 .catch(error => {
-                    // Handle error here
+                   
                     console.error("Error scheduling cron job", error);
                     reject(error);
                 });
@@ -124,11 +123,14 @@ export const CronJobsTab = () => {
             stored_procedure: selectedProc,
             schema: selectedSchema
         };
-
+        if (selectedProc == '' || selectedProc == 'Select a procedure') {
+            setInfoPopupMessage('Please specify a procedure before attempting to unschedule a job.');
+            setIsInfoPopupOpen(true);
+            return; 
+        }
         return new Promise((resolve, reject) => {
             unscheduleProcedure(params)
                 .then(response => {
-                    // Handle success here
                     resolve(response);
 
                     Audits.logAudits(
@@ -140,8 +142,8 @@ export const CronJobsTab = () => {
                     )
                 })
                 .catch(error => {
-                    // Handle error here
-                    console.error("Error unscheduling cron job", error);
+                    setInfoPopupMessage('Error unscheduling cron job. Make sure the job is scheduled before attempting to unschedule it.');
+                    setIsInfoPopupOpen(true);
                     reject(error);
                 });
         });
@@ -201,7 +203,7 @@ export const CronJobsTab = () => {
                         duration: detail.end_time && detail.start_time
                             ? formatDuration(new Date(detail.end_time).getTime() - new Date(detail.start_time).getTime())
                             : 'N/A',
-                        result: detail.return_message,
+                        result: detail.status,
                         successful: detail.status
                     });
                 }
@@ -227,14 +229,6 @@ export const CronJobsTab = () => {
 
     useEffect(() => {
         updateProcedureNames();
-    }, []);
-
-    useEffect(() => {
-        if (procedures.length > 0 && selectedProc === '') {
-            const initialProc = procedures[0];
-            setSelectedProc(initialProc);
-            fetchExecutionLogsForProc(initialProc);
-        }
     }, []);
     useEffect(() => {
         const intervalId = setInterval(() => {

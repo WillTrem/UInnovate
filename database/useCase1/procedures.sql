@@ -268,3 +268,51 @@ BEGIN
         urs.recal_status = 'calibration_needed_immediately';
 END;
 $$ LANGUAGE plpgsql;
+
+-- Demo Procedures
+
+-- # 1. Update Unit Availability
+--  updates the availability status of units based on their last returned date. 
+-- If a unit has not been returned within a specified number of days, its availability status is set to false 
+-- indicating it's not available.
+CREATE OR REPLACE PROCEDURE app_rentals.update_unit_availability()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE app_rentals.unit
+    SET unit_available = FALSE
+    WHERE unit_last_returned_date < CURRENT_DATE - INTERVAL '30 days';
+END;
+$$;
+
+-- # 2 Archive Old Quotations
+-- moves old quotations (older than a year) 
+-- to an archive table for historical records and then deletes them from the main quotation table.
+CREATE OR REPLACE PROCEDURE app_rentals.archive_old_quotations()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO app_rentals.quotation_archive (quotation_id, quotation_date, tools_quoted_qty, totalprice)
+    SELECT quotation_id, quotation_date, tools_quoted_qty, totalprice
+    FROM app_rentals.quotation
+    WHERE quotation_date < CURRENT_DATE - INTERVAL '1 year';
+
+    DELETE FROM app_rentals.quotation
+    WHERE quotation_date < CURRENT_DATE - INTERVAL '1 year';
+END;
+$$;
+
+
+-- #3 Restock Low Inventory Tools
+--  identifies tools with a quantity available below a certain threshold and creates restock requests for them.
+CREATE OR REPLACE PROCEDURE app_rentals.restock_low_inventory_tools()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO app_rentals.tool_restock_request (id, notice_date, restock_notice_author, qty_requested)
+    SELECT id, CURRENT_DATE, 'Automated System', 50 -- assuming a restock request of 50 units
+    FROM app_rentals.tool
+    WHERE tool_qty_available < 10; -- assuming a threshold of 10 units
+END;
+$$;
+
