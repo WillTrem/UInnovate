@@ -59,8 +59,6 @@ const AdditionalViewModal = ({
     e.preventDefault();
 
     if (form.checkValidity() === false) {
-      // e.preventDefault();
-      // e.stopPropagation();
       console.log("invalid form, redcheck data");
     } else {
       console.log("valid form, submitting");
