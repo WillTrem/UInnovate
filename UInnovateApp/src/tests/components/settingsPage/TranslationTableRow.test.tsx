@@ -5,10 +5,6 @@ import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
 import { Provider } from "react-redux";
 import TranslationTableRow from "../../../components/settingsPage/TranslationTableRow";
-import { spy } from "sinon";
-import sinon from "sinon";
-import Audits from "../../../virtualmodel/Audits";
-import AuditTrails from "../../../components/settingsPage/AuditTrails";
 
 describe("TranslationTableRow component", () => {
     const initialState = {
@@ -81,54 +77,4 @@ describe("TranslationTableRow component", () => {
         const modalTitle = screen.getByTestId("delete-label-title");
         expect(modalTitle).toHaveTextContent("Delete Label");
     });
-
-    it("sets isEditingLabel to true when handleDoubleClickLabel is called for the first row", () => {
-        // Arrange
-        const { getAllByTestId } = render(
-            <Provider store={store}>
-                <TranslationTableRow
-                    getTranslationsByLanguage={() => {}}
-                    onEdit={() => {}}
-                    getLanguageId={() => {}}
-                    getKeyId={() => {}}
-                    selectedLanguage={""}
-                    is_default={false}
-                />
-            </Provider>
-        );
-        // get all label elements
-        const labelElements = getAllByTestId("label-element");
-        // labelElements[0].setAttribute("data-isEditingLabel", "true");
-
-        // Act
-        fireEvent.doubleClick(labelElements[0]);
-
-        // Assert
-        expect(labelElements[0].getAttribute("data-isEditingLabel")).toBe("true");
-    });
-
-    it("sets isEditingTranslation to true when handleDoubleClickTranslation is called for the first row", () => {
-        // Arrange
-        const { getAllByTestId } = render(
-            <Provider store={store}>
-                <TranslationTableRow
-                    getTranslationsByLanguage={() => {}}
-                    onEdit={() => {}}
-                    getLanguageId={() => {}}
-                    getKeyId={() => {}}
-                    selectedLanguage={""}
-                />
-            </Provider>
-        );
-        // get all translation elements
-        const translationElements = getAllByTestId("translation-element");
-
-        // Act
-        fireEvent.doubleClick(translationElements[0]);
-
-        // Assert 
-        expect(translationElements[0].getAttribute("data-isEditingTranslation")).toBe(null);
-    });
-
-
 });

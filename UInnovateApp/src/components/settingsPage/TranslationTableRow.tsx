@@ -8,7 +8,6 @@ import vmd from '../../virtualmodel/VMD';
 import  Audits  from "../../virtualmodel/Audits";
 import { IoLockClosed } from 'react-icons/io5';
 import { MdDelete } from 'react-icons/md';
-import { set } from 'lodash';
 
 const buttonStyle = {
     marginRight: 10,
@@ -217,7 +216,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
 
     return (
         <tr>
-            <td onDoubleClick={handleDoubleClickLabel} className="container-labels" data-testid="label-element">
+            <td onDoubleClick={handleDoubleClickLabel} className="container-labels">
                 <input
                     value={isEditingLabel ? editedValue : keyCode}
                     onChange={handleChange}
@@ -230,8 +229,9 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
                         backgroundColor: isEditingLabel ? '#f2f2f2' : 'transparent',
                         borderRadius: '4px',
                     }}
+                    data-testid="label-element"
                 />
-                {is_default ? <IoLockClosed className="icon-lock" /> : (
+                {is_default ? <IoLockClosed className="icon-lock" data-testid="lock-label-icon"/> : (
                     <>
                         <MdDelete onClick={showModalDelete} className="icon-delete" data-testid="delete-label-icon" /> 
                     </>
@@ -279,7 +279,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
                         backgroundColor: isEditingTranslation ? '#f2f2f2' : 'transparent',
                         borderRadius: '4px',
                     }}
-                    data-testid="input-field"
+                    data-testid="translation-cell"
                 />
             </td>
         </tr> 

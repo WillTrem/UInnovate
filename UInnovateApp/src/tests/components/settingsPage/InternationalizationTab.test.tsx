@@ -1,12 +1,10 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import InternationalizationTab from "../../../components/settingsPage/InternationalizationTab"
 import { describe, expect } from "vitest";
 import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
 import { Provider } from "react-redux";
-import TranslationTableRow from "../../../components/settingsPage/InternationalizationTab";
-
 
 describe("InternationalizationTab component", () => {
 	const initialState = {
