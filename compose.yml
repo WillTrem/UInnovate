@@ -54,6 +54,13 @@ services:
     networks:
       - backend
     restart: always
+  
+  postgoat:
+    image: alexicazana/goat-dock
+    container_name: postgoat
+    ports:
+      - "8080:80"
+
 
 volumes:
   db_data:
