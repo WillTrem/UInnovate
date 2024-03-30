@@ -10,14 +10,16 @@ import { ConfigProperty } from '../../virtualmodel/ConfigProperties';
 import { saveConfigToDB } from '../../helper/SettingsHelpers';
 import { AuthState } from '../../redux/AuthSlice';
 import { RootState } from '../../redux/Store';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Audits from "../../virtualmodel/Audits";
+import { displayError } from '../../redux/NotificationSlice';
 
 type LookUpTableProps = {
   table: Table;
 }
 
 const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
+  const dispatch = useDispatch();
   const attributes = table.getColumns();
   let count = 0;
   const referencesTableList: string[] = [];
@@ -158,7 +160,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
     //function to handle increase in amount of lookup tables
     const handleButtonClick = async () => {
       if (count - 1 == counter || count == 0) {
-        alert("You can't add more lookup tables")
+        dispatch(displayError("Cannot add more lookup tables"));
       }
       else {
         const newCounterValue = counter + 1;
@@ -181,9 +183,10 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
         setCounterConfig(newCounterValue);
         handleReset();
       }
-      else
+      else {
         setCounter(0);
-      setCounterConfig(0);
+        setCounterConfig(0);
+      }
       Audits.logAudits(
         loggedInUser || "",
         "Lookup Tables",
