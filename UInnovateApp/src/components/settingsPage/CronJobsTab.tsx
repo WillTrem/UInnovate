@@ -2,16 +2,18 @@ import { useEffect, useState } from 'react';
 import {Button, Typography} from "@mui/material"
 import { ListGroup, Form, Table, Row, Col } from "react-bootstrap";
 import { DataAccessor } from "../../virtualmodel/DataAccessor";
-import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchProcedureNamesWithNoArgs } from '../../virtualmodel/PlatformFunctions';
+import { scheduleProcedure, unscheduleProcedure, ProcedureSchedulingParams, fetchFunctionNames } from '../../virtualmodel/PlatformFunctions';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
+import SchemaSelector from '../Schema/SchemaSelector';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import Tab from "react-bootstrap/Tab";
+import DisplayType from '../Schema/DisplayType';
 import vmd from "../../virtualmodel/VMD";
 import { AuthState } from '../../redux/AuthSlice';
 import  Audits  from "../../virtualmodel/Audits";
-import InfoPopup from '../PrimaryKeyErrorPopup';
+
 interface ExecutionLogEntry {
     id: any; 
     datetime: string;
@@ -36,7 +38,6 @@ const buttonStyle = {
     width: "fit-content",
   };
 export const CronJobsTab = () => {
-    const [refreshInterval, setRefreshInterval] = useState(60000); // Refresh every 60 seconds
     const [selectedProc, setSelectedProc] = useState('');
     const [cronSchedule, setCronSchedule] = useState('');
     const [procedures, setProcedures] = useState<string[]>([]); // list of stored procedures
@@ -45,61 +46,35 @@ export const CronJobsTab = () => {
     const selectedSchema = useSelector((state: RootState) => state.schema.value);
     const { schema_access } = useSelector((state: RootState) => state.auth);
     const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
-    const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
-    const [infoPopupMessage, setInfoPopupMessage] = useState('');
-
     const updateProcedureNames = async () => {
         if (!selectedSchema || schema_access.length == 0) return
         try {
             // wait for resolve of fetchFunctionNames promises
-            const functionNames = await fetchProcedureNamesWithNoArgs(selectedSchema);
+            const functionNames = await fetchFunctionNames(selectedSchema);
             const procedures = [...new Set(functionNames)];
 
             setProcedures(procedures); // update state with function names
+
+            if (procedures.length > 0) {
+                setSelectedProc(procedures[0]);
+            }
         } catch (error) {
             console.error('Error fetching function names:', error);
         }
     };
-    const isValidCron = (cronSchedule) => {
-        const parts = cronSchedule.split(' ');
-        if (parts.length !== 5) {
-            return false;
-        }
-    
-        // Regex for validating each part of the cron expression
-        // This is a simple validation and might not cover all edge cases
-        const regex = /^(\*|(\d+(,\d+)*|\d+(\/|-)\d+)|(SUN|MON|TUE|WED|THU|FRI|SAT))+$/i;
-    
-        for (const part of parts) {
-            if (!regex.test(part)) {
-                return false;
-            }
-        }
-    
-        return true;
-    };
+
     const scheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
             functionName: "schedule_job_by_name",
             stored_procedure: selectedProc,
             cron_schedule: cronSchedule,
-            schema: selectedSchema
         };
-        if (!cronSchedule || selectedProc == 'Select a procedure') {
-            // Update the message and show the InfoPopup
-            setInfoPopupMessage('Please specify a cron schedule and procedure before attempting to schedule a job.');
-            setIsInfoPopupOpen(true);
-            return; // Prevent further execution
-        }
-        if (!isValidCron(cronSchedule)) {
-            setInfoPopupMessage('The specified cron schedule is invalid. Please enter a valid cron schedule.');
-            setIsInfoPopupOpen(true);
-            return; // Prevent further execution
-        }
+    
         return new Promise((resolve, reject) => {
             scheduleProcedure(params)
                 .then(response => {
                     // Handle success here
+                    console.log("Cron job scheduled successfully");
                     resolve(response);
 
                     Audits.logAudits(
@@ -121,14 +96,14 @@ export const CronJobsTab = () => {
     const unscheduleCronJob = () => {
         const params: ProcedureSchedulingParams = {
             functionName: "unschedule_job_by_name",
-            stored_procedure: selectedProc,
-            schema: selectedSchema
+            stored_procedure: selectedProc
         };
 
         return new Promise((resolve, reject) => {
             unscheduleProcedure(params)
                 .then(response => {
                     // Handle success here
+                    console.log("Cron job unscheduled successfully");
                     resolve(response);
 
                     Audits.logAudits(
@@ -237,13 +212,6 @@ export const CronJobsTab = () => {
         }
     }, []);
     useEffect(() => {
-        const intervalId = setInterval(() => {
-            fetchExecutionLogsForProc(selectedProc);
-        }, refreshInterval);
-
-        return () => clearInterval(intervalId);
-    }, [selectedProc, refreshInterval]);
-    useEffect(() => {
         if (selectedProc) {
             fetchExecutionLogsForProc(selectedProc);
         }
@@ -296,12 +264,6 @@ export const CronJobsTab = () => {
                                             <div style={containerStyle}>
                                                 <Button variant="contained" style={buttonStyle} onClick={() => scheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Schedule Job</Button>
                                                 <Button variant="contained" style={buttonStyle} onClick={() => unscheduleCronJob().then(() => fetchExecutionLogsForProc(selectedProc))}>Unschedule Job</Button>
-                                                   {/* InfoPopup for displaying scheduling errors */}
-                                                <InfoPopup
-                                                    open={isInfoPopupOpen}
-                                                    message={infoPopupMessage}
-                                                    onClose={() => setIsInfoPopupOpen(false)}
-                                                />
                                             </div>
                                         </Form.Group>
                                     </ListGroup.Item>
