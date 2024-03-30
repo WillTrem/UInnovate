@@ -31,9 +31,9 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
         USING (constraint_name)
 );
 
-
+DROP VIEW IF EXISTS meta.columns;
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","referenced_table", "referenced_by" ) AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","is_serial", "referenced_table", "referenced_by" ) AS 
 (
   
    (
@@ -44,6 +44,7 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     STRING_AGG(DISTINCT rc.referenced_table::text, ', '),
     STRING_AGG(DISTINCT rc.referenced_column::text, ', ') AS references_by, 
     CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable,
+    ( SELECT pg_catalog.pg_get_serial_sequence(c.table_schema || '.' || c.table_name, c.column_name) IS NOT NULL) AS is_serial,
     STRING_AGG(DISTINCT ref.referee_table::text, ', '), 
     STRING_AGG(DISTINCT ref.referee_column::text, ', ') AS referenced_by
 FROM information_schema.columns AS c
@@ -397,6 +398,24 @@ BEGIN
 END;
 $BODY$;
 
+-- EXPORT FUNCTIONALITY FOR scripts
+CREATE OR REPLACE FUNCTION meta.export_scripts_to_json()
+RETURNS json
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    scripts_json json;
+BEGIN
+    SELECT COALESCE(json_agg(row_to_json(s)), '[]') INTO scripts_json
+    FROM (
+        SELECT id, name, description, content, table_name, btn_name, created_at
+        FROM meta.scripts
+    ) s;
+
+    RETURN scripts_json;
+END;
+$BODY$;
+
 -- IMPORT FUNCTIONALITY
 CREATE OR REPLACE FUNCTION meta.import_appconfig_from_json(json)
 RETURNS void
@@ -456,7 +475,36 @@ BEGIN
 END;
 $BODY$;
 
+-- Import for scripts
 
+CREATE OR REPLACE FUNCTION meta.import_scripts_from_json(json)
+RETURNS void
+LANGUAGE plpgsql
+AS $BODY$
+DECLARE
+    scripts_data json; 
+    scripts_row json;
+BEGIN
+    scripts_data := $1; -- Assign the passed JSON to scripts_data
+
+    -- Clearing the existing scripts and replace with new ones
+    DELETE FROM meta.scripts;
+
+    -- Iterate through each element in the JSON array
+    FOR scripts_row IN SELECT * FROM json_array_elements(scripts_data)
+    LOOP
+        -- Insert each script into the scripts table
+        INSERT INTO meta.scripts (id, name, description, content, table_name, btn_name, created_at)
+        VALUES ((scripts_row->>'id')::int, 
+                scripts_row->>'name', 
+                scripts_row->>'description', 
+                scripts_row->>'content', 
+                scripts_row->>'table_name', 
+                scripts_row->>'btn_name', 
+                (scripts_row->>'created_at')::timestamp );
+    END LOOP;
+END;
+$BODY$;
 -- Env Variables --
 
 -- Export for environment variables
@@ -541,6 +589,8 @@ GRANT ALL ON FUNCTION meta.export_i18n_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_i18n_from_json(json) TO configurator;
 GRANT ALL ON FUNCTION meta.export_env_vars_to_json() TO configurator;
 GRANT ALL ON FUNCTION meta.import_env_vars_from_json(json) TO configurator;
+GRANT ALL ON FUNCTION meta.export_scripts_to_json() TO configurator;
+GRANT ALL ON FUNCTION meta.import_scripts_from_json(json) TO configurator;
 GRANT USAGE ON SCHEMA information_schema TO "user";
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA information_schema TO "user";
 GRANT USAGE ON SCHEMA meta.user_logs TO "user";

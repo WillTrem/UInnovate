@@ -190,6 +190,7 @@ class VirtualModelDefinition {
           new Column(data.column),
           data.references_table,
           data.is_editable,
+          data.is_serial,
           data.references_by,
           data.referenced_table,
           data.referenced_by
@@ -372,15 +373,15 @@ class VirtualModelDefinition {
     if (schema && table) {
       return new DataAccessor(
         table.url +
-          "?order=" +
-          order_by +
-          "." +
-          sortOrder +
-          "&limit=" +
-          limit +
-          "&offset=" +
-          page +
-          Filter,
+        "?order=" +
+        order_by +
+        "." +
+        sortOrder +
+        "&limit=" +
+        limit +
+        "&offset=" +
+        page +
+        Filter,
         {
           "Accept-Profile": schema.schema_name,
         }
@@ -412,9 +413,9 @@ class VirtualModelDefinition {
     }
   }
 
-  // Method to return a data accessor object to add a row to a table
+  // Method to return a data accessor object to add a row / multiple rows to a table
   // return type : DataAccessor
-  getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {
+  getAddRowDataAccessor(schema_name: string, table_name: string, row: Row | Row[], missingAsDefault: boolean = false) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -422,7 +423,7 @@ class VirtualModelDefinition {
       return new DataAccessor(
         table.url,
         {
-          Prefer: "return=representation",
+          Prefer: `return=representation${missingAsDefault ? ",missing=default" : ''}`,
           "Content-Type": "application/json",
           "Content-Profile": schema_name,
         },
@@ -442,7 +443,7 @@ class VirtualModelDefinition {
 
     if (schema && table) {
       return new DataAccessor(
-        `${table.url}?id=eq.${row["id"]}`, // PostgREST URL for updating a row from its id
+        `${table.url}?${table_name}_id=eq.${row[table_name+"_id"]}`, // PostgREST URL for updating a row from its id
         {
           Prefer: "return=representation",
           "Content-Type": "application/json",
@@ -723,6 +724,7 @@ export class Table {
     column: Column,
     references_table: string,
     is_editable: boolean,
+    is_serial: boolean,
     references_by: string,
     referenced_table: string,
     referenced_by: string
@@ -732,6 +734,7 @@ export class Table {
     column.setReferencesBy(references_by);
     column.setReferencedTable(referenced_table);
     column.setReferencedBy(referenced_by);
+    column.setIsSerial(is_serial);
 
     this.columns.push(column);
   }
@@ -870,9 +873,10 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
+  is_serial: boolean;
   references_by: string;
   referenced_table: string;
-  referenced_by:string;
+  referenced_by: string;
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -881,6 +885,7 @@ export class Column {
     this.reqOnCreate = false;
     this.references_table = "";
     this.is_editable = false;
+    this.is_serial = false;
     this.references_by = "";
     this.referenced_table = "";
     this.referenced_by = "";
@@ -951,6 +956,22 @@ export class Column {
   setReferencedBy(referenced_by: string) {
     this.referenced_by = referenced_by;
   }
+
+  /**
+   * Method to set the column is_serial field
+   * @param isSerial The new value of is_serial
+   */
+  setIsSerial(isSerial: boolean){
+    this.is_serial = isSerial;
+  }
+
+  /**
+   * Method to get the column is_serial field
+   * @returns boolean 
+   */
+  getIsSerial(){
+    return this.is_serial;
+  }
 }
 
 export class View {
@@ -975,6 +996,7 @@ interface ColumnData {
   column: string;
   references_table: string;
   is_editable: boolean;
+  is_serial: boolean;
   references_by: string;
   referenced_table: string;
   referenced_by: string;
