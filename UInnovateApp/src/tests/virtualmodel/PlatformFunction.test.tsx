@@ -195,12 +195,11 @@ describe("PlatformFunction", () => {
     // Verify that vmd.getFunctionAccessor was called with the correct arguments
     expect(VMD.getFunctionAccessor).toHaveBeenCalledWith(
       mockSchema.schema_name,
-      params.functionName
+      params.functionName,
     );
-
     // Verify that func.setBody was called with the correct arguments
     expect(mockFunc.setBody).toHaveBeenCalledWith({
-      stored_procedure: params.stored_procedure,
+      stored_procedure: `${params.schema}.${params.stored_procedure}`,
       cron_schedule: params.cron_schedule,
     });
 
@@ -241,7 +240,7 @@ describe("PlatformFunction", () => {
 
     // Verify that func.setBody was called with the correct arguments
     expect(mockFunc.setBody).toHaveBeenCalledWith({
-      stored_procedure: params.stored_procedure,
+      stored_procedure: `${params.schema}.${params.stored_procedure}`,
     });
 
     // Verify that func.executeFunction was called
