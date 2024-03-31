@@ -710,129 +710,154 @@ const TableListView: React.FC<TableListViewProps> = ({
       case "text":
       case "email":
         return (
-          <input
-            type="text"
-            defaultValue={editingCell.value}
-            onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-            onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-            autoFocus
-          />
+          <div style={{ textAlign: 'center' }}>
+            <input
+              type="text"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+
         );
       case "number":
         return (
-          <input
-            type="number"
-            defaultValue={editingCell.value}
-            onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-            onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-            autoFocus
-          />
+          <div style={{ textAlign: 'center' }}>
+            <input
+              type="number"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+
         );
 
         case "longtext":
           return (
+          <div style={{ textAlign: 'center' }}>
             <textarea
               defaultValue={editingCell.value}
               onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
               onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
               autoFocus
             />
+          </div>
+
           );
     
         case "boolean":
           return (
-            <select
-            defaultValue={editingCell.value}
-            onChange={(e) => handleSave(e, rowIdx, column.column_name)}
-            autoFocus
-          >
-            <option value="true">True</option>
-            <option value="false">False</option>
-          </select>
+            <div style={{ textAlign: 'center' }}>
+              <select
+                defaultValue={editingCell.value}
+                onChange={(e) => handleSave(e, rowIdx, column.column_name)}
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                autoFocus
+              >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
           );
-    
+
         case "datetime":
           return (
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <ThemeProvider theme={theme}>
-                <DateTimePicker
-                  defaultValue={dayjs(editingCell.value)}
-                  onAccept={(e) => handleSave(e, rowIdx, column.column_name)}
-                  autoFocus
-                />
-              </ThemeProvider>
-            </LocalizationProvider>
+            <div style={{ textAlign: 'center' }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <ThemeProvider theme={theme}>
+                  <DateTimePicker
+                    defaultValue={dayjs(editingCell.value)}
+                    onAccept={(e) => handleSave(e, rowIdx, column.column_name)}
+                    autoFocus
+                  />
+                </ThemeProvider>
+              </LocalizationProvider>
+            </div>
           );
-    
         case "categories":
           return (
-            <Select
-              defaultValue={editingCell.value}
-              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-              autoFocus
-            >
-              {Object.keys(CategoriesDisplayType).map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </Select>
+            <div style={{ textAlign: 'center' }}>
+              <Select
+                defaultValue={editingCell.value}
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+                autoFocus
+              >
+                {Object.keys(CategoriesDisplayType).map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </Select>
+            </div>
           );
-    
         case "phone":
           return (
-            <MuiTelInput
-              defaultValue={editingCell.value}
-              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-              autoFocus
+            <div style={{ textAlign: 'center' }}>
+              <MuiTelInput
+                value={
+                  editingCell.value
+                }
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+                name={column.column_name}
             />
+            </div>
           );
-    
         case "currency":
           // Simple numeric input for currency
           const numericValue = editingCell.value.replace('$', '');
           return (
-            <input
-              type="number"
-              defaultValue={numericValue}
-              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-              autoFocus
-            />
+            <div style={{ textAlign: 'center' }}>
+              <input
+                type="number"
+                defaultValue={numericValue}
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+                autoFocus
+              />
+            </div>
           );
     
         case "multiline_wysiwyg":
           return (
-            <RichTextEditor
-            name={column.column_name}
-            content={
-              editingCell.value
-            }
-            onBlur={(event) => handleSave(event.event, rowIdx, column.column_name)}
-            onKeyDown={(event) => handleKeyDown(event.event, rowIdx, column.column_name)}
-            ref={rteRef}
-            extensions={[StarterKit]}
-            renderControls={() => (
-              <MenuControlsContainer>
-                <MenuSelectHeading />
-                <MenuDivider />
-                <MenuButtonBold />
-                <MenuButtonItalic />
-              </MenuControlsContainer>
-            )}
-          />
+            <div style={{ textAlign: 'center' }}>
+              <RichTextEditor
+              name={column.column_name}
+              content={
+                editingCell.value
+              }
+              onBlur={(event) => handleSave(event.event, rowIdx, column.column_name)}
+              onKeyDown={(event) => handleKeyDown(event.event, rowIdx, column.column_name)}
+              ref={rteRef}
+              extensions={[StarterKit]}
+              renderControls={() => (
+                <MenuControlsContainer>
+                  <MenuSelectHeading />
+                  <MenuDivider />
+                  <MenuButtonBold />
+                  <MenuButtonItalic />
+                </MenuControlsContainer>
+              )}
+            />
+          </div>
+
           );
       default:
         return (
-          <input
-            type="text"
-            defaultValue={editingCell.value}
-            onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-            onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-            autoFocus
-          />
+          <div style={{ textAlign: 'center' }}>
+            <input
+              type="text"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+
         );
       }
   };
