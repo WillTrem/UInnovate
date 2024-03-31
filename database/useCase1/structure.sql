@@ -91,7 +91,7 @@ CREATE TABLE app_rentals.contact (
     email text,
     active boolean
 );
-COMMENT ON TABLE app_rentals.contact IS '{"displayField": "fullname"}';
+COMMENT ON TABLE app_rentals.contact IS '{"displayField": "full_name"}';
 COMMENT ON COLUMN app_rentals.contact.company_id IS '{"reqOnCreate": true, "refTable": "app_rentals.company"}';
 COMMENT ON COLUMN app_rentals.contact.first_name IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.contact.last_name IS '{"reqOnCreate": true}';
