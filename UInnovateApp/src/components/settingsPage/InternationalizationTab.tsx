@@ -42,7 +42,7 @@ const InternationalizationTab = () => {
 
     const [newLabelName, setNewLabelName] = useState<string>(''); 
     const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
-    const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
+    const [selectedLanguage, setSelectedLanguage] = useState<string>("en"); // Default language is English
 
     // Key Object
     interface KeyProps {
@@ -265,7 +265,6 @@ const InternationalizationTab = () => {
                 }
             ).addRow();
 
-            // await getTranslations();
             await getTranslationsByLanguage(selectedLanguage);
         } catch (error) {
             console.error('Error adding a new label:', error);
@@ -324,6 +323,15 @@ const InternationalizationTab = () => {
     const handleSelectedNewLanguage = (event: SelectChangeEvent<string>) => {
         setNewLanguageName(event.target.value as string);
         setNewLanguageCode(isoLanguages.getCode(event.target.value as string));
+
+        // Audits
+        Audits.logAudits(
+            loggedInUser || "",
+            "Add New Language",
+            "Added language: " + "\"" + event.target.value + "\"",
+            "i18n_languages",
+            ""
+        );
     };
 
     const handleSelectedLanguage = (event: SelectChangeEvent<string>) => {
@@ -331,12 +339,16 @@ const InternationalizationTab = () => {
         setSelectedLanguage(language);
         getTranslationsByLanguage(language);
 
-        // clear the previous translations
-        setTranslations([]);
+        // Audits
+        Audits.logAudits(
+            loggedInUser || "",
+            "Select Internationalization Language",
+            "Selected language: " + "\"" + language + "\"",
+            "i18n_languages",
+            ""
+        );
     };
 
-    // Sort the translations by missing translations of the selected language and using the getTranslationsProps function
-    // meaning that I want to display all the missing translations of the selected language at the top of the table and the rest of the translations below
     const sortByMissingTranslations = async (selectedLanguage: string) => {
         try {
             const translations = await getTranslationsPropsByLanguage(selectedLanguage);
@@ -348,6 +360,15 @@ const InternationalizationTab = () => {
         } catch (error) {
             console.error('Error sorting by missing translations:', error);
         }
+
+        // Audits
+        Audits.logAudits(
+            loggedInUser || "",
+            "Sort by Missing Translations",
+            "Sorted by missing translations for the language: " + "\"" + selectedLanguage + "\"",
+            "i18n_translations",
+            ""
+        );
     };
 
 
@@ -379,17 +400,17 @@ const InternationalizationTab = () => {
                 </Button>
             </div>
 
-            <div className="default-language-input">
+            <div className="selected-language-input">
 
                 <FormControl fullWidth>
-                    <InputLabel id="default-language-label">Default Language</InputLabel>
+                    <InputLabel id="selected-language-label">Selected Language</InputLabel>
                     <Select
-                        labelId="default-language-label"
-                        name="Default Language"
+                        labelId="selected-language-label"
+                        name="Selected Language"
                         onChange={handleSelectedLanguage}
                         onClick={handleDropdownLanguages}
                         variant="outlined"
-                        label="Default Language"
+                        label="Selected Language"
                         defaultValue=''
                     >
                         {languages.map(language => (
@@ -412,7 +433,6 @@ const InternationalizationTab = () => {
                             if (translation) {
                                 return (
                                     <TranslationTableRow
-                                        // getTranslations={getTranslations}
                                         getTranslationsByLanguage={getTranslationsByLanguage}
                                         key={idx}
                                         keyCode={translation["key_code"] as string}
@@ -541,7 +561,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     const [isEditingTranslation, setisEditingTranslation] = useState(false);
 
     const handleUpsertTranslation = async (languageCode: string, keyCode: string, newTranslation: string) => {
-        setisEditingTranslation(true);
+        // setisEditingTranslation(true);
         try {
             // Get the language and key IDs
             const languageId = await getLanguageId(languageCode);
@@ -565,15 +585,31 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
             // if the value is not empty and null, perform the upsert operation
             if (newTranslation !== "" && newTranslation !== null) {
                 await dataAccessor.upsert();
+
+                //Audits
+                Audits.logAudits(
+                    loggedInUser || "",
+                    "Upsert Translation",
+                    "Upserted a translation with the following value: " + JSON.stringify(newTranslation) + ", for the language: "+ "\"" + languageCode + "\"" + ", and the label: " + "\""+ keyCode + "\"",
+                    "i18n_values",
+                    ""
+                );
             }
         } catch (error) {
             console.error(`Error upserting translation: ${newTranslation}`, error);
         }
+
+
     }
     
-    const handleDoubleClick = () => {
+    const handleDoubleClickLabel = () => {
         if (!is_default && !isEditingLabel) {
             setisEditingLabel(true);
+        }
+    };
+    const handleDoubleClickTranslation = () => {
+        if  (!isEditingTranslation) {
+            setisEditingTranslation(true);
         }
     };
 
@@ -584,7 +620,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
         }
     };
 
-    const handleTranslationBlur = () => {
+    const   handleTranslationBlur = () => {
         setisEditingTranslation(false);
         saveChangesTranslation();
     }
@@ -592,13 +628,11 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!is_default && isEditingLabel) {
             setEditedValue(e.target.value);
-            saveChangesLabel();
         }
     };
 
     const handleTranslationCellChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setEditedTranslation(e.target.value);
-        saveChangesTranslation();
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -699,14 +733,15 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
 
     useEffect(() => {
         document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
     }, []);
+
+    useEffect(() => {
+        setEditedTranslation(value);
+    }, [value])
 
     return (
         <tr>
-            <td onDoubleClick={handleDoubleClick} className="container-labels">
+            <td onDoubleClick={handleDoubleClickLabel} className="container-labels">
                 <input
                     value={isEditingLabel ? editedValue : keyCode}
                     onChange={handleChange}
@@ -753,9 +788,11 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({ getTranslatio
                 </Modal>
             </td>
 
-            <td onDoubleClick= {() => handleUpsertTranslation(selectedLanguage, keyCode || "", editedTranslation || "")}>                
+            <td onDoubleClick= {() => handleDoubleClickTranslation()
+                // handleUpsertTranslation(selectedLanguage, keyCode || "", editedTranslation || "")
+                }>                
                 <input
-                    value={isEditingTranslation ? editedTranslation : value}
+                    value={editedTranslation}
                     onChange={handleTranslationCellChange}  
                     onBlur={handleTranslationBlur}
                     onKeyDown={handleTranslationKeyDown}

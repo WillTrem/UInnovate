@@ -45,7 +45,7 @@ INSERT INTO app_rentals.tool (tool_type, tool_name, tool_price, tool_description
     (20, 'Sledgehammer', 24.99, 'Powerful sledgehammer for heavy demolition work', 7, null);
 
 -- Sample data for unit table
-INSERT INTO app_rentals.unit (id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES
+INSERT INTO app_rentals.unit (tool_id, tool_type, unit_serial_number, unit_weight, unit_height, unit_condition, unit_available, unit_last_exited_date, unit_last_returned_date, last_calibration_certificate_id) VALUES
     (1, 1, 'SN123456', 10.0, 15.0, 'Good', true, '2023-11-01', '2023-11-01', NULL),
     (2, 2, 'SN789012', 5.0, 10.0, 'Excellent', true, '2023-11-02', '2023-11-02', NULL),
     (3, 3, 'SN345678', 7.0, 12.0, 'Fair', true, '2023-11-03', '2023-11-03', NULL),
@@ -159,7 +159,7 @@ INSERT INTO app_rentals.quotation (quotation_date, tools_quoted_qty, totalprice)
     ('2023-11-20', 34, 1020.00);
 
 -- Sample data for quotation_line_item table
-INSERT INTO app_rentals.quotation_line_item (quotation_id, id, tool_quoted_qty, tool_price) VALUES
+INSERT INTO app_rentals.quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price) VALUES
     (1, 1, 2, 30.00),
     (1, 2, 1, 40.00),
     (2, 3, 3, 30.00),
@@ -205,7 +205,7 @@ INSERT INTO app_rentals.purchase_order (quotation_id, company_id, order_date, to
     (20, 20, '2023-11-20', 34, 1020.00);
 
 -- Sample data for purchase_order_line_item table
-INSERT INTO app_rentals.purchase_order_line_item (purchase_order_id, id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
+INSERT INTO app_rentals.purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price) VALUES
     (1, 1, NULL, 2, 30.00),
     (1, 2, NULL, 1, 40.00),
     (2, 3, NULL, 3, 30.00),
@@ -281,7 +281,7 @@ UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 19 WHERE pu
 UPDATE app_rentals.purchase_order_line_item  SET unit_scheduled_id = 20 WHERE purchase_order_id = 20;
 
 -- Sample data for tool_restock_request table
-INSERT INTO app_rentals.tool_restock_request (id, notice_date, restock_notice_author, qty_requested) VALUES
+INSERT INTO app_rentals.tool_restock_request (tool_id, notice_date, restock_notice_author, qty_requested) VALUES
     (1, '2023-11-01', 'Author1', 5),
     (2, '2023-11-02', 'Author2', 8),
     (3, '2023-11-03', 'Author3', 10),
@@ -462,12 +462,26 @@ INSERT INTO meta.additional_view_settings(schemaName, tableName, viewName, viewT
 
 -- sample custom view 
 INSERT INTO meta.custom_view_templates(settingId, template) VALUES
-(4, 'import React from ''react''
-
-const HelloWorld = () => {
-  return (
-    <div>HelloWorld</div>
-  )
-}
-
-export default HelloWorld')
+(4, '
+    <div>
+      <div id="CustomView" class="container mt-5">
+        <div class="row" data-bind="foreach: sampleData">
+        {{#rows }}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" data-bind="text: title">test</h5>
+                <p class="card-text">company_id: {{row.company_id}}</p>
+                <p class="card-text">company_name: {{row.company_name}}</p>
+                <p class="card-text">is_prev_customer: {{row.is_prev_customer}}</p>
+                <p class="card-text">pricing_rate: {{row.pricing_rate}}</p>
+                <p class="card-text">primary_contact_id: {{row.primary_contact_id}}</p>
+                <a href="#" class="btn btn-primary" data-bind="text: details">Some action</a>
+              </div>
+            </div>
+          </div>
+        {{/rows}}
+        </div>
+      </div>
+    </div>
+')
