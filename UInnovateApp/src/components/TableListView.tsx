@@ -19,6 +19,7 @@ import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import ConfirmationPopup from "./SavePopup";
 import InfoPopup from "./PrimaryKeyErrorPopup";
+import  Audits  from "../virtualmodel/Audits";
 import { IoIosArrowUp } from "react-icons/io";
 import {
   Switch,
@@ -802,11 +803,23 @@ const TableListView: React.FC<TableListViewProps> = ({
         case "multiline_wysiwyg":
           return (
             <RichTextEditor
-              defaultValue={editingCell.value}
-              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
-              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
-              autoFocus
-            />
+            name={column.column_name}
+            content={
+              editingCell.value
+            }
+            onBlur={(event) => handleSave(event.event, rowIdx, column.column_name)}
+            onKeyDown={(event) => handleKeyDown(event.event, rowIdx, column.column_name)}
+            ref={rteRef}
+            extensions={[StarterKit]}
+            renderControls={() => (
+              <MenuControlsContainer>
+                <MenuSelectHeading />
+                <MenuDivider />
+                <MenuButtonBold />
+                <MenuButtonItalic />
+              </MenuControlsContainer>
+            )}
+          />
           );
       default:
         return (
@@ -828,7 +841,10 @@ const TableListView: React.FC<TableListViewProps> = ({
         
         let newValue;
         if(e.target !== undefined){
-          newValue = e.target.value;
+          if(e.target.editor !== undefined)
+            newValue = e.target.editor.options.content;
+          else
+            newValue = e.target.value;
         }
         else{
           newValue = e.format("YYYY-MM-DDTHH:mm:ss");
@@ -840,16 +856,13 @@ const TableListView: React.FC<TableListViewProps> = ({
           console.error("Schema not found");
           return;
         }
-      
-        Logger.logUserAction(
-          loggedInUser || "",
-          "Edited Cell",
-          `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
-          schema.schema_name,
-          table.table_name
+        const nonEditableColumn = table.columns.find(
+          (column) => column.is_editable === false
         );
-      
-        const primaryKeyValue = Object.keys(currentRow.row)[0];
+        if (nonEditableColumn) {
+          setCurrentPrimaryKey(nonEditableColumn.column_name);
+        }
+        const primaryKeyValue = nonEditableColumn?.column_name;
         // Use the primary key for the row to identify which row to update
         const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
         // Call the update API
@@ -868,7 +881,13 @@ const TableListView: React.FC<TableListViewProps> = ({
           const updatedRows = [...rows];
           updatedRows[rowIdx] = new Row(updatedRow);
           setRows(updatedRows);
-      
+          Audits.logAudits(
+            loggedInUser || "",
+            "Edited Cell",
+            `User has modified column ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+            schema.schema_name,
+            table.table_name
+          )
           // Exit editing mode
         } catch (error) {
           console.error("Failed to update row", error);
