@@ -90,12 +90,12 @@ export function Settings() {
               <Col sm={3}>
                 <Nav variant="pills" className="flex-column">
                   <Nav.Item>
-                    <Nav.Link
+                    {/* <Nav.Link
                       eventKey="general"
                       onClick={() => handleNavClick("general")}
                     >
                       General
-                    </Nav.Link>
+                    </Nav.Link> */}
                   </Nav.Item>
                   <Nav.Item>
                     <Nav.Link

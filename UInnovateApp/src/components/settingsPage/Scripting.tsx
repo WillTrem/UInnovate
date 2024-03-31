@@ -16,9 +16,9 @@ const Scripting = () => {
                     <Nav.Item>
                         <Nav.Link eventKey="scripting">Scripts</Nav.Link>
                     </Nav.Item>
-                    <Nav.Item>
+                    {/* <Nav.Item>
                         <Nav.Link eventKey="envVariables">Environment Variables</Nav.Link>
-                    </Nav.Item>
+                    </Nav.Item> */}
                     <Nav.Item>
                         <Nav.Link eventKey="exProcedures">Execute Procedures</Nav.Link>
                     </Nav.Item>
