@@ -28,6 +28,23 @@ export async function fetchFunctionNames(schema: string) {
     return [];
   }
 }
+export async function fetchProcedureNamesWithNoArgs(schema: string) {
+  try {
+    const func = await vmd.getFunctionAccessor(
+      "meta" || "",
+      "get_procedures_with_no_args"
+    );
+    const input = new Row();
+    input.p_schema = schema;
+
+    func.setBody(input);
+    const response = await func.executeFunction();
+    return response.data.map(row => row.function_name);
+  } catch (error) {
+    console.error("Error fetching procedures with no arguments:", error);
+    return [];
+  }
+}
 
 export async function fetchProcedureSource(
   schema: string,
@@ -77,8 +94,9 @@ export async function scheduleProcedure(
     schema?.schema_name || "",
     params.functionName
   );
+  const fullProcedureName = `${params.schema}.${params.stored_procedure}`;
   const input = new Row();
-  input.stored_procedure = params.stored_procedure;
+  input.stored_procedure = fullProcedureName;
   input.cron_schedule = params.cron_schedule;
   func.setBody(input);
   // 3. Call the function accessor with the schedule
@@ -95,8 +113,10 @@ export async function unscheduleProcedure(
     schema?.schema_name || "",
     params.functionName
   );
+  const fullProcedureName = `${params.schema}.${params.stored_procedure}`;
+
   const input = new Row();
-  input.stored_procedure = params.stored_procedure;
+  input.stored_procedure = fullProcedureName;
   func.setBody(input);
   // 3. Call the function accessor with the schedule
   await func.executeFunction();
