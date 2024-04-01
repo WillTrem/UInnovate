@@ -171,7 +171,7 @@ const AdditionalViewModal = ({
 						Close
 					</Button>
 					<Button variant='contained' onClick={handleFormSubmit}>
-						Save Changes
+						Save
 					</Button>
 				</Modal.Footer>
 			</Modal>
