@@ -412,15 +412,15 @@ class VirtualModelDefinition {
     if (schema && table) {
       return new DataAccessor(
         table.url +
-        "?order=" +
-        order_by +
-        "." +
-        sortOrder +
-        "&limit=" +
-        limit +
-        "&offset=" +
-        page +
-        Filter,
+          "?order=" +
+          order_by +
+          "." +
+          sortOrder +
+          "&limit=" +
+          limit +
+          "&offset=" +
+          page +
+          Filter,
         {
           "Accept-Profile": schema.schema_name,
         }
@@ -454,7 +454,12 @@ class VirtualModelDefinition {
 
   // Method to return a data accessor object to add a row / multiple rows to a table
   // return type : DataAccessor
-  getAddRowDataAccessor(schema_name: string, table_name: string, row: Row | Row[], missingAsDefault: boolean = false) {
+  getAddRowDataAccessor(
+    schema_name: string,
+    table_name: string,
+    row: Row | Row[],
+    missingAsDefault: boolean = false
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -462,7 +467,7 @@ class VirtualModelDefinition {
       return new DataAccessor(
         table.url,
         {
-          Prefer: `return=representation${missingAsDefault ? ",missing=default" : ''}`,
+          Prefer: `return=representation${missingAsDefault ? ",missing=default" : ""}`,
           "Content-Type": "application/json",
           "Content-Profile": schema_name,
         },
@@ -479,10 +484,11 @@ class VirtualModelDefinition {
   getUpdateRowDataAccessor(schema_name: string, table_name: string, row: Row) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
+    const primary_key = table?.getPrimaryKey()?.column_name;
 
-    if (schema && table) {
+    if (schema && table && primary_key) {
       return new DataAccessor(
-        `${table.url}?${table_name}_id=eq.${row[table_name+"_id"]}`, // PostgREST URL for updating a row from its id
+        `${table.url}?${primary_key}=eq.${row[primary_key]}`, // PostgREST URL for updating a row from its id
         {
           Prefer: "return=representation",
           "Content-Type": "application/json",
@@ -1008,15 +1014,15 @@ export class Column {
    * Method to set the column is_serial field
    * @param isSerial The new value of is_serial
    */
-  setIsSerial(isSerial: boolean){
+  setIsSerial(isSerial: boolean) {
     this.is_serial = isSerial;
   }
 
   /**
    * Method to get the column is_serial field
-   * @returns boolean 
+   * @returns boolean
    */
-  getIsSerial(){
+  getIsSerial() {
     return this.is_serial;
   }
 }
