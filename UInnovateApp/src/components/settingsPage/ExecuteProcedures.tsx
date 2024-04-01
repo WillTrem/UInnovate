@@ -68,6 +68,12 @@ export const ExecuteProcedures = () => {
 
       await data_accessor?.addRow();
       getFunctions();
+      setNewFunction(prevState => ({
+        ...prevState,  
+        procedure: procedures[0], 
+        name: "", 
+        description: "", 
+      }));
       setShowModal(false);
     };
     const execProcedure = () => {
@@ -95,6 +101,7 @@ export const ExecuteProcedures = () => {
 
             if (procedures.length > 0) {
                 setSelectedProc(procedures[0]);
+                setNewFunction({ ...newFunction, procedure: procedures[0] });
                 handleProcSelection(procedures[0]);
             }
         } catch (error) {
@@ -161,7 +168,7 @@ export const ExecuteProcedures = () => {
                     <Form.Label>Description</Form.Label>
                     <Form.Control
                       type="text"
-                      value={newFunction.description || ""}
+                      value={newFunction.description ||""}
                       onChange={(e) =>
                         setNewFunction({
                           ...newFunction,
