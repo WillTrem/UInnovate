@@ -222,6 +222,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     const FilteredRowsCount = count?.map((row) => {
       const filteredRowData: { [key: string]: string | number | boolean } = {};
       attributes.forEach((column) => {
+        if (column.is_editable === false) {
+          setCurrentPrimaryKey(column.column_name);
+        }
         filteredRowData[column.column_name] = row[column.column_name];
       });
       return new Row(filteredRowData);
@@ -427,12 +430,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           .updateRow();
         setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
       });
-    const nonEditableColumn = table.columns.find(
-      (column) => column.is_editable === false
-    );
-    if (nonEditableColumn) {
-      setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
     getRows();
   };
 
@@ -465,7 +462,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     setAllFileGroups(newItems);
     getRows();
   };
-
 
   const { user: loggedInUser }: AuthState = useSelector(
     (state: RootState) => state.auth
@@ -633,56 +629,56 @@ const TableListView: React.FC<TableListViewProps> = ({
         // It's a single click
         handleOpenPanel(row);
       }
-      setClickAction(null);  
-    }, 200); 
+      setClickAction(null);
+    }, 200);
   };
 
-  const handleSave = async (e, rowIdx : number, columnName : string) => {
-      const confirmAction = async () => {
-        if (e.preventDefault) e.preventDefault();
-      
-        const newValue = e.target.value;
-        const updatedRow = { [columnName]: newValue };
-      
-        const schema = vmd.getTableSchema(table.table_name);
-        if (!schema) {
-          console.error("Schema not found");
-          return;
-        }
-      
-        Logger.logUserAction(
-          loggedInUser || "",
-          "Edited Cell",
-          `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+  const handleSave = async (e, rowIdx: number, columnName: string) => {
+    const confirmAction = async () => {
+      if (e.preventDefault) e.preventDefault();
+
+      const newValue = e.target.value;
+      const updatedRow = { [columnName]: newValue };
+
+      const schema = vmd.getTableSchema(table.table_name);
+      if (!schema) {
+        console.error("Schema not found");
+        return;
+      }
+
+      Logger.logUserAction(
+        loggedInUser || "",
+        "Edited Cell",
+        `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+        schema.schema_name,
+        table.table_name
+      );
+
+      const primaryKeyValue = Object.keys(currentRow.row)[0];
+      // Use the primary key for the row to identify which row to update
+      const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
+      // Call the update API
+      try {
+        const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
           schema.schema_name,
-          table.table_name
+          table.table_name,
+          updatedRow,
+          primaryKeyValue as string,
+          storedPrimaryKeyValue as string
         );
-      
-        const primaryKeyValue = Object.keys(currentRow.row)[0];
-        // Use the primary key for the row to identify which row to update
-        const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
-        // Call the update API
-        try {
-          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-            schema.schema_name,
-            table.table_name,
-            updatedRow,
-            primaryKeyValue as string,
-            storedPrimaryKeyValue as string
-          );
-          data_accessor.updateRow().then((res) => {
-            getRows();
-          });
-          // Reflect the update locally
-          const updatedRows = [...rows];
-          updatedRows[rowIdx] = new Row(updatedRow);
-          setRows(updatedRows);
-      
-          // Exit editing mode
-        } catch (error) {
-          console.error("Failed to update row", error);
-        }
-        setEditingCell(null);
+        data_accessor.updateRow().then((res) => {
+          getRows();
+        });
+        // Reflect the update locally
+        const updatedRows = [...rows];
+        updatedRows[rowIdx] = new Row(updatedRow);
+        setRows(updatedRows);
+
+        // Exit editing mode
+      } catch (error) {
+        console.error("Failed to update row", error);
+      }
+      setEditingCell(null);
     };
 
     setConfirmPopupContent({
@@ -1075,7 +1071,14 @@ const TableListView: React.FC<TableListViewProps> = ({
                           <label key={column.column_name + colIdx}>
                             {column.column_name}
                           </label>
-                          <InputField column={column} table={table} appConfigValues={appConfigValues} currentRow={currentRow} setCurrentPrimaryKey={setCurrentPrimaryKey} setInputValues={setInputValues}></InputField>
+                          <InputField
+                            column={column}
+                            table={table}
+                            appConfigValues={appConfigValues}
+                            currentRow={currentRow}
+                            setCurrentPrimaryKey={setCurrentPrimaryKey}
+                            setInputValues={setInputValues}
+                          ></InputField>
                         </div>
                       );
                     }
