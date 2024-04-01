@@ -1,5 +1,12 @@
 CREATE EXTENSION IF NOT EXISTS pg_cron;
-GRANT USAGE ON SCHEMA cron TO configurator;
+GRANT USAGE ON SCHEMA cron TO "web_anon";
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA cron to "web_anon";
+GRANT SELECT on cron.job to "web_anon";
+GRANT SELECT on cron.job_run_details to "web_anon";
+GRANT USAGE ON SCHEMA cron TO "user";
+GRANT SELECT ON ALL SEQUENCES IN SCHEMA cron to "user";
+GRANT SELECT on cron.job to "user";
+GRANT SELECT on cron.job_run_details to "user";
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA cron TO configurator;
 GRANT SELECT, UPDATE, INSERT ON cron.job TO configurator;
 GRANT SELECT, UPDATE, INSERT ON cron.job_run_details TO configurator;
