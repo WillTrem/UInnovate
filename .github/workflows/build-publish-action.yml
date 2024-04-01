@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - deployment-test
+      # - deployment-test
 # basic sanity check before pushing the image is necessary -> create test tag
 env:
   TEST_TAG: alexicazana/goat-dock:test
@@ -50,5 +50,5 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: alexicazana/goat-dock:latest
-          build-args: VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
+          # build-args: VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
 
