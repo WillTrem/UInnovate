@@ -1,8 +1,8 @@
-import vmd from "./VMD";
+import vmd, { API_BASE_URL } from "./VMD";
 import { Row } from "./DataAccessor";
 import axiosCustom from "../api/AxiosCustom";
 
-const API_BASE_URL = "http://localhost:3000/"; // Base URL of your PostgREST API
+// const API_BASE_URL = "http://localhost:3000/"; // Base URL of your PostgREST API
 
 export interface ProcedureSchedulingParams {
   functionName: string;

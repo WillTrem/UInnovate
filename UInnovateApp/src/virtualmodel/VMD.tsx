@@ -3,7 +3,7 @@ import { Role } from "../redux/AuthSlice";
 import { DataAccessor, Row } from "./DataAccessor";
 import { FunctionAccessor } from "./FunctionAccessor";
 
-const API_BASE_URL = "http://localhost:3000/"; // TO CHANGE TO ENV VAR WHEN WE DEPLOY
+export const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000/"; // TO CHANGE TO ENV VAR WHEN WE DEPLOY
 
 // VMD Class
 class VirtualModelDefinition {
