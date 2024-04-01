@@ -70,7 +70,7 @@ RETURNS varchar
 LANGUAGE plpgsql
 AS $BODY$
 BEGIN
-    EXECUTE format('SELECT cron.schedule(%L, %L, %L)', stored_procedure, cron_schedule, 'CALL ' || quote_ident(stored_procedure) || '()');
+    EXECUTE format('SELECT cron.schedule(%L, %L, %L)', stored_procedure, cron_schedule, 'CALL ' || stored_procedure || '()');
     RETURN format('Successfully scheduled job %s', stored_procedure);
 END;
 $BODY$;
