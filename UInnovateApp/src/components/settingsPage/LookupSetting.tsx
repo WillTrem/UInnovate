@@ -24,7 +24,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
   const { user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
   attributes?.map((attribute) => {
     //checks for references table and referenced table
-    if (attribute.references_table != "null" && attribute.references_table != null && attribute.references_table != "filegroup") {
+    if (attribute.references_table != "null" && attribute.references_table != null) {
       count = count + 1;
       referencesTableList.push(attribute.references_table + ":references");
     }

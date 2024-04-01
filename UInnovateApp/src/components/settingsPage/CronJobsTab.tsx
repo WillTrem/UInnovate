@@ -84,22 +84,6 @@ export const CronJobsTab = () => {
                 .then(response => {
                     // Handle success here
                     console.log("Cron job scheduled successfully");
-=======
-        if (!cronSchedule || selectedProc == '' || selectedProc == 'Select a procedure') {
-            setInfoPopupMessage('Please specify a cron schedule and procedure before attempting to schedule a job.');
-            setIsInfoPopupOpen(true);
-            return; 
-        }
-        if (!isValidCron(cronSchedule)) {
-            setInfoPopupMessage('The specified cron schedule is invalid. Please enter a valid cron schedule.');
-            setIsInfoPopupOpen(true);
-            return; 
-        }
-        return new Promise((resolve, reject) => {
-            scheduleProcedure(params)
-                .then(response => {
-                    
->>>>>>> main
                     resolve(response);
 
                     Audits.logAudits(
