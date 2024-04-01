@@ -28,7 +28,23 @@ export async function fetchFunctionNames(schema: string) {
     return [];
   }
 }
+export async function fetchProcedureNamesWithNoArgs(schema: string) {
+  try {
+    const func = await vmd.getFunctionAccessor(
+      "meta" || "",
+      "get_procedures_with_no_args"
+    );
+    const input = new Row();
+    input.p_schema = schema;
 
+    func.setBody(input);
+    const response = await func.executeFunction();
+    return response.data.map(row => row.function_name);
+  } catch (error) {
+    console.error("Error fetching procedures with no arguments:", error);
+    return [];
+  }
+}
 export async function fetchProcedureSource(
   schema: string,
   functionName: string
