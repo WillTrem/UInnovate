@@ -864,57 +864,57 @@ const TableListView: React.FC<TableListViewProps> = ({
   
   
   const handleSave = async (e, rowIdx : number, columnName : string) => {
-      const confirmAction = async () => {
-        if (e.preventDefault) e.preventDefault();
-        
-        let newValue;
-        if(e.target !== undefined){
-          if(e.target.editor !== undefined)
-            newValue = e.target.editor.options.content;
-          else
-            newValue = e.target.value;
-        }
-        else{
-          newValue = e.format("YYYY-MM-DDTHH:mm:ss");
-        }
-        const updatedRow = { ...currentRow.row, [columnName]: newValue };
+    const confirmAction = async () => {
+      if (e.preventDefault) e.preventDefault();
       
-        const schema = vmd.getTableSchema(table.table_name);
-        if (!schema) {
-          console.error("Schema not found");
-          return;
-        }
-        
-        //const primaryKeyValue = table.getPrimaryKey()?.column_name;
-        // Use the primary key for the row to identify which row to update
-        //const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
-        // Call the update API
-        try {
-          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessor(
-            schema.schema_name,
-            table.table_name,
-            updatedRow,
-          );
-          data_accessor.updateRow().then((res) => {
-            getRows();
-          });
-          // Reflect the update locally
-          const updatedRows = [...rows];
-          updatedRows[rowIdx] = new Row(updatedRow);
-          setRows(updatedRows);
-          Audits.logAudits(
-            loggedInUser || "",
-            "Edited Cell",
-            `User has modified column ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
-            schema.schema_name,
-            table.table_name
-          )
-          // Exit editing mode
-        } catch (error) {
-          console.error("Failed to update row", error);
-        }
-        setEditingCell(null);
-    };
+      let newValue;
+      if(e.target !== undefined){
+        if(e.target.editor !== undefined)
+          newValue = e.target.editor.options.content;
+        else
+          newValue = e.target.value;
+      }
+      else{
+        newValue = e.format("YYYY-MM-DDTHH:mm:ss");
+      }
+      const updatedRow = { ...currentRow.row, [columnName]: newValue };
+    
+      const schema = vmd.getTableSchema(table.table_name);
+      if (!schema) {
+        console.error("Schema not found");
+        return;
+      }
+      
+      //const primaryKeyValue = table.getPrimaryKey()?.column_name;
+      // Use the primary key for the row to identify which row to update
+      //const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
+      // Call the update API
+      try {
+        const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessor(
+          schema.schema_name,
+          table.table_name,
+          updatedRow,
+        );
+        data_accessor.updateRow().then((res) => {
+          getRows();
+        });
+        // Reflect the update locally
+        const updatedRows = [...rows];
+        updatedRows[rowIdx] = new Row(updatedRow);
+        setRows(updatedRows);
+        Audits.logAudits(
+          loggedInUser || "",
+          "Edited Cell",
+          `User has modified column ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+          schema.schema_name,
+          table.table_name
+        )
+        // Exit editing mode
+      } catch (error) {
+        console.error("Failed to update row", error);
+      }
+      setEditingCell(null);
+  };
 
     setConfirmPopupContent({
       title: "Confirm Save",
@@ -1388,9 +1388,9 @@ const TableListView: React.FC<TableListViewProps> = ({
                     }
                   >
                     {editingCell &&
-                    editingCell.rowIdx === rowIdx &&
-                    editingCell.columnName === columns[idx].column_name ? (
-                      renderEditableField(editingCell, columns[idx], rowIdx)
+                      editingCell.rowIdx === rowIdx &&
+                      editingCell.columnName === columns[idx].column_name ? (
+                        renderEditableField(editingCell, columns[idx], rowIdx)
                     ) : (
                       <Box sx={{ textAlign: "center" }}>
                         {typeof cell === "boolean"
