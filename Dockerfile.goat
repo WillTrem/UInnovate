@@ -2,6 +2,8 @@ FROM node:latest as builder
 
 WORKDIR /app
 
+ARG VITE_BACKEND_URL
+
 COPY UInnovateApp/package*.json ./
 RUN npm install
 
@@ -9,7 +11,7 @@ RUN npm install
 COPY UInnovateApp/ ./ 
 # COPY UInnovateApp/ .
 
-RUN npm run build
+RUN VITE_BACKEND_URL=${VITE_BACKEND_URL} npm run build
 
 # Base image for postgoat 
 
