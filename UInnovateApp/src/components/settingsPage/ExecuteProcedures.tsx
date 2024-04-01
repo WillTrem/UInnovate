@@ -2,7 +2,7 @@ import { Col, Row as Line, Tab, Nav } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { fetchFunctionNames, callProcedure, ProcedureSchedulingParams, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
+import { fetchProcedureNamesWithNoArgs, callProcedure, ProcedureSchedulingParams, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -88,7 +88,7 @@ export const ExecuteProcedures = () => {
         if (!selectedSchema || schema_access.length == 0) return
         try {
             // wait for resolve of fetchFunctionNames promises
-            const functionNames = await fetchFunctionNames(selectedSchema);
+            const functionNames = await fetchProcedureNamesWithNoArgs(selectedSchema);
             const procedures = [...new Set(functionNames)];
 
             setProcedures(procedures); // update state with function names
