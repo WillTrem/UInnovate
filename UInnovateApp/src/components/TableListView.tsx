@@ -2,12 +2,10 @@ import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
-import React, { useState, useEffect, useRef, CSSProperties } from "react";
-import SlidingPanel from "react-sliding-side-panel";
+import React, { useState, useEffect, useRef } from "react";
 import "react-sliding-side-panel/lib/index.css";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
-import { NavBar } from "./NavBar";
 import Logger from "../virtualmodel/Logger";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
@@ -16,23 +14,20 @@ import Box from "@mui/material/Box";
 import ConfirmationPopup from "./SavePopup";
 import InfoPopup from "./PrimaryKeyErrorPopup";
 import { IoIosArrowUp } from "react-icons/io";
+import SlidingPanel from "./TableListViewSlidingPanel.tsx";
 import {
   Button,
-  Typography,
   Select,
   MenuItem,
   FormControl,
   SelectChangeEvent,
   Tooltip,
-  createTheme,
   Menu,
   Checkbox,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
 import { Container } from "react-bootstrap";
-import Dropzone from "./Dropzone";
 import "../styles/TableListView.css";
 import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
@@ -49,7 +44,7 @@ import {
 } from "@mui/material";
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
-import InputField from "./InputField";
+import { getConfigs } from "../helper/TableListViewHelpers";
 
 interface TableListViewProps {
   table: Table;
@@ -71,17 +66,6 @@ type ConfirmPopupContent = {
   confirmAction: () => void;
   onCancel?: () => void;
 };
-const theme = createTheme({
-  components: {
-    MuiPickersPopper: {
-      styleOverrides: {
-        root: {
-          zIndex: 19000,
-        },
-      },
-    },
-  },
-});
 
 const TableListView: React.FC<TableListViewProps> = ({
   table,
@@ -103,7 +87,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   );
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
-  const [showFiles, setShowFiles] = useState<boolean>(false);
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [functions, setFunctions] = useState<Row[] | undefined>([]);
 
@@ -115,7 +98,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [selectedFunction, setSelectedFunction] = useState<Row | null>(null);
 
-  const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
   const [fileGroupFiles, setFileGroupFiles] = useState<object>({});
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
@@ -137,7 +119,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
 
-  const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
@@ -148,7 +129,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
-  const [showTable, setShowTable] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(defaultOrderValue);
   const [conditionFilter, setConditionFilter] = useState<string>("");
@@ -327,37 +307,22 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   }, [selectedFunction]);
 
-  const getConfigs = async () => {
-    if (!meta_schema || !config_table) {
-      throw new Error("Schema or table not found");
-    }
-
-    const config_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      meta_schema?.schema_name,
-      config_table?.table_name
-    );
-
-    const config_rows = await config_data_accessor?.fetchRows();
-
-    setAppConfigValues(config_rows);
+  const getAppConfigs = async () => {
+    getConfigs();
   };
 
   useEffect(() => {
+    getRows();
+    getFileGroupsView();
+  }, [openPanel]);
+
+  useEffect(() => {
     getScripts();
-    getConfigs();
+    getAppConfigs();
     getFunctions();
     getFileGroupsView();
   }, [inputValues]);
 
-  const inputStyle: CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    width: table.stand_alone_details_view ? "80%" : "120%",
-  };
-  const tableStyle = table.stand_alone_details_view
-    ? "form-group-stand-alone"
-    : "form-group";
   //For when order changes
   const handleSort = (column: React.SetStateAction<string>) => {
     const isAsc = orderBy === column && sortOrder === "asc";
@@ -466,41 +431,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const { user: loggedInUser }: AuthState = useSelector(
     (state: RootState) => state.auth
   );
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const schema = vmd.getTableSchema(table.table_name);
-    if (!schema) {
-      console.error("Schema not found");
-      return;
-    }
-
-    Logger.logUserAction(
-      loggedInUser || "",
-      "Edited Row",
-      //i want the edited value in the details
-      "User has modified a row in the table: " + JSON.stringify(inputValues),
-      schema?.schema_name || "",
-      table.table_name
-    );
-
-    const storedPrimaryKeyValue = currentRow.row
-      ? currentRow.row[currentPrimaryKey as string]
-      : null;
-
-    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-      schema.schema_name,
-      table.table_name,
-      inputValues,
-      currentPrimaryKey as string,
-      storedPrimaryKeyValue as unknown as string
-    );
-    data_accessor.updateRow().then(() => {
-      getRows();
-    });
-    setInputValues({});
-    setOpenPanel(false);
-  };
   //Filter Functions
   //Handle when you click on the filter button
   const handleFilterClick = (
@@ -555,37 +485,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   //End of Filter Function
 
   // Object.entries(row.row).map(([key, value]) => {
-
-  const FileInputField = (column: Column) => {
-    if (!appConfigValues) {
-      return null;
-    }
-
-    if (column.is_editable == false) {
-      localStorage.setItem(
-        "currentPrimaryKeyValue",
-        currentRow.row[column.column_name]
-      );
-    }
-
-    if (column.references_table != null) {
-      const string = column.column_name + "L";
-      localStorage.setItem(
-        string,
-        currentRow.row[column.column_name] as string
-      );
-    }
-    return (
-      <div>
-        <Dropzone
-          onItemAdded={onItemAdded}
-          onItemRemoved={onItemRemoved}
-          items={fileGroupFiles[currentRow.row[column.column_name]]}
-          currentColumn={column.column_name}
-        />
-      </div>
-    );
-  };
 
   const handleDoubleClick = (rowIndex: number, column: Column) => {
     const newRow = rows[rowIndex];
@@ -701,7 +600,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   useEffect(() => {
     getRows();
-  }, [showFiles]);
+  }, []);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
@@ -1045,120 +944,15 @@ const TableListView: React.FC<TableListViewProps> = ({
           </RRow>
         </Container>
       </div>
-
       <SlidingPanel
-        type={"right"}
-        isOpen={openPanel}
-        size={table.stand_alone_details_view ? 100 : 50}
-        panelContainerClassName="panel-container"
-        backdropClicked={() => {
-          setOpenPanel(false);
-          setInputValues({});
-          setShowFiles(false);
-        }}
-      >
-        <div>
-          <div>
-            {table.stand_alone_details_view ? <NavBar /> : <div></div>}
-            <div className="form-panel-container">
-              <Typography variant="h5">Details</Typography>
-              <form>
-                <div className={tableStyle}>
-                  {columns.map((column, colIdx) => {
-                    if (column.references_table != "filegroup") {
-                      return (
-                        <div key={colIdx} className="row-details">
-                          <label key={column.column_name + colIdx}>
-                            {column.column_name}
-                          </label>
-                          <InputField
-                            column={column}
-                            table={table}
-                            appConfigValues={appConfigValues}
-                            currentRow={currentRow}
-                            setCurrentPrimaryKey={setCurrentPrimaryKey}
-                            setInputValues={setInputValues}
-                          ></InputField>
-                        </div>
-                      );
-                    }
-                  })}
-                  {columns.map((column, colIdx) => {
-                    if (column.references_table == "filegroup") {
-                      return (
-                        <div
-                          key={colIdx}
-                          className="row-details"
-                          title="Dropzone"
-                        >
-                          <label key={column.column_name + colIdx}>
-                            {column.column_name}
-                          </label>
-                          <FileInputField {...column} />
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
-              </form>
-              <div>
-                <Button
-                  variant="contained"
-                  style={buttonStyle}
-                  onClick={() => {
-                    setInputValues({});
-                    setOpenPanel(false);
-                    setShowFiles(false);
-                  }}
-                >
-                  close
-                </Button>
-                <Button
-                  variant="contained"
-                  style={{
-                    marginTop: 20,
-                    backgroundColor: "#403eb5",
-                    width: "fit-content",
-                    marginLeft: 10,
-                  }}
-                  onClick={handleFormSubmit}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div style={{ paddingBottom: "2em", paddingLeft: "1.5em" }}>
-            {table.lookup_tables == "null" ? (
-              <div></div>
-            ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
-              <div></div>
-            ) : showTable ? (
-              <div style={{ paddingBottom: "2em" }}>
-                {currentRow.row && (
-                  <LookUpTableDetails
-                    table={table}
-                    currentRow={currentRow.row}
-                  />
-                )}{" "}
-              </div>
-            ) : (
-              <Button
-                variant="contained"
-                style={{
-                  marginTop: 20,
-                  backgroundColor: "#403eb5",
-                  width: "fit-content",
-                  marginLeft: "12px",
-                }}
-                onClick={() => setShowTable(true)}
-              >
-                Show Look Up Table
-              </Button>
-            )}
-          </div>
-        </div>
-      </SlidingPanel>
+        table={table}
+        currentRow={currentRow}
+        onItemAdded={onItemAdded}
+        onItemRemoved={onItemRemoved}
+        fileGroupFiles={fileGroupFiles}
+        openPanel={openPanel}
+        setOpenPanel={setOpenPanel}
+      ></SlidingPanel>
     </div>
   );
 };
