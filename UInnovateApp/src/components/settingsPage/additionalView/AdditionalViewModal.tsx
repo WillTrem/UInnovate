@@ -113,7 +113,7 @@ const AdditionalViewModal = ({
 						onSubmit={handleFormSubmit}
 						id='AdditionalViewModalForm'>
 						<Form.Group className='mb-3' controlId='viewName'>
-							<Form.Label>view name</Form.Label>
+							<Form.Label>View Name</Form.Label>
 							<Form.Control
 								required
 								name='viewName'
@@ -128,7 +128,7 @@ const AdditionalViewModal = ({
 							</Form.Control.Feedback>
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='viewType'>
-							<Form.Label>view type</Form.Label>
+							<Form.Label>View Type</Form.Label>
 							<Form.Select
 								name='viewType'
 								onChange={(e) => setViewType(parseInt(e.target.value))}>
@@ -139,7 +139,7 @@ const AdditionalViewModal = ({
 							</Form.Select>
 						</Form.Group>
 						<Form.Group className='mb-3' controlId='viewTable'>
-							<Form.Label>tables</Form.Label>
+							<Form.Label>Tables</Form.Label>
 							<Form.Select onChange={(e) => setTableName(e.target.value)}>
 								{tableList &&
 									tableList.map((table) => (
