@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
-import vmd from "../../virtualmodel/VMD";
+import { Row } from "../../virtualmodel/DataAccessor";
 import { Modal, Form } from "react-bootstrap";
 import { Button, SelectChangeEvent } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
-import { IoMdAddCircle } from "react-icons/io"; 
+import { IoMdAddCircle } from "react-icons/io";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import "../../styles/InternationalizationTab.css";
 import isoLanguages from "iso-639-1";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { AuthState } from '../../redux/AuthSlice';
-import  Audits  from "../../virtualmodel/Audits";
+import { AuthState } from "../../redux/AuthSlice";
+import Audits from "../../virtualmodel/Audits";
 import TranslationTableRow from "./TranslationTableRow";
+import {
+  KEYS_TABLE_NAME,
+  LANGUAGE_TABLE_NAME,
+  TRANSLATIONS_TABLE_NAME,
+  editKeyCode,
+  getKeyProps,
+  getLanguagesProps,
+  getTranslationsByLanguage,
+  getTranslationsPropsByLanguage,
+  saveLabel,
+  saveLanguage,
+} from "../../virtualmodel/I18nDataAccessor";
 
 const buttonStyle = {
   marginRight: 10,
@@ -27,8 +38,8 @@ const addLabelButtonStyle = {
   marginBottom: 10,
 };
 
-const language_code_column_name = "language_code";
-const order_by_column = "translation_id";
+// const language_code_column_name = "language_code";
+// const order_by_column = "translation_id";
 
 const InternationalizationTab = () => {
   const [showModalAddLanguage, setshowModalAddLanguage] =
@@ -45,110 +56,6 @@ const InternationalizationTab = () => {
   );
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en"); // Default language is English
 
-  // Key Object
-  interface KeyProps {
-    id: number;
-    key_code: string;
-  }
-
-  // Language Object
-  interface LanguageProps {
-    id: number;
-    language_code: string;
-    language_name: string;
-  }
-
-  // i18n_translations Object
-  interface i18nTranslationsProps {
-    translation_id: number;
-    language_code: string;
-    key_code: string;
-    value: string;
-    is_default: boolean;
-  }
-
-  const getTranslationsByLanguage = async (chosenLanguage: string) => {
-    try {
-      const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
-        "meta",
-        "i18n_translations",
-      );
-      const rows = await data_accessor.fetchRowsByColumnValues(
-        language_code_column_name,
-        chosenLanguage,
-        order_by_column,
-      );
-      if (rows) {
-        const translationsWithIsDefault = rows.map((row) => ({
-          ...row,
-          is_default: row.is_default || false,
-        }));
-        setTranslations(translationsWithIsDefault);
-      }
-    } catch (error) {
-      console.error("Error fetching translations:", error);
-    }
-  };
-
-  const getKeyProps = async () => {
-    try {
-      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-        "meta",
-        "i18n_keys",
-      );
-
-      const rows = await data_accessor.fetchRows();
-      if (rows) {
-        const keys: KeyProps[] = rows.map((row) => ({
-          id: row.id, // Assuming 'id' is the primary key of the table
-          key_code: row.key_code as string,
-        }));
-
-        return keys;
-      }
-    } catch (error) {
-      console.error("Error fetching keys:", error);
-    }
-  };
-
-  // Get the key_id of the selected key using the getKeyProps function
-  const getKeyId = async (keyCode: string) => {
-    try {
-      const keys = await getKeyProps();
-      if (keys) {
-        const keyId = keys.find((key) => key.key_code === keyCode);
-        return keyId?.id;
-      }
-    } catch (error) {
-      console.error("Error fetching key_id:", error);
-    }
-  };
-
-  const getLanguagesProps = async () => {
-    try {
-      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-        "meta",
-        "i18n_languages",
-      );
-
-      // Fetch the list of language names for the dropdown using the LanguageProps interface
-      const rows = await data_accessor.fetchRows();
-      if (rows) {
-        // Process the rows to extract language codes and names
-        const languages: LanguageProps[] = rows.map((row) => ({
-          id: row.id, // Assuming 'id' is the primary key of the table
-          language_code: row.language_code as string,
-          language_name: row.language_name as string,
-        }));
-
-        // Return the list of languages_codes
-        return languages;
-      }
-    } catch (error) {
-      console.error("Error fetching languages:", error);
-    }
-  };
-
   // Return the list of language codes using the getLanguagesProps function
   const getLanguagesCodes = async () => {
     try {
@@ -164,53 +71,18 @@ const InternationalizationTab = () => {
     }
   };
 
-  // Get the language_id of the selected language from the i18n_languages table using the LanguageProps interface. Return only the language_id, hence the id attribute
-  const getLanguageId = async (languageCode: string) => {
-    try {
-      const languages = await getLanguagesProps();
-      if (languages) {
-        const languageId = languages.find(
-          (language) => language.language_code === languageCode,
-        );
-        return languageId?.id;
-      }
-    } catch (error) {
-      console.error("Error fetching language_id:", error);
-    }
-  };
-
-  const getTranslationsPropsByLanguage = async (selectedLanguage: string) => {
-    try {
-      const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
-        "meta",
-        "i18n_translations",
-      );
-
-      const rows = await data_accessor.fetchRowsByColumnValues(
-        language_code_column_name,
-        selectedLanguage,
-        order_by_column,
-      );
-      if (rows) {
-        const translations: i18nTranslationsProps[] = rows.map((row) => ({
-          translation_id: row.translation_id as number,
-          language_code: row.language_code as string,
-          key_code: row.key_code as string,
-          value: row.value as string,
-          is_default: row.is_default as boolean,
-        }));
-
-        return translations;
-      }
-    } catch (error) {
-      console.error("Error fetching translations:", error);
-    }
-  };
-
   useEffect(() => {
-    getTranslationsByLanguage(selectedLanguage);
+    // getTranslationsByLanguage(selectedLanguage);
+    loadTranslations(selectedLanguage);
     getLanguagesCodes();
   }, []);
+
+  const loadTranslations = (lang: string) => {
+    const translations = getTranslationsByLanguage(lang);
+    translations.then((data: any) => {
+      setTranslations(data);
+    });
+  };
 
   const showAddLanguage = () => {
     setshowModalAddLanguage(true);
@@ -228,32 +100,11 @@ const InternationalizationTab = () => {
   };
 
   const handleSaveLanguage = async () => {
-    if (newLanguageCode && newLanguageName) {
-      try {
-        const schema = vmd.getTableSchema("i18n_languages");
-        if (!schema) {
-          console.error("Could not find schema for table ", "i18n_languages");
-          return;
-        }
-
-        const data_accessor: DataAccessor = vmd.getAddRowDataAccessor(
-          "meta",
-          "i18n_languages",
-          {
-            language_code: newLanguageCode,
-            language_name: newLanguageName,
-          },
-        );
-
-        setLanguages((prevLanguages) => [...prevLanguages, newLanguageCode]);
-        await data_accessor?.addRow();
-        resetNewLanguage();
-      } catch (error) {
-        console.error("Error adding language:", error);
-      }
-    } else {
-      console.error("Please provide valid language code and name.");
-    }
+    const setLang = saveLanguage(newLanguageCode, newLanguageName);
+    setLang.then(() => {
+      setLanguages([...languages, newLanguageCode]);
+      resetNewLanguage();
+    });
 
     setshowModalAddLanguage(false);
   };
@@ -264,65 +115,33 @@ const InternationalizationTab = () => {
 
   const handleSaveLabel = async (labelName: string) => {
     setshowModalAddLabel(false);
-    try {
-      await vmd
-        .getAddRowDataAccessor("meta", "i18n_keys", {
-          key_code: labelName.trim() || "New Label",
-          is_default: false, // Set is_default to false for user-added labels
-        })
-        .addRow();
-
-      await getTranslationsByLanguage(selectedLanguage);
-    } catch (error) {
-      console.error("Error adding a new label:", error);
-    }
+    const save = saveLabel(labelName);
+    save.then(() => {
+      loadTranslations(selectedLanguage);
+    });
 
     Audits.logAudits(
       loggedInUser || "",
       "Add Label",
       "Added a new label with the following values: " +
         JSON.stringify(labelName),
-      "i18n_keys",
+      KEYS_TABLE_NAME,
       "",
     );
   };
 
   const handleEdit = async (keyCode: string, editedValue: string) => {
-    try {
-      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-        "meta",
-        "i18n_keys",
-        {
-          key_code: editedValue,
-        },
-        "key_code",
-        keyCode,
-      );
-
-      // Verify if update response is successful
-      const response = await data_accessor.updateRow();
-
-      if (response && response.status >= 200 && response.status < 300) {
-        await getTranslationsByLanguage(selectedLanguage);
-      } else {
-        console.error(
-          `Failed to update label with keyCode ${keyCode} to value ${editedValue}`,
-        );
-        if (response) {
-          console.error(`Error status: ${response.status}`);
-          console.error(`Error message: ${response.data}`);
-        }
-      }
-    } catch (error) {
-      console.error("Error editing label:", error);
-    }
+    const edit = editKeyCode(keyCode, editedValue);
+    edit.then(() => {
+      loadTranslations(selectedLanguage);
+    });
 
     Audits.logAudits(
       loggedInUser || "",
       "Edit Label",
       "Edited a label with the following values: " +
         JSON.stringify(editedValue),
-      "i18n_keys",
+      KEYS_TABLE_NAME,
       "",
     );
   };
@@ -340,7 +159,7 @@ const InternationalizationTab = () => {
       loggedInUser || "",
       "Add New Language",
       "Added language: " + '"' + event.target.value + '"',
-      "i18n_languages",
+      LANGUAGE_TABLE_NAME,
       "",
     );
   };
@@ -348,14 +167,14 @@ const InternationalizationTab = () => {
   const handleSelectedLanguage = (event: SelectChangeEvent<string>) => {
     const language = event.target.value as string;
     setSelectedLanguage(language);
-    getTranslationsByLanguage(language);
+    loadTranslations(language);
 
     // Audits
     Audits.logAudits(
       loggedInUser || "",
       "Select Internationalization Language",
       "Selected language: " + '"' + language + '"',
-      "i18n_languages",
+      LANGUAGE_TABLE_NAME,
       "",
     );
   };
@@ -388,7 +207,7 @@ const InternationalizationTab = () => {
         '"' +
         selectedLanguage +
         '"',
-      "i18n_translations",
+      TRANSLATIONS_TABLE_NAME,
       "",
     );
   };
@@ -408,6 +227,9 @@ const InternationalizationTab = () => {
           style={buttonStyle}
           variant="contained"
           data-testid="refresh-button"
+          onClick={() => {
+            loadTranslations(selectedLanguage);
+          }}
         >
           Refresh
         </Button>
@@ -421,25 +243,28 @@ const InternationalizationTab = () => {
         </Button>
       </div>
 
-            <div className="selected-language-input">
-
-                <FormControl fullWidth>
-                    <InputLabel data-testid="selected-language-label">Selected Language</InputLabel>
-                    <Select
-                        labelId="selected-language-label"
-                        name="Selected Language"
-                        onChange={handleSelectedLanguage}
-                        onClick={handleDropdownLanguages}
-                        variant="outlined"
-                        label="Selected Language"
-                        defaultValue=''
-                    >
-                        {languages.map(language => (
-                            <MenuItem key={language} value={language}>{language}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </div>
+      <div className="selected-language-input">
+        <FormControl fullWidth>
+          <InputLabel data-testid="selected-language-label">
+            Selected Language
+          </InputLabel>
+          <Select
+            labelId="selected-language-label"
+            name="Selected Language"
+            onChange={handleSelectedLanguage}
+            onClick={handleDropdownLanguages}
+            variant="outlined"
+            label="Selected Language"
+            defaultValue=""
+          >
+            {languages.map((language) => (
+              <MenuItem key={language} value={language}>
+                {language}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
 
       <div style={{ maxHeight: "700px", overflowY: "auto" }}>
         {" "}
@@ -457,14 +282,12 @@ const InternationalizationTab = () => {
                 if (translation) {
                   return (
                     <TranslationTableRow
-                      getTranslationsByLanguage={getTranslationsByLanguage}
+                      getTranslationsByLanguage={loadTranslations}
                       key={idx}
                       keyCode={translation["key_code"] as string}
                       value={translation["value"] as string}
                       is_default={translation["is_default"] as boolean}
                       onEdit={handleEdit}
-                      getLanguageId={getLanguageId}
-                      getKeyId={getKeyId}
                       selectedLanguage={selectedLanguage}
                     />
                   );

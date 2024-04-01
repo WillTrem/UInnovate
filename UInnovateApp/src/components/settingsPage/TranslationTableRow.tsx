@@ -3,13 +3,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { AuthState } from "../../redux/AuthSlice";
 import { Modal } from "react-bootstrap";
-import { DataAccessor } from "../../virtualmodel/DataAccessor";
-import vmd from "../../virtualmodel/VMD";
 import Audits from "../../virtualmodel/Audits";
 import { IoLockClosed } from "react-icons/io5";
 import { MdDelete } from "react-icons/md";
 import "../../styles/InternationalizationTab.css";
 import { Button } from "@mui/material";
+import {
+  KEYS_TABLE_NAME,
+  deleteKey,
+  upsertTranslation,
+} from "../../virtualmodel/I18nDataAccessor";
 
 const buttonStyle = {
   marginRight: 10,
@@ -23,8 +26,6 @@ interface TranslationTableRowProps {
   value?: string;
   is_default?: boolean;
   onEdit: (keyCode: string, newValue: string) => void;
-  getLanguageId: (languageCode: string) => void;
-  getKeyId: (keyCode: string) => void;
   selectedLanguage: string;
 }
 
@@ -34,8 +35,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({
   value,
   is_default,
   onEdit,
-  getLanguageId,
-  getKeyId,
   selectedLanguage,
 }) => {
   const [showModalDeleteLabel, setshowModalDeleteLabel] =
@@ -48,58 +47,6 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({
 
   const [editedTranslation, setEditedTranslation] = useState(value);
   const [isEditingTranslation, setisEditingTranslation] = useState(false);
-
-  const handleUpsertTranslation = async (
-    languageCode: string,
-    keyCode: string,
-    newTranslation: string,
-  ) => {
-    try {
-      // Get the language and key IDs
-      const languageId = await getLanguageId(languageCode);
-      const keyId = await getKeyId(keyCode);
-
-      // Get the data accessor for upsert operation
-      const dataAccessor = vmd.getUpsertDataAccessor(
-        "meta",
-        "i18n_values",
-        {
-          columns: "language_id, key_id, value",
-          on_conflict: "language_id, key_id",
-        },
-        {
-          language_id: languageId,
-          key_id: keyId,
-          value: newTranslation,
-        },
-      );
-
-      // if the value is not empty and null, perform the upsert operation
-      if (newTranslation !== "" && newTranslation !== null) {
-        await dataAccessor.upsert();
-
-        //Audits
-        Audits.logAudits(
-          loggedInUser || "",
-          "Upsert Translation",
-          "Upserted a translation with the following value: " +
-            JSON.stringify(newTranslation) +
-            ", for the language: " +
-            '"' +
-            languageCode +
-            '"' +
-            ", and the label: " +
-            '"' +
-            keyCode +
-            '"',
-          "i18n_values",
-          "",
-        );
-      }
-    } catch (error) {
-      console.error(`Error upserting translation: ${newTranslation}`, error);
-    }
-  };
 
   const handleDoubleClickLabel = () => {
     if (!is_default && !isEditingLabel) {
@@ -167,39 +114,17 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({
 
   // Delete functionality using the deleteRow method from DataAccessor
   const handleDelete = async (keyCode: string) => {
-    try {
-      const primaryKeyName = "key_code"; // Assuming "key_code" is the primary key of the table
-      const data_accessor: DataAccessor = vmd.getRemoveRowAccessor(
-        "meta",
-        "i18n_keys",
-        primaryKeyName,
-        keyCode,
-      );
-
-      // Call the deleteRow method of the DataAccessor instance
-      const response = await data_accessor.deleteRow();
-
-      // Check if the deletion was successful
-      if (response && response.status >= 200 && response.status < 300) {
-        await getTranslationsByLanguage(selectedLanguage);
-        handleClose();
-      } else {
-        // Handle error responses
-        console.error(`Failed to delete row with keyCode ${keyCode}`);
-        if (response) {
-          console.error(`Error status: ${response.status}`);
-          console.error(`Error message: ${response.data}`);
-        }
-      }
-    } catch (error) {
-      console.error("Error deleting row:", error);
-    }
+    const removeKey = deleteKey(keyCode);
+    removeKey.then(() => {
+      getTranslationsByLanguage(selectedLanguage);
+      handleClose();
+    });
 
     Audits.logAudits(
       loggedInUser || "",
       "Delete Label",
       "Deleted a label with the following values: " + JSON.stringify(keyCode),
-      "i18n_keys",
+      KEYS_TABLE_NAME,
       "",
     );
   };
@@ -217,10 +142,27 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({
   const saveChangesTranslation = async () => {
     try {
       if (value !== editedTranslation) {
-        handleUpsertTranslation(
+        upsertTranslation(
           selectedLanguage,
           keyCode || "",
           editedTranslation || "",
+        );
+        //Audits
+        Audits.logAudits(
+          loggedInUser || "",
+          "Upsert Translation",
+          "Upserted a translation with the following value: " +
+            JSON.stringify(editedTranslation) +
+            ", for the language: " +
+            '"' +
+            selectedLanguage +
+            '"' +
+            ", and the label: " +
+            '"' +
+            keyCode +
+            '"',
+          "i18n_values",
+          "",
         );
       }
     } catch (error) {
