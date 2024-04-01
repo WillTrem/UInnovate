@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import FormControl from "@mui/material/FormControl";
 import FormHelperText from "@mui/material/FormHelperText";
 import Select from "@mui/material/Select";
-import { MenuItem } from '@mui/material';
+import { Button, MenuItem } from '@mui/material';
 import "../../styles/TableItem.css";
 import { ConfigData, Table } from "../../virtualmodel/VMD";
 import { Row } from '../../virtualmodel/DataAccessor';
@@ -17,6 +17,14 @@ import { displayError } from '../../redux/NotificationSlice';
 type LookUpTableProps = {
   table: Table;
 }
+
+const buttonStyle = {
+  marginRight: 20,
+  backgroundColor: "#404040",
+  color: "white",
+  fontSize: 18,
+
+};
 
 const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTableProps) => {
   const dispatch = useDispatch();
@@ -235,20 +243,20 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({ table }: LookUpTablePr
             </FormHelperText>
           </FormControl>
 
-          <button
+          <Button
             onClick={handleButtonClick}
-            style={{ width: '26.5px', height: '30px', marginRight: '30px' }}
+            style={buttonStyle}
             data-testid="initial-plus-button"
           >
             +
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={handleButtonClickDelete}
-            style={{ width: '26.5px', height: '30px', }}
+            style={buttonStyle}
             data-testid="initial-minus-button"
           >
             -
-          </button>
+          </Button>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', marginLeft: '100px', width: '273.08' }}>
           {[...Array(counter)].map((_, index) => (
