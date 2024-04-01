@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - deployment-test
 # basic sanity check before pushing the image is necessary -> create test tag
 env:
   TEST_TAG: alexicazana/goat-dock:test
@@ -35,6 +36,8 @@ jobs:
           file: Dockerfile.goat
           load: true
           tags: ${{ env.TEST_TAG }}
+          build-args:
+            VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
       - name: Test
         run: |
          timeout 30s docker run --rm ${{ env.TEST_TAG }} || true
@@ -47,3 +50,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: alexicazana/goat-dock:latest
+          build-args:
+            VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
+
