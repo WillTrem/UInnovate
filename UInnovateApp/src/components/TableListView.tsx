@@ -877,30 +877,23 @@ const TableListView: React.FC<TableListViewProps> = ({
         else{
           newValue = e.format("YYYY-MM-DDTHH:mm:ss");
         }
-        const updatedRow = { [columnName]: newValue };
+        const updatedRow = { ...currentRow.row, [columnName]: newValue };
       
         const schema = vmd.getTableSchema(table.table_name);
         if (!schema) {
           console.error("Schema not found");
           return;
         }
-        const nonEditableColumn = table.columns.find(
-          (column) => column.is_editable === false
-        );
-        if (nonEditableColumn) {
-          setCurrentPrimaryKey(nonEditableColumn.column_name);
-        }
-        const primaryKeyValue = nonEditableColumn?.column_name;
+        
+        //const primaryKeyValue = table.getPrimaryKey()?.column_name;
         // Use the primary key for the row to identify which row to update
-        const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
+        //const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
         // Call the update API
         try {
-          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessor(
             schema.schema_name,
             table.table_name,
             updatedRow,
-            primaryKeyValue as string,
-            storedPrimaryKeyValue as string
           );
           data_accessor.updateRow().then((res) => {
             getRows();
