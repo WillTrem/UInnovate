@@ -13,15 +13,21 @@ CREATE OR REPLACE VIEW meta.schemas ("schema") AS
 ) ;
     
 -- Creating the table view
-CREATE OR REPLACE VIEW meta.tables ( "schema", "table" ) AS
+CREATE OR REPLACE VIEW meta.tables ( "schema", "table", "display_field" ) AS
 (
-    SELECT table_schema, table_name
-    FROM information_schema.tables
-    WHERE table_schema IN (SELECT * FROM meta.schemas)
-    AND table_type = 'BASE TABLE'
-    ORDER BY table_schema
-) ;
-
+    SELECT 
+        t.table_schema,
+        t.table_name,
+        (SELECT obj_description(c.oid) 
+         FROM pg_catalog.pg_class c
+         WHERE c.relname = t.table_name
+         AND c.relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = t.table_schema)
+         ) AS displayField_comments
+    FROM information_schema.tables t
+    WHERE t.table_schema IN (SELECT * FROM meta.schemas)
+    AND t.table_type = 'BASE TABLE'
+    ORDER BY t.table_schema
+);
 -- Creating the constraints view
 CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_name", "constraint_name") AS 
 (
