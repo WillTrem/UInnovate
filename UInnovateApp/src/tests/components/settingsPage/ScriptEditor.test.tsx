@@ -65,14 +65,14 @@ describe("ScriptEditor component", () => {
 
     const buttonNameField = screen.getAllByRole("textbox")[0];
 
-    act(() => {
+    await act(async () => {
       userEvent.click(buttonNameField);
-      userEvent.clear(buttonNameField);
-      userEvent.type(buttonNameField, "New button name");
+      await userEvent.clear(buttonNameField);
+      await userEvent.type(buttonNameField, "New button name");
     });
 
     await waitFor(() => {
-      expect(screen.getByDisplayValue("New button name")).toBeInTheDocument();
+      expect(buttonNameField).toHaveValue('New button name');
     });
   });
 
@@ -86,14 +86,14 @@ describe("ScriptEditor component", () => {
     const descriptionField = screen.getByTestId("description-field");
     const inputElement = within(descriptionField).getByRole("textbox");
 
-    act(() => {
+    await act(async () => {
       userEvent.click(inputElement);
-      userEvent.clear(inputElement);
-      userEvent.type(inputElement, "New description");
+      await userEvent.clear(inputElement);
+      await userEvent.type(inputElement, "New description");
     });
 
     await waitFor(() => {
-      expect(screen.getByDisplayValue("New description")).toBeInTheDocument();
+      expect(inputElement).toHaveValue('New description');
     });
   });
 

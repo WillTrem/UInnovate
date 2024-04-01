@@ -162,5 +162,51 @@ describe("InternationalizationTab component", () => {
       );
       const button = screen.getByTestId("refresh-button");
       fireEvent.click(button);
+    }),
+    it("Show Missing Translations button is clickable", async () => {
+      render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
+      );
+      const button = screen.getByTestId("missing-translations-button");
+      fireEvent.click(button);
+    }),
+    // Default Language Dropdown selected
+    it("Default Language Dropdown selected", async () => {
+      render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
+      );
+      const button = screen.getByTestId("selected-language-label");
+      fireEvent.click(button);
+    }),
+    // It display the add label modal when the add label icon button is clicked and then once a label is added, it should be displayed in the table
+    it("displays the add label modal when the add label icon button is clicked and then once a label is added, it should be displayed in the table", async () => {
+      render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
+      );
+      const button = screen.getByTestId("add-label-button");
+      fireEvent.click(button);
+
+      await waitFor(() => {
+        const modalElement = screen.getByTestId('add-label-modal');
+        expect(modalElement).toBeInTheDocument();
+      });
+
+      const saveButton = screen.getByText("Save");
+
+      fireEvent.click(saveButton);
+
+      await waitFor(() => {
+        const modalElement = screen.queryByTestId('add-label-modal');
+        expect(modalElement).not.toBeInTheDocument();
+      });
+
+      const tableElement = screen.getByTestId('table-component');
+      expect(tableElement).toBeInTheDocument();
     })
-})
+});

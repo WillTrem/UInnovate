@@ -1,6 +1,6 @@
 import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
-import type {} from "@mui/x-date-pickers/themeAugmentation";
+import type { } from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef } from "react";
 import "react-sliding-side-panel/lib/index.css";
@@ -23,7 +23,7 @@ import {
   SelectChangeEvent,
   Tooltip,
   Menu,
-  Checkbox,
+  Checkbox
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -45,6 +45,10 @@ import {
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 import { getConfigs } from "../helper/TableListViewHelpers";
+import { set } from "lodash";
+import { CloudUpload } from '@mui/icons-material'
+import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
+import { CSVUploadButton } from "./CSVUploadButton";
 
 interface TableListViewProps {
   table: Table;
@@ -114,7 +118,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     useState<ConfirmPopupContent>({
       title: "",
       message: "",
-      confirmAction: () => {},
+      confirmAction: () => { },
     });
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
@@ -617,8 +621,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -649,6 +652,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
           {isPopupVisible && (
             <AddRowPopup
+              getRows={getRows}
               onClose={() => setIsPopupVisible(false)}
               table={table}
               columns={table.getColumns()}
@@ -728,19 +732,21 @@ const TableListView: React.FC<TableListViewProps> = ({
           )}
         </div>
       </div>
-      <Button
-        style={{
-          ...buttonStyle,
-          marginTop: "",
-          backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2",
-        }}
-        variant="contained"
-        onClick={ResetFilter}
-        data-testid="reset-filter-button"
-      >
-        Reset Filters
-      </Button>
-
+      <Box display={"flex"} justifyContent={"space-between"} width={"100%"}>
+        <Button
+          style={{
+            ...buttonStyle,
+            marginTop: "",
+            backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2",
+          }}
+          variant="contained"
+          onClick={ResetFilter}
+          data-testid="reset-filter-button"
+        >
+          Reset Filters
+        </Button>
+        <CSVUploadButton table={table} getRows={getRows}/>
+      </Box>
       <TableContainer>
         <MUITable
           className="table-container"
@@ -864,8 +870,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                     }
                   >
                     {editingCell &&
-                    editingCell.rowIdx === rowIdx &&
-                    editingCell.columnName === columns[idx].column_name ? (
+                      editingCell.rowIdx === rowIdx &&
+                      editingCell.columnName === columns[idx].column_name ? (
                       <input
                         type="text"
                         defaultValue={editingCell.value}
@@ -883,10 +889,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                           ? cell.toString()
                           : columns[idx].references_table === "filegroup"
                             ? (
-                                fileGroupsView?.find(
-                                  (fileGroup) => fileGroup.id === cell
-                                )?.count || 0
-                              ).toString() + " file(s)"
+                              fileGroupsView?.find(
+                                (fileGroup) => fileGroup.id === cell
+                              )?.count || 0
+                            ).toString() + " file(s)"
                             : (cell as React.ReactNode)}
                       </Box>
                     )}

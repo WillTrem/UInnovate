@@ -4,13 +4,13 @@ export class DataAccessor {
   data_url: string;
   params?: { [key: string]: string };
   headers: { [key: string]: string };
-  values?: Row;
+  values?: Row | Row[];
 
   constructor(
     data_url: string,
     headers: { [key: string]: string },
     params?: { [key: string]: string },
-    values?: Row
+    values?: Row | Row[]
   ) {
     this.data_url = data_url;
     this.headers = headers;
@@ -75,6 +75,7 @@ export class DataAccessor {
       return response;
     } catch (error) {
       console.error("Could not add row:", error);
+      throw error;
     }
   }
 

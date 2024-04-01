@@ -152,6 +152,45 @@ class VirtualModelDefinition {
     console.log(this.schemas);
   }
 
+  // Method to get the display field for a table
+  // return type : string
+  async getTableDisplayField(schema_name: string, table_name: string) {
+    const table_url = API_BASE_URL + "tables";
+
+    try {
+      const response = await axiosCustom.get(table_url, {
+        headers: { "Accept-Profile": "meta" },
+      });
+
+      const data = response.data;
+      let display_field = "";
+      data.forEach((data: DisplayField) => {
+        if (data.schema === schema_name && data.table === table_name) {
+          const schema = this.getSchema(data.schema);
+
+          if (!schema) {
+            console.error(`Schema ${data.schema} does not exist.`);
+            return;
+          }
+
+          const table = schema.getTable(data.table);
+
+          if (!table) {
+            console.error(
+              `Table ${data.table} does not exist in schema ${data.schema}.`
+            );
+            return;
+          }
+          const JSONdisplayField = JSON.parse(data.display_field);
+          display_field = JSONdisplayField["displayField"];
+        }
+      });
+      return display_field;
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
   // Method to fetch schemas, tables, columns and views from the API
   // return type : void
   async fetchSchemas() {
@@ -190,6 +229,7 @@ class VirtualModelDefinition {
           new Column(data.column),
           data.references_table,
           data.is_editable,
+          data.is_serial,
           data.references_by,
           data.referenced_table,
           data.referenced_by
@@ -412,9 +452,14 @@ class VirtualModelDefinition {
     }
   }
 
-  // Method to return a data accessor object to add a row to a table
+  // Method to return a data accessor object to add a row / multiple rows to a table
   // return type : DataAccessor
-  getAddRowDataAccessor(schema_name: string, table_name: string, row: Row) {
+  getAddRowDataAccessor(
+    schema_name: string,
+    table_name: string,
+    row: Row | Row[],
+    missingAsDefault: boolean = false
+  ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
@@ -422,7 +467,7 @@ class VirtualModelDefinition {
       return new DataAccessor(
         table.url,
         {
-          Prefer: "return=representation",
+          Prefer: `return=representation${missingAsDefault ? ",missing=default" : ""}`,
           "Content-Type": "application/json",
           "Content-Profile": schema_name,
         },
@@ -439,10 +484,11 @@ class VirtualModelDefinition {
   getUpdateRowDataAccessor(schema_name: string, table_name: string, row: Row) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
+    const primary_key = table?.getPrimaryKey()?.column_name;
 
-    if (schema && table) {
+    if (schema && table && primary_key) {
       return new DataAccessor(
-        `${table.url}?id=eq.${row["id"]}`, // PostgREST URL for updating a row from its id
+        `${table.url}?${primary_key}=eq.${row[primary_key]}`, // PostgREST URL for updating a row from its id
         {
           Prefer: "return=representation",
           "Content-Type": "application/json",
@@ -705,6 +751,7 @@ export class Table {
   lookup_tables: string;
   stand_alone_details_view: boolean;
   lookup_counter: string;
+  display_field: string;
 
   constructor(table_name: string) {
     this.table_name = table_name;
@@ -716,6 +763,7 @@ export class Table {
     this.lookup_tables = "null";
     this.stand_alone_details_view = false;
     this.lookup_counter = "0";
+    this.display_field = "";
   }
 
   // Method to add a new column to the table object
@@ -723,6 +771,7 @@ export class Table {
     column: Column,
     references_table: string,
     is_editable: boolean,
+    is_serial: boolean,
     references_by: string,
     referenced_table: string,
     referenced_by: string
@@ -732,6 +781,7 @@ export class Table {
     column.setReferencesBy(references_by);
     column.setReferencedTable(referenced_table);
     column.setReferencedBy(referenced_by);
+    column.setIsSerial(is_serial);
 
     this.columns.push(column);
   }
@@ -861,6 +911,12 @@ export class Table {
   setLookupCounter(lookup_counter: string) {
     this.lookup_counter = lookup_counter;
   }
+
+  // Method to set the table's display field
+  // return type : void
+  setDisplayField(display_field: string) {
+    this.display_field = display_field;
+  }
 }
 
 export class Column {
@@ -870,9 +926,10 @@ export class Column {
   reqOnCreate: boolean;
   references_table: string;
   is_editable: boolean;
+  is_serial: boolean;
   references_by: string;
   referenced_table: string;
-  referenced_by:string;
+  referenced_by: string;
 
   constructor(column_name: string) {
     this.column_name = column_name;
@@ -881,6 +938,7 @@ export class Column {
     this.reqOnCreate = false;
     this.references_table = "";
     this.is_editable = false;
+    this.is_serial = false;
     this.references_by = "";
     this.referenced_table = "";
     this.referenced_by = "";
@@ -951,6 +1009,22 @@ export class Column {
   setReferencedBy(referenced_by: string) {
     this.referenced_by = referenced_by;
   }
+
+  /**
+   * Method to set the column is_serial field
+   * @param isSerial The new value of is_serial
+   */
+  setIsSerial(isSerial: boolean) {
+    this.is_serial = isSerial;
+  }
+
+  /**
+   * Method to get the column is_serial field
+   * @returns boolean
+   */
+  getIsSerial() {
+    return this.is_serial;
+  }
 }
 
 export class View {
@@ -975,6 +1049,7 @@ interface ColumnData {
   column: string;
   references_table: string;
   is_editable: boolean;
+  is_serial: boolean;
   references_by: string;
   referenced_table: string;
   referenced_by: string;
@@ -983,6 +1058,13 @@ interface ColumnData {
 interface ViewData {
   schema: string;
   view: string;
+}
+
+// Defining DisplayField interface for type checking when calling /tables with the API
+interface DisplayField {
+  schema: string;
+  table: string;
+  display_field: string;
 }
 
 // Defining ConfigData interface for type checking when calling /appconfig_values with the API
