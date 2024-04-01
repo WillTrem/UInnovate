@@ -16,6 +16,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { setLoading } from '../redux/LoadingSlice';
 import vmd from '../virtualmodel/VMD';
 import MenuSchemaSelector from './Schema/MenuSchemaSelector';
+import nav_logo from '../../public/PostGOAT_nav.png';
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
@@ -46,10 +47,10 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
     >
       <Container>
         <Navbar.Brand as={Link} to="/" style={{ fontSize: "30px", margin: "0px 10px 5px 0px" }}>
-          <BsFillWrenchAdjustableCircleFill></BsFillWrenchAdjustableCircleFill>
+          <img src={nav_logo} alt="PostGOAT" style={{height: "50px"}}/>
         </Navbar.Brand>
         <Navbar.Brand as={Link} to="/" style={{ fontSize: "30px" }}>
-          UInnovate
+          PostGOAT
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse className="justify-content-end">

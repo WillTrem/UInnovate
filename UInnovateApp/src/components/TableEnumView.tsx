@@ -25,45 +25,47 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
   const [originalColumns, setOriginalColumns] = useState<Column[]>([]);
   const [rows, setRows] = useState<Row[] | undefined>([]);
   const [isPopupVisible, setIsPopupVisible] = useState<boolean>(false);
+  const getRows = async () => {
+    try {
+      const schema = vmd.getTableSchema(table.table_name);
+      if (!schema) {
+        throw new Error("Schema not found");
+      }
+
+      const attribute = table.getEnumViewColumn();
+      const columns = table.getColumns();
+
+      if (!attribute) {
+        throw new Error("Attribute not found");
+      }
+
+      const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+        schema.schema_name,
+        table.table_name
+      );
+      const lines = await data_accessor.fetchRows();
+
+      // Filter the rows to only include the attribute column
+      const filteredRows = lines?.map((row: Row) => {
+        const filteredRowData: { [key: string]: string | number | boolean } =
+          {};
+        filteredRowData[attribute.column_name] = row[attribute.column_name];
+        return new Row(filteredRowData);
+      });
+
+      setColumn(attribute);
+      setOriginalColumns(columns);
+      setRows(filteredRows);
+    } catch (error) {
+      console.error("Could not generate the columns and rows.");
+    }
+  };
+
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const schema = vmd.getTableSchema(table.table_name);
-        if (!schema) {
-          throw new Error("Schema not found");
-        }
+    
 
-        const attribute = table.getEnumViewColumn();
-        const columns = table.getColumns();
-
-        if (!attribute) {
-          throw new Error("Attribute not found");
-        }
-
-        const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-          schema.schema_name,
-          table.table_name
-        );
-        const lines = await data_accessor.fetchRows();
-
-        // Filter the rows to only include the attribute column
-        const filteredRows = lines?.map((row: Row) => {
-          const filteredRowData: { [key: string]: string | number | boolean } =
-            {};
-          filteredRowData[attribute.column_name] = row[attribute.column_name];
-          return new Row(filteredRowData);
-        });
-
-        setColumn(attribute);
-        setOriginalColumns(columns);
-        setRows(filteredRows);
-      } catch (error) {
-        console.error("Could not generate the columns and rows.");
-      }
-    };
-
-    fetchData();
+    getRows();
   }, [table]);
 
   const handleAddRowClick = () => {
@@ -108,6 +110,7 @@ const TableEnumView: React.FC<TableEnumViewProps> = ({
           </div>
           {isPopupVisible && (
             <AddRowPopup
+            getRows={getRows}
               onClose={() => setIsPopupVisible(false)}
               table={table}
               columns={originalColumns}
