@@ -21,7 +21,7 @@ export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({ table, getRows
 	function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
 		const file = event?.target?.files?.[0];
 		if (file) {
-			if (file.type !== 'text/csv') {
+			if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {
 				dispatch(displayError(`ERROR: '${file.name}' is not in CSV format.`))
 			}
 			else {

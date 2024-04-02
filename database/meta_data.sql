@@ -30,9 +30,9 @@ WHERE schema = ' app_service_support' AND CFP.name = 'table_view'
 OR CFP.name = 'visible' OR CFP.name = 'metadata_view' OR CFP.name = 'details_view' OR CFP.name = 'stand_alone_details_view' OR CFP.name = 'lookup_tables' OR CFP.name = 'lookup_counter';
 
 -- Insert a default script for the scripts table
-INSERT INTO meta.scripts (name, description, content, table_name)
+INSERT INTO meta.scripts (name, description, content, table_name, btn_name)
 VALUES
-    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts'),
+    ('default_script', 'Simple script to print something on the console.', 'console.log("Hello World");', 'scripts', 'print'),
     ('remove_first_object', 'Removes the first object in a table', 'try {
     removeRow(1, table_data);
     console.log("Successfully removed a row.");
@@ -40,7 +40,7 @@ VALUES
     console.log(e);
 }
 
-', 'scripts'),
+', 'scripts', 'delete'),
     ('add_script_object', 'Add a dummy script object to the scripts table.', 'try {
     addRow({
         id: 5,
@@ -50,14 +50,14 @@ VALUES
     });
 } catch (e) {
     console.log(e);
-}', 'scripts'),
+}', 'scripts', 'add'),
     ('update_script_object', 'Updates an existing row.', 'try {
     updateRow(3, {
         name: "new_script_object"
     })
 } catch (e) {
     console.log(e);
-}', 'scripts');
+}', 'scripts', 'update');
 
 -- Insert the tables names, columns names, schema tables into the i18n_keys table
 -- Insert unique column names into i18n_keys
