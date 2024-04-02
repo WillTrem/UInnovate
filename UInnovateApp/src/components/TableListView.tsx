@@ -78,6 +78,7 @@ import { set } from "lodash";
 import { CloudUpload } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
 import { CSVUploadButton } from "./CSVUploadButton";
+import axiosCustom from "../api/AxiosCustom";
 
 interface TableListViewProps {
   table: Table;
@@ -428,7 +429,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentColumn
   ) => {
     e.preventDefault();
-    await axios
+    await axiosCustom
       .post(
         "http://localhost:3000/rpc/add_file_to_group",
         {
@@ -472,7 +473,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   const onItemRemoved = async (e, item, currentColumn) => {
     e.preventDefault();
-    await axios
+    await axiosCustom
       .post(
         "http://localhost:3000/rpc/remove_file_from_group",
         {
@@ -860,7 +861,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleSave = async (e, rowIdx: number, columnName: string) => {
     const confirmAction = async () => {
       if (e.preventDefault) e.preventDefault();
-
       let newValue;
       if (e.target !== undefined) {
         if (e.target.editor !== undefined)
