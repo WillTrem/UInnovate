@@ -861,7 +861,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const handleSave = async (e, rowIdx: number, columnName: string) => {
     const confirmAction = async () => {
       if (e.preventDefault) e.preventDefault();
-
       let newValue;
       if (e.target !== undefined) {
         if (e.target.editor !== undefined)
@@ -1166,43 +1165,6 @@ const TableListView: React.FC<TableListViewProps> = ({
             />
           )}
         </div>
-
-        <div className="d-flex flex-column">
-          {(scripts || []).length > 0 && <h6>Scripts</h6>}
-          {scripts?.map((script) => {
-            return (
-              <Tooltip
-                key={script["id"]}
-                title={script["description"]}
-                open={scriptDescription === script["description"]}
-                placement="right"
-              >
-                <Button
-                  key={script["id"]}
-                  style={buttonStyle}
-                  variant="contained"
-                  onClick={() => {
-                    // handleConfirmForm();
-                    setSelectedScript(script);
-                  }}
-                  onMouseEnter={() => handleScriptHover(script["description"])}
-                  onMouseLeave={handleScriptHoverExit}
-                >
-                  {script["btn_name"]}
-                </Button>
-              </Tooltip>
-            );
-          })}
-          {isScriptPopupVisible && selectedScript && (
-            <ScriptLoadPopup
-              onClose={() => {
-                setIsScriptPopupVisible(false);
-                setSelectedScript(null);
-              }}
-              script={selectedScript}
-            />
-          )}
-        </div>
         <div className="d-flex flex-column">
           {(functions || []).length > 0 && <h6>Functions</h6>}
           {functions?.map((func) => {
@@ -1239,7 +1201,12 @@ const TableListView: React.FC<TableListViewProps> = ({
           )}
         </div>
       </div>
-      <Box display={"flex"} justifyContent={"space-between"} width={"100%"}>
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        width={"100%"}
+        alignItems={"center"}
+      >
         <Button
           style={{
             ...buttonStyle,
@@ -1252,6 +1219,39 @@ const TableListView: React.FC<TableListViewProps> = ({
         >
           Reset Filters
         </Button>
+        {scripts?.map((script) => {
+          return (
+            <Tooltip
+              key={script["id"]}
+              title={script["description"]}
+              open={scriptDescription === script["description"]}
+              placement="right"
+            >
+              <Button
+                key={script["id"]}
+                style={{ ...buttonStyle, marginTop: "2px" }}
+                variant="contained"
+                onClick={() => {
+                  // handleConfirmForm();
+                  setSelectedScript(script);
+                }}
+                onMouseEnter={() => handleScriptHover(script["description"])}
+                onMouseLeave={handleScriptHoverExit}
+              >
+                {script["btn_name"]}
+              </Button>
+            </Tooltip>
+          );
+        })}
+        {isScriptPopupVisible && selectedScript && (
+          <ScriptLoadPopup
+            onClose={() => {
+              setIsScriptPopupVisible(false);
+              setSelectedScript(null);
+            }}
+            script={selectedScript}
+          />
+        )}
         <CSVUploadButton table={table} getRows={getRows} />
       </Box>
       <TableContainer>
