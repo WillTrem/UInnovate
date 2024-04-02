@@ -19,6 +19,7 @@ import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import ConfirmationPopup from "./SavePopup";
 import InfoPopup from "./PrimaryKeyErrorPopup";
+import  Audits  from "../virtualmodel/Audits";
 import { IoIosArrowUp } from "react-icons/io";
 import {
   Switch,
@@ -704,52 +705,210 @@ const TableListView: React.FC<TableListViewProps> = ({
     }, 200);
   };
 
-  const handleSave = async (e, rowIdx: number, columnName: string) => {
-    const confirmAction = async () => {
-      if (e.preventDefault) e.preventDefault();
+  const renderEditableField = (editingCell, column, rowIdx) => {
+    switch (column.column_type) {
+      case "text":
+      case "email":
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <input
+              type="text"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
 
-      const newValue = e.target.value;
-      const updatedRow = { [columnName]: newValue };
-
-      const schema = vmd.getTableSchema(table.table_name);
-      if (!schema) {
-        console.error("Schema not found");
-        return;
-      }
-
-      Logger.logUserAction(
-        loggedInUser || "",
-        "Edited Cell",
-        `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
-        schema.schema_name,
-        table.table_name
-      );
-
-      const primaryKeyValue = Object.keys(currentRow.row)[0];
-      // Use the primary key for the row to identify which row to update
-      const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
-      // Call the update API
-      try {
-        const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-          schema.schema_name,
-          table.table_name,
-          updatedRow,
-          primaryKeyValue as string,
-          storedPrimaryKeyValue as string
         );
-        data_accessor.updateRow().then((res) => {
-          getRows();
-        });
-        // Reflect the update locally
-        const updatedRows = [...rows];
-        updatedRows[rowIdx] = new Row(updatedRow);
-        setRows(updatedRows);
+      case "number":
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <input
+              type="number"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
 
-        // Exit editing mode
-      } catch (error) {
-        console.error("Failed to update row", error);
+        );
+
+        case "longtext":
+          return (
+          <div style={{ textAlign: 'center' }}>
+            <textarea
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+
+          );
+    
+        case "boolean":
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <select
+                defaultValue={editingCell.value}
+                onChange={(e) => handleSave(e, rowIdx, column.column_name)}
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                autoFocus
+              >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+          );
+
+        case "datetime":
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <ThemeProvider theme={theme}>
+                  <DateTimePicker
+                    defaultValue={dayjs(editingCell.value)}
+                    onAccept={(e) => handleSave(e, rowIdx, column.column_name)}
+                    autoFocus
+                  />
+                </ThemeProvider>
+              </LocalizationProvider>
+            </div>
+          );
+        case "categories":
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <Select
+                defaultValue={editingCell.value}
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+                autoFocus
+              >
+                {Object.keys(CategoriesDisplayType).map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          );
+        case "phone":
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <MuiTelInput
+                value={
+                  editingCell.value
+                }
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+                name={column.column_name}
+            />
+            </div>
+          );
+        case "currency":
+          // Simple numeric input for currency
+          const numericValue = editingCell.value.replace('$', '');
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <input
+                type="number"
+                defaultValue={numericValue}
+                onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+                onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+                autoFocus
+              />
+            </div>
+          );
+    
+        case "multiline_wysiwyg":
+          return (
+            <div style={{ textAlign: 'center' }}>
+              <RichTextEditor
+              name={column.column_name}
+              content={
+                editingCell.value
+              }
+              onBlur={(event) => handleSave(event.event, rowIdx, column.column_name)}
+              onKeyDown={(event) => handleKeyDown(event.event, rowIdx, column.column_name)}
+              ref={rteRef}
+              extensions={[StarterKit]}
+              renderControls={() => (
+                <MenuControlsContainer>
+                  <MenuSelectHeading />
+                  <MenuDivider />
+                  <MenuButtonBold />
+                  <MenuButtonItalic />
+                </MenuControlsContainer>
+              )}
+            />
+          </div>
+
+          );
+      default:
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <input
+              type="text"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+
+        );
       }
-      setEditingCell(null);
+  };
+  
+  
+  const handleSave = async (e, rowIdx : number, columnName : string) => {
+      const confirmAction = async () => {
+        if (e.preventDefault) e.preventDefault();
+        
+        let newValue;
+        if(e.target !== undefined){
+          if(e.target.editor !== undefined)
+            newValue = e.target.editor.options.content;
+          else
+            newValue = e.target.value;
+        }
+        else{
+          newValue = e.format("YYYY-MM-DDTHH:mm:ss");
+        }
+        const updatedRow = { ...currentRow.row, [columnName]: newValue };
+      
+        const schema = vmd.getTableSchema(table.table_name);
+        if (!schema) {
+          console.error("Schema not found");
+          return;
+        }
+        try {
+          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessor(
+            schema.schema_name,
+            table.table_name,
+            updatedRow,
+          );
+          data_accessor.updateRow().then((res) => {
+            getRows();
+          });
+          // Reflect the update locally
+          const updatedRows = [...rows];
+          updatedRows[rowIdx] = new Row(updatedRow);
+          setRows(updatedRows);
+          Audits.logAudits(
+            loggedInUser || "",
+            "Edited Cell",
+            `User has modified column ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+            schema.schema_name,
+            table.table_name
+          )
+          // Exit editing mode
+        } catch (error) {
+          console.error("Failed to update row", error);
+        }
+        setEditingCell(null);
     };
 
     setConfirmPopupContent({
@@ -1224,19 +1383,9 @@ const TableListView: React.FC<TableListViewProps> = ({
                     }
                   >
                     {editingCell &&
-                      editingCell.rowIdx === rowIdx &&
-                      editingCell.columnName === columns[idx].column_name ? (
-                      <input
-                        type="text"
-                        defaultValue={editingCell.value}
-                        onBlur={(e) =>
-                          handleSave(e, rowIdx, columns[idx].column_name)
-                        }
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, rowIdx, columns[idx].column_name)
-                        }
-                        autoFocus
-                      />
+                    editingCell.rowIdx === rowIdx &&
+                    editingCell.columnName === columns[idx].column_name ? (
+                      renderEditableField(editingCell, columns[idx], rowIdx)
                     ) : (
                       <Box sx={{ textAlign: "center" }}>
                         {typeof cell === "boolean"
