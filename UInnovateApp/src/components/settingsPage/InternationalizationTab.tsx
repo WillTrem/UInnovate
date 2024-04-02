@@ -15,9 +15,8 @@ import TranslationTableRow from "./TranslationTableRow";
 import {
   KEYS_TABLE_NAME,
   LANGUAGE_TABLE_NAME,
-  TRANSLATIONS_TABLE_NAME,
+  TRANSLATIONS_VIEW_NAME,
   editKeyCode,
-  getKeyProps,
   getLanguagesProps,
   getTranslationsByLanguage,
   getTranslationsPropsByLanguage,
@@ -207,7 +206,7 @@ const InternationalizationTab = () => {
         '"' +
         selectedLanguage +
         '"',
-      TRANSLATIONS_TABLE_NAME,
+      TRANSLATIONS_VIEW_NAME,
       "",
     );
   };

@@ -2,7 +2,7 @@ import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import vmd from "./VMD";
 
 const SCHEMA_NAME = "meta";
-export const TRANSLATIONS_TABLE_NAME = "i18n_translations";
+export const TRANSLATIONS_VIEW_NAME = "i18n_translations";
 export const LANGUAGE_TABLE_NAME = "i18n_languages";
 export const KEYS_TABLE_NAME = "i18n_keys";
 export const VALUES_TABLE_NAME = "i18n_values";
@@ -35,7 +35,7 @@ export const getTranslationsByLanguage = async (chosenLanguage: string) => {
   try {
     const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
       SCHEMA_NAME,
-      TRANSLATIONS_TABLE_NAME,
+      TRANSLATIONS_VIEW_NAME,
     );
     const rows = await data_accessor.fetchRowsByColumnValues(
       LANGUAGE_CODE_COLUMN_NAME,
@@ -47,12 +47,13 @@ export const getTranslationsByLanguage = async (chosenLanguage: string) => {
         ...row,
         is_default: row.is_default || false,
       }));
-      console.log("data retreived...");
-      return translationsWithIsDefault;
+      console.log("data retreived...", translationsWithIsDefault);
+      return translationsWithIsDefault as i18nTranslationsProps[];
     }
   } catch (error) {
     console.error("Error fetching translations:", error);
   }
+  return [];
 };
 
 // Get the key_id of the selected key using the getKeyProps function
@@ -114,6 +115,18 @@ export const getLanguagesProps = async () => {
   }
 };
 
+export const getLanguagesCodes = async () => {
+  try {
+    const languages = await getLanguagesProps();
+    if (languages) {
+      const languageCodes = languages.map((language) => language.language_code);
+      return languageCodes;
+    }
+  } catch (error) {
+    console.error("Error fetching languages:", error);
+  }
+};
+
 export const editKeyCode = async (keyCode: string, editedValue: string) => {
   try {
     const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
@@ -151,7 +164,7 @@ export const getTranslationsPropsByLanguage = async (
   try {
     const data_accessor: DataAccessor = vmd.getViewRowsDataAccessor(
       SCHEMA_NAME,
-      TRANSLATIONS_TABLE_NAME,
+      TRANSLATIONS_VIEW_NAME,
     );
 
     const rows = await data_accessor.fetchRowsByColumnValues(
@@ -248,7 +261,7 @@ export const upsertTranslation = async (
     // Get the data accessor for upsert operation
     const dataAccessor = vmd.getUpsertDataAccessor(
       SCHEMA_NAME,
-      "i18n_values",
+      VALUES_TABLE_NAME,
       {
         columns: "language_id, key_id, value",
         on_conflict: "language_id, key_id",
