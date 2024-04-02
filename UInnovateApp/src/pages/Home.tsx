@@ -32,13 +32,13 @@ export function Home() {
         >
           <Grid item>
             <Typography variant="h2" gutterBottom>
-              Welcome to PostGoat!
+              Welcome to PostGOAT!
             </Typography>
           </Grid>
           <Grid item>
             <img
               src="./../public/PostGOAT_nav.png"
-              alt="PostGoat"
+              alt="PostGOAT"
               style={{ maxWidth: "400px", maxHeight: "100%", marginBottom: "20px" }}
             />
           </Grid>
