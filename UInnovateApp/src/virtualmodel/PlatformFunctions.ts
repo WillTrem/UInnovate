@@ -73,11 +73,13 @@ export async function callProcedure(
     return;
   }
   const func = await vmd.getFunctionAccessor(
-    params.schema || "",
-    params.functionName
+    "meta" || "",
+    "execute_procedure"
   );
   const input = new Row();
   // TODO: Add input parameters to the input row
+  input.schema_name = params.schema;
+  input.procedure_name = params.functionName;
 
   func.setBody(input);
   await func.executeFunction();

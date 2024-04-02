@@ -428,7 +428,7 @@ table_record record;
 BEGIN FOR schema_name IN (
 	SELECT "schema"
 	FROM meta.schemas
-	WHERE "schema" LIKE 'app%'
+	WHERE "schema" LIKE 'app%' or "schema" = 'filemanager'
 ) LOOP EXECUTE format('GRANT ALL ON SCHEMA %I TO "user";', schema_name);
 FOR table_record IN (
 	SELECT "table"
@@ -480,7 +480,7 @@ VALUES (
 		'admin123',
 		TRUE,
 		'administrator', 
-		'{app_rentals, app_service_support}'
+		'{app_rentals, app_service_support, filemanager}'
 	),
 	(
 		'config@test.com',
@@ -489,7 +489,7 @@ VALUES (
 		'config123',
 		TRUE,
 		'configurator',
-		'{app_rentals, app_service_support}'
+		'{app_rentals, app_service_support, filemanager}'
 	),
 	(
 		'user@test.com',
@@ -498,7 +498,7 @@ VALUES (
 		'user123',
 		TRUE,
 		'user',
-		'{app_rentals, app_service_support}'
+		'{app_rentals, app_service_support, filemanager}'
 	),
 	(
 		'api_testing@test.com',

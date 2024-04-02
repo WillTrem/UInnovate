@@ -10,11 +10,12 @@ import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { saveConfigToDB } from "../../helper/SettingsHelpers";
 import { AuthState } from "../../redux/AuthSlice";
 import { RootState } from "../../redux/Store";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Audits from "../../virtualmodel/Audits";
 // import { Button } from "react-bootstrap";
 import { Button } from "@mui/material";
 import { IoMdAddCircle, IoMdRemoveCircle } from "react-icons/io";
+import { displayError } from "../../redux/NotificationSlice";
 
 // import { buttonStyle } from "../../styles/Styles";
 
@@ -31,6 +32,7 @@ const buttonStyle = {
 const LookUpTableSetting: React.FC<LookUpTableProps> = ({
 	table,
 }: LookUpTableProps) => {
+  const dispatch = useDispatch();
 	const attributes = table.getColumns();
 	let count = 0;
 	const referencesTableList: string[] = [];
@@ -173,15 +175,16 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({
 				);
 			};
 
-		//function to handle increase in amount of lookup tables
-		const handleButtonClick = async () => {
-			if (count - 1 == counter || count == 0) {
-				alert("You can't add more lookup tables");
-			} else {
-				const newCounterValue = counter + 1;
-				setCounter(newCounterValue);
-				setCounterConfig(newCounterValue);
-			}
+    //function to handle increase in amount of lookup tables
+    const handleButtonClick = async () => {
+      if (count - 1 == counter || count == 0) {
+        dispatch(displayError("Cannot add more lookup tables"));
+      }
+      else {
+        const newCounterValue = counter + 1;
+        setCounter(newCounterValue);
+        setCounterConfig(newCounterValue);
+      }
 
 			Audits.logAudits(
 				loggedInUser || "",
@@ -192,22 +195,25 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({
 			);
 		};
 
-		const handleButtonClickDelete = async () => {
-			if (counter > 0) {
-				const newCounterValue = counter - 1;
-				setCounter(newCounterValue);
-				setCounterConfig(newCounterValue);
-				handleReset();
-			} else setCounter(0);
-			setCounterConfig(0);
-			Audits.logAudits(
-				loggedInUser || "",
-				"Lookup Tables",
-				"User removed a lookup table from the table",
-				"",
-				table.table_name
-			);
-		};
+    const handleButtonClickDelete = async () => {
+      if (counter > 0) {
+        const newCounterValue = counter - 1;
+        setCounter(newCounterValue);
+        setCounterConfig(newCounterValue);
+        handleReset();
+      }
+      else {
+        setCounter(0);
+        setCounterConfig(0);
+		handleReset();
+      }
+      Audits.logAudits(
+        loggedInUser || "",
+        "Lookup Tables",
+        "User removed a lookup table from the table",
+        "",
+        table.table_name)
+    };
 
 		const handleReset = async () => {
 			const newSelectInput = {
