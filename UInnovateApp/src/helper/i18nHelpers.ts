@@ -1,7 +1,7 @@
 import { KeyProps, LanguageProps, getTranslationsByLanguage, i18nTranslationsProps } from "../virtualmodel/I18nDataAccessor";
 
 
-class I18n {
+export class I18n {
 
     public languages: LanguageProps[] = [];
     public labelKeyCode: KeyProps[] = [];
@@ -14,7 +14,7 @@ class I18n {
 
         //load translation values
         const gettranslations = getTranslationsByLanguage(lang);
-        gettranslations.then((rows) => {
+        return gettranslations.then((rows) => {
             this.translations = rows;
         })
     }

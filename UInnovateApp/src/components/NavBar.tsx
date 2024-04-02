@@ -3,7 +3,7 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import { BsFillWrenchAdjustableCircleFill } from "react-icons/bs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SignupModal from "./settingsPage/SignupModal";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
@@ -28,6 +28,14 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const { user: loggedInUser, dbRole }: AuthState = useSelector(
     (state: RootState) => state.auth,
   );
+  const selectedLanguage: string = useSelector(
+    (state: RootState) => state.languageSelection.value,
+  );
+
+  //labels
+  const [settings_lbl, setSettings_lbl] = useState("");
+  i18n.reloadI18Values(selectedLanguage);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleClose = () => setShowSignupModal(false);
@@ -39,6 +47,16 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
       dispatch(setLoading(false));
     });
     navigate("/");
+  };
+
+  useEffect(() => {
+    i18n.reloadI18Values(selectedLanguage).then(() => {
+      updateLabels();
+    });
+  }, [selectedLanguage]);
+
+  const updateLabels = () => {
+    setSettings_lbl(i18n.get("Settings"));
   };
 
   return (
@@ -80,7 +98,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
                   style={{ fontSize: "25px" }}
                   hidden={dbRole === Role.USER}
                 >
-                  {i18n.get("Settings")}
+                  {settings_lbl}
                 </Nav.Link>
               </>
             )}
