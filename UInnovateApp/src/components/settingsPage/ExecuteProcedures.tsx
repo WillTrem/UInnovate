@@ -2,7 +2,7 @@ import { Col, Row as Line, Tab, Nav } from "react-bootstrap";
 import { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
-import { fetchFunctionNames, callProcedure, ProcedureSchedulingParams, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
+import { fetchProcedureNamesWithNoArgs, callProcedure, ProcedureSchedulingParams, fetchProcedureSource} from '../../virtualmodel/PlatformFunctions';
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-github";
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -68,6 +68,12 @@ export const ExecuteProcedures = () => {
 
       await data_accessor?.addRow();
       getFunctions();
+      setNewFunction(prevState => ({
+        ...prevState,  
+        procedure: procedures[0], 
+        name: "", 
+        description: "", 
+      }));
       setShowModal(false);
     };
     const execProcedure = () => {
@@ -88,13 +94,14 @@ export const ExecuteProcedures = () => {
         if (!selectedSchema || schema_access.length == 0) return
         try {
             // wait for resolve of fetchFunctionNames promises
-            const functionNames = await fetchFunctionNames(selectedSchema);
+            const functionNames = await fetchProcedureNamesWithNoArgs(selectedSchema);
             const procedures = [...new Set(functionNames)];
 
             setProcedures(procedures); // update state with function names
 
             if (procedures.length > 0) {
                 setSelectedProc(procedures[0]);
+                setNewFunction({ ...newFunction, procedure: procedures[0] });
                 handleProcSelection(procedures[0]);
             }
         } catch (error) {
@@ -161,7 +168,7 @@ export const ExecuteProcedures = () => {
                     <Form.Label>Description</Form.Label>
                     <Form.Control
                       type="text"
-                      value={newFunction.description || ""}
+                      value={newFunction.description ||""}
                       onChange={(e) =>
                         setNewFunction({
                           ...newFunction,

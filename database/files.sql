@@ -4,6 +4,10 @@ CREATE SCHEMA IF NOT EXISTS filemanager ;
 DROP SEQUENCE IF EXISTS file_seq CASCADE;
 CREATE SEQUENCE file_seq START WITH 1;
 
+GRANT ALL ON SCHEMA filemanager TO "user";
+
+NOTIFY pgrst, 'reload config';
+NOTIFY pgrst, 'reload schema';
 
 CREATE TABLE IF NOT EXISTS filemanager.filestorage (
 	id TEXT NOT NULL DEFAULT 'file_'||nextval('file_seq'::regclass) PRIMARY KEY,
@@ -82,15 +86,15 @@ END;
 $$;
 
 
-GRANT ALL ON SEQUENCE file_seq TO web_anon;
-GRANT ALL ON SCHEMA filemanager TO web_anon;
-GRANT ALL ON filemanager.filestorage TO web_anon;
-GRANT ALL ON filemanager.filegroup TO web_anon;
-GRANT ALL ON filemanager.filestorage_view TO web_anon;
-GRANT ALL ON filemanager.filegroup_view TO web_anon;
-GRANT USAGE, SELECT ON SEQUENCE file_seq, filemanager.filegroup_id_seq TO web_anon;
-GRANT ALL ON FUNCTION filemanager.add_file_to_group(INT, TEXT, TEXT, TEXT) TO web_anon;
-GRANT ALL ON FUNCTION filemanager.remove_file_from_group(INT, TEXT) TO web_anon;
+GRANT ALL ON SEQUENCE file_seq TO "user";
+GRANT ALL ON filemanager.filestorage TO "user";
+GRANT ALL ON filemanager.filegroup TO "user";
+GRANT ALL ON filemanager.filestorage_view TO "user";
+GRANT ALL ON filemanager.filegroup_view TO "user";
+GRANT USAGE, SELECT ON SEQUENCE file_seq, filemanager.filegroup_id_seq TO "user";
+GRANT ALL ON FUNCTION filemanager.add_file_to_group(INT, TEXT, TEXT, TEXT) TO "user";
+GRANT ALL ON FUNCTION filemanager.remove_file_from_group(INT, TEXT) TO "user";
 
-NOTIFY pgrst, 'reload schema'
+NOTIFY pgrst, 'reload config';
+NOTIFY pgrst, 'reload schema';
 
