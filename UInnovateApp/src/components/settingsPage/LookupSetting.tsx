@@ -205,6 +205,7 @@ const LookUpTableSetting: React.FC<LookUpTableProps> = ({
       else {
         setCounter(0);
         setCounterConfig(0);
+		handleReset();
       }
       Audits.logAudits(
         loggedInUser || "",
