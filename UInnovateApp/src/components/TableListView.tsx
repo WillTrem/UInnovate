@@ -1,6 +1,6 @@
 import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
-import type { } from "@mui/x-date-pickers/themeAugmentation";
+import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
@@ -33,7 +33,7 @@ import {
   createTheme,
   ThemeProvider,
   Menu,
-  Checkbox
+  Checkbox,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -74,9 +74,10 @@ import {
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 import { set } from "lodash";
-import { CloudUpload } from '@mui/icons-material'
+import { CloudUpload } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
 import { CSVUploadButton } from "./CSVUploadButton";
+import axiosCustom from "../api/AxiosCustom";
 
 interface TableListViewProps {
   table: Table;
@@ -165,7 +166,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     useState<ConfirmPopupContent>({
       title: "",
       message: "",
-      confirmAction: () => { },
+      confirmAction: () => {},
     });
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
@@ -427,7 +428,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentColumn
   ) => {
     e.preventDefault();
-    await axios
+    await axiosCustom
       .post(
         "http://localhost:3000/rpc/add_file_to_group",
         {
@@ -471,7 +472,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   const onItemRemoved = async (e, item, currentColumn) => {
     e.preventDefault();
-    await axios
+    await axiosCustom
       .post(
         "http://localhost:3000/rpc/remove_file_from_group",
         {
@@ -975,7 +976,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
+        row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -1099,7 +1101,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         >
           Reset Filters
         </Button>
-        <CSVUploadButton table={table} getRows={getRows}/>
+        <CSVUploadButton table={table} getRows={getRows} />
       </Box>
       <TableContainer>
         <MUITable
@@ -1224,8 +1226,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                     }
                   >
                     {editingCell &&
-                      editingCell.rowIdx === rowIdx &&
-                      editingCell.columnName === columns[idx].column_name ? (
+                    editingCell.rowIdx === rowIdx &&
+                    editingCell.columnName === columns[idx].column_name ? (
                       <input
                         type="text"
                         defaultValue={editingCell.value}
@@ -1243,10 +1245,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                           ? cell.toString()
                           : columns[idx].references_table === "filegroup"
                             ? (
-                              fileGroupsView?.find(
-                                (fileGroup) => fileGroup.id === cell
-                              )?.count || 0
-                            ).toString() + " file(s)"
+                                fileGroupsView?.find(
+                                  (fileGroup) => fileGroup.id === cell
+                                )?.count || 0
+                              ).toString() + " file(s)"
                             : (cell as React.ReactNode)}
                       </Box>
                     )}
