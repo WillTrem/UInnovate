@@ -126,12 +126,16 @@ describe("PlatformFunction", () => {
     // Assert
     // Verify that vmd.getFunctionAccessor was called with the correct arguments
     expect(VMD.getFunctionAccessor).toHaveBeenCalledWith(
-      params.schema,
-      params.functionName
+      "meta",
+      "execute_procedure"
     );
 
     // Verify that func.setBody was called with the correct arguments
-    expect(mockFunc.setBody).toHaveBeenCalledWith(new Row()); // Replace with the expected input row
+    expect(mockFunc.setBody).toHaveBeenCalledWith({
+      schema_name: "your-schema",
+      procedure_name: "your-function-name",
+      // Add other properties if needed
+    }); // Replace with the expected input row
 
     // Verify that func.executeFunction was called
     expect(mockFunc.executeFunction).toHaveBeenCalled();
