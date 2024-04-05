@@ -11,6 +11,9 @@ export default {
   }),
   getRowsDataAccessor: vi.fn().mockImplementation((schema, table) => {
     console.log("getRowsDataAccessor in VMD mock was called");
+    if(table){
+      return new DataAccessorMock(table);
+    }
     return new DataAccessorMock("/api/data");
   }),
   getRowsDataAccessorForOrder: vi.fn().mockImplementation(() => {
@@ -109,9 +112,9 @@ export default {
         return new DataAccessorMock(view_name);
       }
     ),
-  getRemoveRowAccessor: vi.fn().mockImplementation(() => {
+  getRemoveRowAccessor: vi.fn().mockImplementation((schemaName, tableName) => {
     console.log("getRemoveRowAccessor in VMD mock was called");
-    return new DataAccessorMock();
+    return new DataAccessorMock(tableName);
   }),
   getAddRowDataAccessor: vi.fn().mockImplementation(() => {
     console.log("getAddRowDataAccessor in VMD mock was called");

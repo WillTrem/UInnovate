@@ -156,6 +156,7 @@ const AdditionalViewEditor = ({
                                     view.viewtype === ViewTypeEnum.Custom,
                                   )
                                 }
+                                data-testid="delete-button"
                               >
                                 <Delete fontSize="small" />
                               </Button>

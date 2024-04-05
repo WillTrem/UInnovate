@@ -1,6 +1,7 @@
 import { vi } from "vitest";
 import { Row } from "../DataAccessor";
 import { Role } from "../../redux/AuthSlice";
+import { ViewTypeEnum } from "../../enums/ViewTypeEnum";
 
 export { Row };
 export class DataAccessorMock {
@@ -23,7 +24,7 @@ export class DataAccessorMock {
 
   fetchRows = vi.fn().mockImplementation(() => {
     console.log("fetchRows in DataAccessor mock was called");
-    if (this.data_url === "/api/data") {
+    if (this.data_url === "/api/data" || this.data_url === "mock table name") {
       return Promise.resolve([
         {
           Column1: 1,
@@ -54,7 +55,19 @@ export class DataAccessorMock {
           role: Role.USER,
         },
       ]);
-    } else {
+    }
+    else if (this.data_url === "additional_view_settings") {
+      return Promise.resolve([
+        {
+          id: 0,
+          viewname: 'mockViewName',
+          schemaname: 'mock schema name',
+          tablename: "mock table name",
+          viewtype: ViewTypeEnum.Custom
+        }
+      ])
+    }
+    else {
       return Promise.resolve([]);
     }
   });
@@ -99,6 +112,13 @@ export class DataAccessorMock {
     console.log("put in DataAccessor mock was called");
     return Promise.resolve();
   });
+  
+  deleteRow = vi.fn().mockImplementation(() => {
+    console.log("deleteRow in DataAccessor mock was called");
+    return Promise.resolve();
+  });
+
+
 }
 
 const userInfoMock = [
