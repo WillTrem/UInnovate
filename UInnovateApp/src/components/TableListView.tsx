@@ -668,9 +668,10 @@ const TableListView: React.FC<TableListViewProps> = ({
       clearTimeout(clickTimeoutRef.current);
       clickTimeoutRef.current = null;
     }
-    if (!column.is_editable) {
+    if (!column.is_editable || column.is_serial || column.references_table) {
+      let reason = column.references_table ? "it's a primary key" : "it references another table";
       setInfoPopupMessage(
-        `${column.column_name} is not editable because it's a primary key.`
+        `${column.column_name} is not editable because ${reason}.`
       );
       setIsInfoPopupOpen(true);
       return false;
