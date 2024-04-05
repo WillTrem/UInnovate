@@ -126,12 +126,16 @@ describe("PlatformFunction", () => {
     // Assert
     // Verify that vmd.getFunctionAccessor was called with the correct arguments
     expect(VMD.getFunctionAccessor).toHaveBeenCalledWith(
-      params.schema,
-      params.functionName
+      "meta",
+      "execute_procedure"
     );
 
     // Verify that func.setBody was called with the correct arguments
-    expect(mockFunc.setBody).toHaveBeenCalledWith(new Row()); // Replace with the expected input row
+    expect(mockFunc.setBody).toHaveBeenCalledWith({
+      schema_name: "your-schema",
+      procedure_name: "your-function-name",
+      // Add other properties if needed
+    }); // Replace with the expected input row
 
     // Verify that func.executeFunction was called
     expect(mockFunc.executeFunction).toHaveBeenCalled();
@@ -172,6 +176,7 @@ describe("PlatformFunction", () => {
       functionName: "your-function-name",
       stored_procedure: "your-stored-procedure",
       cron_schedule: "your-cron-schedule",
+      schema: "your-schema",
       // TODO: Add other parameters if needed
     };
     const mockSchema = { schema_name: "your-schema" };
@@ -194,12 +199,11 @@ describe("PlatformFunction", () => {
     // Verify that vmd.getFunctionAccessor was called with the correct arguments
     expect(VMD.getFunctionAccessor).toHaveBeenCalledWith(
       mockSchema.schema_name,
-      params.functionName
+      params.functionName,
     );
-
     // Verify that func.setBody was called with the correct arguments
     expect(mockFunc.setBody).toHaveBeenCalledWith({
-      stored_procedure: params.stored_procedure,
+      stored_procedure: `${params.schema}.${params.stored_procedure}`,
       cron_schedule: params.cron_schedule,
     });
 
@@ -212,6 +216,7 @@ describe("PlatformFunction", () => {
     const params = {
       functionName: "your-function-name",
       stored_procedure: "your-stored-procedure",
+      schema: "your-schema",
       // TODO: Add other parameters if needed
     };
     const mockSchema = { schema_name: "your-schema" };
@@ -239,7 +244,7 @@ describe("PlatformFunction", () => {
 
     // Verify that func.setBody was called with the correct arguments
     expect(mockFunc.setBody).toHaveBeenCalledWith({
-      stored_procedure: params.stored_procedure,
+      stored_procedure: `${params.schema}.${params.stored_procedure}`,
     });
 
     // Verify that func.executeFunction was called

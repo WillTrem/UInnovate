@@ -114,7 +114,7 @@ const AdditionalViewModal = ({
             id="AdditionalViewModalForm"
           >
             <Form.Group className="mb-3" controlId="viewName">
-              <Form.Label>view name</Form.Label>
+              <Form.Label>View Name</Form.Label>
               <Form.Control
                 required
                 name="viewName"
@@ -129,7 +129,7 @@ const AdditionalViewModal = ({
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="viewType">
-              <Form.Label>view type</Form.Label>
+              <Form.Label>View Type</Form.Label>
               <Form.Select
                 name="viewType"
                 onChange={(e) => setViewType(parseInt(e.target.value))}
@@ -143,7 +143,7 @@ const AdditionalViewModal = ({
             </Form.Group>
             {viewType !== ViewTypeEnum.Kpi && (
               <Form.Group className="mb-3" controlId="viewTable">
-                <Form.Label>tables</Form.Label>
+                <Form.Label>Tables</Form.Label>
                 <Form.Select onChange={(e) => setTableName(e.target.value)}>
                   {tableList &&
                     tableList.map((table) => (
@@ -156,7 +156,7 @@ const AdditionalViewModal = ({
             )}
             {viewType === ViewTypeEnum.Custom && (
               <Form.Group className="mb-3" controlId="viewCustomCode">
-                <Form.Label>view custom code</Form.Label>
+                <Form.Label>View Custom Code</Form.Label>
                 <Form.Control
                   required={viewType == ViewTypeEnum.Custom}
                   type="file"
@@ -176,8 +176,12 @@ const AdditionalViewModal = ({
           >
             Close
           </Button>
-          <Button variant="contained" onClick={handleFormSubmit}>
-            Save Changes
+          <Button
+            className="buttonStyle"
+            variant="contained"
+            onClick={handleFormSubmit}
+          >
+            Save
           </Button>
         </Modal.Footer>
       </Modal>

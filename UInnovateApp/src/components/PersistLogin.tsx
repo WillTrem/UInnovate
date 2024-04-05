@@ -22,11 +22,21 @@ const PersistLogin: React.FC = () => {
 				const { email } = jwtDecode(token) as DecodedToken;
 				const schemaRoles = await getSchemaRoles(email);
 				dispatch(updateSchemaRoles(schemaRoles));
-				
+
 				const defaultRole = await getDefaultRole(email);
 				dispatch(updateDefaultRole(defaultRole));
 			})
-				.catch((error) => { console.log(error.response.data.message) })
+				.catch((error) => {
+					if (error.response) {
+						console.log(error.response.data.message)
+					}
+					else if(error.message){
+						console.log(error.message);
+					}
+					else{
+						console.log(error);
+					}
+				})
 				.finally(() => dispatch(setLoading(false)));
 		}
 	}, [])
