@@ -412,15 +412,15 @@ class VirtualModelDefinition {
     if (schema && table) {
       return new DataAccessor(
         table.url +
-          "?order=" +
-          order_by +
-          "." +
-          sortOrder +
-          "&limit=" +
-          limit +
-          "&offset=" +
-          page +
-          Filter,
+        "?order=" +
+        order_by +
+        "." +
+        sortOrder +
+        "&limit=" +
+        limit +
+        "&offset=" +
+        page +
+        Filter,
         {
           "Accept-Profile": schema.schema_name,
         }
@@ -508,23 +508,38 @@ class VirtualModelDefinition {
     schema_name: string,
     table_name: string,
     row: Row,
-    primarykey: string,
-    primarykeyvalue: string
+    primarykey: string | string[],
+    primarykeyvalue: string | string[]
   ) {
     const schema = this.getSchema(schema_name);
     const table = this.getTable(schema_name, table_name);
 
     if (schema && table) {
-      return new DataAccessor(
-        `${table.url}?${primarykey}=eq.${primarykeyvalue}`, // PostgREST URL for updating a row from its id
-        {
-          Prefer: "return=representation",
-          "Content-Type": "application/json",
-          "Content-Profile": schema_name,
-        },
-        undefined,
-        row
-      );
+      if (typeof primarykey === "string") {
+        return new DataAccessor(
+          `${table.url}?${primarykey}=eq.${primarykeyvalue}`, // PostgREST URL for updating a row from its id
+          {
+            Prefer: "return=representation",
+            "Content-Type": "application/json",
+            "Content-Profile": schema_name,
+          },
+          undefined,
+          row
+        );
+      } else {
+        const queryParameters = primarykey.map((key, index) => `${key}=eq.${primarykeyvalue[index]}`).join('&');
+        const url = `${table.url}?${queryParameters}`;
+        return new DataAccessor(
+          url,
+          {
+            prefer: "return=representation",
+            "Content-Type": "application/json",
+            "Content-Profile": schema_name,
+          },
+          undefined,
+          row
+        );
+      }
     } else {
       throw new Error("Schema or table does not exist");
     }

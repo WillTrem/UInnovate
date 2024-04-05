@@ -1,6 +1,6 @@
 import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
-import type {} from "@mui/x-date-pickers/themeAugmentation";
+import type { } from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef, CSSProperties } from "react";
 import SlidingPanel from "react-sliding-side-panel";
@@ -127,8 +127,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isFunctionPopupVisible, setIsFunctionPopupVisible] =
     useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
-  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
-    null
+  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string>(
+    "null"
   );
   const [openPanel, setOpenPanel] = useState(false);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
@@ -167,7 +167,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     useState<ConfirmPopupContent>({
       title: "",
       message: "",
-      confirmAction: () => {},
+      confirmAction: () => { },
     });
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
@@ -277,6 +277,24 @@ const TableListView: React.FC<TableListViewProps> = ({
     getRows();
   }, [table, orderBy, PageNumber, PaginationValue, sortOrder, conditionFilter]);
 
+  useEffect(() => {
+    const SetPrimaryKey = () => {
+      const allColumnsAreEditable = table.columns.every(
+        (column) => column.is_editable === true
+      );
+      console.log(allColumnsAreEditable)
+      if (allColumnsAreEditable) {
+        table.columns.forEach((column) => {
+          if (column.references_table != null && column.references_table != "filegroup") {
+            console.log(column.column_name)
+            column.setEditability(false);
+          }
+        });
+      }
+    };
+    SetPrimaryKey();
+  }, [table]);
+
   const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
     "filemanager",
     "filegroup_view"
@@ -285,6 +303,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     "filemanager",
     "filestorage_view"
   );
+
 
   const getFileGroupsView = async () => {
     fileGroupsViewDataAccessor.fetchRows().then((response) => {
@@ -541,7 +560,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   );
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    const primary_keys:string[] = [];
     const schema = vmd.getTableSchema(table.table_name);
     if (!schema) {
       console.error("Schema not found");
@@ -556,23 +575,48 @@ const TableListView: React.FC<TableListViewProps> = ({
       schema?.schema_name || "",
       table.table_name
     );
-
-    const storedPrimaryKeyValue = currentRow.row
-      ? currentRow.row[currentPrimaryKey as string]
-      : null;
-
-    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-      schema.schema_name,
-      table.table_name,
-      inputValues,
-      currentPrimaryKey as string,
-      storedPrimaryKeyValue as unknown as string
+    table.columns.forEach((column) => {
+      if (column.is_editable == false) {
+        primary_keys.push(column.column_name);
+      }
+    }
     );
-    data_accessor.updateRow().then(() => {
-      getRows();
-    });
-    setInputValues({});
-    setOpenPanel(false);
+    if (primary_keys.length == 1) { //this checks if the table only has 1 primary key
+
+
+      const storedPrimaryKeyValue = currentRow.row
+        ? currentRow.row[currentPrimaryKey as string]
+        : null;
+
+      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+        schema.schema_name,
+        table.table_name,
+        inputValues,
+        currentPrimaryKey,
+        storedPrimaryKeyValue as unknown as string
+      );
+      
+      data_accessor.updateRow().then(() => {
+        getRows();
+      });
+    } else {
+      const storedPrimaryKeyValues = primary_keys.map(key => currentRow.row ? currentRow.row[key] : null);
+      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+        schema.schema_name,
+        table.table_name,
+        inputValues,
+        primary_keys,
+        storedPrimaryKeyValues
+
+      );
+      console.log(data_accessor)
+      data_accessor.updateRow().then(() => {
+        getRows();
+      });
+    }
+      setInputValues({});
+      setOpenPanel(false);
+    
   };
   //Filter Functions
   //Handle when you click on the filter button
@@ -634,20 +678,8 @@ const TableListView: React.FC<TableListViewProps> = ({
       return null;
     }
 
-    if (column.is_editable == false) {
-      localStorage.setItem(
-        "currentPrimaryKeyValue",
-        currentRow.row[column.column_name]
-      );
-    }
 
-    if (column.references_table != null) {
-      const string = column.column_name + "L";
-      localStorage.setItem(
-        string,
-        currentRow.row[column.column_name] as string
-      );
-    }
+
     return (
       <div>
         <Dropzone
@@ -1126,8 +1158,7 @@ const TableListView: React.FC<TableListViewProps> = ({
       detailtype = "standalone";
     }
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -1377,8 +1408,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                     }
                   >
                     {editingCell &&
-                    editingCell.rowIdx === rowIdx &&
-                    editingCell.columnName === columns[idx].column_name ? (
+                      editingCell.rowIdx === rowIdx &&
+                      editingCell.columnName === columns[idx].column_name ? (
                       renderEditableField(editingCell, columns[idx], rowIdx)
                     ) : (
                       <Box sx={{ textAlign: "center" }}>
@@ -1386,10 +1417,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                           ? cell.toString()
                           : columns[idx].references_table === "filegroup"
                             ? (
-                                fileGroupsView?.find(
-                                  (fileGroup) => fileGroup.id === cell
-                                )?.count || 0
-                              ).toString() + " file(s)"
+                              fileGroupsView?.find(
+                                (fileGroup) => fileGroup.id === cell
+                              )?.count || 0
+                            ).toString() + " file(s)"
                             : (cell as React.ReactNode)}
                       </Box>
                     )}
