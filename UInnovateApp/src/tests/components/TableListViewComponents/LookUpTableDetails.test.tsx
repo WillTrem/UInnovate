@@ -45,7 +45,7 @@ describe("LookUpTableDetails component", () => {
       <LookUpTableDetails table={table2} currentRow={row} />
     );
 
-    expect(container.firstChild).toBeEmptyDOMElement();
+    expect(container.firstChild).toBeNull();
   });
 
   it("renders multiple tables", async () => {

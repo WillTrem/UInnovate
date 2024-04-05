@@ -19,6 +19,7 @@ import { AuthState } from "../redux/AuthSlice";
 import Box from "@mui/material/Box";
 import ConfirmationPopup from "./SavePopup";
 import InfoPopup from "./PrimaryKeyErrorPopup";
+import Audits from "../virtualmodel/Audits";
 import { IoIosArrowUp } from "react-icons/io";
 import {
   Switch,
@@ -74,6 +75,10 @@ import {
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 import { set } from "lodash";
+import { CloudUpload } from "@mui/icons-material";
+import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
+import { CSVUploadButton } from "./CSVUploadButton";
+import axiosCustom from "../api/AxiosCustom";
 
 interface TableListViewProps {
   table: Table;
@@ -424,7 +429,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     currentColumn
   ) => {
     e.preventDefault();
-    await axios
+    await axiosCustom
       .post(
         "http://localhost:3000/rpc/add_file_to_group",
         {
@@ -468,7 +473,7 @@ const TableListView: React.FC<TableListViewProps> = ({
 
   const onItemRemoved = async (e, item, currentColumn) => {
     e.preventDefault();
-    await axios
+    await axiosCustom
       .post(
         "http://localhost:3000/rpc/remove_file_from_group",
         {
@@ -697,56 +702,205 @@ const TableListView: React.FC<TableListViewProps> = ({
         // It's a single click
         handleOpenPanel(row);
       }
-      setClickAction(null);  
-    }, 200); 
+      setClickAction(null);
+    }, 200);
   };
 
-  const handleSave = async (e, rowIdx : number, columnName : string) => {
-      const confirmAction = async () => {
-        if (e.preventDefault) e.preventDefault();
-      
-        const newValue = e.target.value;
-        const updatedRow = { [columnName]: newValue };
-      
-        const schema = vmd.getTableSchema(table.table_name);
-        if (!schema) {
-          console.error("Schema not found");
-          return;
-        }
-      
-        Logger.logUserAction(
+  const renderEditableField = (editingCell, column, rowIdx) => {
+    switch (column.column_type) {
+      case "text":
+      case "email":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <input
+              type="text"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+        );
+      case "number":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <input
+              type="number"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+        );
+
+      case "longtext":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <textarea
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+        );
+
+      case "boolean":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <select
+              defaultValue={editingCell.value}
+              onChange={(e) => handleSave(e, rowIdx, column.column_name)}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              autoFocus
+            >
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select>
+          </div>
+        );
+
+      case "datetime":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <ThemeProvider theme={theme}>
+                <DateTimePicker
+                  defaultValue={dayjs(editingCell.value)}
+                  onAccept={(e) => handleSave(e, rowIdx, column.column_name)}
+                  autoFocus
+                />
+              </ThemeProvider>
+            </LocalizationProvider>
+          </div>
+        );
+      case "categories":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <Select
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            >
+              {Object.keys(CategoriesDisplayType).map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </Select>
+          </div>
+        );
+      case "phone":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <MuiTelInput
+              value={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              name={column.column_name}
+            />
+          </div>
+        );
+      case "currency":
+        // Simple numeric input for currency
+        const numericValue = editingCell.value.replace("$", "");
+        return (
+          <div style={{ textAlign: "center" }}>
+            <input
+              type="number"
+              defaultValue={numericValue}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+        );
+
+      case "multiline_wysiwyg":
+        return (
+          <div style={{ textAlign: "center" }}>
+            <RichTextEditor
+              name={column.column_name}
+              content={editingCell.value}
+              onBlur={(event) =>
+                handleSave(event.event, rowIdx, column.column_name)
+              }
+              onKeyDown={(event) =>
+                handleKeyDown(event.event, rowIdx, column.column_name)
+              }
+              ref={rteRef}
+              extensions={[StarterKit]}
+              renderControls={() => (
+                <MenuControlsContainer>
+                  <MenuSelectHeading />
+                  <MenuDivider />
+                  <MenuButtonBold />
+                  <MenuButtonItalic />
+                </MenuControlsContainer>
+              )}
+            />
+          </div>
+        );
+      default:
+        return (
+          <div style={{ textAlign: "center" }}>
+            <input
+              type="text"
+              defaultValue={editingCell.value}
+              onBlur={(e) => handleSave(e, rowIdx, column.column_name)}
+              onKeyDown={(e) => handleKeyDown(e, rowIdx, column.column_name)}
+              autoFocus
+            />
+          </div>
+        );
+    }
+  };
+
+  const handleSave = async (e, rowIdx: number, columnName: string) => {
+    const confirmAction = async () => {
+      if (e.preventDefault) e.preventDefault();
+      let newValue;
+      if (e.target !== undefined) {
+        if (e.target.editor !== undefined)
+          newValue = e.target.editor.options.content;
+        else newValue = e.target.value;
+      } else {
+        newValue = e.format("YYYY-MM-DDTHH:mm:ss");
+      }
+      const updatedRow = { ...currentRow.row, [columnName]: newValue };
+
+      const schema = vmd.getTableSchema(table.table_name);
+      if (!schema) {
+        console.error("Schema not found");
+        return;
+      }
+      try {
+        const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessor(
+          schema.schema_name,
+          table.table_name,
+          updatedRow
+        );
+        data_accessor.updateRow().then((res) => {
+          getRows();
+        });
+        // Reflect the update locally
+        const updatedRows = [...rows];
+        updatedRows[rowIdx] = new Row(updatedRow);
+        setRows(updatedRows);
+        Audits.logAudits(
           loggedInUser || "",
           "Edited Cell",
-          `User has modified cell ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
+          `User has modified column ${columnName} in row ${rowIdx}: from ${currentRow.row[columnName]} to ${newValue}`,
           schema.schema_name,
           table.table_name
         );
-      
-        const primaryKeyValue = Object.keys(currentRow.row)[0];
-        // Use the primary key for the row to identify which row to update
-        const storedPrimaryKeyValue = currentRow.row[primaryKeyValue];
-        // Call the update API
-        try {
-          const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-            schema.schema_name,
-            table.table_name,
-            updatedRow,
-            primaryKeyValue as string,
-            storedPrimaryKeyValue as string
-          );
-          data_accessor.updateRow().then((res) => {
-            getRows();
-          });
-          // Reflect the update locally
-          const updatedRows = [...rows];
-          updatedRows[rowIdx] = new Row(updatedRow);
-          setRows(updatedRows);
-      
-          // Exit editing mode
-        } catch (error) {
-          console.error("Failed to update row", error);
-        }
-        setEditingCell(null);
+        // Exit editing mode
+      } catch (error) {
+        console.error("Failed to update row", error);
+      }
+      setEditingCell(null);
     };
 
     setConfirmPopupContent({
@@ -1004,46 +1158,10 @@ const TableListView: React.FC<TableListViewProps> = ({
 
           {isPopupVisible && (
             <AddRowPopup
+              getRows={getRows}
               onClose={() => setIsPopupVisible(false)}
               table={table}
               columns={table.getColumns()}
-            />
-          )}
-        </div>
-
-        <div className="d-flex flex-column">
-          {(scripts || []).length > 0 && <h6>Scripts</h6>}
-          {scripts?.map((script) => {
-            return (
-              <Tooltip
-                key={script["id"]}
-                title={script["description"]}
-                open={scriptDescription === script["description"]}
-                placement="right"
-              >
-                <Button
-                  key={script["id"]}
-                  style={buttonStyle}
-                  variant="contained"
-                  onClick={() => {
-                    // handleConfirmForm();
-                    setSelectedScript(script);
-                  }}
-                  onMouseEnter={() => handleScriptHover(script["description"])}
-                  onMouseLeave={handleScriptHoverExit}
-                >
-                  {script["btn_name"]}
-                </Button>
-              </Tooltip>
-            );
-          })}
-          {isScriptPopupVisible && selectedScript && (
-            <ScriptLoadPopup
-              onClose={() => {
-                setIsScriptPopupVisible(false);
-                setSelectedScript(null);
-              }}
-              script={selectedScript}
             />
           )}
         </div>
@@ -1083,19 +1201,59 @@ const TableListView: React.FC<TableListViewProps> = ({
           )}
         </div>
       </div>
-      <Button
-        style={{
-          ...buttonStyle,
-          marginTop: "",
-          backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2",
-        }}
-        variant="contained"
-        onClick={ResetFilter}
-        data-testid="reset-filter-button"
+      <Box
+        display={"flex"}
+        justifyContent={"space-between"}
+        width={"100%"}
+        alignItems={"center"}
       >
-        Reset Filters
-      </Button>
-
+        <Button
+          style={{
+            ...buttonStyle,
+            marginTop: "",
+            backgroundColor: conditionFilter === "" ? "#404040" : "#1976d2",
+          }}
+          variant="contained"
+          onClick={ResetFilter}
+          data-testid="reset-filter-button"
+        >
+          Reset Filters
+        </Button>
+        {scripts?.map((script) => {
+          return (
+            <Tooltip
+              key={script["id"]}
+              title={script["description"]}
+              open={scriptDescription === script["description"]}
+              placement="right"
+            >
+              <Button
+                key={script["id"]}
+                style={{ ...buttonStyle, marginTop: "2px" }}
+                variant="contained"
+                onClick={() => {
+                  // handleConfirmForm();
+                  setSelectedScript(script);
+                }}
+                onMouseEnter={() => handleScriptHover(script["description"])}
+                onMouseLeave={handleScriptHoverExit}
+              >
+                {script["btn_name"]}
+              </Button>
+            </Tooltip>
+          );
+        })}
+        {isScriptPopupVisible && selectedScript && (
+          <ScriptLoadPopup
+            onClose={() => {
+              setIsScriptPopupVisible(false);
+              setSelectedScript(null);
+            }}
+            script={selectedScript}
+          />
+        )}
+        <CSVUploadButton table={table} getRows={getRows} />
+      </Box>
       <TableContainer>
         <MUITable
           className="table-container"
@@ -1221,17 +1379,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                     {editingCell &&
                     editingCell.rowIdx === rowIdx &&
                     editingCell.columnName === columns[idx].column_name ? (
-                      <input
-                        type="text"
-                        defaultValue={editingCell.value}
-                        onBlur={(e) =>
-                          handleSave(e, rowIdx, columns[idx].column_name)
-                        }
-                        onKeyDown={(e) =>
-                          handleKeyDown(e, rowIdx, columns[idx].column_name)
-                        }
-                        autoFocus
-                      />
+                      renderEditableField(editingCell, columns[idx], rowIdx)
                     ) : (
                       <Box sx={{ textAlign: "center" }}>
                         {typeof cell === "boolean"

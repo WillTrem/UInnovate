@@ -13,15 +13,21 @@ CREATE OR REPLACE VIEW meta.schemas ("schema") AS
 ) ;
     
 -- Creating the table view
-CREATE OR REPLACE VIEW meta.tables ( "schema", "table" ) AS
+CREATE OR REPLACE VIEW meta.tables ( "schema", "table", "display_field" ) AS
 (
-    SELECT table_schema, table_name
-    FROM information_schema.tables
-    WHERE table_schema IN (SELECT * FROM meta.schemas)
-    AND table_type = 'BASE TABLE'
-    ORDER BY table_schema
-) ;
-
+    SELECT 
+        t.table_schema,
+        t.table_name,
+        (SELECT obj_description(c.oid) 
+         FROM pg_catalog.pg_class c
+         WHERE c.relname = t.table_name
+         AND c.relnamespace = (SELECT oid FROM pg_catalog.pg_namespace WHERE nspname = t.table_schema)
+         ) AS displayField_comments
+    FROM information_schema.tables t
+    WHERE t.table_schema IN (SELECT * FROM meta.schemas)
+    AND t.table_type = 'BASE TABLE'
+    ORDER BY t.table_schema
+);
 -- Creating the constraints view
 CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_name", "constraint_name") AS 
 (
@@ -31,9 +37,9 @@ CREATE OR REPLACE VIEW meta.constraints ("schema_name", "table_name", "column_na
         USING (constraint_name)
 );
 
-
+DROP VIEW IF EXISTS meta.columns;
 -- Creating the columns view
-CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","referenced_table", "referenced_by" ) AS 
+CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_table", "references_by", "is_editable","is_serial", "referenced_table", "referenced_by" ) AS 
 (
   
    (
@@ -44,6 +50,7 @@ CREATE OR REPLACE VIEW meta.columns ("schema", "table", "column", "references_ta
     STRING_AGG(DISTINCT rc.referenced_table::text, ', '),
     STRING_AGG(DISTINCT rc.referenced_column::text, ', ') AS references_by, 
     CASE WHEN c.column_name = pk.table_pkey THEN false ELSE true END AS is_editable,
+    ( SELECT pg_catalog.pg_get_serial_sequence(c.table_schema || '.' || c.table_name, c.column_name) IS NOT NULL) AS is_serial,
     STRING_AGG(DISTINCT ref.referee_table::text, ', '), 
     STRING_AGG(DISTINCT ref.referee_column::text, ', ') AS referenced_by
 FROM information_schema.columns AS c
@@ -443,6 +450,15 @@ BEGIN
 END;
 $BODY$;
 
+-- Function that executes a procedure
+CREATE OR REPLACE FUNCTION meta.execute_procedure(schema_name text, procedure_name text)
+RETURNS VOID AS
+$$
+BEGIN
+    EXECUTE format('CALL %I.%I()', schema_name, procedure_name);
+END;
+$$
+LANGUAGE plpgsql;
 -- IMPORT FUNCTIONALITY FOR i18n configurations such as languages, keys, and values
 CREATE OR REPLACE FUNCTION meta.import_i18n_from_json(json)
 RETURNS void
@@ -563,6 +579,21 @@ BEGIN
     AND pg_proc.proname = p_function_name;
 END;
 $$ LANGUAGE plpgsql STABLE;
+
+-- Fetch Functions with no args
+CREATE OR REPLACE FUNCTION meta.get_procedures_with_no_args(p_schema text)
+RETURNS TABLE(function_name text) AS $$
+BEGIN
+    -- Start with a basic query that's known to work
+    RETURN QUERY 
+    SELECT proname::text AS function_name -- Explicit casting, for diagnostic purposes
+    FROM pg_proc
+    JOIN pg_namespace ON pg_proc.pronamespace = pg_namespace.oid
+    WHERE pg_namespace.nspname = p_schema
+    AND pg_proc.pronargs = 0
+    AND pg_proc.prokind = 'p';
+END;
+$$ LANGUAGE plpgsql;
 -- GRANT ROLE PERMISSIONS --
 
 -- Schemas

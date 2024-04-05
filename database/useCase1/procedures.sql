@@ -20,10 +20,10 @@ BEGIN
     RETURNING quotation_id INTO new_quotation_id;
 
     -- Clone quotation line items
-    INSERT INTO quotation_line_item (quotation_id, id, tool_quoted_qty, tool_price)
+    INSERT INTO quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price)
     SELECT
         new_quotation_id,
-        id,
+        tool_id,
         tool_quoted_qty,
         tool_price
     FROM
@@ -59,10 +59,10 @@ BEGIN
     RETURNING purchase_order_id INTO new_purchase_order_id;
 
     -- Clone quotation line items to purchase order line items
-    INSERT INTO purchase_order_line_item (purchase_order_id, id, unit_scheduled_id, tool_rented_qty, tool_price)
+    INSERT INTO purchase_order_line_item (purchase_order_id, tool_id, unit_scheduled_id, tool_rented_qty, tool_price)
     SELECT
         new_purchase_order_id,
-        id,
+        tool_id,
         NULL::INT, -- NULL for now, will likely change how this works in the future
         tool_quoted_qty,
         tool_price
@@ -94,7 +94,7 @@ BEGIN
     FROM
         unit
     WHERE
-        id = id_param
+        tool_id = id_param
         AND (last_returned_date IS NULL OR last_returned_date <= CURRENT_DATE)
     ORDER BY
         last_returned_date ASC
@@ -125,7 +125,7 @@ DECLARE
     new_restock_request_id INT;
 BEGIN
     -- Check if the tool exists
-    IF NOT EXISTS (SELECT 1 FROM tool WHERE id = id_param) THEN
+    IF NOT EXISTS (SELECT 1 FROM tool WHERE tool_id = id_param) THEN
         -- Handle the case where the tool is not found
         RETURN 0;
     END IF;
@@ -153,12 +153,12 @@ BEGIN
         -- Handle the case where the quotation is not found
 
     -- Check if the tool exists
-    ELSIF NOT EXISTS (SELECT 1 FROM tool WHERE id = id_param) THEN
+    ELSIF NOT EXISTS (SELECT 1 FROM tool WHERE tool_id = id_param) THEN
         -- Handle the case where the tool is not found;
 
     -- Create a new line item for the tool in the quotation
     ELSE 
-        INSERT INTO quotation_line_item (quotation_id, id, tool_quoted_qty, tool_price)
+        INSERT INTO quotation_line_item (quotation_id, tool_id, tool_quoted_qty, tool_price)
         VALUES
             (quotation_id_param, id_param, tool_quoted_qty_param, tool_price_param);
     END IF;
@@ -268,3 +268,51 @@ BEGIN
         urs.recal_status = 'calibration_needed_immediately';
 END;
 $$ LANGUAGE plpgsql;
+
+-- Demo Procedures
+
+-- # 1. Update Unit Availability
+--  updates the availability status of units based on their last returned date. 
+-- If a unit has not been returned within a specified number of days, its availability status is set to false 
+-- indicating it's not available.
+CREATE OR REPLACE PROCEDURE app_rentals.update_unit_availability()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE app_rentals.unit
+    SET unit_available = FALSE
+    WHERE unit_last_returned_date < CURRENT_DATE - INTERVAL '30 days';
+END;
+$$;
+
+-- # 2 Archive Old Quotations
+-- moves old quotations (older than a year) 
+-- to an archive table for historical records and then deletes them from the main quotation table.
+CREATE OR REPLACE PROCEDURE app_rentals.archive_old_quotations()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO app_rentals.quotation_archive (quotation_id, quotation_date, tools_quoted_qty, totalprice)
+    SELECT quotation_id, quotation_date, tools_quoted_qty, totalprice
+    FROM app_rentals.quotation
+    WHERE quotation_date < CURRENT_DATE - INTERVAL '1 year';
+
+    DELETE FROM app_rentals.quotation
+    WHERE quotation_date < CURRENT_DATE - INTERVAL '1 year';
+END;
+$$;
+
+
+-- #3 Restock Low Inventory Tools
+--  identifies tools with a quantity available below a certain threshold and creates restock requests for them.
+CREATE OR REPLACE PROCEDURE app_rentals.restock_low_inventory_tools()
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    INSERT INTO app_rentals.tool_restock_request (id, notice_date, restock_notice_author, qty_requested)
+    SELECT id, CURRENT_DATE, 'Automated System', 50 -- assuming a restock request of 50 units
+    FROM app_rentals.tool
+    WHERE tool_qty_available < 10; -- assuming a threshold of 10 units
+END;
+$$;
+
