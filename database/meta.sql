@@ -450,6 +450,15 @@ BEGIN
 END;
 $BODY$;
 
+-- Function that executes a procedure
+CREATE OR REPLACE FUNCTION meta.execute_procedure(schema_name text, procedure_name text)
+RETURNS VOID AS
+$$
+BEGIN
+    EXECUTE format('CALL %I.%I()', schema_name, procedure_name);
+END;
+$$
+LANGUAGE plpgsql;
 -- IMPORT FUNCTIONALITY FOR i18n configurations such as languages, keys, and values
 CREATE OR REPLACE FUNCTION meta.import_i18n_from_json(json)
 RETURNS void
