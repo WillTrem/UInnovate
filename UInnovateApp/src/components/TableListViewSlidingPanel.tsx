@@ -242,6 +242,7 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
               <Button
                 variant="contained"
                 style={{
+                  color: "white",
                   marginTop: 20,
                   backgroundColor: "#403eb5",
                   width: "fit-content",
