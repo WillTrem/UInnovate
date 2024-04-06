@@ -504,6 +504,7 @@ const InternationalizationTab = () => {
                 onChange={handleSelectedNewLanguage}
                 variant="outlined"
                 label="Add Language"
+                data-testid="language-select"
               >
                 {isoLanguages.getAllNames().map((language) => (
                   <MenuItem key={language} value={language}>

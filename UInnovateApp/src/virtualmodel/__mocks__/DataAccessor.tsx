@@ -75,7 +75,7 @@ export class DataAccessorMock {
   fetchRowsByColumnValues = vi.fn().mockImplementation(() => {
     switch (this.data_url) {
       case 'i18n_translations': return Promise.resolve([
-        {translation_id: 0, language_code: 'EN', key_code: 'mockKey', value: 'mockValue', is_default: true}
+        {translation_id: 0, language_code: 'EN', key_code: 'mockKey', value: 'mockValue', is_default: false}
       ])
     }
   });
@@ -108,7 +108,7 @@ export class DataAccessorMock {
 
   updateRow = vi.fn().mockImplementation(() => {
     console.log("updateRow in DataAccessor mock was called");
-    return Promise.resolve();
+    return Promise.resolve({status: 200});
   });
 
   upsert = vi.fn().mockImplementation(() => {

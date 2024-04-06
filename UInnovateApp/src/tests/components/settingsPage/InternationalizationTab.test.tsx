@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import InternationalizationTab from "../../../components/settingsPage/InternationalizationTab"
 import { describe, expect } from "vitest";
 import { Middleware, Store } from "@reduxjs/toolkit";
@@ -74,6 +74,7 @@ describe("InternationalizationTab component", () => {
       });
     }),
     it("When clicking the save button from the add language modal, the language should be saved ", async () => {
+      const user = userEvent.setup();
       render(
         <Provider store={store}>
           <InternationalizationTab />
@@ -87,9 +88,17 @@ describe("InternationalizationTab component", () => {
         expect(modalElement).toBeInTheDocument();
       });
 
+      const select = screen.getByTestId('language-select');
+      const combobox = within(select).getByRole('combobox');
+      await act(() => user.click(combobox));
+      const listbox = await screen.findByRole("listbox");
+      await act(() => user.click(within(listbox).getByText('English')))
+
       const saveButton = screen.getByText("Save");
 
-      fireEvent.click(saveButton);
+      await act(async () => {
+        user.click(saveButton);
+      });
 
       await waitFor(() => {
         const modalElement = screen.queryByTestId('add-language-modal');
@@ -215,27 +224,37 @@ describe("InternationalizationTab component", () => {
     it('allows editing the label and the translation', async () => {
       store = mockStore(initialState);
       const user = userEvent.setup();
-      const {debug} = render(
+      const { debug } = render(
         <Provider store={store}>
           <InternationalizationTab />
         </Provider>
       );
-      const labelInput = await screen.findByTestId('label-input'); 
-      const translationInput = await screen.findByTestId('translation-input'); 
-      
+      const labelInput = await screen.findByTestId('label-input');
+  
+      const translationCell = await screen.findByTestId('translation-element');
+      const translationInput = await screen.findByTestId('translation-input');
+
       // Changing the label
       await act(async () => {
-        await user.click(labelInput);
+        await user.dblClick(labelInput);
+      });
+      await act(async () => {
+        await user.clear(labelInput);
         await user.type(labelInput, 'changedLabelMock');
+        await user.type(labelInput, '{enter}');
         fireEvent.mouseDown(screen.getByText('Label'));
       });
       // Changing the translation value
       await act(async () => {
-        await user.click(translationInput);
+        await user.dblClick(translationCell);
+      });
+      await act(async () => {
+        await user.clear(translationInput);
         await user.type(translationInput, 'changedTranslationMock');
+        await user.type(translationInput, '{enter}');
         fireEvent.mouseDown(screen.getByText('Label'));
       });
       debug();
-      // expect(translationInput).toHaveValue('changedTranslationMock');
+      expect(translationInput).toHaveValue('changedTranslationMock');
     })
 });
