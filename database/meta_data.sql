@@ -80,7 +80,38 @@ INSERT INTO meta.i18n_languages (language_code, language_name)
 VALUES ('en', 'English');
 
 
+CREATE OR REPLACE FUNCTION meta.refresh_i18n()
+RETURNS void AS $$
+BEGIN
+    -- Insert the tables names, columns names, schema tables into the i18n_keys table
+    -- Insert unique column names into i18n_keys
+    INSERT INTO meta.i18n_keys (key_code, is_default)
+    SELECT DISTINCT "column", true
+    FROM meta.columns
+    ON CONFLICT (key_code) DO NOTHING;
+
+    -- Insert unique table names into i18n_keys
+    INSERT INTO meta.i18n_keys (key_code, is_default)
+    SELECT DISTINCT "table", true
+    FROM meta.tables
+    ON CONFLICT (key_code) DO NOTHING;
+
+    -- Insert unique schema names into i18n_keys
+    INSERT INTO meta.i18n_keys (key_code, is_default)
+    SELECT DISTINCT "schema", true
+    FROM meta.schemas
+    ON CONFLICT (key_code) DO NOTHING;
 
 
+    -- Insert the default language into the i18n_languages table
+    INSERT INTO meta.i18n_languages (language_code, language_name) 
+    VALUES ('en', 'English')
+    ON CONFLICT (language_code) DO NOTHING;
+
+END;
+$$ LANGUAGE plpgsql;
+
+
+GRANT ALL ON FUNCTION refresh_i18n() TO user;
 
 NOTIFY pgrst, 'reload schema'

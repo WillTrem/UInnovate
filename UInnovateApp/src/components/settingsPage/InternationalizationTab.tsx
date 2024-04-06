@@ -13,6 +13,7 @@ import { RootState } from "../../redux/Store";
 import { AuthState } from '../../redux/AuthSlice';
 import  Audits  from "../../virtualmodel/Audits";
 import TranslationTableRow from "./TranslationTableRow";
+import axios from "axios";
 
 const buttonStyle = {
   marginRight: 10,
@@ -393,6 +394,39 @@ const InternationalizationTab = () => {
     );
   };
 
+  const refreshI18nData = async () => {
+    const refreshI18nUrl = "http://localhost:3000/rpc/refresh_i18n";
+    const headers = {
+      "content-profile": "meta",
+    };
+
+    try {
+      const response = await axios.post(refreshI18nUrl, {}, { headers })
+
+      if (response.status >= 200 && response.status < 300) {
+        console.log("Internationalization data refreshed successfully");
+      } else {
+        console.error("Failed to refresh internationalization data");
+        console.error(`Error status: ${response.status}`);
+        console.error(`Error message: ${response.data}`);
+      }
+
+      // Reload the translations
+      await getTranslationsByLanguage(selectedLanguage);
+
+      // Audits
+      Audits.logAudits(
+        loggedInUser || "",
+        "Refresh Internationalization Data",
+        "Refreshed internationalization",
+        "i18n_translations",
+        "",
+      );
+    } catch (error) {
+      console.error("Error refreshing internationalization data:", error);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -408,6 +442,7 @@ const InternationalizationTab = () => {
           style={buttonStyle}
           variant="contained"
           data-testid="refresh-button"
+          onClick={refreshI18nData}
         >
           Refresh
         </Button>
