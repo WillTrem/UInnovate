@@ -67,6 +67,27 @@ export class DataAccessorMock {
         }
       ])
     }
+    else if (this.data_url === "job") {
+      return Promise.resolve([
+        {
+          command: "function1",
+          jobname: "function1",
+          jobid: 0,
+          schedule: "1 * * * *",
+          active: true
+        }
+      ])
+    }
+    else if (this.data_url === "job_run_details") {
+      return Promise.resolve([
+        {
+          jobid:0,
+          start_time: undefined,
+          end_time: "00:00:00",
+          status: "mockStatus",
+        }
+      ])
+    }
     else {
       return Promise.resolve([]);
     }

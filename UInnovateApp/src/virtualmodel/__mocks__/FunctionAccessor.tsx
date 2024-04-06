@@ -27,6 +27,9 @@ export class FunctionAccessorMock {
       case "login": if (this.body && this.body["password"] === 'valid_password') {
         return Promise.resolve({ status: 200, data: { token: "valid_token" } });
       } else { return Promise.reject() }
+      
+      case "get_procedures_with_no_args": 
+        return Promise.resolve({ status: 200, data: [{ function_name: "function1" }] });
 
       default: return Promise.resolve();
     }
