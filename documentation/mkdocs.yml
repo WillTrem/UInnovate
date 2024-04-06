@@ -1,8 +1,8 @@
-site_name: Tool Rental API Documentation
+site_name: PostGOAT Documentation
 theme: readthedocs
 nav:
   - Home: index.md
-  - Diagram: diagram.md
-  - Tool Management: tool.md
-  - Customer Relationship Management: crm.md
-  - Restock and Recalibration: recal.md
+  - Setting up the app: setup.md
+  - VMD and how it works: vmd.md
+  - Scripting: scripting.md
+  - Testing: testing.md
