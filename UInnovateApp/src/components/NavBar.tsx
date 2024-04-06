@@ -17,8 +17,16 @@ import { setLoading } from "../redux/LoadingSlice";
 import vmd from "../virtualmodel/VMD";
 import MenuSchemaSelector from "./Schema/MenuSchemaSelector";
 import nav_logo from "../../public/PostGOAT_nav.png";
-import { i18n } from "../helper/i18nHelpers";
 import LanguageSelector from "./LanguageSelector";
+import { I18n } from "../helper/i18nHelpers";
+import {
+  getLanguagesProps,
+  i18nTranslationsProps,
+} from "../virtualmodel/I18nDataAccessor";
+import {
+  translation,
+  updateTranslation,
+} from "../redux/LanguageSelectionSlice";
 
 interface NavBarProps {
   showSchemaFilter?: boolean;
@@ -28,13 +36,6 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   const { user: loggedInUser, dbRole }: AuthState = useSelector(
     (state: RootState) => state.auth,
   );
-  const selectedLanguage: string = useSelector(
-    (state: RootState) => state.languageSelection.value,
-  );
-
-  //labels
-  const [settings_lbl, setSettings_lbl] = useState("");
-  i18n.reloadI18Values(selectedLanguage);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -49,14 +50,74 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
     navigate("/");
   };
 
+  //labels
+  const selectedLanguage: string = useSelector(
+    (state: RootState) => state.languageSelection.lang,
+  );
+
+  const translations = useSelector(
+    (state: RootState) => state.languageSelection.translations,
+  );
+
+  const [i18n, setI18n] = useState(new I18n([], selectedLanguage));
+
+  const [settings_lbl, setSettings_lbl] = useState("");
+
   useEffect(() => {
-    i18n.reloadI18Values(selectedLanguage).then(() => {
-      updateLabels();
-    });
+    console.log("use effect translations", translations);
+    if (translations[0].values.length == 0) {
+      var res = getLanguagesProps()
+        .then((langs) => {
+          var res = langs?.map(async (lang) => {
+            return await I18n.reloadI18Values(lang.language_code).then(
+              (data) => {
+                return data;
+              },
+            );
+          });
+          if (res) return Promise.all(res);
+          return [];
+        })
+        .then((data) => {
+          let translations: translation[] = [];
+          data.map((translationProp) => {
+            const transl: translation = {
+              languageCode: translationProp[0].language_code,
+              values: translationProp,
+            };
+            translations = [...translations, transl];
+          });
+          return translations;
+        });
+      res
+        .then((data) => {
+          // state.translations = data;
+          console.log(data);
+          dispatch(updateTranslation(data));
+          i18n.setTranslationList(data);
+          i18n.setLanguage(selectedLanguage);
+        })
+        .then(() => {
+          updateLabels();
+        });
+    } else {
+      console.log(translations);
+      i18n.setTranslationList(translations);
+      i18n.setLanguage(selectedLanguage).then(() => {
+        updateLabels();
+      });
+    }
+    console.log("selectedLanguage: ", selectedLanguage);
+  }, []);
+
+  useEffect(() => {
+    // console.log(selectedLanguage);
+    console.log("updating labels for lang", selectedLanguage);
+    i18n.setLanguage(selectedLanguage).then(() => updateLabels());
   }, [selectedLanguage]);
 
   const updateLabels = () => {
-    setSettings_lbl(i18n.get("Settings"));
+    setSettings_lbl(i18n.get("settings", "Settings"));
   };
 
   return (

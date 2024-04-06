@@ -47,7 +47,6 @@ export const getTranslationsByLanguage = async (chosenLanguage: string) => {
         ...row,
         is_default: row.is_default || false,
       }));
-      console.log("data retreived...", translationsWithIsDefault);
       return translationsWithIsDefault as i18nTranslationsProps[];
     }
   } catch (error) {

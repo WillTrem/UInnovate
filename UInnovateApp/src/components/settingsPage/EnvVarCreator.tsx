@@ -8,177 +8,216 @@ import { IoMdAddCircle } from "react-icons/io";
 import { IoLockClosed, IoLockOpen } from "react-icons/io5";
 import { insertNewEnvVar, editEnvVar } from "../../virtualmodel/EnvVarAccessor";
 import { EnvVarValueEditor } from "./EnvVarValueEditor";
-import { AuthState } from '../../redux/AuthSlice';
-import { RootState } from '../../redux/Store';
-import { useSelector } from 'react-redux';
-import  Audits  from "../../virtualmodel/Audits";
+import { AuthState } from "../../redux/AuthSlice";
+import { RootState } from "../../redux/Store";
+import { useSelector } from "react-redux";
+import Audits from "../../virtualmodel/Audits";
+import { I18n } from "../../helper/i18nHelpers";
 
 export const EnvVarCreator = () => {
-	const schema = vmd.getSchema("meta");
-	const env_var_table = vmd.getTable("meta", "env_vars");
-	const columns = env_var_table?.getColumns();
-	const {user: loggedInUser }: AuthState = useSelector((state: RootState) => state.auth);
-	const [envVar, setEnvVar] = useState<Row[] | undefined>([]);
-	const [newEnvVar, setNewEnvVar] = useState<Row>({}); //expect valid type for the row
-	const [showModal, setShowModal] = useState<boolean>(false);
+  const schema = vmd.getSchema("meta");
+  const env_var_table = vmd.getTable("meta", "env_vars");
+  const columns = env_var_table?.getColumns();
+  const { user: loggedInUser }: AuthState = useSelector(
+    (state: RootState) => state.auth,
+  );
+  const [envVar, setEnvVar] = useState<Row[] | undefined>([]);
+  const [newEnvVar, setNewEnvVar] = useState<Row>({}); //expect valid type for the row
+  const [showModal, setShowModal] = useState<boolean>(false);
 
-	useEffect(() => {
-		getEnvVars();
-	},[]);
-	const handleAddEnvVar = async () => {
-		setShowModal(true);
-	};
-	const handleClose = () => {
-		setShowModal(false);
-	};
+  useEffect(() => {
+    getEnvVars();
+  }, []);
 
-	const handleSave = async () => {
-		Audits.logAudits(
-			loggedInUser || "",
-			"Add env var",
-			"Added a new environment variable with the following values: " + JSON.stringify(newEnvVar),
-			schema?.schema_name || "",
-			env_var_table?.table_name || ""
-			);
-		insertNewEnvVar(newEnvVar.name, newEnvVar.value);
-		getEnvVars();
-		setNewEnvVar({}); // Reset form
-		setShowModal(false);
-	};
+  const selectedLanguage: string = useSelector(
+    (state: RootState) => state.languageSelection.lang,
+  );
+  const translations = useSelector(
+    (state: RootState) => state.languageSelection.translations,
+  );
+  const [i18n] = useState(new I18n(translations, selectedLanguage));
 
-	//EDIT ENV VAR FEATURE:
-	const [editMode, setEditMode] = useState(false);
-	const handleEditClick = () => {
-		setEditMode(!editMode);
-	};
+  const [envVariable, setEnvVariable_lbl] = useState("");
+  const [newEnvVariable, setNewEnvVariable_lbl] = useState("");
+  const [existingEnvVariable, setExistingEnvVariable_lbl] = useState("");
+  const [clickToEdit, setClickToEdit_lbl] = useState("");
 
-	const updateEnvVarInDatabase = (id: number | string, value: string) => {
-		console.log("Updating env var in database");
-		editEnvVar(`${id}`, value);
-		getEnvVars();
-	};
+  const updateLabels = () => {
+    setEnvVariable_lbl(
+      i18n.get("scripting.EnvVariable", "Environment Variables"),
+    );
+    setNewEnvVariable_lbl(
+      i18n.get(
+        "scripting.EnvVariable.NewEnvVariable",
+        "New Environment Variable",
+      ),
+    );
+    setExistingEnvVariable_lbl(
+      i18n.get(
+        "scripting.EnvVariable.ExistingEnvVariable",
+        "Existing environment variables",
+      ),
+    );
+    setClickToEdit_lbl(i18n.get("clickToEdit", "Click to edit"));
+  };
 
-	const getEnvVars = async () => {
-		if (!schema || !env_var_table) {
-			return;
-		}
+  useEffect(() => {
+    i18n.setLanguage(selectedLanguage).then(() => updateLabels());
+  }, [selectedLanguage]);
 
-		const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-			schema?.schema_name,
-			env_var_table?.table_name
-		);
+  const handleAddEnvVar = async () => {
+    setShowModal(true);
+  };
+  const handleClose = () => {
+    setShowModal(false);
+  };
 
-		const env_var_rows = await data_accessor?.fetchRows();
-		setEnvVar(env_var_rows);
-	};
+  const handleSave = async () => {
+    Audits.logAudits(
+      loggedInUser || "",
+      "Add env var",
+      "Added a new environment variable with the following values: " +
+        JSON.stringify(newEnvVar),
+      schema?.schema_name || "",
+      env_var_table?.table_name || "",
+    );
+    insertNewEnvVar(newEnvVar.name, newEnvVar.value);
+    getEnvVars();
+    setNewEnvVar({}); // Reset form
+    setShowModal(false);
+  };
 
-	return (
-		<div>
-			<Tab.Container>
-				<Separator>
-					<Col sm={5}>
-						<h5>Environment Variables</h5>
-						<Modal show={showModal} onHide={handleClose}>
-							<Modal.Header>
-								<Modal.Title>Add a New Environment Variable</Modal.Title>
-							</Modal.Header>
-							<Modal.Body>
-								<Form>
-									{/* Environment Variable Name Field */}
-									<Form.Group>
-										<Form.Label>Name</Form.Label>
-										<Form.Control
-											type='text'
-											value={newEnvVar["name"] || ""}
-											onChange={(e) => {
-												setNewEnvVar({
-													...newEnvVar,
-													["name"]: e.target.value,
-												});
-											}}
-										/>
-									</Form.Group>
+  //EDIT ENV VAR FEATURE:
+  const [editMode, setEditMode] = useState(false);
+  const handleEditClick = () => {
+    setEditMode(!editMode);
+  };
 
-									{/* Environment Variable Value Field */}
-									<Form.Group>
-										<Form.Label>Value</Form.Label>
-										<Form.Control
-											type='text'
-											value={newEnvVar["value"] || ""}
-											onChange={(e) => {
-												setNewEnvVar({
-													...newEnvVar,
-													["value"]: e.target.value,
-												});
-											}}
-										/>
-									</Form.Group>
+  const updateEnvVarInDatabase = (id: number | string, value: string) => {
+    console.log("Updating env var in database");
+    editEnvVar(`${id}`, value);
+    getEnvVars();
+  };
 
-									{/* misc breadcrumbs */}
-									{columns?.map((column) => {
-										if (
-											column.column_name === "id" ||
+  const getEnvVars = async () => {
+    if (!schema || !env_var_table) {
+      return;
+    }
 
-										
-											column.column_name === "table_name" ||
-											column.column_name === "name" || // Exclude if already added
-											column.column_name === "value" // Exclude if already added
-										)
-											return null;
+    const data_accessor: DataAccessor = vmd.getRowsDataAccessor(
+      schema?.schema_name,
+      env_var_table?.table_name,
+    );
 
-									})}
-								</Form>
-							</Modal.Body>
-							<Modal.Footer>
-								<Button variant='contained' onClick={handleClose}>
-									Cancel
-								</Button>
-								<Button variant='contained' onClick={handleSave}>
-									Save
-								</Button>
-							</Modal.Footer>
-						</Modal>
-						<Button
-							onClick={handleAddEnvVar}
-							style={{
-								fontSize: "12px",
-								alignItems: "center",
-								display: "flex",
-								marginBottom: "10px",
-								flexDirection: "row",
-								backgroundColor: "#404040",
-							}}
-							variant='contained'>
-							<IoMdAddCircle style={{ marginRight: "5px" }} />
-							New Environment Variable
-						</Button>
-						<Tab.Content>
-							<h5>Existing environment variables</h5>
-							<Button onClick={handleEditClick}>
-								{editMode ? <IoLockOpen /> : <IoLockClosed />}
-								<h5>Click to edit</h5>
-							</Button>
+    const env_var_rows = await data_accessor?.fetchRows();
+    setEnvVar(env_var_rows);
+  };
 
-							{envVar?.map((envVarItem) => {
-								return (
-									<Nav.Item key={envVarItem.id}>
-										<Nav.Link eventKey={envVarItem.name}>
-											{editMode ? (
-												<EnvVarValueEditor
-													row={envVarItem}
-													update={{ handleSubmit: updateEnvVarInDatabase }}
-												/>
-											) : (
-												`${envVarItem.name}, ${envVarItem.value}`
-											)}
-										</Nav.Link>
-									</Nav.Item>
-								);
-							})}
-						</Tab.Content>
-					</Col>
-				</Separator>
-			</Tab.Container>
-		</div>
-	);
+  return (
+    <div>
+      <Tab.Container>
+        <Separator>
+          <Col sm={5}>
+            <h5>{envVariable}</h5>
+            <Modal show={showModal} onHide={handleClose}>
+              <Modal.Header>
+                <Modal.Title>Add a New Environment Variable</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <Form>
+                  {/* Environment Variable Name Field */}
+                  <Form.Group>
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={newEnvVar["name"] || ""}
+                      onChange={(e) => {
+                        setNewEnvVar({
+                          ...newEnvVar,
+                          ["name"]: e.target.value,
+                        });
+                      }}
+                    />
+                  </Form.Group>
+
+                  {/* Environment Variable Value Field */}
+                  <Form.Group>
+                    <Form.Label>Value</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={newEnvVar["value"] || ""}
+                      onChange={(e) => {
+                        setNewEnvVar({
+                          ...newEnvVar,
+                          ["value"]: e.target.value,
+                        });
+                      }}
+                    />
+                  </Form.Group>
+
+                  {/* misc breadcrumbs */}
+                  {columns?.map((column) => {
+                    if (
+                      column.column_name === "id" ||
+                      column.column_name === "table_name" ||
+                      column.column_name === "name" || // Exclude if already added
+                      column.column_name === "value" // Exclude if already added
+                    )
+                      return null;
+                  })}
+                </Form>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="contained" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleSave}>
+                  Save
+                </Button>
+              </Modal.Footer>
+            </Modal>
+            <Button
+              onClick={handleAddEnvVar}
+              style={{
+                fontSize: "12px",
+                alignItems: "center",
+                display: "flex",
+                marginBottom: "10px",
+                flexDirection: "row",
+                backgroundColor: "#404040",
+              }}
+              variant="contained"
+            >
+              <IoMdAddCircle style={{ marginRight: "5px" }} />
+              {newEnvVariable}
+            </Button>
+            <Tab.Content>
+              <h5>{existingEnvVariable}</h5>
+              <Button onClick={handleEditClick}>
+                {editMode ? <IoLockOpen /> : <IoLockClosed />}
+                <h5>{clickToEdit}</h5>
+              </Button>
+
+              {envVar?.map((envVarItem) => {
+                return (
+                  <Nav.Item key={envVarItem.id}>
+                    <Nav.Link eventKey={envVarItem.name}>
+                      {editMode ? (
+                        <EnvVarValueEditor
+                          row={envVarItem}
+                          update={{ handleSubmit: updateEnvVarInDatabase }}
+                        />
+                      ) : (
+                        `${envVarItem.name}, ${envVarItem.value}`
+                      )}
+                    </Nav.Link>
+                  </Nav.Item>
+                );
+              })}
+            </Tab.Content>
+          </Col>
+        </Separator>
+      </Tab.Container>
+    </div>
+  );
 };

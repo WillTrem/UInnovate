@@ -6,13 +6,13 @@ import { RootState } from "../redux/Store";
 import { updateLang } from "../redux/LanguageSelectionSlice";
 
 const LanguageSelector = () => {
-  const languageSelection: string = useSelector(
-    (state: RootState) => state.languageSelection.value,
+  const selectedLanguage: string = useSelector(
+    (state: RootState) => state.languageSelection.lang,
   );
   const dispatch = useDispatch();
 
   const [currentLanguage, setCurrentLanguage] =
-    useState<string>(languageSelection);
+    useState<string>(selectedLanguage);
   const [languages, setLanguages] = useState<string[]>([]);
 
   useEffect(() => {
