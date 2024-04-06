@@ -282,11 +282,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       const allColumnsAreEditable = table.columns.every(
         (column) => column.is_editable === true
       );
-      console.log(allColumnsAreEditable)
       if (allColumnsAreEditable) {
         table.columns.forEach((column) => {
           if (column.references_table != null && column.references_table != "filegroup") {
-            console.log(column.column_name)
             column.setEditability(false);
           }
         });
@@ -609,7 +607,6 @@ const TableListView: React.FC<TableListViewProps> = ({
         storedPrimaryKeyValues
 
       );
-      console.log(data_accessor)
       data_accessor.updateRow().then(() => {
         getRows();
       });
@@ -1149,16 +1146,17 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-    if (!table.stand_alone_details_view) {
-      console.log("No Stand Alone Details View " + table.table_name);
-    }
+    
     const schema = vmd.getTableSchema(table.table_name);
     let detailtype = "overlay";
     if (table.stand_alone_details_view) {
       detailtype = "standalone";
     }
+    const firstNonEditableColumn = table.columns.find(column => !column.is_editable);
+    
+    const firstNonEditableColumnName = firstNonEditableColumn?.column_name;
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[table.table_name + "_id"]
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[firstNonEditableColumnName ?? '']
       }?details=${detailtype}`
     );
     setOpenPanel(true);
