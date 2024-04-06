@@ -312,3 +312,11 @@ Note; this can take up to a few minutes the first time, it's normal.
 
 5. Visit localhost:8080 to see Postgoat container running on your local machine.
 
+## Diversity Statement
+At UInnovate, we believe:
+- That diversity comes in many different forms which we welcome 
+- In having an environment where anyone can contribute their talents and ideas into the project
+- In the importance of your data being safe and secure from outside breaches
+- That while using our software, your data will retain its confidentiality and integrity
+
+
