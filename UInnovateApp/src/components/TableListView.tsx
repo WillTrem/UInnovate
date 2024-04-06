@@ -25,6 +25,7 @@ import {
   Tooltip,
   Menu,
   Checkbox,
+  createTheme,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
@@ -164,6 +165,25 @@ const TableListView: React.FC<TableListViewProps> = ({
     return initialCheckedState;
   });
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
+
+  const theme = createTheme({
+    components: {
+      MuiPickersPopper: {
+        styleOverrides: {
+          root: {
+            zIndex: 19000,
+          },
+        },
+      },
+      MuiPopover: {
+        styleOverrides: {
+          root: {
+            zIndex: 19000,
+          },
+        },
+      },
+    },
+  });
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
