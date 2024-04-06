@@ -2,7 +2,8 @@ import FormControl from "@mui/material/FormControl";
 import Switch from "@mui/material/Switch";
 import "../../styles/TableItem.css";
 import { Select } from "@mui/material";
-import MenuItem from "@mui/material/MenuItem";import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
+import MenuItem from "@mui/material/MenuItem";
+import { ConfigProperty } from "../../virtualmodel/ConfigProperties";
 import { ColumnDisplayTypes } from "../../virtualmodel/Config";
 import { SelectChangeEvent } from "@mui/material";
 import { Column, Table } from "../../virtualmodel/VMD";
@@ -116,7 +117,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
       </td>
       <td>
         <FormControl size="small">
-          <Select defaultValue={column.column_type} onChange={handleDisplayChange}>
+          <Select defaultValue={column.column_type} onChange={handleDisplayChange} data-testid='display-type-select'>
             {Object.keys(ColumnDisplayTypes).map((value) => (
               <MenuItem key={value} value={value}>
                 {value}

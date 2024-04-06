@@ -1,6 +1,7 @@
 import { vi } from "vitest";
 import { Row } from "../DataAccessor";
 import { Role } from "../../redux/AuthSlice";
+import { ViewTypeEnum } from "../../enums/ViewTypeEnum";
 
 export { Row };
 export class DataAccessorMock {
@@ -23,7 +24,7 @@ export class DataAccessorMock {
 
   fetchRows = vi.fn().mockImplementation(() => {
     console.log("fetchRows in DataAccessor mock was called");
-    if (this.data_url === "/api/data") {
+    if (this.data_url === "/api/data" || this.data_url === "mock table name") {
       return Promise.resolve([
         {
           Column1: 1,
@@ -54,8 +55,49 @@ export class DataAccessorMock {
           role: Role.USER,
         },
       ]);
-    } else {
+    }
+    else if (this.data_url === "additional_view_settings") {
+      return Promise.resolve([
+        {
+          id: 0,
+          viewname: 'mockViewName',
+          schemaname: 'mock schema name',
+          tablename: "mock table name",
+          viewtype: ViewTypeEnum.Custom
+        }
+      ])
+    }
+    else if (this.data_url === "job") {
+      return Promise.resolve([
+        {
+          command: "function1",
+          jobname: "function1",
+          jobid: 0,
+          schedule: "1 * * * *",
+          active: true
+        }
+      ])
+    }
+    else if (this.data_url === "job_run_details") {
+      return Promise.resolve([
+        {
+          jobid:0,
+          start_time: undefined,
+          end_time: "00:00:00",
+          status: "mockStatus",
+        }
+      ])
+    }
+    else {
       return Promise.resolve([]);
+    }
+  });
+
+  fetchRowsByColumnValues = vi.fn().mockImplementation(() => {
+    switch (this.data_url) {
+      case 'i18n_translations': return Promise.resolve([
+        {translation_id: 0, language_code: 'EN', key_code: 'mockKey', value: 'mockValue', is_default: false}
+      ])
     }
   });
 
@@ -87,7 +129,7 @@ export class DataAccessorMock {
 
   updateRow = vi.fn().mockImplementation(() => {
     console.log("updateRow in DataAccessor mock was called");
-    return Promise.resolve();
+    return Promise.resolve({status: 200});
   });
 
   upsert = vi.fn().mockImplementation(() => {
@@ -99,6 +141,15 @@ export class DataAccessorMock {
     console.log("put in DataAccessor mock was called");
     return Promise.resolve();
   });
+
+  deleteRow = vi.fn().mockImplementation(() => {
+    console.log("deleteRow in DataAccessor mock was called");
+    return Promise.resolve();
+  });
+
+
+
+
 }
 
 const userInfoMock = [
