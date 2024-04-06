@@ -462,61 +462,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const { user: loggedInUser }: AuthState = useSelector(
     (state: RootState) => state.auth
   );
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const primary_keys: string[] = [];
-    const currentPrimaryKey = table?.getPrimaryKey()?.column_name;
-    const schema = vmd.getTableSchema(table.table_name);
-    if (!schema) {
-      console.error("Schema not found");
-      return;
-    }
-
-    Logger.logUserAction(
-      loggedInUser || "",
-      "Edited Row",
-      //i want the edited value in the details
-      "User has modified a row in the table: " + JSON.stringify(inputValues),
-      schema?.schema_name || "",
-      table.table_name
-    );
-    table.columns.forEach((column) => {
-      if (column.is_editable == false) {
-        primary_keys.push(column.column_name);
-      }
-    });
-    if (primary_keys.length == 1) {
-      //this checks if the table only has 1 primary key
-
-      const storedPrimaryKeyValue = currentRow.row
-        ? currentRow.row[currentPrimaryKey as string]
-        : null;
-
-      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-        schema.schema_name,
-        table.table_name,
-        inputValues,
-        currentPrimaryKey,
-        storedPrimaryKeyValue as unknown as string
-      );
-
-      data_accessor.updateRow();
-    } else {
-      const storedPrimaryKeyValues = primary_keys.map((key) =>
-        currentRow.row ? currentRow.row[key] : null
-      );
-      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-        schema.schema_name,
-        table.table_name,
-        inputValues,
-        primary_keys,
-        storedPrimaryKeyValues
-      );
-      data_accessor.updateRow();
-    }
-    setInputValues({});
-    setOpenPanel(false);
-  };
   //Filter Functions
   //Handle when you click on the filter button
   const handleFilterClick = (

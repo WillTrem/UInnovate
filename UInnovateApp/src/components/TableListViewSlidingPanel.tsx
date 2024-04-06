@@ -89,8 +89,9 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
 
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const schema = vmd.getTableSchema(table?.table_name);
+    const primary_keys: string[] = [];
+    const currentPrimaryKey = table?.getPrimaryKey()?.column_name;
+    const schema = vmd.getTableSchema(table.table_name);
     if (!schema) {
       console.error("Schema not found");
       return;
@@ -102,23 +103,42 @@ const SlidingPanel: React.FC<SlidingPanelProps> = ({
       //i want the edited value in the details
       "User has modified a row in the table: " + JSON.stringify(inputValues),
       schema?.schema_name || "",
-      table?.table_name
+      table.table_name
     );
+    table.columns.forEach((column) => {
+      if (column.is_editable == false) {
+        primary_keys.push(column.column_name);
+      }
+    });
+    if (primary_keys.length == 1) {
+      //this checks if the table only has 1 primary key
 
-    const currentPrimaryKey = table?.getPrimaryKey()?.column_name;
+      const storedPrimaryKeyValue = currentRow.row
+        ? currentRow.row[currentPrimaryKey as string]
+        : null;
 
-    const storedPrimaryKeyValue = currentRow.row
-      ? currentRow.row[currentPrimaryKey as string]
-      : null;
+      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+        schema.schema_name,
+        table.table_name,
+        inputValues,
+        currentPrimaryKey,
+        storedPrimaryKeyValue as unknown as string
+      );
 
-    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-      schema.schema_name,
-      table?.table_name,
-      inputValues,
-      currentPrimaryKey as string,
-      storedPrimaryKeyValue as unknown as string
-    );
-    data_accessor.updateRow();
+      data_accessor.updateRow();
+    } else {
+      const storedPrimaryKeyValues = primary_keys.map((key) =>
+        currentRow.row ? currentRow.row[key] : null
+      );
+      const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
+        schema.schema_name,
+        table.table_name,
+        inputValues,
+        primary_keys,
+        storedPrimaryKeyValues
+      );
+      data_accessor.updateRow();
+    }
     setInputValues({});
     setOpenPanel(false);
   };
