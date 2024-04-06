@@ -1,6 +1,6 @@
 import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
-import type { } from "@mui/x-date-pickers/themeAugmentation";
+import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
 import React, { useState, useEffect, useRef } from "react";
 import "react-sliding-side-panel/lib/index.css";
@@ -28,9 +28,8 @@ import {
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import { Container } from "react-bootstrap";
+import { Container, ThemeProvider } from "react-bootstrap";
 import "../styles/TableListView.css";
-import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import FunctionLoadPopup from "./FunctionLoadPopup";
 import { useNavigate } from "react-router-dom";
@@ -46,11 +45,23 @@ import {
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
 import { getConfigs } from "../helper/TableListViewHelpers";
-import { set } from "lodash";
-import { CloudUpload } from "@mui/icons-material";
-import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
 import { CSVUploadButton } from "./CSVUploadButton";
 import axiosCustom from "../api/AxiosCustom";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import StarterKit from "@tiptap/starter-kit";
+import { MuiTelInput } from "mui-tel-input";
+import {
+  RichTextEditor,
+  MenuControlsContainer,
+  MenuSelectHeading,
+  MenuDivider,
+  MenuButtonBold,
+  MenuButtonItalic,
+  RichTextEditorRef,
+} from "mui-tiptap";
+import { CategoriesDisplayType } from "../virtualmodel/Config.ts";
 
 interface TableListViewProps {
   table: Table;
@@ -88,10 +99,8 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isFunctionPopupVisible, setIsFunctionPopupVisible] =
     useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
-  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string>(
-    "null"
-  );
   const [openPanel, setOpenPanel] = useState(false);
+  const rteRef = useRef<RichTextEditorRef>(null);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [functions, setFunctions] = useState<Row[] | undefined>([]);
@@ -120,7 +129,7 @@ const TableListView: React.FC<TableListViewProps> = ({
     useState<ConfirmPopupContent>({
       title: "",
       message: "",
-      confirmAction: () => { },
+      confirmAction: () => {},
     });
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
@@ -208,9 +217,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     const FilteredRowsCount = count?.map((row) => {
       const filteredRowData: { [key: string]: string | number | boolean } = {};
       attributes.forEach((column) => {
-        if (column.is_editable === false) {
-          setCurrentPrimaryKey(column.column_name);
-        }
         filteredRowData[column.column_name] = row[column.column_name];
       });
       return new Row(filteredRowData);
@@ -238,7 +244,10 @@ const TableListView: React.FC<TableListViewProps> = ({
       );
       if (allColumnsAreEditable) {
         table.columns.forEach((column) => {
-          if (column.references_table != null && column.references_table != "filegroup") {
+          if (
+            column.references_table != null &&
+            column.references_table != "filegroup"
+          ) {
             column.setEditability(false);
           }
         });
@@ -255,7 +264,6 @@ const TableListView: React.FC<TableListViewProps> = ({
     "filemanager",
     "filestorage_view"
   );
-
 
   const getFileGroupsView = async () => {
     fileGroupsViewDataAccessor.fetchRows().then((response) => {
@@ -456,7 +464,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   );
   const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const primary_keys:string[] = [];
+    const primary_keys: string[] = [];
     const currentPrimaryKey = table?.getPrimaryKey()?.column_name;
     const schema = vmd.getTableSchema(table.table_name);
     if (!schema) {
@@ -476,10 +484,9 @@ const TableListView: React.FC<TableListViewProps> = ({
       if (column.is_editable == false) {
         primary_keys.push(column.column_name);
       }
-    }
-    );
-    if (primary_keys.length == 1) { //this checks if the table only has 1 primary key
-
+    });
+    if (primary_keys.length == 1) {
+      //this checks if the table only has 1 primary key
 
       const storedPrimaryKeyValue = currentRow.row
         ? currentRow.row[currentPrimaryKey as string]
@@ -492,23 +499,23 @@ const TableListView: React.FC<TableListViewProps> = ({
         currentPrimaryKey,
         storedPrimaryKeyValue as unknown as string
       );
-      
+
       data_accessor.updateRow();
     } else {
-      const storedPrimaryKeyValues = primary_keys.map(key => currentRow.row ? currentRow.row[key] : null);
+      const storedPrimaryKeyValues = primary_keys.map((key) =>
+        currentRow.row ? currentRow.row[key] : null
+      );
       const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
         schema.schema_name,
         table.table_name,
         inputValues,
         primary_keys,
         storedPrimaryKeyValues
-
       );
       data_accessor.updateRow();
     }
-      setInputValues({});
-      setOpenPanel(false);
-    
+    setInputValues({});
+    setOpenPanel(false);
   };
   //Filter Functions
   //Handle when you click on the filter button
@@ -836,17 +843,20 @@ const TableListView: React.FC<TableListViewProps> = ({
     if (!table.has_details_view) {
       return;
     }
-    
+
     const schema = vmd.getTableSchema(table.table_name);
     let detailtype = "overlay";
     if (table.stand_alone_details_view) {
       detailtype = "standalone";
     }
-    const firstNonEditableColumn = table.columns.find(column => !column.is_editable);
-    
+    const firstNonEditableColumn = table.columns.find(
+      (column) => !column.is_editable
+    );
+
     const firstNonEditableColumnName = firstNonEditableColumn?.column_name;
     navigate(
-      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${row.row[firstNonEditableColumnName ?? '']
+      `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
+        row.row[firstNonEditableColumnName ?? ""]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -1096,8 +1106,8 @@ const TableListView: React.FC<TableListViewProps> = ({
                     }
                   >
                     {editingCell &&
-                      editingCell.rowIdx === rowIdx &&
-                      editingCell.columnName === columns[idx].column_name ? (
+                    editingCell.rowIdx === rowIdx &&
+                    editingCell.columnName === columns[idx].column_name ? (
                       renderEditableField(editingCell, columns[idx], rowIdx)
                     ) : (
                       <Box sx={{ textAlign: "center" }}>
@@ -1105,10 +1115,10 @@ const TableListView: React.FC<TableListViewProps> = ({
                           ? cell.toString()
                           : columns[idx].references_table === "filegroup"
                             ? (
-                              fileGroupsView?.find(
-                                (fileGroup) => fileGroup.id === cell
-                              )?.count || 0
-                            ).toString() + " file(s)"
+                                fileGroupsView?.find(
+                                  (fileGroup) => fileGroup.id === cell
+                                )?.count || 0
+                              ).toString() + " file(s)"
                             : (cell as React.ReactNode)}
                       </Box>
                     )}

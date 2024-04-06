@@ -412,15 +412,15 @@ class VirtualModelDefinition {
     if (schema && table) {
       return new DataAccessor(
         table.url +
-        "?order=" +
-        order_by +
-        "." +
-        sortOrder +
-        "&limit=" +
-        limit +
-        "&offset=" +
-        page +
-        Filter,
+          "?order=" +
+          order_by +
+          "." +
+          sortOrder +
+          "&limit=" +
+          limit +
+          "&offset=" +
+          page +
+          Filter,
         {
           "Accept-Profile": schema.schema_name,
         }
@@ -527,7 +527,9 @@ class VirtualModelDefinition {
           row
         );
       } else {
-        const queryParameters = primarykey.map((key, index) => `${key}=eq.${primarykeyvalue[index]}`).join('&');
+        const queryParameters = primarykey
+          .map((key, index) => `${key}=eq.${primarykeyvalue[index]}`)
+          .join("&");
         const url = `${table.url}?${queryParameters}`;
         return new DataAccessor(
           url,
