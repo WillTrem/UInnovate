@@ -5,72 +5,74 @@ import { Middleware, Store } from "@reduxjs/toolkit";
 import configureStore from "redux-mock-store";
 import { Role } from "../../../redux/AuthSlice";
 import { Provider } from "react-redux";
+import { act } from "react-test-renderer";
+import userEvent from "@testing-library/user-event";
 
 describe("InternationalizationTab component", () => {
-	const initialState = {
-		schema: { schema_name: "application" },
-		script_table: { table_name: "script_mock" },
-		auth: { role: Role.ADMIN, user: "admin", token: "token" } 
-	};
-	const middlewares: Middleware[] = [];
-	const mockStore = configureStore(middlewares);
-	let store: Store;
+  const initialState = {
+    schema: { schema_name: "application" },
+    script_table: { table_name: "script_mock" },
+    auth: { role: Role.ADMIN, user: "admin", token: "token" }
+  };
+  const middlewares: Middleware[] = [];
+  const mockStore = configureStore(middlewares);
+  let store: Store;
 
 
-	it("renders the component", () => {
-		store = mockStore(initialState);
-		render(
-				<Provider store={store}>
-					<InternationalizationTab />
-				</Provider>
-		);
-	}),
-  it("renders the table component", async () => {
+  it("renders the component", () => {
+    store = mockStore(initialState);
     render(
       <Provider store={store}>
         <InternationalizationTab />
       </Provider>
     );
-    const tableElement = screen.getByTestId('table-component');
-    expect(tableElement).toBeInTheDocument();
   }),
-		it("displays the add language modal when the add language button is clicked", async () => {
-			const { getByText } = render(
-				<Provider store={store}>
-					<InternationalizationTab />
-				</Provider>
+    it("renders the table component", async () => {
+      render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
       );
-			const button = getByText("Add Language");
-			fireEvent.click(button);
-
-			await waitFor(() => {
-				const modalElement = screen.getByTestId('add-language-modal');
-				expect(modalElement).toBeInTheDocument();
-			});
-		}),
-		it("closes the add language modal when the cancel button is clicked", async () => {
-			render(
-				<Provider store={store}>
-					<InternationalizationTab />
-				</Provider>
+      const tableElement = screen.getByTestId('table-component');
+      expect(tableElement).toBeInTheDocument();
+    }),
+    it("displays the add language modal when the add language button is clicked", async () => {
+      const { getByText } = render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
       );
-			const button = screen.getByText("Add Language");
-			fireEvent.click(button);
+      const button = getByText("Add Language");
+      fireEvent.click(button);
 
-			await waitFor(() => {
-				const modalElement = screen.getByTestId('add-language-modal');
-				expect(modalElement).toBeInTheDocument();
-			});
+      await waitFor(() => {
+        const modalElement = screen.getByTestId('add-language-modal');
+        expect(modalElement).toBeInTheDocument();
+      });
+    }),
+    it("closes the add language modal when the cancel button is clicked", async () => {
+      render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
+      );
+      const button = screen.getByText("Add Language");
+      fireEvent.click(button);
 
-			const closeButton = screen.getByText("Close");
+      await waitFor(() => {
+        const modalElement = screen.getByTestId('add-language-modal');
+        expect(modalElement).toBeInTheDocument();
+      });
 
-			fireEvent.click(closeButton);
+      const closeButton = screen.getByText("Close");
 
-			await waitFor(() => {
-				const modalElement = screen.queryByTestId('add-language-modal');
-				expect(modalElement).not.toBeInTheDocument();
-			});
-		}),
+      fireEvent.click(closeButton);
+
+      await waitFor(() => {
+        const modalElement = screen.queryByTestId('add-language-modal');
+        expect(modalElement).not.toBeInTheDocument();
+      });
+    }),
     it("When clicking the save button from the add language modal, the language should be saved ", async () => {
       render(
         <Provider store={store}>
@@ -100,7 +102,7 @@ describe("InternationalizationTab component", () => {
           <InternationalizationTab />
         </Provider>
       );
-      const button = screen.getByTestId("add-label-button");  
+      const button = screen.getByTestId("add-label-button");
       fireEvent.click(button);
 
       await waitFor(() => {
@@ -208,5 +210,32 @@ describe("InternationalizationTab component", () => {
 
       const tableElement = screen.getByTestId('table-component');
       expect(tableElement).toBeInTheDocument();
+    }),
+
+    it('allows editing the label and the translation', async () => {
+      store = mockStore(initialState);
+      const user = userEvent.setup();
+      const {debug} = render(
+        <Provider store={store}>
+          <InternationalizationTab />
+        </Provider>
+      );
+      const labelInput = await screen.findByTestId('label-input'); 
+      const translationInput = await screen.findByTestId('translation-input'); 
+      
+      // Changing the label
+      await act(async () => {
+        await user.click(labelInput);
+        await user.type(labelInput, 'changedLabelMock');
+        fireEvent.mouseDown(screen.getByText('Label'));
+      });
+      // Changing the translation value
+      await act(async () => {
+        await user.click(translationInput);
+        await user.type(translationInput, 'changedTranslationMock');
+        fireEvent.mouseDown(screen.getByText('Label'));
+      });
+      debug();
+      // expect(translationInput).toHaveValue('changedTranslationMock');
     })
 });

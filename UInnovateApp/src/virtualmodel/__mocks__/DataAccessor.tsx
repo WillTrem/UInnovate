@@ -72,6 +72,14 @@ export class DataAccessorMock {
     }
   });
 
+  fetchRowsByColumnValues = vi.fn().mockImplementation(() => {
+    switch (this.data_url) {
+      case 'i18n_translations': return Promise.resolve([
+        {translation_id: 0, language_code: 'EN', key_code: 'mockKey', value: 'mockValue', is_default: true}
+      ])
+    }
+  });
+
   addRow = vi.fn().mockImplementation(() => {
     console.log("addRow in DataAccessor mock was called");
     if (this.data_url === "/api/data" && this.values) {
@@ -112,11 +120,13 @@ export class DataAccessorMock {
     console.log("put in DataAccessor mock was called");
     return Promise.resolve();
   });
-  
+
   deleteRow = vi.fn().mockImplementation(() => {
     console.log("deleteRow in DataAccessor mock was called");
     return Promise.resolve();
   });
+
+
 
 
 }
