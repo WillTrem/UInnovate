@@ -103,11 +103,9 @@ COMMENT ON COLUMN app_rentals.contact.active IS '{"reqOnCreate": true}';
 ALTER TABLE app_rentals.company ADD CONSTRAINT fk_prim_contact
     FOREIGN KEY (primary_contact_id) REFERENCES app_rentals.contact(contact_id);
 
---generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.quotation (
     quotation_id serial PRIMARY KEY,
     quotation_date timestamp NOT NULL,
-    --quotation_name text GENERATED ALWAYS AS (my_concat_immutable(cast(quotation_id as text), cast(quotation_date as text))) STORED,
     tools_quoted_qty int,
     totalprice money
 );
@@ -116,7 +114,7 @@ COMMENT ON COLUMN app_rentals.quotation.quotation_date IS '{"reqOnCreate": true}
 COMMENT ON COLUMN app_rentals.quotation.tools_quoted_qty IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.quotation.totalprice IS '{"reqOnCreate": true}';
 
---should only exist as a lookup table, no need for display field (to discuss with Eddy)
+--should only exist as a lookup table, no need for display field
 CREATE TABLE app_rentals.quotation_line_item (
     quotation_id int REFERENCES app_rentals.quotation(quotation_id),
     tool_id int REFERENCES app_rentals.tool(tool_id),
@@ -129,13 +127,11 @@ COMMENT ON COLUMN app_rentals.quotation_line_item.tool_id IS '{"reqOnCreate": tr
 COMMENT ON COLUMN app_rentals.quotation_line_item.tool_quoted_qty IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.quotation_line_item.tool_price IS '{"reqOnCreate": true}';
 
---generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.purchase_order (
     purchase_order_id serial PRIMARY KEY,
     quotation_id int REFERENCES app_rentals.quotation(quotation_id),
     company_id int REFERENCES app_rentals.company(company_id),
     order_date timestamp,
-    --purchase_order_name text GENERATED ALWAYS AS (my_concat_immutable(purchase_order_id, order_date)) STORED,
     tools_rented_qty int,
     total_adjusted_price money NOT NULL,
     gst money NOT NULL GENERATED ALWAYS AS (total_adjusted_price * 0.05) STORED,
@@ -149,7 +145,7 @@ COMMENT ON COLUMN app_rentals.purchase_order.order_date IS '{"reqOnCreate": true
 COMMENT ON COLUMN app_rentals.purchase_order.tools_rented_qty IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.purchase_order.total_adjusted_price IS '{"reqOnCreate": true}';
 
---should only exist as a lookup table, no need for display field (to discuss with Eddy)
+--should only exist as a lookup table, no need for display field
 CREATE TABLE app_rentals.purchase_order_line_item (
     purchase_order_id int REFERENCES app_rentals.purchase_order(purchase_order_id),
     tool_id int REFERENCES app_rentals.tool(tool_id),
@@ -172,13 +168,12 @@ CREATE TABLE app_rentals.availability_status (
 COMMENT ON TABLE app_rentals.availability_status IS '{"displayField": "availability_status_name"}';
 COMMENT ON COLUMN app_rentals.availability_status.availability_status_name IS '{"reqOnCreate": true}';
 
---generated columns not working for now, need more time to investigate
+
 CREATE TABLE app_rentals.unit_scheduler (
     unit_scheduled_id serial PRIMARY KEY,
     unit_id int REFERENCES app_rentals.unit(unit_id) NOT NULL,
     unavailable_start_date timestamp,
     unavailable_end_date timestamp,
-    --unit_scheduled_name text GENERATED ALWAYS AS (my_concat_immutable(unit_id, unavailable_start_date)) STORED,
     availability_status_id int REFERENCES app_rentals.availability_status(availability_status_id),
     unit_recalibration_flag_id int
 );
@@ -192,13 +187,10 @@ COMMENT ON COLUMN app_rentals.unit_scheduler.unit_recalibration_flag_id IS '{"re
 ALTER TABLE app_rentals.purchase_order_line_item ADD CONSTRAINT fk_purchase_order_line_item_unit_scheduler
     FOREIGN KEY (unit_scheduled_id) REFERENCES app_rentals.unit_scheduler(unit_scheduled_id);
 
---generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.tool_restock_request (
     tool_restock_request_id serial PRIMARY KEY,
     tool_id int REFERENCES app_rentals.tool(tool_id) NOT NULL,
     notice_date timestamp,
-    --tool_restock_name text GENERATED ALWAYS AS (my_concat_immutable(tool_id, notice_date)) STORED,
-    restock_notice_author text,
     qty_requested int
 );
 COMMENT ON TABLE app_rentals.tool_restock_request IS '{"displayField": "tool_restock_request_id"}';
@@ -215,13 +207,11 @@ CREATE TABLE app_rentals.unit_recalibration_status (
 COMMENT ON TABLE app_rentals.unit_recalibration_status IS '{"displayField": "recal_status"}';
 COMMENT ON COLUMN app_rentals.unit_recalibration_status.recal_status IS '{"reqOnCreate": true}';
 
---generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.unit_recalibration_flag (
     unit_recalibration_flag_id serial PRIMARY KEY,
     unit_id int REFERENCES app_rentals.unit(unit_id) NOT NULL,
     unit_recalibration_status_id int REFERENCES app_rentals.unit_recalibration_status(unit_recalibration_status_id),
     flag_date timestamp NOT NULL,
-    --unit_recalibration_flag_name text GENERATED ALWAYS AS (my_concat_immutable(unit_id, flag_date)) STORED,
     manual_flagger boolean,
     flagger_name text
 );
@@ -243,7 +233,6 @@ CREATE TABLE app_rentals.unit_recalibration_schedule_type (
 COMMENT ON TABLE app_rentals.unit_recalibration_schedule_type IS '{"displayField": "recal_type_name"}';
 COMMENT ON COLUMN app_rentals.unit_recalibration_schedule_type.recal_type_name IS '{"reqOnCreate": true}';
 
---generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.unit_recalibration_schedule (
     unit_recalibration_schedule_id serial PRIMARY KEY,
     unit_recalibration_flag_id int REFERENCES app_rentals.unit_recalibration_flag(unit_recalibration_flag_id),
@@ -255,7 +244,6 @@ CREATE TABLE app_rentals.unit_recalibration_schedule (
     recal_type_counter int,
     recal_start_date timestamp,
     recal_end_date timestamp
-    --unit_recalibration_schedule_name text GENERATED ALWAYS AS (my_concat_immutable(unit_id, recal_start_date)) STORED
 );
 COMMENT ON TABLE app_rentals.unit_recalibration_schedule IS '{"displayField": "unit_recalibration_schedule_id"}';
 COMMENT ON COLUMN app_rentals.unit_recalibration_schedule.unit_recalibration_flag_id IS '{"reqOnCreate": true, "refTable": "app_rentals.unit_recalibration_flag"}';
@@ -267,12 +255,10 @@ COMMENT ON COLUMN app_rentals.unit_recalibration_schedule.recal_type_counter IS 
 COMMENT ON COLUMN app_rentals.unit_recalibration_schedule.recal_start_date IS '{"reqOnCreate": true}';
 COMMENT ON COLUMN app_rentals.unit_recalibration_schedule.recal_end_date IS '{"reqOnCreate": true}';
 
---generated columns not working for now, need more time to investigate
 CREATE TABLE app_rentals.unit_calibration_certificate (
     unit_calibration_certificate_id serial PRIMARY KEY,
     unit_id int REFERENCES app_rentals.unit(unit_id) NOT NULL,
     certification_date timestamp,
-    --unit_calibration_certificate_name text GENERATED ALWAYS AS (my_concat_immutable(unit_id, certification_date)) STORED,
     recalibration_advised_date timestamp,
     calibration_signature text
 );

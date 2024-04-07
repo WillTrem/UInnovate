@@ -1,0 +1,38 @@
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { describe, expect } from "vitest";
+import { Middleware, Store } from "@reduxjs/toolkit";
+import configureStore from "redux-mock-store";
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
+import userEvent from "@testing-library/user-event";
+import { Role } from "../../redux/AuthSlice";
+const COMPONENT_NAME = ""
+describe(COMPONENT_NAME, () => {
+	const initialState = {
+		schema: { schema_name: "mock schema name" },
+		script_table: { table_name: "script_mock" },
+		auth: { dbRole: Role.ADMIN, user: "admin", token: "token" },
+		userData: {
+			users: [{ email: "mockuser123@test.com", role: "user", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
+			{ email: "mockAdmin@test.com", role: "administrator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
+			{ email: "mockConfigurator@test.com", role: "configurator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} }]
+		}
+	};
+
+	const middlewares: Middleware[] = [];
+	const mockStore = configureStore(middlewares);
+	let store: Store;
+
+	it(`renders the ${COMPONENT_NAME} component`, async () => {
+		store = mockStore(initialState);
+		render(
+			<MemoryRouter>
+				<Provider store={store}>
+					{/* INSERT COMPONENT HERE */}
+					<></>
+				</Provider>
+			</MemoryRouter>
+		);
+	})
+	
+});

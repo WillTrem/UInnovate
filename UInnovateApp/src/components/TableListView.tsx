@@ -2,16 +2,10 @@ import "../styles/TableComponent.css";
 import vmd, { Table, Column } from "../virtualmodel/VMD";
 import type {} from "@mui/x-date-pickers/themeAugmentation";
 import { DataAccessor, Row } from "../virtualmodel/DataAccessor";
-import React, { useState, useEffect, useRef, CSSProperties } from "react";
-import SlidingPanel from "react-sliding-side-panel";
+import React, { useState, useEffect, useRef } from "react";
 import "react-sliding-side-panel/lib/index.css";
-import { ConfigProperty } from "../virtualmodel/ConfigProperties";
-import StarterKit from "@tiptap/starter-kit";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import RRow from "react-bootstrap/Row";
 import CCol from "react-bootstrap/Col";
-import dayjs from "dayjs";
-import { NavBar } from "./NavBar";
 import Logger from "../virtualmodel/Logger";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/Store";
@@ -21,45 +15,22 @@ import ConfirmationPopup from "./SavePopup";
 import InfoPopup from "./PrimaryKeyErrorPopup";
 import Audits from "../virtualmodel/Audits";
 import { IoIosArrowUp } from "react-icons/io";
+import SlidingPanel from "./TableListViewSlidingPanel.tsx";
 import {
-  Switch,
   Button,
-  Typography,
   Select,
   MenuItem,
   FormControl,
   SelectChangeEvent,
   Tooltip,
-  CircularProgress,
-  createTheme,
-  ThemeProvider,
   Menu,
   Checkbox,
+  createTheme,
 } from "@mui/material";
 import AddRowPopup from "./AddRowPopup";
 import Pagination from "@mui/material/Pagination";
-import LookUpTableDetails from "./TableListViewComponents/LookUpTableDetails";
-import { Container } from "react-bootstrap";
-import {
-  DatePicker,
-  DateTimePicker,
-  LocalizationProvider,
-  StaticDateTimePicker,
-} from "@mui/x-date-pickers";
-import { CategoriesDisplayType } from "../virtualmodel/Config";
-import { MuiTelInput } from "mui-tel-input";
-import {
-  MenuButtonBold,
-  MenuButtonItalic,
-  MenuControlsContainer,
-  MenuDivider,
-  MenuSelectHeading,
-  RichTextEditor,
-  type RichTextEditorRef,
-} from "mui-tiptap";
-import Dropzone from "./Dropzone";
+import { Container, ThemeProvider } from "react-bootstrap";
 import "../styles/TableListView.css";
-import axios from "axios";
 import ScriptLoadPopup from "./ScriptLoadPopup";
 import FunctionLoadPopup from "./FunctionLoadPopup";
 import { useNavigate } from "react-router-dom";
@@ -74,11 +45,24 @@ import {
 } from "@mui/material";
 
 import DeleteRowButton from "./TableListViewComponents/DeleteRowButton";
-import { set } from "lodash";
-import { CloudUpload } from "@mui/icons-material";
-import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
+import { getConfigs } from "../helper/TableListViewHelpers";
 import { CSVUploadButton } from "./CSVUploadButton";
 import axiosCustom from "../api/AxiosCustom";
+import { LocalizationProvider, DateTimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import StarterKit from "@tiptap/starter-kit";
+import { MuiTelInput } from "mui-tel-input";
+import {
+  RichTextEditor,
+  MenuControlsContainer,
+  MenuSelectHeading,
+  MenuDivider,
+  MenuButtonBold,
+  MenuButtonItalic,
+  RichTextEditorRef,
+} from "mui-tiptap";
+import { CategoriesDisplayType } from "../virtualmodel/Config.ts";
 
 interface TableListViewProps {
   table: Table;
@@ -100,17 +84,6 @@ type ConfirmPopupContent = {
   confirmAction: () => void;
   onCancel?: () => void;
 };
-const theme = createTheme({
-  components: {
-    MuiPickersPopper: {
-      styleOverrides: {
-        root: {
-          zIndex: 19000,
-        },
-      },
-    },
-  },
-});
 
 const TableListView: React.FC<TableListViewProps> = ({
   table,
@@ -127,15 +100,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isFunctionPopupVisible, setIsFunctionPopupVisible] =
     useState<boolean>(false);
   const [inputValues, setInputValues] = useState<Row>({});
-  const [currentPrimaryKey, setCurrentPrimaryKey] = useState<string | null>(
-    null
-  );
   const [openPanel, setOpenPanel] = useState(false);
+  const rteRef = useRef<RichTextEditorRef>(null);
   const [currentRow, setCurrentRow] = useState<Row>(new Row({}));
-  const [currentPhone, setCurrentPhone] = useState<string>("");
-  const [currentCategory, setCurrentCategory] = useState<string>("");
-  const [currentWYSIWYG, setCurrentWYSIWYG] = useState<string>("");
-  const [showFiles, setShowFiles] = useState<boolean>(false);
   const [scripts, setScripts] = useState<Row[] | undefined>([]);
   const [functions, setFunctions] = useState<Row[] | undefined>([]);
 
@@ -147,13 +114,9 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [selectedScript, setSelectedScript] = useState<Row | null>(null);
   const [selectedFunction, setSelectedFunction] = useState<Row | null>(null);
 
-  const [appConfigValues, setAppConfigValues] = useState<Row[] | undefined>([]);
-  const rteRef = useRef<RichTextEditorRef>(null);
   const [fileGroupsView, setFileGroupsView] = useState<Row[] | undefined>([]);
   const [fileGroupFiles, setFileGroupFiles] = useState<object>({});
   const [allFileGroups, setAllFileGroups] = useState<Row[] | undefined>([]);
-  const [inputField, setInputField] =
-    useState<(column: Column) => JSX.Element>();
   const meta_schema = vmd.getSchema("meta");
   const script_table = vmd.getTable("meta", "scripts");
   const function_table = vmd.getTable("meta", "function_map");
@@ -172,7 +135,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [isInfoPopupOpen, setIsInfoPopupOpen] = useState(false);
   const [infoPopupMessage, setInfoPopupMessage] = useState("");
 
-  const config_table = vmd.getTable("meta", "appconfig_values");
   let defaultOrderValue = table.columns.find(
     (column) => column.is_editable === false
   )?.column_name;
@@ -183,7 +145,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   const [PaginationValue, setPaginationValue] = useState<number>(10);
   const [PageNumber, setPageNumber] = useState<number>(1);
   const [Plength, setLength] = useState<number>(0);
-  const [showTable, setShowTable] = useState<boolean>(false);
   const [sortOrder, setSortOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState(defaultOrderValue);
   const [conditionFilter, setConditionFilter] = useState<string>("");
@@ -204,6 +165,25 @@ const TableListView: React.FC<TableListViewProps> = ({
     return initialCheckedState;
   });
   const [editingCell, setEditingCell] = useState<EditingCell | null>(null);
+
+  const theme = createTheme({
+    components: {
+      MuiPickersPopper: {
+        styleOverrides: {
+          root: {
+            zIndex: 19000,
+          },
+        },
+      },
+      MuiPopover: {
+        styleOverrides: {
+          root: {
+            zIndex: 19000,
+          },
+        },
+      },
+    },
+  });
 
   const getRows = async () => {
     const attributes = table.getVisibleColumns();
@@ -276,6 +256,25 @@ const TableListView: React.FC<TableListViewProps> = ({
   useEffect(() => {
     getRows();
   }, [table, orderBy, PageNumber, PaginationValue, sortOrder, conditionFilter]);
+
+  useEffect(() => {
+    const SetPrimaryKey = () => {
+      const allColumnsAreEditable = table.columns.every(
+        (column) => column.is_editable === true
+      );
+      if (allColumnsAreEditable) {
+        table.columns.forEach((column) => {
+          if (
+            column.references_table != null &&
+            column.references_table != "filegroup"
+          ) {
+            column.setEditability(false);
+          }
+        });
+      }
+    };
+    SetPrimaryKey();
+  }, [table]);
 
   const fileGroupsViewDataAccessor = vmd.getViewRowsDataAccessor(
     "filemanager",
@@ -359,37 +358,22 @@ const TableListView: React.FC<TableListViewProps> = ({
     }
   }, [selectedFunction]);
 
-  const getConfigs = async () => {
-    if (!meta_schema || !config_table) {
-      throw new Error("Schema or table not found");
-    }
-
-    const config_data_accessor: DataAccessor = vmd.getRowsDataAccessor(
-      meta_schema?.schema_name,
-      config_table?.table_name
-    );
-
-    const config_rows = await config_data_accessor?.fetchRows();
-
-    setAppConfigValues(config_rows);
+  const getAppConfigs = async () => {
+    getConfigs();
   };
 
   useEffect(() => {
+    getRows();
+    getFileGroupsView();
+  }, [openPanel]);
+
+  useEffect(() => {
     getScripts();
-    getConfigs();
+    getAppConfigs();
     getFunctions();
     getFileGroupsView();
   }, [inputValues]);
 
-  const inputStyle: CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    width: table.stand_alone_details_view ? "80%" : "120%",
-  };
-  const tableStyle = table.stand_alone_details_view
-    ? "form-group-stand-alone"
-    : "form-group";
   //For when order changes
   const handleSort = (column: React.SetStateAction<string>) => {
     const isAsc = orderBy === column && sortOrder === "asc";
@@ -462,12 +446,6 @@ const TableListView: React.FC<TableListViewProps> = ({
           .updateRow();
         setAllFileGroups((prevItems) => [...prevItems, response.data[0]]);
       });
-    const nonEditableColumn = table.columns.find(
-      (column) => column.is_editable === false
-    );
-    if (nonEditableColumn) {
-      setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
     getRows();
   };
 
@@ -501,79 +479,9 @@ const TableListView: React.FC<TableListViewProps> = ({
     getRows();
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    columnName: string | undefined,
-    type: string | undefined
-  ) => {
-    const nonEditableColumn = table.columns.find(
-      (column) => column.is_editable === false
-    );
-    if (nonEditableColumn) {
-      setCurrentPrimaryKey(nonEditableColumn.column_name);
-    }
-    let eventName: string | undefined = undefined;
-    let eventValue: string | undefined = undefined;
-    if (event?.target?.name !== undefined && event?.target?.name !== "") {
-      eventName = event.target.name;
-      eventValue = event.target.value;
-    } else {
-      if (type !== undefined) {
-        eventName = columnName;
-        eventValue = event;
-      } else if (type == "phone" || type == "date") {
-        eventName = columnName;
-        eventValue = event.format();
-      } else {
-        eventName = columnName;
-        eventValue = event.target.value;
-      }
-    }
-
-    setInputValues((prevInputValues) => ({
-      ...prevInputValues,
-      [eventName as string]: eventValue,
-    }));
-  };
-
   const { user: loggedInUser }: AuthState = useSelector(
     (state: RootState) => state.auth
   );
-  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const schema = vmd.getTableSchema(table.table_name);
-    if (!schema) {
-      console.error("Schema not found");
-      return;
-    }
-
-    Logger.logUserAction(
-      loggedInUser || "",
-      "Edited Row",
-      //i want the edited value in the details
-      "User has modified a row in the table: " + JSON.stringify(inputValues),
-      schema?.schema_name || "",
-      table.table_name
-    );
-
-    const storedPrimaryKeyValue = currentRow.row
-      ? currentRow.row[currentPrimaryKey as string]
-      : null;
-
-    const data_accessor: DataAccessor = vmd.getUpdateRowDataAccessorView(
-      schema.schema_name,
-      table.table_name,
-      inputValues,
-      currentPrimaryKey as string,
-      storedPrimaryKeyValue as unknown as string
-    );
-    data_accessor.updateRow().then(() => {
-      getRows();
-    });
-    setInputValues({});
-    setOpenPanel(false);
-  };
   //Filter Functions
   //Handle when you click on the filter button
   const handleFilterClick = (
@@ -628,37 +536,6 @@ const TableListView: React.FC<TableListViewProps> = ({
   //End of Filter Function
 
   // Object.entries(row.row).map(([key, value]) => {
-
-  const FileInputField = (column: Column) => {
-    if (!appConfigValues) {
-      return null;
-    }
-
-    if (column.is_editable == false) {
-      localStorage.setItem(
-        "currentPrimaryKeyValue",
-        currentRow.row[column.column_name]
-      );
-    }
-
-    if (column.references_table != null) {
-      const string = column.column_name + "L";
-      localStorage.setItem(
-        string,
-        currentRow.row[column.column_name] as string
-      );
-    }
-    return (
-      <div>
-        <Dropzone
-          onItemAdded={onItemAdded}
-          onItemRemoved={onItemRemoved}
-          items={fileGroupFiles[currentRow.row[column.column_name]]}
-          currentColumn={column.column_name}
-        />
-      </div>
-    );
-  };
 
   const handleDoubleClick = (rowIndex: number, column: Column) => {
     const newRow = rows[rowIndex];
@@ -920,214 +797,31 @@ const TableListView: React.FC<TableListViewProps> = ({
     setIsConfirmPopupOpen(false);
     setEditingCell(null);
   };
-  useEffect(() => {
-    const newInputField = (column: Column) => {
-      if (!appConfigValues) {
-        return null;
-      }
-      const columnDisplayType = appConfigValues?.find(
-        (element) =>
-          element.column == column.column_name &&
-          element.table == table.table_name &&
-          element.property == ConfigProperty.COLUMN_DISPLAY_TYPE
-      );
 
-      if (
-        !columnDisplayType ||
-        columnDisplayType.value == "text" ||
-        columnDisplayType.value == "email"
-      ) {
-        return (
-          <input
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow?.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "number") {
-        return (
-          <input
-            type="number"
-            name={column.column_name}
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "longtext") {
-        return (
-          <textarea
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            name={column.column_name}
-            type="text"
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "boolean") {
-        return (
-          <Switch
-            checked={
-              currentRow?.row[column.column_name] == "true"
-                ? true
-                : false || false
-            }
-            name={column.column_name}
-          />
-        );
-      } else if (columnDisplayType.value == "date") {
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ThemeProvider theme={theme}>
-              <DatePicker
-                value={dayjs(currentRow.row[column.column_name])}
-                onChange={(date) =>
-                  handleInputChange(date, column.column_name, "date")
-                }
-                name={column.column_name}
-                className="date-time-picker"
-                readOnly={column.is_editable === false ? true : false}
-              />
-            </ThemeProvider>
-          </LocalizationProvider>
-        );
-      } else if (columnDisplayType.value == "datetime") {
-        return (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <ThemeProvider theme={theme}>
-              <DateTimePicker
-                value={dayjs(currentRow.row[column.column_name])}
-                onChange={(date) =>
-                  handleInputChange(date, column.column_name, "date")
-                }
-                name={column.column_name}
-                className="date-time-picker"
-                readOnly={column.is_editable === false ? true : false}
-              />
-            </ThemeProvider>
-          </LocalizationProvider>
-        );
-      } else if (columnDisplayType.value == "categories") {
-        return (
-          <Select
-            value={
-              currentCategory
-                ? currentCategory
-                : currentRow.row[column.column_name]
-            }
-            name={column.column_name}
-            onChange={(event) => {
-              handleInputChange(event, column.column_name, undefined);
-              setCurrentCategory(event.target.value);
-            }}
-            native
-            className="width"
-          >
-            {Object.keys(CategoriesDisplayType).map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </Select>
-        );
-      } else if (columnDisplayType.value == "phone") {
-        return (
-          <MuiTelInput
-            value={
-              currentPhone !== "" || currentPhone
-                ? currentPhone
-                : currentRow.row[column.column_name]
-            }
-            onChange={(phone) => {
-              handleInputChange(phone, column.column_name, "phone");
-              setCurrentPhone(phone);
-            }}
-            name={column.column_name}
-          />
-        );
-      } else if (columnDisplayType.value == "currency") {
-        return (
-          <input
-            type="number"
-            name={column.column_name}
-            readOnly={column.is_editable === false ? true : false}
-            placeholder={String(currentRow.row[column.column_name]) || ""}
-            style={inputStyle}
-            onChange={handleInputChange}
-          />
-        );
-      } else if (columnDisplayType.value == "multiline_wysiwyg") {
-        return (
-          <RichTextEditor
-            name={column.column_name}
-            content={
-              currentWYSIWYG
-                ? currentWYSIWYG
-                : currentRow.row[column.column_name]
-            }
-            onChange={(event) => {
-              handleInputChange(event, column.column_name, undefined);
-              rteRef.current?.editor.setContent(event);
-            }}
-            ref={rteRef}
-            extensions={[StarterKit]} // Or any Tiptap extensions you wish!
-            // Optionally include `renderControls` for a menu-bar atop the editor:
-            renderControls={() => (
-              <MenuControlsContainer>
-                <MenuSelectHeading />
-                <MenuDivider />
-                <MenuButtonBold />
-                <MenuButtonItalic />
-                {/* Add more controls of your choosing here */}
-              </MenuControlsContainer>
-            )}
-          />
-        );
-      }
-    };
-    setInputField(() => newInputField as (column: Column) => JSX.Element);
-  }, [
-    currentRow,
-    columns,
-    table,
-    appConfigValues,
-    currentPhone,
-    rows,
-    currentCategory,
-    inputValues,
-    currentWYSIWYG,
-    showFiles,
-    allFileGroups,
-  ]);
   useEffect(() => {
     getRows();
-  }, [showFiles]);
+  }, []);
 
   // Function to save the current row
   const handleOpenPanel = (row: Row) => {
     setCurrentRow(row);
-    setCurrentPhone("");
-    setCurrentCategory("");
-    setCurrentWYSIWYG("");
     if (!table.has_details_view) {
       return;
     }
-    if (!table.stand_alone_details_view) {
-      console.log("No Stand Alone Details View " + table.table_name);
-    }
+
     const schema = vmd.getTableSchema(table.table_name);
     let detailtype = "overlay";
     if (table.stand_alone_details_view) {
       detailtype = "standalone";
     }
+    const firstNonEditableColumn = table.columns.find(
+      (column) => !column.is_editable
+    );
+
+    const firstNonEditableColumnName = firstNonEditableColumn?.column_name;
     navigate(
       `/${schema?.schema_name.toLowerCase()}/${table.table_name.toLowerCase()}/${
-        row.row[table.table_name + "_id"]
+        row.row[firstNonEditableColumnName ?? ""]
       }?details=${detailtype}`
     );
     setOpenPanel(true);
@@ -1447,119 +1141,15 @@ const TableListView: React.FC<TableListViewProps> = ({
           </RRow>
         </Container>
       </div>
-
       <SlidingPanel
-        type={"right"}
-        isOpen={openPanel}
-        size={table.stand_alone_details_view ? 100 : 50}
-        panelContainerClassName="panel-container"
-        backdropClicked={() => {
-          setCurrentPhone("");
-          setCurrentCategory("");
-          setCurrentWYSIWYG("");
-          setOpenPanel(false);
-          setInputValues({});
-          setShowFiles(false);
-        }}
-      >
-        <div>
-          <div>
-            {table.stand_alone_details_view ? <NavBar /> : <div></div>}
-            <div className="form-panel-container">
-              <Typography variant="h5">Details</Typography>
-              <form>
-                <div className={tableStyle}>
-                  {columns.map((column, colIdx) => {
-                    if (column.references_table != "filegroup") {
-                      return (
-                        <div key={colIdx} className="row-details">
-                          <label key={column.column_name + colIdx}>
-                            {column.column_name}
-                          </label>
-                          {inputField(column)}
-                        </div>
-                      );
-                    }
-                  })}
-                  {columns.map((column, colIdx) => {
-                    if (column.references_table == "filegroup") {
-                      return (
-                        <div
-                          key={colIdx}
-                          className="row-details"
-                          title="Dropzone"
-                        >
-                          <label key={column.column_name + colIdx}>
-                            {column.column_name}
-                          </label>
-                          <FileInputField {...column} />
-                        </div>
-                      );
-                    }
-                  })}
-                </div>
-              </form>
-              <div>
-                <Button
-                  variant="contained"
-                  style={buttonStyle}
-                  onClick={() => {
-                    setCurrentPhone("");
-                    setCurrentCategory("");
-                    setCurrentWYSIWYG("");
-                    setInputValues({});
-                    setOpenPanel(false);
-                    setShowFiles(false);
-                  }}
-                >
-                  close
-                </Button>
-                <Button
-                  variant="contained"
-                  style={{
-                    marginTop: 20,
-                    backgroundColor: "#403eb5",
-                    width: "fit-content",
-                    marginLeft: 10,
-                  }}
-                  onClick={handleFormSubmit}
-                >
-                  Save
-                </Button>
-              </div>
-            </div>
-          </div>
-          <div style={{ paddingBottom: "2em", paddingLeft: "1.5em" }}>
-            {table.lookup_tables == "null" ? (
-              <div></div>
-            ) : JSON.parse(table.lookup_tables)[-1] == "none" ? (
-              <div></div>
-            ) : showTable ? (
-              <div style={{ paddingBottom: "2em" }}>
-                {currentRow.row && (
-                  <LookUpTableDetails
-                    table={table}
-                    currentRow={currentRow.row}
-                  />
-                )}{" "}
-              </div>
-            ) : (
-              <Button
-                variant="contained"
-                style={{
-                  marginTop: 20,
-                  backgroundColor: "#403eb5",
-                  width: "fit-content",
-                  marginLeft: "12px",
-                }}
-                onClick={() => setShowTable(true)}
-              >
-                Show Look Up Table
-              </Button>
-            )}
-          </div>
-        </div>
-      </SlidingPanel>
+        table={table}
+        currentRow={currentRow}
+        onItemAdded={onItemAdded}
+        onItemRemoved={onItemRemoved}
+        fileGroupFiles={fileGroupFiles}
+        openPanel={openPanel}
+        setOpenPanel={setOpenPanel}
+      ></SlidingPanel>
     </div>
   );
 };

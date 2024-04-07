@@ -32,6 +32,7 @@ describe("ScriptingTab", () => {
     );
 
     console.log(screen.debug(undefined, 20000));
+    
 
     await waitFor(() => {
       expect(screen.getByText("mock name")).toBeInTheDocument();
