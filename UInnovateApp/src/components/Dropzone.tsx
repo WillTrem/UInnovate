@@ -84,31 +84,6 @@ function Dropzone({ onItemAdded, items, currentColumn, onItemRemoved }) {
     downloadFile(await fetchFile(item), item);
   };
 
-  // const onDragOver = (event) => {
-  //   event.preventDefault();
-  //   setHighlight(true);
-  // };
-
-  // const onDragLeave = (event) => {
-  //   setHighlight(false);
-  // };
-
-  // const onDrop = (event) => {
-  //   event.preventDefault();
-  //   const files = event.dataTransfer.files;
-  //   if (onItemAdded) {
-  //     const array = fileListToArray(files);
-  //     onItemAdded(event, array);
-  //   }
-  // };
-
-  // const fileListToArray = (list) => {
-  //   const array = [];
-  //   for (var i = 0; i < list.length; i++) {
-  //     array.push(list.item(i));
-  //   }
-  //   return array;
-  // };
   return (
     <div>
       <div className="flex-row" title="file-instance">

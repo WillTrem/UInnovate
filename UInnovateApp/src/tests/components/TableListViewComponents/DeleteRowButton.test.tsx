@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { Provider } from "react-redux";
 import { Store, Middleware } from "@reduxjs/toolkit";
@@ -40,11 +40,16 @@ describe("DeleteRowButton", () => {
   const row = { row: { id: "1" } };
   const getRows = vi.fn();
 
+  afterEach(() => {
+    getRows.mockReset();
+  })
+
   it("renders the component with table 1", async () => {
     render(
       <Provider store={store}>
         <DeleteRowButton getRows={getRows} table={table} row={row} />
       </Provider>
+      
     );
     const resetFiltersButton = screen.getByTestId("delete-row-button");
     expect(resetFiltersButton).toBeInTheDocument();
@@ -52,7 +57,9 @@ describe("DeleteRowButton", () => {
     act(() => resetFiltersButton.click());
 
     expect(VMD.getRemoveRowAccessor).toHaveBeenCalled();
-    expect(getRows).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(getRows).toHaveBeenCalled();
+    })
   });
 
   it("renders the component with table 2", async () => {
@@ -68,6 +75,8 @@ describe("DeleteRowButton", () => {
     act(() => resetFiltersButton.click());
 
     expect(VMD.getRemoveRowAccessor).toHaveBeenCalled();
-    expect(getRows).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(getRows).toHaveBeenCalled();
+    })
   });
 });

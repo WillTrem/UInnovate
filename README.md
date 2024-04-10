@@ -125,7 +125,7 @@ The supported types of tests are:
 
 1. Unit Tests using Vitest
 2. Integration Tests using Cypress
-3. Component Tests using Cypress
+3. API testing with SoapUI
 
 ### Unit Tests
 
@@ -135,46 +135,6 @@ To run the unit tests
 
 ```bash
 npm run test:unit
-```
-
-### Component Tests
-
-The [component tests](https://docs.cypress.io/guides/component-testing/react/overview#React-with-Vite) will be handled by Cypress. These tests will be generated in the `cypress/component` directory.
-
-To run component tests
-
-```bash
-npm run cy:run-component
-```
-
-To build component tests with Cypress Component Testing
-
-```bash
-npm run cy:open-component
-```
-
-### Integration Tests
-
-The [integration tests](https://docs.cypress.io/guides/component-testing/react/overview#React-with-Vite) will be handled by Cypress. These tests will be generated in the `cypress/e2e` directory.
-
-To run component tests
-
-```bash
-npm run cy:run-e2e
-```
-
-To build component tests with Cypress Component Testing
-
-```bash
-npm run cy:open-e2e
-```
-
-### Cypress Component Testing
-
-To open directly the GUI of Cypress Component Testing for both component tests and E2E, run
-
-```bash
-npx cypress open
 ```
 
 ## Coverage Reports
@@ -204,10 +164,6 @@ You can run the following scripts with `npm run <script>`.
 | `preview`           | Preview of the application.        |
 | `lint`              | Runs ESLint on the project.        |
 | `test:unit`         | Runs unit tests.                   |
-| `cy:open-component` | Opens component tests via GUI.     |
-| `cy:run-component`  | Runs component tests.              |
-| `cy:open-e2e`       | Opens E2E tests via GUI.           |
-| `cy:run-e2e`        | Runs E2E tests.                    |
 | `coverage`          | Coverage report for Vitest.        |
 
 Additionally, you can run the script `npx cypress open`
@@ -230,15 +186,13 @@ refresh script, follow the steps below:
 
 4. A log file will be generated to see everything that was done to the DB and any errors that occurred
 
-## Postman Endpoint Testing
+## SoapUI Endpoint Testing
 
-To use Postman for testing the PostgREST API corrrectly accessing the database:
+To use SoapUI for testing the PostgREST API corrrectly accessing the database:
 
-1. Have Postman downloaded on your local machine, with an account created.
-2. Join the Team Workspace using the invite link below:
-   https://app.getpostman.com/join-team?invite_code=daa40b2dc66c40aca34c410ded3642a0&target_code=0ad2148deff37d1bc2ab282720715240
-   > Note: there is a 3-person/teamspace limitation on Postman without a premium account. We'll look into this later.
-3. Once inside the teamspace, navigate to Collections to see the current tests and run them.
+1. Have SoapUI downloaded on your local machine.
+2. Load the xml file within the api_testing folder
+3. Navigate through the UI, and click on any individual tests you would like to run
 
 ## Configuration
 
@@ -311,4 +265,12 @@ Note; this can take up to a few minutes the first time, it's normal.
 4. `docker run -p 8080:80 goat-dock` to run the container. This will serve the minified js as a static web page on an Nginx server.
 
 5. Visit localhost:8080 to see Postgoat container running on your local machine.
+
+## Diversity Statement
+At UInnovate, we believe:
+- That diversity comes in many different forms which we welcome 
+- In having an environment where anyone can contribute their talents and ideas into the project
+- In the importance of your data being safe and secure from outside breaches
+- That while using our software, your data will retain its confidentiality and integrity
+
 

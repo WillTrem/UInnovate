@@ -142,10 +142,7 @@ const ColumnConfigRow: React.FC<ColumnConfigRowProps> = ({
       </td>
       <td>
         <FormControl size="small">
-          <Select
-            defaultValue={column.column_type}
-            onChange={handleDisplayChange}
-          >
+          <Select defaultValue={column.column_type} onChange={handleDisplayChange} data-testid='display-type-select'>
             {Object.keys(ColumnDisplayTypes).map((value) => (
               <MenuItem key={value} value={value}>
                 {value}

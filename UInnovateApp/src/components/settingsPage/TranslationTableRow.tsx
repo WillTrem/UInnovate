@@ -201,7 +201,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({
             backgroundColor: isEditingLabel ? "#f2f2f2" : "transparent",
             borderRadius: "4px",
           }}
-          data-testid="label-element"
+          data-testid="label-input"
         />
         {is_default ? (
           <IoLockClosed className="icon-lock" />
@@ -268,7 +268,7 @@ const TranslationTableRow: React.FC<TranslationTableRowProps> = ({
             backgroundColor: isEditingTranslation ? "#f2f2f2" : "transparent",
             borderRadius: "4px",
           }}
-          data-testid="translation-cell"
+          data-testid="translation-input"
         />
       </td>
     </tr>
