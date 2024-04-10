@@ -5,6 +5,7 @@ import loadingReducer from './LoadingSlice';
 import userDataReducer from './UserDataSlice';
 import notificationReducer from './NotificationSlice';
 import selectedViewListReducer from './AdditionalViewSlice';
+import languageSelectionReducer from './LanguageSelectionSlice';
 
 // App state store
 const Store = configureStore({
@@ -14,6 +15,7 @@ const Store = configureStore({
     loading: loadingReducer,
     userData: userDataReducer,
     notification: notificationReducer,
+    languageSelection: languageSelectionReducer,
     selectedViewList:  selectedViewListReducer
   },
 });

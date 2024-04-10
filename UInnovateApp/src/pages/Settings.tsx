@@ -25,11 +25,53 @@ import { useEffect, useState } from "react";
 import { updateSelectedSchema } from "../redux/SchemaSlice";
 import SchemaSelector from "../components/Schema/SchemaSelector";
 import DisplayType from "../components/Schema/DisplayType";
+import { I18n } from "../helper/i18nHelpers";
+// import { i18n } from "../helper/i18nHelpers";
 
 export function Settings() {
+  //labels
+  const selectedLanguage: string = useSelector(
+    (state: RootState) => state.languageSelection.lang,
+  );
+  const [settings_lbl, setSettings_lbl] = useState("");
+
+  const [general_lbl, setGeneral_lbl] = useState("");
+  const [display_lbl, setDisplay_lbl] = useState("");
+  const [scripting_lbl, setScripting_lbl] = useState("");
+  const [internationalization_lbl, setInternationalization_lbl] = useState("");
+  const [additionalViews_lbl, setAdditionalViews_lbl] = useState("");
+  const [userActionLoggingAndTracing_lbl, setUserActionLoggingAndTracing_lbl] =
+    useState("");
+  const [auditTrails_lbl, setAuditTrails_lbl] = useState("");
+
+  // labels
+  const translations = useSelector(
+    (state: RootState) => state.languageSelection.translations,
+  );
+  const [i18n] = useState(new I18n(translations));
+
+  useEffect(() => {
+    i18n.setLanguage(selectedLanguage).then(() => updateLabels());
+  }, [selectedLanguage]);
+
+  const updateLabels = () => {
+    setSettings_lbl(i18n.get("settings", "Settings"));
+    setGeneral_lbl(i18n.get("general", "General"));
+    setDisplay_lbl(i18n.get("display", "Display"));
+    setScripting_lbl(i18n.get("scripting", "Scripting"));
+    setInternationalization_lbl(
+      i18n.get("internationalization", "Internationalization"),
+    );
+    setAdditionalViews_lbl(i18n.get("additionalViews", "Additional Views"));
+    setUserActionLoggingAndTracing_lbl(
+      i18n.get("userActionLoggingTracing", "User Action Logging and Tracing"),
+    );
+    setAuditTrails_lbl(i18n.get("AuditTrails", "Audit Trails"));
+  };
+
   const dispatch = useDispatch();
   const { user, schema_access, dbRole, defaultRole, schemaRoles } = useSelector(
-    (state: RootState) => state.auth
+    (state: RootState) => state.auth,
   );
   const schemas = [
     ...new Set(
@@ -47,7 +89,7 @@ export function Settings() {
           ) {
             return schema_name;
           }
-        })
+        }),
     ),
   ];
   console.log(schemas);
@@ -75,7 +117,7 @@ export function Settings() {
         <div className="page-container">
           <div className="save-config-container">
             <Box display="flex" gap={"2rem"} alignItems={"center"}>
-              <h1 className="title">Settings</h1>
+              <h1 className="title">{settings_lbl}</h1>
               <SchemaSelector
                 displayType={DisplayType.MuiDropDown}
                 schemas={schemas}
@@ -94,7 +136,7 @@ export function Settings() {
                       eventKey="general"
                       onClick={() => handleNavClick("general")}
                     >
-                      General
+                      {general_lbl}
                     </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
@@ -102,7 +144,7 @@ export function Settings() {
                       eventKey="display"
                       onClick={() => handleNavClick("display")}
                     >
-                      Display
+                      {display_lbl}
                     </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
@@ -110,7 +152,7 @@ export function Settings() {
                       eventKey="scripting"
                       onClick={() => handleNavClick("scripting")}
                     >
-                      Scripting
+                      {scripting_lbl}
                     </Nav.Link>
                   </Nav.Item>
                   {(dbRole === Role.ADMIN ||
@@ -121,6 +163,7 @@ export function Settings() {
                         onClick={() => handleNavClick("users")}
                       >
                         Users
+                        {/* {users_lbl} */}
                       </Nav.Link>
                     </Nav.Item>
                   )}
@@ -129,7 +172,7 @@ export function Settings() {
                       eventKey="internationalization"
                       onClick={() => handleNavClick("internationalization")}
                     >
-                      Internationalization
+                      {internationalization_lbl}
                     </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
@@ -137,7 +180,7 @@ export function Settings() {
                       eventKey="additionalviews"
                       onClick={() => handleNavClick("additionalviews")}
                     >
-                      Additional Views
+                      {additionalViews_lbl}
                     </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
@@ -145,7 +188,7 @@ export function Settings() {
                       eventKey="userlogs"
                       onClick={() => handleNavClick("userlogs")}
                     >
-                      User Action Logging and Tracing
+                      {userActionLoggingAndTracing_lbl}
                     </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
@@ -153,7 +196,7 @@ export function Settings() {
                       eventKey="audittrails"
                       onClick={() => handleNavClick("audittrails")}
                     >
-                      Audit Trails
+                      {auditTrails_lbl}
                     </Nav.Link>
                   </Nav.Item>
                 </Nav>
