@@ -214,7 +214,7 @@ VALUES
     ('scripting.buttonName', true),
     ('scripting.table', true),
     ('scripting.content', true),
-    ('users', true),
+    ('Users', true),
     ('emailAddress', true),
     ('firstName', true),
     ('lastName', true),
@@ -356,6 +356,7 @@ VALUES
     (2, 103, 'Variable d''Environment Existant'),
     (2, 104, 'Execution de la Procedures'),
     (2, 105, 'Cliquez pour modifier');
+
 
 NOTIFY pgrst,
 'reload schema'

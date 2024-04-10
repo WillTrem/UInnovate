@@ -66,8 +66,7 @@ export function Settings() {
     setUserActionLoggingAndTracing_lbl(
       i18n.get("userActionLoggingTracing", "User Action Logging and Tracing"),
     );
-    setSettings_lbl(i18n.get("AuditTrails", "Audit Trails"));
-    setSettings_lbl(i18n.get("Settings", "Settings"));
+    setAuditTrails_lbl(i18n.get("AuditTrails", "Audit Trails"));
   };
 
   const dispatch = useDispatch();
