@@ -1,5 +1,5 @@
 import { describe, it, vi, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { Settings } from "../pages/Settings";
 import configureStore from "redux-mock-store";
@@ -45,6 +45,24 @@ describe("Settings.tsx", () => {
         },
       ],
     },
+		languageSelection:{
+			lang: "en",
+  			translations: [
+				{
+					languageCode:'fr',
+					values:[
+						{translation_id: 1, language_code: 'fr', key_code: 'settings', value: 'Configuration', is_default: true},
+						{translation_id: 4, language_code: 'fr', key_code: 'audit_trails', value: '', is_default: true}]
+				},
+				{
+					languageCode:'en',
+					values:[
+						{translation_id: 5, language_code: 'en', key_code: 'settings', value: 'Settings', is_default: true},
+						{translation_id: 8, language_code: 'en', key_code: 'audit_trails', value: '', is_default: true}]
+				}
+			]
+		}
+
   };
   const middlewares: Middleware[] = [];
   const mockStore = configureStore(middlewares);
@@ -60,13 +78,14 @@ describe("Settings.tsx", () => {
         </Provider>
       </MemoryRouter>
     );
-
-    expect(screen.getAllByText("Settings")[1]).toBeInTheDocument();
-    expect(screen.getByText("Layout Personalization")).toBeInTheDocument();
-    expect(screen.getByText("Tables")).toBeInTheDocument();
-    expect(screen.getByText("Cron Jobs")).toBeInTheDocument();
-    expect(screen.getAllByText("Users")[1]).toBeInTheDocument();
-    expect(screen.getByText("Add Language")).toBeInTheDocument();
-    expect(screen.getByText("ADD VIEW")).toBeInTheDocument();
+    await vi.waitFor(    ()=>{
+      expect(screen.getAllByText("Settings")[1]).toBeInTheDocument();
+      expect(screen.getByText("Layout Personalization")).toBeInTheDocument();
+      expect(screen.getByText("Tables")).toBeInTheDocument();
+      expect(screen.getByText("Cron Jobs")).toBeInTheDocument();
+      expect(screen.getAllByText("Users")[1]).toBeInTheDocument();
+      expect(screen.getByText("Add Language")).toBeInTheDocument();
+      expect(screen.getByText("ADD VIEW")).toBeInTheDocument();
+    });
   });
 });

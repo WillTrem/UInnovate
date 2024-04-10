@@ -66,7 +66,6 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
   useEffect(() => {
     console.log("use effect translations", translations);
     if (translations[0].values.length == 0) {
-      console.log(JSON.stringify(translations));
       var res = getLanguagesProps()
         .then((langs) => {
           var res = langs?.map(async (lang) => {

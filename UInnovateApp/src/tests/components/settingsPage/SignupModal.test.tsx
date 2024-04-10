@@ -18,6 +18,23 @@ describe("Signup modal component", () => {
 			users: [{ email: "mockuser123@test.com", role: "user", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
 			{ email: "mockAdmin@test.com", role: "administrator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} },
 			{ email: "mockConfigurator@test.com", role: "configurator", is_active: true, schema_access: ["mock schema name"], schemaRoles: {} }]
+		},
+		languageSelection:{
+			lang: "en",
+  			translations: [
+				{
+					languageCode:'fr',
+					values:[
+						{translation_id: 1, language_code: 'fr', key_code: 'settings', value: 'Configuration', is_default: true},
+						{translation_id: 4, language_code: 'fr', key_code: 'audit_trails', value: '', is_default: true}]
+				},
+				{
+					languageCode:'en',
+					values:[
+						{translation_id: 5, language_code: 'en', key_code: 'settings', value: 'Settings', is_default: true},
+						{translation_id: 8, language_code: 'en', key_code: 'audit_trails', value: '', is_default: true}]
+				}
+			]
 		}
 	};
 
