@@ -388,7 +388,7 @@ INSERT INTO app_rentals.unit_recalibration_schedule (unit_recalibration_flag_id,
 
 -- Sample data for unit_calibration_certificate table
 INSERT INTO app_rentals.unit_calibration_certificate (unit_id, certification_date, recalibration_advised_date, calibration_signature) VALUES
-    (1, '2023-11-01', '2023-11-02', 'Signature1'),
+    (1, '2024-11-01', '2023-11-02', 'Signature1'),
     (2, '2023-11-02', '2023-11-03', 'Signature2'),
     (3, '2023-11-03', '2023-11-04', 'Signature3'),
     (4, '2023-11-04', '2023-11-05', 'Signature4'),
