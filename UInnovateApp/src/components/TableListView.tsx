@@ -842,13 +842,13 @@ const TableListView: React.FC<TableListViewProps> = ({
         }}
       >
         <div>
-          <Button
+          {/* <Button
             style={buttonStyle}
             variant="contained"
             onClick={() => handleAddRowClick()}
           >
             Add {table.table_name}
-          </Button>
+          </Button> */}
 
           {isPopupVisible && (
             <AddRowPopup
@@ -946,18 +946,33 @@ const TableListView: React.FC<TableListViewProps> = ({
             script={selectedScript}
           />
         )}
-        <CSVUploadButton table={table} getRows={getRows} />
+        <Box display={"flex"} gap={4} >
+          <CSVUploadButton table={table} getRows={getRows} />
+          <Button
+              style={{
+                backgroundColor: "#34a4eb",
+                width: "fit-content",
+              }}
+              variant="contained"
+              onClick={() => handleAddRowClick()}
+            >
+              Add {table.table_name}
+            </Button>
+        </Box>
       </Box>
-      <TableContainer>
+      <TableContainer sx={{ maxHeight: 550, overflow: 'auto'}}>
         <MUITable
           className="table-container"
           size="medium"
           sx={{ border: "1px solid lightgrey" }}
-          style={{ padding: "10px" }}
           data-testid="table"
+          stickyHeader
         >
           <TableHead>
             <TableRow>
+            <TableCell  style={{position: 'sticky', left:0, zIndex: 800, background: 'white'}}>
+                {/* Empty table cell for the delete button column */}
+                </TableCell>
               {columns.map((column, index) => (
                 <TableCell
                   key={index}
@@ -1052,6 +1067,7 @@ const TableListView: React.FC<TableListViewProps> = ({
                   </Menu>
                 </TableCell>
               ))}
+              
             </TableRow>
           </TableHead>
           <TableBody>
@@ -1063,6 +1079,9 @@ const TableListView: React.FC<TableListViewProps> = ({
                 onDoubleClick={() => setCurrentRow(row)}
                 sx={{ backgroundColor: rowIdx % 2 === 0 ? "#f2f2f2" : "white" }}
               >
+                <TableCell align="left" style={{position: 'sticky', left:0, zIndex: 700, background: rowIdx % 2 === 0 ? "#f2f2f2" : "white"}}>
+                  <DeleteRowButton getRows={getRows} table={table} row={row} />
+                </TableCell>
                 {Object.values(row.row).map((cell, idx) => (
                   <TableCell
                     key={idx}
@@ -1089,9 +1108,6 @@ const TableListView: React.FC<TableListViewProps> = ({
                     )}
                   </TableCell>
                 ))}
-                <TableCell>
-                  <DeleteRowButton getRows={getRows} table={table} row={row} />
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -480,7 +480,7 @@ VALUES (
 		'admin123',
 		TRUE,
 		'administrator', 
-		'{app_rentals, app_service_support, filemanager}'
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'config@test.com',
@@ -489,7 +489,7 @@ VALUES (
 		'config123',
 		TRUE,
 		'configurator',
-		'{app_rentals, app_service_support, filemanager}'
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'user@test.com',
@@ -498,7 +498,7 @@ VALUES (
 		'user123',
 		TRUE,
 		'user',
-		'{app_rentals, app_service_support, filemanager}'
+		'{app_rentals, app_service_support}'
 	),
 	(
 		'api_testing@test.com',

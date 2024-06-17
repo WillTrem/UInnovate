@@ -66,6 +66,7 @@ export const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({ table, getRows
 		style={{
 			backgroundColor: "#404040",
 			width: "fit-content",
+			height: "fit-content",
 			marginTop: "",
 			display: "flex",
 			flexDirection: "row",

@@ -127,10 +127,10 @@ const DeleteRowButton: React.FC<DeleteRowProps> =
         size="large"
         style={{
           color: 'black',
-          position: 'absolute',
-          right: '10px',
-          transform: 'translateY(-50%)',
-          zIndex: 1,
+          // position: 'absolute',
+          // right: '10px',
+          // transform: 'translateY(-50%)',
+          // zIndex: 1,
           backgroundColor: 'transparent',
           minWidth: '35px'
 
