@@ -275,7 +275,7 @@ ON CONFLICT (availability_status_id) DO NOTHING;
 
 -- Sample data for unit_scheduler table
 INSERT INTO app_rentals.unit_scheduler (unit_id, unavailable_start_date, unavailable_end_date, availability_status_id, unit_recalibration_flag_id) VALUES
-    (1, '2023-11-01', '2023-11-05', 3, NULL),
+    (1, '2024-06-18', '2024-06-20', 3, NULL),
     (2, '2023-11-02', '2023-11-06', 2, NULL),
     (3, '2023-11-03', '2023-11-07', 4, NULL),
     (4, '2023-11-04', '2023-11-08', 1, NULL),

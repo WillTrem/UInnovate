@@ -16,6 +16,7 @@ import { ViewTypeEnum } from "../enums/ViewTypeEnum";
 import { updateSelectedViewList } from "../redux/AdditionalViewSlice";
 import { Row as DataRow } from "../virtualmodel/DataAccessor";
 import CalendarView from "../components/CalendarView";
+import UnitSchedulerView from "../components/UnitSchedulerView";
 
 import CustomViewLoader from "../components/CustomViewLoader";
 import {
@@ -225,7 +226,8 @@ export function ObjectMenu() {
             )}
             {viewType == ViewTypeEnum.Timeline && (
               <>
-                <span>Timeline view</span>
+                {/* <span>Timeline view</span> */}
+                <UnitSchedulerView />
               </>
             )}
             {viewType == ViewTypeEnum.TreeView && (
