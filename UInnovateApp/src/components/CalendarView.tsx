@@ -17,7 +17,12 @@ interface Rental {
   end_date: string;
   tool_name: string;
 }
-
+interface AvailableTool {
+  tool_id: number;
+  available_start_date: string;
+  available_end_date: string;
+  availability_status_id: number;
+}
 
 const CustomCalendar: React.FC = () => {
   const [rentals, setRentals] = useState<Rental[]>([]);
