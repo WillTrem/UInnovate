@@ -1,4 +1,3 @@
-// CustomCalendar.tsx
 import React, { useEffect, useState } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -28,7 +27,7 @@ const CustomCalendar: React.FC = () => {
   const [rentals, setRentals] = useState<Rental[]>([]);
 
   useEffect(() => {
-    console.log('useEffect triggered'); // Initial log to confirm effect is running
+    console.log('useEffect triggered'); 
 
     const fetchRentals = async () => {
       try {
@@ -63,8 +62,14 @@ const CustomCalendar: React.FC = () => {
             const filteredAvailableTools = availableTools.filter((tool: AvailableTool) => tool.availability_status_id === 1);
             console.log('Filtered Available Tools:', filteredAvailableTools);
 
+            
             const rentalsWithToolNames = filteredAvailableTools.map((availableTool: AvailableTool) => {
-              const tool = toolRows.find((tool: Row) => tool.id === availableTool.tool_id);
+              console.log('Processing availableTool:', availableTool);
+              const tool = toolRows.find((tool: Row) => {
+                console.log('Checking tool_id:', tool.tool_id, 'against availableTool tool_id:', availableTool.tool_id);
+                return tool.tool_id === availableTool.tool_id;
+              });
+              console.log('Checking tool:', availableTool.tool_id, 'Found tool:', tool);
 
               if (tool) {
                 return {
@@ -72,7 +77,7 @@ const CustomCalendar: React.FC = () => {
                   tool_id: availableTool.tool_id,
                   start_date: availableTool.available_start_date,
                   end_date: availableTool.available_end_date,
-                  tool_name: tool.name,
+                  tool_name: tool.tool_name,
                 };
               } else {
                 console.log('Tool not found for availableTool:', availableTool);
