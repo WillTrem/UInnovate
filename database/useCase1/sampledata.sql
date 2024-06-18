@@ -493,7 +493,7 @@ UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_
 
 -- sample view
 INSERT INTO meta.additional_view_settings(schemaName, tableName, viewName, viewType) VALUES
-('app_rentals', 'unit_scheduler', 'unit_scheduler_timeline_view', 1),
+('app_rentals', 'unit_scheduler', 'available_tools_calendar_view', 1),
 ('app_rentals', 'unit_recalibration_schedule', 'unit_recalibration_schedule_calendar_view', 2),
 ('app_rentals', 'purchase_order', 'purchase_order_treeview_view', 3),
 ('app_rentals', 'company', 'unit_scheduler_custom_view', 4);
