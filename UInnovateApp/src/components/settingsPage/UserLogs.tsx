@@ -35,7 +35,9 @@ export default function UserLogs() {
 
   return (
     <div style={{ height: "600px", width: "100%" }}>
-      <DataGrid rows={logs} columns={columns} />
+      <DataGrid rows={logs} columns={columns} 
+      sx={{".MuiTablePagination-displayedRows, .MuiTablePagination-selectLabel": {"margin-top": "1em","margin-bottom": "1em"}}}
+       />
     </div>
   );
   }

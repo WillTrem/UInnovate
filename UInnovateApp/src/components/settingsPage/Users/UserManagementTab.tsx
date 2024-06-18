@@ -61,7 +61,7 @@ const UserManagementTab = () => {
 				<Tab eventKey="users" title="Users" className="users-container">
 					<div className="users-container">
 						<div className="add-button-container">
-							<Button variant="contained" className="mt-3 mb-2" onClick={handleOnClick} sx={{ backgroundColor: "#404040" }}>
+							<Button variant="contained" className="mt-3 mb-2" onClick={handleOnClick} sx={{ backgroundColor: "#34a4eb"}}>
 								Add User
 							</Button>
 						</div>

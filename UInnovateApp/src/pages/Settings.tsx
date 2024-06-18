@@ -67,27 +67,27 @@ export function Settings() {
   };
 
   return (
-    <>
+    <Box maxHeight={'100vh'} maxWidth={'100vw'} overflow={'hidden'}>
       <NavBar />
       {dbRole === Role.USER || (dbRole === null && !LOGIN_BYPASS) ? (
         <UnauthorizedScreen />
       ) : (
         <div className="page-container">
-          <div className="save-config-container">
-            <Box display="flex" gap={"2rem"} alignItems={"center"}>
-              <h1 className="title">Settings</h1>
-              <SchemaSelector
-                displayType={DisplayType.MuiDropDown}
-                schemas={schemas}
-                selectedSchema={selectedSchema}
-                setSelectedSchema={setSelectedSchema}
-              />
-            </Box>
-            {/* <ButtonConfigurationSaver /> */}
-          </div>
           <Tab.Container activeKey={option} id="left-tabs-example">
             <Row>
               <Col sm={3}>
+                <div className="save-config-container">
+                  <Box display="flex" gap={"2rem"} alignItems={"center"}>
+                    <h1 className="title">Settings</h1>
+                    <SchemaSelector
+                      displayType={DisplayType.MuiDropDown}
+                      schemas={schemas}
+                      selectedSchema={selectedSchema}
+                      setSelectedSchema={setSelectedSchema}
+                    />
+                  </Box>
+                  {/* <ButtonConfigurationSaver /> */}
+                </div>
                 <Nav variant="pills" className="flex-column">
                   <Nav.Item>
                     <Nav.Link
@@ -115,15 +115,15 @@ export function Settings() {
                   </Nav.Item>
                   {(dbRole === Role.ADMIN ||
                     (LOGIN_BYPASS && dbRole === null)) && (
-                    <Nav.Item>
-                      <Nav.Link
-                        eventKey="users"
-                        onClick={() => handleNavClick("users")}
-                      >
-                        Users
-                      </Nav.Link>
-                    </Nav.Item>
-                  )}
+                      <Nav.Item>
+                        <Nav.Link
+                          eventKey="users"
+                          onClick={() => handleNavClick("users")}
+                        >
+                          Users
+                        </Nav.Link>
+                      </Nav.Item>
+                    )}
                   <Nav.Item>
                     <Nav.Link
                       eventKey="internationalization"
@@ -158,7 +158,7 @@ export function Settings() {
                   </Nav.Item>
                 </Nav>
               </Col>
-              <Col sm={9}>
+              <Col sm={9} style={{paddingTop: '2em'}}>
                 <Tab.Content>
                   <Tab.Pane eventKey="general">
                     <GeneralTab />
@@ -177,10 +177,10 @@ export function Settings() {
                   </Tab.Pane>
                   {(dbRole === Role.ADMIN ||
                     (LOGIN_BYPASS && dbRole === null)) && (
-                    <Tab.Pane eventKey="users">
-                      <UserManagementTab />
-                    </Tab.Pane>
-                  )}
+                      <Tab.Pane eventKey="users">
+                        <UserManagementTab />
+                      </Tab.Pane>
+                    )}
                   <Tab.Pane eventKey="internationalization">
                     <InternationalizationTab />
                   </Tab.Pane>
@@ -204,6 +204,6 @@ export function Settings() {
           </Tab.Container>
         </div>
       )}
-    </>
+    </Box>
   );
 }

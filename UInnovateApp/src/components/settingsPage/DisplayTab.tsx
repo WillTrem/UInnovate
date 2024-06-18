@@ -7,6 +7,7 @@ import ConfigurationSaver from "./ConfigurationSaver";
 import vmd from "../../virtualmodel/VMD";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
+import '../../styles/ObjectMenu.css'
 
 const DisplayTab = () => {
 
@@ -26,8 +27,8 @@ const DisplayTab = () => {
       <Tab.Container>
         <Row>
           <Col sm={3}>
-                <h4 style={{ marginBottom: 0 }}>Tables</h4>
-            <Nav variant="pills" className="flex-column">
+                <h4 >Tables</h4>
+            <Nav variant="pills" className="flex-column scrollable-col">
               {tables?.map(({ table_name }) => {
                 return (
                   <Nav.Item key={table_name} data-testid="table-setting-nav">
@@ -37,7 +38,7 @@ const DisplayTab = () => {
               })}
             </Nav>
           </Col>
-          <Col sm={9}>
+          <Col sm={9} className="scrollable-col">
             <Tab.Content>
               {tableItems?.map((tableItem, idx) => {
                 const tableName = tableItem.props.table.table_name;

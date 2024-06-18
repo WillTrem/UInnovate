@@ -833,7 +833,7 @@ const TableListView: React.FC<TableListViewProps> = ({
   };
 
   return (
-    <div>
+    <Box display={'flex'} flexDirection={'column'} gap={2}>
       <div
         style={{
           display: "flex",
@@ -960,10 +960,10 @@ const TableListView: React.FC<TableListViewProps> = ({
             </Button>
         </Box>
       </Box>
-      <TableContainer sx={{ maxHeight: 550, overflow: 'auto'}}>
+      <TableContainer sx={{ maxHeight: '70vh', overflow: 'auto'}}>
         <MUITable
           className="table-container"
-          size="medium"
+          size="small"
           sx={{ border: "1px solid lightgrey" }}
           data-testid="table"
           stickyHeader
@@ -1166,7 +1166,7 @@ const TableListView: React.FC<TableListViewProps> = ({
         openPanel={openPanel}
         setOpenPanel={setOpenPanel}
       ></SlidingPanel>
-    </div>
+    </Box>
   );
 };
 

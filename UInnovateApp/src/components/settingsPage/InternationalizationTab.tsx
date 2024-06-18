@@ -2,22 +2,23 @@ import React, { useEffect, useState } from "react";
 import { DataAccessor, Row } from "../../virtualmodel/DataAccessor";
 import vmd from "../../virtualmodel/VMD";
 import { Modal, Form } from "react-bootstrap";
-import { Button, SelectChangeEvent } from "@mui/material";
+import { Box, Button, SelectChangeEvent } from "@mui/material";
 import TableComponent from "react-bootstrap/Table";
-import { IoMdAddCircle } from "react-icons/io"; 
+import { IoMdAddCircle } from "react-icons/io";
 import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 import "../../styles/InternationalizationTab.css";
 import isoLanguages from "iso-639-1";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/Store";
 import { AuthState } from '../../redux/AuthSlice';
-import  Audits  from "../../virtualmodel/Audits";
+import Audits from "../../virtualmodel/Audits";
 import TranslationTableRow from "./TranslationTableRow";
 
 const buttonStyle = {
-  marginRight: 10,
+  // marginRight: 10,
+  // marginBottom: 10,
   backgroundColor: "#404040",
-  marginBottom: 10,
+  display: 'inline-block',
 };
 
 const addLabelButtonStyle = {
@@ -281,7 +282,7 @@ const InternationalizationTab = () => {
       loggedInUser || "",
       "Add Label",
       "Added a new label with the following values: " +
-        JSON.stringify(labelName),
+      JSON.stringify(labelName),
       "i18n_keys",
       "",
     );
@@ -321,7 +322,7 @@ const InternationalizationTab = () => {
       loggedInUser || "",
       "Edit Label",
       "Edited a label with the following values: " +
-        JSON.stringify(editedValue),
+      JSON.stringify(editedValue),
       "i18n_keys",
       "",
     );
@@ -385,61 +386,65 @@ const InternationalizationTab = () => {
       loggedInUser || "",
       "Sort by Missing Translations",
       "Sorted by missing translations for the language: " +
-        '"' +
-        selectedLanguage +
-        '"',
+      '"' +
+      selectedLanguage +
+      '"',
       "i18n_translations",
       "",
     );
   };
 
   return (
-    <div>
-      <div>
-        <Button
-          data-testid="add-language-button"
-          onClick={showAddLanguage}
-          style={buttonStyle}
-          variant="contained"
-        >
-          Add Language
-        </Button>
-        <Button
-          style={buttonStyle}
-          variant="contained"
-          data-testid="refresh-button"
-        >
-          Refresh
-        </Button>
-        <Button
-          style={buttonStyle}
-          variant="contained"
-          data-testid="missing-translations-button"
-          onClick={() => sortByMissingTranslations(selectedLanguage)}
-        >
-          Show Missing Translations
-        </Button>
-      </div>
-
-            <div className="selected-language-input">
-
-                <FormControl fullWidth>
-                    <InputLabel data-testid="selected-language-label">Selected Language</InputLabel>
-                    <Select
-                        labelId="selected-language-label"
-                        name="Selected Language"
-                        onChange={handleSelectedLanguage}
-                        onClick={handleDropdownLanguages}
-                        variant="outlined"
-                        label="Selected Language"
-                        defaultValue=''
-                    >
-                        {languages.map(language => (
-                            <MenuItem key={language} value={language}>{language}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            </div>
+    <Box display={'flex'} flexDirection={'column'} gap={1} maxHeight={'80vh'}>
+      <Box display={'flex'} justifyContent={'space-between'}>
+        <div className="selected-language-input">
+          <FormControl fullWidth>
+            <InputLabel data-testid="selected-language-label">Selected Language</InputLabel>
+            <Select
+              labelId="selected-language-label"
+              name="Selected Language"
+              onChange={handleSelectedLanguage}
+              onClick={handleDropdownLanguages}
+              variant="outlined"
+              label="Selected Language"
+              defaultValue=''
+            >
+              {languages.map(language => (
+                <MenuItem key={language} value={language}>{language}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </div>
+        <Box display={'flex'} gap={2}>
+          <Button
+            className="mt-3 mb-2"
+            style={buttonStyle}
+            variant="contained"
+            data-testid="refresh-button"
+          >
+            Refresh
+          </Button>
+          <Button
+            className="mt-3 mb-2"
+            style={buttonStyle}
+            variant="contained"
+            data-testid="missing-translations-button"
+            onClick={() => sortByMissingTranslations(selectedLanguage)}
+          >
+            Show Missing Translations
+          </Button>
+          <Button
+            className="mt-3 mb-2"
+            data-testid="add-language-button"
+            onClick={showAddLanguage}
+            style={{ ...buttonStyle, backgroundColor: '#34a4eb' }}
+            variant="contained"
+          >
+            Add Language
+          </Button>
+          
+        </Box>
+      </Box>
 
       <div style={{ maxHeight: "700px", overflowY: "auto" }}>
         {" "}
@@ -473,19 +478,20 @@ const InternationalizationTab = () => {
               })}
           </tbody>
         </TableComponent>
+        
       </div>
-
-      <div style={addLabelButtonStyle}>
+      <Box maxHeight={'fit-content'} paddingTop={1}>
         <Button
-          variant="contained"
-          style={buttonStyle}
-          onClick={handleAddRowClick}
-          data-testid="add-label-button"
-        >
-          <IoMdAddCircle className="button-icon" />
-        </Button>
-      </div>
-
+              // className="mt-3 mb-2"
+              variant="contained"
+              style={{ ...buttonStyle, backgroundColor: '#34a4eb' }}
+              onClick={handleAddRowClick}
+              data-testid="add-label-button"
+            >
+              {/* <IoMdAddCircle className="button-icon" /> */}
+              New Label
+            </Button>
+      </Box>
       <Modal
         show={showModalAddLanguage}
         onHide={handleClose}
@@ -576,7 +582,7 @@ const InternationalizationTab = () => {
           </div>
         </Modal.Footer>
       </Modal>
-    </div>
+    </Box>
   );
 };
 

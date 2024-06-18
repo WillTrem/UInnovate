@@ -1,0 +1,12 @@
+.scrollable-col {
+	overflow-y: auto;
+	max-height: 78vh;
+	display: flex;
+	flex-direction:column ;
+	flex-wrap: nowrap;
+	/* max-width: fit-content; */
+  }
+
+.fit-content {
+	max-width: fit-content;
+}
