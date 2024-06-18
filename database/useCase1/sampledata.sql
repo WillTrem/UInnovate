@@ -235,6 +235,44 @@ VALUES
     ('requires_calibration'),
     ('out_of_commission');
 
+
+
+-------
+-- Sample data for available_tools table for June 2024
+INSERT INTO app_rentals.available_tools (tool_id, available_start_date, available_end_date, availability_status_id) VALUES
+    (1, '2024-06-01', '2024-06-30', 1),
+    (2, '2024-06-01', '2024-06-30', 1),
+    (3, '2024-06-01', '2024-06-30', 1),
+    (4, '2024-06-01', '2024-06-30', 1),
+    (5, '2024-06-01', '2024-06-30', 1),
+    (6, '2024-06-01', '2024-06-30', 1),
+    (7, '2024-06-01', '2024-06-30', 1),
+    (8, '2024-06-01', '2024-06-30', 1),
+    (9, '2024-06-01', '2024-06-30', 1),
+    (10, '2024-06-01', '2024-06-30', 1),
+    (11, '2024-06-01', '2024-06-30', 1),
+    (12, '2024-06-01', '2024-06-30', 1),
+    (13, '2024-06-01', '2024-06-30', 1),
+    (14, '2024-06-01', '2024-06-30', 1),
+    (15, '2024-06-01', '2024-06-30', 1),
+    (16, '2024-06-01', '2024-06-30', 1),
+    (17, '2024-06-01', '2024-06-30', 1),
+    (18, '2024-06-01', '2024-06-30', 1),
+    (19, '2024-06-01', '2024-06-30', 1),
+    (20, '2024-06-01', '2024-06-30', 1);
+
+-- Ensure that the availability status "available" exists
+INSERT INTO app_rentals.availability_status (availability_status_id, availability_status_name)
+VALUES
+    (1, 'available')
+ON CONFLICT (availability_status_id) DO NOTHING;
+
+
+
+
+------
+
+
 -- Sample data for unit_scheduler table
 INSERT INTO app_rentals.unit_scheduler (unit_id, unavailable_start_date, unavailable_end_date, availability_status_id, unit_recalibration_flag_id) VALUES
     (1, '2023-11-01', '2023-11-05', 3, NULL),
