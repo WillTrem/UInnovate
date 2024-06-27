@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/Store";
 import { Alert, Box, CircularProgress, Snackbar, Typography } from "@mui/material";
 import NotificationSnackbar from "./components/NotificationSnackbar";
+import {SearchPage} from "./pages/SearchPage";
 
 function App() {
   const loading = useSelector((state: RootState) => state.loading.loading);
@@ -34,6 +35,7 @@ function App() {
           <Route path="/:schema" element={<ObjectMenu />} />
           <Route path="/:schema/:tableName/:id" element={<ObjectMenu />} />
           <Route path="/:schema/:tableName" element={<ObjectMenu />} />
+          <Route path="/search" element={<SearchPage />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/:option" element={<Settings />} />
 
