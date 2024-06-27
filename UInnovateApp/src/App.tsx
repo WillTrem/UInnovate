@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./redux/Store";
 import { Alert, Box, CircularProgress, Snackbar, Typography } from "@mui/material";
 import NotificationSnackbar from "./components/NotificationSnackbar";
-import {SearchPage} from "./pages/SearchPage";
+import SearchPage from "./pages/SearchPage";
 
 function App() {
   const loading = useSelector((state: RootState) => state.loading.loading);
