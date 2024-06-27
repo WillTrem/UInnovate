@@ -68,7 +68,7 @@ export function NavBar({ showSchemaFilter = true }: NavBarProps) {
           <Nav className="justify-content-end flex-grow-1 pe-3">
             {( LOGIN_BYPASS || loggedInUser ) &&
             <>
-            <Nav.Link as={Link} to="/search" style={{ fontSize: "25px" }} hidden={dbRole === Role.USER}>Search</Nav.Link>
+            <Nav.Link as={Link} to="/search" style={{ fontSize: "25px" }}>Search</Nav.Link>
             {/* Hides the Settings page link for user role */}
             <Nav.Link as={Link} to="/settings" style={{ fontSize: "25px" }} hidden={dbRole === Role.USER}>
               Settings
