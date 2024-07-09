@@ -262,6 +262,30 @@ CREATE TABLE app_rentals.unit_calibration_certificate (
     recalibration_advised_date timestamp,
     calibration_signature text
 );
+
+-------------------------------------------
+-- Create a new table for available tools
+CREATE TABLE app_rentals.available_tools (
+    available_tool_id serial PRIMARY KEY,
+    tool_id int REFERENCES app_rentals.tool(tool_id),
+    available_start_date timestamp,
+    available_end_date timestamp,
+    availability_status_id int REFERENCES app_rentals.availability_status(availability_status_id)
+);
+COMMENT ON TABLE app_rentals.available_tools IS '{"displayField": "available_tool_id"}';
+COMMENT ON COLUMN app_rentals.available_tools.tool_id IS '{"reqOnCreate": true, "refTable": "app_rentals.tool"}';
+COMMENT ON COLUMN app_rentals.available_tools.available_start_date IS '{"reqOnCreate": true}';
+COMMENT ON COLUMN app_rentals.available_tools.available_end_date IS '{"reqOnCreate": true}';
+COMMENT ON COLUMN app_rentals.available_tools.availability_status_id IS '{"reqOnCreate": true, "refTable": "app_rentals.availability_status"}';
+
+-- Grant permissions on the new table
+GRANT ALL ON app_rentals.available_tools TO "user";
+GRANT USAGE, SELECT ON SEQUENCE app_rentals.available_tools_available_tool_id_seq TO "user";
+-----------
+
+
+
+
 COMMENT ON TABLE app_rentals.unit_calibration_certificate IS '{"displayField": "unit_calibration_certificate_id"}';
 COMMENT ON COLUMN app_rentals.unit_calibration_certificate.unit_id IS '{"reqOnCreate": true, "refTable": "app_rentals.unit"}';
 COMMENT ON COLUMN app_rentals.unit_calibration_certificate.certification_date IS '{"reqOnCreate": true}';
