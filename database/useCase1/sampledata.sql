@@ -235,9 +235,47 @@ VALUES
     ('requires_calibration'),
     ('out_of_commission');
 
+
+
+-------
+-- Sample data for available_tools table for June 2024
+INSERT INTO app_rentals.available_tools (tool_id, available_start_date, available_end_date, availability_status_id) VALUES
+    (1, '2024-06-01', '2024-06-30', 1),
+    (2, '2024-06-01', '2024-06-30', 1),
+    (3, '2024-06-01', '2024-06-30', 1),
+    (4, '2024-06-01', '2024-06-30', 1),
+    (5, '2024-06-01', '2024-06-30', 1),
+    (6, '2024-06-01', '2024-06-30', 1),
+    (7, '2024-05-01', '2024-06-01', 1),
+    (8, '2024-05-01', '2024-06-01', 1),
+    (9, '2024-06-01', '2024-06-30', 1),
+    (10, '2024-06-01', '2024-06-30', 1),
+    (11, '2024-06-01', '2024-06-30', 1),
+    (12, '2024-06-01', '2024-06-30', 1),
+    (13, '2024-06-01', '2024-06-30', 1),
+    (14, '2024-06-01', '2024-06-30', 1),
+    (15, '2024-06-01', '2024-06-30', 1),
+    (16, '2024-06-01', '2024-06-30', 1),
+    (17, '2024-06-01', '2024-06-30', 1),
+    (18, '2024-06-01', '2024-06-30', 1),
+    (19, '2024-06-01', '2024-06-30', 1),
+    (20, '2024-06-01', '2024-06-30', 1);
+
+-- Ensure that the availability status "available" exists
+INSERT INTO app_rentals.availability_status (availability_status_id, availability_status_name)
+VALUES
+    (1, 'available')
+ON CONFLICT (availability_status_id) DO NOTHING;
+
+
+
+
+------
+
+
 -- Sample data for unit_scheduler table
 INSERT INTO app_rentals.unit_scheduler (unit_id, unavailable_start_date, unavailable_end_date, availability_status_id, unit_recalibration_flag_id) VALUES
-    (1, '2023-11-01', '2023-11-05', 3, NULL),
+    (1, '2024-06-18', '2024-06-20', 3, NULL),
     (2, '2023-11-02', '2023-11-06', 2, NULL),
     (3, '2023-11-03', '2023-11-07', 4, NULL),
     (4, '2023-11-04', '2023-11-08', 1, NULL),
@@ -388,7 +426,7 @@ INSERT INTO app_rentals.unit_recalibration_schedule (unit_recalibration_flag_id,
 
 -- Sample data for unit_calibration_certificate table
 INSERT INTO app_rentals.unit_calibration_certificate (unit_id, certification_date, recalibration_advised_date, calibration_signature) VALUES
-    (1, '2023-11-01', '2023-11-02', 'Signature1'),
+    (1, '2024-11-01', '2023-11-02', 'Signature1'),
     (2, '2023-11-02', '2023-11-03', 'Signature2'),
     (3, '2023-11-03', '2023-11-04', 'Signature3'),
     (4, '2023-11-04', '2023-11-05', 'Signature4'),
@@ -455,7 +493,7 @@ UPDATE app_rentals.unit_recalibration_schedule SET last_calibration_certificate_
 
 -- sample view
 INSERT INTO meta.additional_view_settings(schemaName, tableName, viewName, viewType) VALUES
-('app_rentals', 'unit_scheduler', 'unit_scheduler_timeline_view', 1),
+('app_rentals', 'unit_scheduler', 'available_tools_calendar_view', 1),
 ('app_rentals', 'unit_recalibration_schedule', 'unit_recalibration_schedule_calendar_view', 2),
 ('app_rentals', 'purchase_order', 'purchase_order_treeview_view', 3),
 ('app_rentals', 'company', 'unit_scheduler_custom_view', 4);

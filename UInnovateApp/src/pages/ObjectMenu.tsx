@@ -15,6 +15,8 @@ import AdditionalViewNavBar from "../components/AdditionalViewNavBar";
 import { ViewTypeEnum } from "../enums/ViewTypeEnum";
 import { updateSelectedViewList } from "../redux/AdditionalViewSlice";
 import { Row as DataRow } from "../virtualmodel/DataAccessor";
+import CalendarView from "../components/CalendarView";
+import UnitSchedulerView from "../components/UnitSchedulerView";
 
 import CustomViewLoader from "../components/CustomViewLoader";
 import {
@@ -58,7 +60,7 @@ export function ObjectMenu() {
     p_viewType: ViewTypeEnum = ViewTypeEnum.Default,
   ) => {
     if (p_schema && p_tableName) {
-      let viewType = p_viewType;
+      const viewType = p_viewType;
 
       if (viewType == ViewTypeEnum.Custom) {
         //update custom view index
@@ -154,6 +156,8 @@ export function ObjectMenu() {
     );
   };
 
+  
+
   return (
     <>
       <NavBar />
@@ -216,12 +220,14 @@ export function ObjectMenu() {
             )}
             {viewType == ViewTypeEnum.Calendar && (
               <>
-                <span>Calendar view</span>
+                {/* <span>Calendar view</span> */}
+                <CalendarView/>
               </>
             )}
             {viewType == ViewTypeEnum.Timeline && (
               <>
-                <span>Timeline view</span>
+                {/* <span>Timeline view</span> */}
+                <UnitSchedulerView />
               </>
             )}
             {viewType == ViewTypeEnum.TreeView && (
